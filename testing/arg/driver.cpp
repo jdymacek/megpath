@@ -1,7 +1,7 @@
 //test args
 #include<iostream>
-#include "Value.h"
-#include "ArgFile.h"
+#include "../../shared/Value.h"
+#include "../../shared/ArgFile.h"
 
 using namespace std;
 
