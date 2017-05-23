@@ -20,7 +20,7 @@ class ArgFile{
 		bool isArgument();
 
 	private:
-		map<string, Value> values;
+		map<string, Value> args;
 };
 
 #endif
