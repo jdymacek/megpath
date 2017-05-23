@@ -4,7 +4,7 @@
 //Last Modified: 5/23/2017
 
 #include "CSVFile.h"
-vector<vector<Value> > CSVFile::readCSV(string filename, bool tab = false){
+vector<vector<Value> > CSVFile::readCSV(string filename, bool tab){
 	vector<vector<Value> > rv;
 	Value row;
 	string line = "";
