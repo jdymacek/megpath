@@ -1,7 +1,4 @@
 #include "Value.h"
-#include <vector>
-
-using namespace std;
 
 Value::Value(){
 	data = "";
