@@ -10,7 +10,13 @@ int main(){
 
 	args.load("tests.txt");
 
-	args.toString();
+	cout << "Print out the args: \n";
+	string print = args.toString();
+	cout << print;
+
+	cout << "Get the argument for time: \n";
+	Value val = args.getArgument("time");
+	cout << val.toString() << "\n";
 
 	return 0;
 }

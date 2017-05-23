@@ -34,13 +34,9 @@ void ArgFile::load(string filename){
 
 string ArgFile::toString(){
 	string rv = "";
-	stringstream ss;
-
 	for(map<string,Value>::iterator i = args.begin(); i != args.end(); ++i){
-		ss << i->first << " = " << i->second.toString() << "\n";
-		ss >> rv;
+		rv = rv +  i->first + " = " + i->second.toString() + "\n";
 	}
-
 	return rv;
 }
 
