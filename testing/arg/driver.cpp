@@ -1,4 +1,7 @@
-//test args
+//test args driver
+//Matthew Dyer
+//Created on 5/23/2017
+
 #include<iostream>
 #include "../../shared/Value.h"
 #include "../../shared/ArgFile.h"
@@ -19,7 +22,21 @@ int main(){
 
 	cout << "Get the argument for time: \n";
 	Value val = args.getArgument("time");
-	cout << val.toString() << "\n";
+	cout << val.asString() << "\n\n";
+
+	cout << "Vector of ints: \n";
+	if(args.isArgument("vecInts")){
+		val = args.getArgument("vecInts");
+	}
+	cout << "[ ";
+	for(int i = 0; i < val.asVector().size(); ++i){
+		if(i != val.asVector().size()-1){
+			cout << val.asVector()[i].asInt() << ",";
+		}else{
+			cout << val.asVector()[i].asInt();
+		}
+	}
+	cout << " ]\n\n";
 
 	return 0;
 }
