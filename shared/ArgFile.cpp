@@ -17,6 +17,7 @@ void ArgFile::load(string filename){
 		if(line[0] == '#'){
 			continue;
 		}else{
+			/* XXX breaks if the value has a space within it XXX */
 			stringstream ss;
 			ss << line;
 			ss >> key;
