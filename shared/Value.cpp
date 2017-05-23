@@ -49,8 +49,6 @@ vector<Value> Value::asVector() const{
 			token += str[i];		
 			if(str[i] == '\"'){
 				inString = false;
-				Value v(token);
-				vec.push_back(v);
 				token = "";
 			}
 		}else{
