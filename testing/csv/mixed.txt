@@ -1,0 +1,4 @@
+"basketball",23,2.5
+"baseball",19,11.7
+"rugby",12,19.5
+"darts",128,124.3
