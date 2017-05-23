@@ -60,7 +60,7 @@ Value ArgFile::getArgument(string key){
 
 bool ArgFile::isArgument(string key){
 	for(map<string,Value>::iterator i = args.begin(); i != args.end(); ++i){
-		if(i->first == key)
+		if(i->first == key){
 			return true;
 		}
 	}
