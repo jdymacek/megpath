@@ -30,11 +30,41 @@ string Value::asString() const{
 
 vector<Value> Value::asVector() const{
 	vector<Value> vec;
-	//check for the []
-	if(data.size() > 0){
-		//parse string?
-
+	if(data.size() <= 2){
+		return vec;
 	}
+	if(data[0] != '[' || data[data.size()-1] != ']'){
+		return vec;
+	}
+	string token = "";
+	bool inString = false;
+	string str = data.substr(1,data.size()-2);	
+	//walk along string looking for commas not inside of ""
+	for(int i =0; i < str.size(); ++i){
+		if(inString){
+			token += str[i];		
+			if(str[i] == '\"'){
+				inString = false;
+				Value v(token);
+				vec.push_back(v);
+				token = "";
+			}
+		}else{
+			if(str[i] == '\"'){
+				token = "\"";
+				inString = true;
+			}else if(str[i] == ','){
+				Value v(token);
+				vec.push_back(v);
+				token = "";
+			}else{
+				token += str[i];
+			}
+		}
+	}
+	Value v(token);
+	vec.push_back(token);
+
 	return vec;
 }
 
