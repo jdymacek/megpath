@@ -5,8 +5,10 @@
 #define ARGFILE_H
 
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <vector>
+#include <map>
 #include "Value.h"
 
 using namespace std;

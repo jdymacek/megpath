@@ -8,6 +8,7 @@ void ArgFile::load(string filename){
 	string key = "";
 	string equals = "";
 	string value = "";
+	Value val = Value();
 
 	ifstream inFile;
 	inFile.open(filename);
@@ -16,25 +17,28 @@ void ArgFile::load(string filename){
 		if(line[0] == '#'){
 			continue;
 		}else{
-
 			stringstream ss;
 			ss << line;
 			ss >> key;
 			ss >> equals;
 			ss >> value;
-
-			Value val = Value(value);
+			val = Value(value);
 		}
 
 		args.insert(pair<string,Value>(key,val));
-
 	}
 
-	infile.close();
+	inFile.close();
 }
 
 string ArgFile::toString(){
-	return;
+	string rv = "";
+		
+	for(map<string,Value>::iterator i = args.begin(); i != args.end(); ++i){
+		cout << i->first << " = " << i->second.asString() << "\n";
+	}
+
+	return rv;
 }
 
 Value ArgFile::getArgument(string key){
@@ -42,8 +46,8 @@ Value ArgFile::getArgument(string key){
 	string val = "";
 
 	for(map<string,Value>::iterator i = args.begin(); i != args.end(); ++i){
-		if(map->first == key){
-			val =  map->second;
+		if(i->first == key){
+			val = i->second.asString();
 			rv = Value(val);
 			return rv;
 		}
