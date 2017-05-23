@@ -2,13 +2,14 @@
 
 
 
-FixedPF::FixedPF(){
-
+FixedPF::FixedPF(int x,int y, double v){
+	Entry e = {x,y,v};
+	value.push_back(e);
 }
 
 
 vector<Entry> FixedPF::random(){
-	return vec;
+	return value;
 }
 
 string FixedPF::toString(){
@@ -16,5 +17,4 @@ string FixedPF::toString(){
 }
 
 void FixedPF::addObservation(double d){
-
 }
