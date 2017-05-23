@@ -2,7 +2,7 @@
 commit = "blah"
 johnny = "boy"
 time = "4:00"
-vecInts = ["1","2","3"]
-vecDoubles = ["2.1","2.2","2.75"]
-vecStrings = ["et","tu","brute", "?"]
+vecInts = [1,2,3]
+vecDoubles = [2.1,2.2,2.75]
+vecStrings = ["et","tu","brute","?"]
 #don't read me either
