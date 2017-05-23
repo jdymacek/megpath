@@ -13,7 +13,7 @@ int main(){
 	CSVFile file;
 
 	cout << "Integers only: \n";
-	vector<vector<Value> > vec = file.readCSV("ints.txt");
+	vector<vector<Value> > vec = file.readCSV("ints.csv");
 	for(int i = 0; i < vec.size(); ++i){
 		for(int j = 0; j < vec[i].size(); ++j){
 			cout << vec[i][j].asInt() << " ";
@@ -22,7 +22,7 @@ int main(){
 	}
 
 	cout << "\nDoubles only: \n";
-	vec = file.readCSV("doubles.txt");
+	vec = file.readCSV("doubles.csv");
 	for(int i = 0; i < vec.size(); ++i){
 		for(int j = 0; j < vec[i].size(); ++j){
 			cout << vec[i][j].asDouble() << " ";
@@ -31,7 +31,7 @@ int main(){
 	}
 
 	cout << "\nStrings only: \n";
-	vec = file.readCSV("strings.txt");
+	vec = file.readCSV("strings.csv");
 	for(int i = 0; i < vec.size(); ++i){
 		for(int j = 0; j < vec[i].size(); ++j){
 			cout << vec[i][j].asString() << " ";
@@ -40,7 +40,7 @@ int main(){
 	}
 
 	cout << "\nMixed types: \n"; //string,int,double
-	vec = file.readCSV("mixed.txt");
+	vec = file.readCSV("mixed.csv");
 	for(int i = 0; i < vec.size(); ++i){
 		int switcher = 0;
 		for(int j = 0; j < vec[i].size(); ++j){
