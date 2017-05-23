@@ -1,9 +1,9 @@
 #ifndef VALUE_CPP
 #define VALUE_CPP
 #include <vector>
+#include <cstdlib>
 
 using namespace std;
-
 
 class Value{
 	public:
