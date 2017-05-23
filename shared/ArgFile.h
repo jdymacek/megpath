@@ -19,7 +19,7 @@ class ArgFile{
 		void load(string filename);
 		string toString();
 		Value getArgument(string key);
-		bool isArgument();
+		bool isArgument(string key);
 
 	private:
 		map<string, Value> args;

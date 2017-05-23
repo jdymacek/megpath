@@ -34,9 +34,11 @@ void ArgFile::load(string filename){
 
 string ArgFile::toString(){
 	string rv = "";
-		
+	stringstream ss;
+
 	for(map<string,Value>::iterator i = args.begin(); i != args.end(); ++i){
-		cout << i->first << " = " << i->second.toString() << "\n";
+		ss << i->first << " = " << i->second.toString() << "\n";
+		ss >> rv;
 	}
 
 	return rv;
@@ -48,8 +50,7 @@ Value ArgFile::getArgument(string key){
 
 	for(map<string,Value>::iterator i = args.begin(); i != args.end(); ++i){
 		if(i->first == key){
-			val = i->second.asString();
-			rv = Value(val);
+			rv = i->second;
 			return rv;
 		}
 	}
@@ -57,6 +58,11 @@ Value ArgFile::getArgument(string key){
 	return rv;
 }
 
-bool ArgFile::isArgument(){
-	return true;
+bool ArgFile::isArgument(string key);
+	for(map<string,Value>::iterator i = args.begin(); i != args.end(); ++i){
+		if(i->first == key)
+			return true;
+		}
+	}
+	return false;
 }
