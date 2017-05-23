@@ -14,6 +14,7 @@ class Value{
 		double asDouble() const;
 		string asString() const;
 		vector<Value> asVector() const;
+		string toString() const;
 	private:
 		string data;
 };
