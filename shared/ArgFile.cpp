@@ -35,7 +35,7 @@ string ArgFile::toString(){
 	string rv = "";
 		
 	for(map<string,Value>::iterator i = args.begin(); i != args.end(); ++i){
-		cout << i->first << " = " << i->second.asString() << "\n";
+		cout << i->first << " = " << i->second.toString() << "\n";
 	}
 
 	return rv;
