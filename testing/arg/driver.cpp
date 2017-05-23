@@ -12,7 +12,10 @@ int main(){
 
 	cout << "Print out the args: \n";
 	string print = args.toString();
-	cout << print;
+	cout << print << "\n";
+
+	cout << "Is time an argument?\n";
+	cout << args.isArgument("time") << "\n\n";
 
 	cout << "Get the argument for time: \n";
 	Value val = args.getArgument("time");
