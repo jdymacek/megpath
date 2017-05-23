@@ -38,5 +38,33 @@ int main(){
 	}
 	cout << " ]\n\n";
 
+	cout << "Vector of doubles: \n";
+	if(args.isArgument("vecDoubles")){
+		val = args.getArgument("vecDoubles");
+	}
+	cout << "[ ";
+	for(int i = 0; i < val.asVector().size(); ++i){
+		if(i != val.asVector().size()-1){
+			cout << val.asVector()[i].asDouble() << ",";
+		}else{
+			cout << val.asVector()[i].asDouble();
+		}
+	}
+	cout << " ]\n\n";
+
+	cout << "Vector of strings: \n";
+	if(args.isArgument("vecStrings")){
+		val = args.getArgument("vecStrings");
+	}
+	cout << "[ ";
+	for(int i = 0; i < val.asVector().size(); ++i){
+		if(i != val.asVector().size()-1){
+			cout << val.asVector()[i].asString() << ",";
+		}else{
+			cout << val.asVector()[i].asString();
+		}
+	}
+	cout << " ]\n\n";
+
 	return 0;
 }
