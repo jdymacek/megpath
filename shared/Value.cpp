@@ -12,11 +12,11 @@ Value::Value(string d){
 }
 
 int Value::asInt(){
-	return 0;
+	return -1;
 }
 
 double Value::asDouble(){
-
+	return -1;
 }
 
 string Value::asString(){
@@ -25,6 +25,13 @@ string Value::asString(){
 
 vector<Value> Value::asVector(){
 	vector<Value> vec;
+	//check for the []
+	if(data.size() > 0){
+		//parse string?
+
+	}
+
+
 	return vec;
 }
 
