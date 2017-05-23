@@ -28,6 +28,10 @@ string Value::asString() const{
 	return  data.substr(1,data.size()-2);
 }
 
+string Value::toString() const{
+	return data;
+}
+
 vector<Value> Value::asVector() const{
 	vector<Value> vec;
 	if(data.size() <= 2){
