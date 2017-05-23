@@ -1,5 +1,7 @@
+//ArgFile.h
 //Matthew Dyer
-//ArgFile header
+//Created on 5/22/2017
+//Last Modified: 5/23/2017
 
 #ifndef ARGFILE_H
 #define ARGFILE_H

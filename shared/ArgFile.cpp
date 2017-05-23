@@ -1,3 +1,8 @@
+//ArgFile.cpp
+//Matthew Dyer
+//Created on 5/22/2017
+//Last Modified: 5/23/2017
+
 #include "ArgFile.h"
 
 ArgFile::ArgFile(){
