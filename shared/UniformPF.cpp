@@ -11,7 +11,7 @@ UniformPF::UniformPF(int x, int y){
 	dist = uniform_real_distribution<double>(0.0,1.0);
 }
 
-vector<Entry> UniformPf::random(){
+vector<Entry> UniformPF::random(){
 	value[0].val = dist(generator);
 	return value;
 }
@@ -20,6 +20,6 @@ void UniformPF::addObservation(double d){
 
 }
 
-string UniformPf::toString(){
-	return;
+string UniformPF::toString(){
+	return "";
 }
