@@ -3,7 +3,7 @@
 //Created on 5/24/2017
 //Last Modified: 5/24/2017
 
-#include "UniformPF"
+#include "UniformPF.h"
 
 UniformPF::UniformPF(int x, int y){
 	Entry ent = {x,y,0};
