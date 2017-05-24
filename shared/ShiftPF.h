@@ -8,6 +8,7 @@
 
 #include <vector>
 #include "ProbFunc.h"
+#include "HistoPF.h"
 
 using namespace std;
 
