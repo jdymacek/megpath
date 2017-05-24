@@ -46,9 +46,9 @@ void shiftTest(){
 void uniformTest(){
 	ProbFunc* pf = new UniformPF(0,1);
 	vector<double> counts(10,0);
-	for(int i = 0; i < 1000; ++i){
+	for(int i = 0; i < 5000; ++i){
 		vector<Entry> vec = pf->random();
-		counts[(int)vec[0].val*10] +=1;
+		counts[(int)(vec[0].val*10)] +=1;
 	}
 
 	cout << "[ ";
