@@ -1,5 +1,6 @@
 //ShiftPF.cpp -- Shifts a group of varibles
 //julian dymacek
+//Matthew Dyer
 //created: 5/24/2017
 //modified: 5/24/2017
 
@@ -19,7 +20,7 @@ class ShiftPF: public ProbFunc{
 		void addObservation(double d);
 		string toString();
 	private:
-		HistoPF function;
+		HistoPF function = HistoPF(0,0);
 		double prevRandom;
 		vector<Entry> org;
 		vector<Entry> value;
