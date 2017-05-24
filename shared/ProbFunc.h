@@ -8,6 +8,7 @@
 
 #include <iostream>
 #include <vector>
+#include <random>
 
 using namespace std;
 
@@ -22,6 +23,7 @@ class ProbFunc{
 		virtual vector<Entry> random() = 0;
 		virtual void addObservation(double d) = 0;
 		virtual string toString() = 0;
+		static default_random_engine generator;
 };
 
 #endif
