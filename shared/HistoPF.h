@@ -15,7 +15,7 @@ struct Atom{
 
 class HistoPF: public ProbFunc{
 	public:
-		HistoPF(int x,int y, double v);
+		HistoPF(int x,int y);
 		vector<Entry> random();
 		void addObservation(double d);
 		string toString();
