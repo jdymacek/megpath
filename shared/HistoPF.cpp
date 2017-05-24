@@ -8,15 +8,15 @@
 
 HistoPF::HistoPF(int x,int y){
 	Entry e = {x,y,0};
-	weights(12,1);
+	weights = vector<double>(12,1.0);
 	for(int i =0; i < weights.size(); ++i){
 		intervals.push_back(i*1.0/(weights.size()-1));
 	}	
-	distribution(intervals.begin(),intervals.end(),weights.begin());
+	dist(intervals.begin(),intervals.end(),weights.begin());
 }
 
 vector<Entry> HistoPF::random(){
-	e.val = distribution(generator);
+	value[0].val = dist(generator);
 	return value;
 }
 
