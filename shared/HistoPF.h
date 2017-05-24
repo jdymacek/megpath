@@ -6,16 +6,10 @@
 #define HISTOPF__H
 
 #include <vector>
+#include <random>
 #include "ProbFunc.h"
 
 using namespace std;
-
-struct Atom{
-	double center;
-	int count;
-	int prev;
-	int next;
-};
 
 class HistoPF: public ProbFunc{
 	public:
@@ -24,8 +18,9 @@ class HistoPF: public ProbFunc{
 		void addObservation(double d);
 		string toString();
 	private:
-		vector<Atom> bins;
-		int totalObservations;
+		piecewise_linear_distribution<double> dist;
+		vector<double> intervals;
+		vector<double> weights;
 		vector<Entry> value;
 };
 
