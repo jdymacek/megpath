@@ -15,12 +15,13 @@ struct Entry{
 	int x;
 	int y;
 	double val;
-}
+};
 
 class ProbFunc{
-	virtual vector<Entry> random() = 0;
-	virtual void addObservation(double d) = 0;
-	virtual string toString() = 0;
+	public:
+		virtual vector<Entry> random() = 0;
+		virtual void addObservation(double d) = 0;
+		virtual string toString() = 0;
 };
 
 #endif
