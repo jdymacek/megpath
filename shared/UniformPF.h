@@ -21,4 +21,5 @@ class UniformPF: public ProbFunc{
 	private:
 		vector<Entry> value;
 };
+
 #endif
