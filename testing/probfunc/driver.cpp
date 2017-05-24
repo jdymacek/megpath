@@ -8,6 +8,7 @@
 #include "../../shared/ProbFunc.h"
 #include "../../shared/FixedPF.h"
 #include "../../shared/HistoPF.h"
+#include "../../shared/UniformPF.h"
 
 using namespace std;
 
@@ -43,7 +44,22 @@ void shiftTest(){
 }
 
 void uniformTest(){
+	ProbFunc* pf = new UniformPF(0,1);
+	vector<double> counts(10,0);
+	for(int i = 0; i < 1000; ++i){
+		vector<Entry> vec = pf->random();
+		counts[(int)vec[0].val*10] +=1;
+	}
 
+	cout << "[ ";
+	for(int i = 0; i < counts.size(); ++i){
+		if(i < counts.size()-1){
+			cout << counts[i] << ", ";
+		}else{
+			cout << counts[i];
+		}
+	}
+	cout << " ]\n";
 }
 
 void normalTest(){
