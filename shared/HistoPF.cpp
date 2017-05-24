@@ -12,7 +12,7 @@ HistoPF::HistoPF(int x,int y){
 	for(int i =0; i < weights.size(); ++i){
 		intervals.push_back(i*1.0/(weights.size()-1));
 	}	
-	dist(intervals.begin(),intervals.end(),weights.begin());
+	dist = piecewise_linear_distribution<double>(intervals.begin(),intervals.end(),weights.begin());
 }
 
 vector<Entry> HistoPF::random(){
