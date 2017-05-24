@@ -10,6 +10,7 @@
 #include "../../shared/HistoPF.h"
 #include "../../shared/UniformPF.h"
 #include "../../shared/NormalPF.h"
+#include "../../shared/ShiftPF.h"
 
 using namespace std;
 
@@ -33,7 +34,6 @@ void histoTest(){
 			pf->addObservation(d);
 		}
 	}
-//	cout << pf->toString() << endl;
 	for(int i = 0; i < 5000; ++i){
 		vector<Entry> vec = pf->random();
 		cout << vec[0].val << "\n";
@@ -41,7 +41,22 @@ void histoTest(){
 }
 
 void shiftTest(){
+	vector<Entry> shiftBy;
+	shiftBy.push_back({0,1,0});
+	shiftBy.push_back({0,2,0.15});
+	shiftBy.push_back({0,3,0.25});
+	shiftBy.push_back({0,4,0.15});
+	shiftBy.push_back({0,5,0});
 
+	ProbFunc* pf = new ShiftPF(shiftBy);
+	
+	for(int i = 0; i < 5; ++i){
+		vector<Entry> vec = pf->random();
+		for(int j = 0; j < vec.size(); ++j){
+			cout << vec[j].val-shiftBy[j].val << " ";
+		}
+		cout << "\n";
+	}
 }
 
 void uniformTest(){
