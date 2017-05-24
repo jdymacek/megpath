@@ -14,7 +14,7 @@ using namespace std;
 struct Entry{
 	int x;
 	int y;
-	double v;
+	double val;
 }
 
 class ProbFunc{
