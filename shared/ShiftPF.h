@@ -13,7 +13,7 @@ using namespace std;
 
 class ShiftPF: public ProbFunc{
 	public:
-		ShiftPF(int x,int y, double v);
+		ShiftPF(vector<Entry> vec);
 		vector<Entry> random();
 		void addObservation(double d);
 		string toString();
