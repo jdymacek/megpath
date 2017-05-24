@@ -8,21 +8,11 @@
 UniformPF::UniformPF(int x, int y){
 	Entry ent = {x,y,0};
 	value.push_back(ent);
+	dist = uniform_real_distribution<double>(0.0,1.0);
 }
 
 vector<Entry> UniformPf::random(){
-	int intervals = 10;
-	int rolls = 1000;
-
-	uniform_real_distribution<double> distribution(0.0,1.0);
-
-	double num;
-	for(int i = 0; i < rolls; ++i){
-		num = distribution(generator);
-		Entry ent = {x,y,num};
-		value.push_back(ent);
-	}
-	
+	value[0].val = dist(generator);
 	return value;
 }
 

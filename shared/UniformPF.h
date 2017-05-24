@@ -19,6 +19,7 @@ class UniformPF: public ProbFunc{
 		void addObservation(double d);
 		string toString();
 	private:
+		uniform_real_distribution<double> dist;
 		vector<Entry> value;
 };
 
