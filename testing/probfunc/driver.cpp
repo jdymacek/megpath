@@ -9,6 +9,7 @@
 #include "../../shared/FixedPF.h"
 #include "../../shared/HistoPF.h"
 #include "../../shared/UniformPF.h"
+#include "../../shared/NormalPF.h"
 
 using namespace std;
 
@@ -63,7 +64,22 @@ void uniformTest(){
 }
 
 void normalTest(){
+	ProbFunc* pf = new NormalPF(0,1,0.5,0.1);
+	vector<double> counts(22,0);
+	for(int i = 0; i < 5000; ++i){
+		vector<Entry> vec = pf->random();
+		counts[(int)(vec[0].val*22)] += 1;
+	}
 
+	cout << "[ ";
+	for(int i = 0; i < counts.size(); ++i){
+		if(i < counts.size()-1){
+			cout << counts[i] << ", ";
+		}else{
+			cout << counts[i];
+		}
+	}
+	cout << " ]\n";
 }
 
 int main(int argc, char* argv[]){

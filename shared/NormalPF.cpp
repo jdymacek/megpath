@@ -11,7 +11,7 @@ NormalPF::NormalPF(int x, int y,double u,double sd){
 	dist = normal_distribution<double>(u,sd);
 }
 
-vector<Entry> NormalPf::random(){
+vector<Entry> NormalPF::random(){
 	value[0].val = dist(generator);
 	return value;
 }
@@ -20,7 +20,7 @@ void NormalPF::addObservation(double d){
 
 }
 
-string NormalPf::toString(){
+string NormalPF::toString(){
 	//more
 	return "";
 }
