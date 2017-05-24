@@ -26,4 +26,5 @@ class ProbFunc{
 		static default_random_engine generator;
 };
 
+
 #endif
