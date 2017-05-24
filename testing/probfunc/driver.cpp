@@ -25,13 +25,14 @@ void fixedTest(){
 void histoTest(){
 	ProbFunc* pf = new HistoPF(0,1);
 	normal_distribution<double> distro(0.5,0.1);
-	for(int i = 0; i < 1000; ++i){
+	for(int i = 0; i < 5000; ++i){
 		double d = distro(ProbFunc::generator);
 		if(d >= 0 && d <= 1){
 			pf->addObservation(d);
 		}
 	}
-	for(int i = 0; i < 1000; ++i){
+//	cout << pf->toString() << endl;
+	for(int i = 0; i < 5000; ++i){
 		vector<Entry> vec = pf->random();
 		cout << vec[0].val << "\n";
 	}
