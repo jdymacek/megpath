@@ -6,6 +6,7 @@
 #include<iostream>
 #include "../../shared/ProbFunc.h"
 #include "../../shared/FixedPF.h"
+#include "../../shared/HistoPF.h"
 
 using namespace std;
 
