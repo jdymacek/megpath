@@ -3,7 +3,8 @@
 //Created on 5/24/2017
 //Last Modified: 5/24/2017
 
-#include<iostream>
+#include <iostream>
+#include <cstdlib>
 #include "../../shared/ProbFunc.h"
 #include "../../shared/FixedPF.h"
 #include "../../shared/HistoPF.h"
@@ -50,6 +51,8 @@ void normalTest(){
 
 int main(int argc, char* argv[]){
 
+	ProbFunc::generator.seed(time(0));
+
 	if(argc < 2){
 		cout << "Not enough arguments!\nOptions:\n"
 		     << "-fixed\n"
@@ -61,7 +64,6 @@ int main(int argc, char* argv[]){
 	}
 
 	string type = argv[1];
-
 
 	if(type == "-fixed"){
 		fixedTest();
