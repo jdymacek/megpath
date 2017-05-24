@@ -8,6 +8,7 @@
 
 HistoPF::HistoPF(int x,int y){
 	Entry e = {x,y,0};
+	value.push_back(e);
 	weights = vector<double>(12,1.0);
 	for(int i =0; i < weights.size(); ++i){
 		intervals.push_back(i*1.0/(weights.size()-1));
