@@ -1,3 +1,7 @@
+//HistoPF.h -- Histogram Based Probability Function
+//Julian Dymacek
+//Created 5/24/2017
+//Modified 5/24/2017
 #ifndef HISTOPF__H
 #define HISTOPF__H
 
