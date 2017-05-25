@@ -34,18 +34,31 @@ void normalize(MatrixXd& m ,int x, int y){
 int main(){
 	ArgFile args;
 	CSVFile file;
+	string analysis = "";
 	string filename = "";
-
+	vector<Value> origin;
+	string dir = "";
+	vector<Value> controls;
+	vector<Value> columns;
+	//vector<Value> patterns;
+	
 	args.load("arguments.txt");
 
-	if(args.isArgument("filename")){
-		Value val = args.getArgument("filename");
+	if(args.isArgument("analysis")){
+		Value val = args.getArgument("analysis");
+		analysis = val.asString();
+		analysis = analysis + "_";
+	}
+
+	cout << "Using analysis: " << analysis.substr(0,analysis.size()-1) << "\n";
+
+	if(args.isArgument(analysis + "filename")){
+		Value val = args.getArgument(analysis + "filename");
 		filename = val.asString();
 	}
 
-	vector<Value> origin;
-	if(args.isArgument("origin")){
-		Value val = args.getArgument("origin");
+	if(args.isArgument(analysis + "origin")){
+		Value val = args.getArgument(analysis + "origin");
 		origin = val.asVector();
 	}else{
 		Value val;
@@ -53,6 +66,21 @@ int main(){
 		origin.push_back(val);
 	}
 
+	if(args.isArgument(analysis + "dir")){
+		Value val = args.getArgument(analysis + "dir");
+		dir = val.asString();
+	}
+
+	if(args.isArgument(analysis + "controls")){
+		Value val = args.getArgument(analysis + "controls");
+		controls = val.asVector();
+	}
+
+	if(args.isArgument(analysis + "columns")){
+		Value val = args.getArgument(analysis + "column");
+		columns = val.asVector();
+	}
+	
 	cout << "From the CSVFile:\n";
 	vector<vector<Value> > csv = file.readCSV(filename);
 	for(int i = origin[1].asInt(); i < csv.size(); ++i){

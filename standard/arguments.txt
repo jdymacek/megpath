@@ -1,3 +1,4 @@
 #test argument file
-filename = "test.csv"
-origin = [1,0]
+analysis = "one"
+one_filename = "test.csv"
+one_origin = [1,0]
