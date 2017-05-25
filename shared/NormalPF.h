@@ -2,7 +2,7 @@
 //Julian Dymacek
 //Matthew Dyer
 //Created on 5/24/2017
-//Last Modified: 5/24/2017
+//Last Modified: 5/25/2017
 
 #ifndef NORMALPF__H
 #define NORMALPF__H
@@ -15,13 +15,11 @@ using namespace std;
 
 class NormalPF: public ProbFunc{
 	public:
-		NormalPF(int x,int y,double u,double sd);
-		vector<Entry> random();
-		void addObservation(double d);
+		NormalPF(double u,double sd);
+		double random();
 		string toString();
 	private:
 		normal_distribution<double> dist;
-		vector<Entry> value;
 };
 
 #endif
