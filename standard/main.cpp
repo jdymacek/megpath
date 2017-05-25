@@ -12,11 +12,14 @@
 using namespace std;
 using namespace Eigen;
 
-void normalize(MatrixXd& m ,int x, int y){
+static int ROWS;
+static int COLUMNS;
+
+void normalize(MatrixXd& m){
 	double max = 0;
 	double min = 0;
-	for(int i = 0; i < y; ++i){
-		for(int j = 0; j < x; ++j){
+	for(int i = 0; i < COLUMNS; ++i){
+		for(int j = 0; j < ROWS; ++j){
 			if(m(i,j) < min)
 				min = m(i,j);
 			if(m(i,j) > max)
@@ -24,8 +27,8 @@ void normalize(MatrixXd& m ,int x, int y){
 		}
 	}
 	double change = 0 - min;
-	for(int i = 0; i < y; ++i){
-		for(int j = 0; j < x; ++j){
+	for(int i = 0; i < COLUMNS; ++i){
+		for(int j = 0; j < ROWS; ++j){
 			m(i,j) = (m(i,j) + change)/(max-min);
 		}
 	}
@@ -91,22 +94,22 @@ int main(){
 	}
 	cout << "\n";
 	
-	int sizeY = csv.size() - origin[1].asInt();
-	int sizeX = csv[0].size() - origin[0].asInt();
+	COLUMNS = csv.size() - origin[1].asInt();
+	ROWS = csv[0].size() - origin[0].asInt();
 
-	MatrixXd m(sizeY,sizeX);
-	m = MatrixXd::Zero(sizeY,sizeX);
+	MatrixXd expression(COLUMNS,ROWS);
+	expression = MatrixXd::Zero(COLUMNS,ROWS);
 
-	for(int i = 0; i < sizeY; ++i){
-		for(int j = 0; j < sizeX; ++j){
-			m(i,j) = csv[i+origin[1].asInt()][j+origin[0].asInt()].asDouble();
+	for(int i = 0; i < COLUMNS; ++i){
+		for(int j = 0; j < ROWS; ++j){
+			expression(i,j) = csv[i+origin[1].asInt()][j+origin[0].asInt()].asDouble();
 		}
 	}
 
-	normalize(m,sizeX,sizeY);
+	normalize(expression);
 	
 	cout << "After Normalizing:\n";
-	cout << m << "\n";
+	cout << expression << "\n";
 	
 	return 0;
 }
