@@ -1,3 +1,9 @@
+//FixedPF.h
+//Julian Dymacek
+//Matthew Dyer
+//Created on 5/23/2017
+//Last Modified: 5/25/2017
+
 #ifndef FIXEDPF__H
 #define FIXEDPF__H
 
@@ -9,11 +15,10 @@ using namespace std;
 class FixedPF: public ProbFunc{
 	public:
 		FixedPF(int x,int y, double v);
-		vector<Entry> random();
-		void addObservation(double d);
+		double random();
 		string toString();
 	private:
-		vector<Entry> value;
+		double value;
 };
 
 #endif
