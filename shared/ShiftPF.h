@@ -19,6 +19,8 @@ class ShiftPF: public ProbFunc{
 		ShiftPF(vector<Entry> vec);
 		double random();
 		void addObservation(double d);
+		int size();
+		Entry getEntry(int i);
 		string toString();
 	private:
 		HistoPF function;
