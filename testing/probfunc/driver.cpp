@@ -15,18 +15,18 @@
 using namespace std;
 
 void fixedTest(){
-	ProbFunc* pf = new FixedPF(0,1,0.5);
+	ProbFunc* pf = new FixedPF(0.5);
 	for(int i = 0; i < 1000; ++i){
-		vector<Entry> vec = pf->random();
-		if(vec[0].val <= 0.495 || vec[0].val >= 0.505){
-			cout << vec[0].val << "\n";
+		double d = pf->random();
+		if(d <= 0.495 || d >= 0.505){
+			cout << d << "\n";
 		}
 	}
 
 }
 
 void histoTest(){
-	ProbFunc* pf = new HistoPF(0,1);
+	ProbFunc* pf = new HistoPF();
 	normal_distribution<double> distro(0.5,0.1);
 	for(int i = 0; i < 5000; ++i){
 		double d = distro(ProbFunc::generator);
@@ -35,8 +35,8 @@ void histoTest(){
 		}
 	}
 	for(int i = 0; i < 5000; ++i){
-		vector<Entry> vec = pf->random();
-		cout << vec[0].val << "\n";
+		double d = pf->random();
+		cout << d << "\n";
 	}
 }
 
@@ -51,20 +51,20 @@ void shiftTest(){
 	ProbFunc* pf = new ShiftPF(shiftBy);
 	
 	for(int i = 0; i < 5; ++i){
-		vector<Entry> vec = pf->random();
-		for(int j = 0; j < vec.size(); ++j){
-			cout << vec[j].val-shiftBy[j].val << " ";
+		double d = pf->random();
+		for(int j = 0; j < shiftBy.size(); ++j){
+			cout << d-shiftBy[j].val << " ";
 		}
 		cout << "\n";
 	}
 }
 
 void uniformTest(){
-	ProbFunc* pf = new UniformPF(0,1);
+	ProbFunc* pf = new UniformPF();
 	vector<double> counts(10,0);
 	for(int i = 0; i < 5000; ++i){
-		vector<Entry> vec = pf->random();
-		counts[(int)(vec[0].val*10)] +=1;
+		double d = pf->random();
+		counts[(int)(d*10)] +=1;
 	}
 
 	cout << "[ ";
@@ -79,11 +79,11 @@ void uniformTest(){
 }
 
 void normalTest(){
-	ProbFunc* pf = new NormalPF(0,1,0.5,0.1);
+	ProbFunc* pf = new NormalPF(0.5,0.1);
 	vector<double> counts(22,0);
 	for(int i = 0; i < 5000; ++i){
-		vector<Entry> vec = pf->random();
-		counts[(int)(vec[0].val*22)] += 1;
+		double d = pf->random();
+		counts[(int)(d*22)] += 1;
 	}
 
 	cout << "[ ";
