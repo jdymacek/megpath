@@ -12,7 +12,17 @@ using namespace std;
 
 int main(){
 	ArgFile args;
+	CSVFile file;
+	string filename = "";
+
 	args.load("arguments.txt");
+
+	if(args.isArguemnt("filename")){
+		Value val = args.getArgument("filename");
+		filename = val.asString();
+	}
+
+	vector<vector<Value > csv = file.readCSV(filename);
 	
 	return 0;
 }
