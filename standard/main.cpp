@@ -12,6 +12,25 @@
 using namespace std;
 using namespace Eigen;
 
+void normalize(MatrixXd& m ,int x, int y){
+	double max = 0;
+	double min = 0;
+	for(int i = 0; i < y; ++i){
+		for(int j = 0; j < x; ++j){
+			if(m(i,j) < min)
+				min = m(i,j);
+			if(m(i,j) > max)
+				max = m(i,j);
+		}
+	}
+	double change = 0 - min;
+	for(int i = 0; i < y; ++i){
+		for(int j = 0; j < x; ++j){
+			m(i,j) = (m(i,j) + change)/(max-min);
+		}
+	}
+}
+
 int main(){
 	ArgFile args;
 	CSVFile file;
@@ -34,6 +53,7 @@ int main(){
 		origin.push_back(val);
 	}
 
+	cout << "From the CSVFile:\n";
 	vector<vector<Value> > csv = file.readCSV(filename);
 	for(int i = origin[1].asInt(); i < csv.size(); ++i){
 		for(int j = origin[0].asInt(); j < csv[i].size(); ++j){
@@ -41,6 +61,7 @@ int main(){
 		}
 		cout << "\n";
 	}
+	cout << "\n";
 	
 	int sizeY = csv.size() - origin[1].asInt();
 	int sizeX = csv[0].size() - origin[0].asInt();
@@ -53,7 +74,10 @@ int main(){
 			m(i,j) = csv[i+origin[1].asInt()][j+origin[0].asInt()].asDouble();
 		}
 	}
+
+	normalize(m,sizeX,sizeY);
 	
+	cout << "After Normalizing:\n";
 	cout << m << "\n";
 	
 	return 0;
