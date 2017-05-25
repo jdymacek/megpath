@@ -7,8 +7,10 @@
 #include"Value.h"
 #include"ArgFile.h"
 #include"CSVFile.h"
+#include"../../Eigen/Core"
 
 using namespace std;
+using namespace Eigen;
 
 int main(){
 	ArgFile args;
@@ -35,6 +37,11 @@ int main(){
 		}
 		cout << "\n";
 	}
+
+	MatrixXd m(2,2);
+	m = MatrixXd::Zero(2,2);
+	
+	cout << m << "\n";
 	
 	return 0;
 }
