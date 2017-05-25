@@ -23,8 +23,8 @@ class ProbFunc{
 		virtual double random() = 0;
 		virtual void addObservation(double d){ };
 		virtual string toString() = 0;
-		virtual int size(){return 1;};
-		virtual Entry getEntry(int i){return {0,0,0};};
+		virtual int size();
+		virtual Entry getEntry(int i);
 		static default_random_engine generator;
 };
 
