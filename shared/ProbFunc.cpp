@@ -11,6 +11,6 @@ int ProbFunc::size(){
 }
 
 Entry ProbFunc::getEntry(int i){
-	Entry ent = {0,0,0}
+	Entry ent = {0,0,0};
 	return ent;
 }
