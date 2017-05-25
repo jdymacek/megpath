@@ -24,22 +24,31 @@ int main(){
 		filename = val.asString();
 	}
 
+	vector<Value> origin;
+	if(args.isArgument("origin")){
+		Value val = args.getArgument("origin");
+		origin = val.asVector();
+	}
+
 	vector<vector<Value> > csv = file.readCSV(filename);
-	for(int i = 0; i < csv.size(); ++i){
-		int switcher = 0;
-		for(int j = 0; j < csv[i].size(); ++j){
-			if(switcher == 0){
-				cout << csv[i][j].asString() << " ";
-				++switcher;
-			}else{
-				cout << csv[i][j].asInt() << " ";
-			}
+	for(int i = origin[1].asInt(); i < csv.size(); ++i){
+		for(int j = origin[0].asInt(); j < csv[i].size(); ++j){
+			cout << csv[i][j].asDouble() << " ";
 		}
 		cout << "\n";
 	}
+	
+	int sizeY = csv.size() - origin[1].asInt();
+	int sizeX = csv[0].size() - origin[0].asInt();
 
-	MatrixXd m(2,2);
-	m = MatrixXd::Zero(2,2);
+	MatrixXd m(sizeY,sizeX);
+	m = MatrixXd::Zero(sizeY,sizeX);
+
+	for(int i = origin[1].asInt(); i < csv.size(); ++i){
+		for(int j = origin[0].asInt(); j < csv[i].size(); ++j){
+			m(i,j) = csv[i][j].asDouble();
+		}
+	}
 	
 	cout << m << "\n";
 	
