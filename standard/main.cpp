@@ -18,8 +18,8 @@ static int COLUMNS;
 void normalize(MatrixXd& m){
 	double max = 0;
 	double min = 0;
-	for(int i = 0; i < COLUMNS; ++i){
-		for(int j = 0; j < ROWS; ++j){
+	for(int i = 0; i < m.rows(); ++i){
+		for(int j = 0; j < m.cols(); ++j){
 			if(m(i,j) < min)
 				min = m(i,j);
 			if(m(i,j) > max)
@@ -27,8 +27,8 @@ void normalize(MatrixXd& m){
 		}
 	}
 	double change = 0 - min;
-	for(int i = 0; i < COLUMNS; ++i){
-		for(int j = 0; j < ROWS; ++j){
+	for(int i = 0; i < m.rows(); ++i){
+		for(int j = 0; j < m.cols(); ++j){
 			m(i,j) = (m(i,j) + change)/(max-min);
 		}
 	}
