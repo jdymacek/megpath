@@ -17,6 +17,26 @@ using namespace Eigen;
 static int ROWS;
 static int COLUMNS;
 
+struct NMFMatrix{
+	MatrixXd matrix;
+	ProbFunc*** functions;
+	int rows;
+	int columns;	
+
+};
+
+void createNMFMatrix(NMFMatrix& rv,int rows,int columns){
+	rv.rows = rows;
+	rv.columns = columns;
+	rv.functions = new ProbFunc**[rows];
+	for(int i =0; i < rows; ++i){
+        rv.functions[i] = new ProbFunc*[columns];
+        for(int j =0; j < columns; ++j){
+            rv.functions[i][j] = new HistoPF();
+        }
+    }	
+}
+
 void normalize(MatrixXd& m){
 	double max = 0;
 	double min = 0;
@@ -115,14 +135,14 @@ int main(){
 	
 	cout << "After Normalizing:\n";
 	cout << expression << "\n";
-	
-	//patternFunctions  matrix
-	ProbFunc* patternFunctions[ROWS][COLUMNS];	
-	for(int i = 0; i < COLUMNS; ++i){
-		for(int j = 0; j < ROWS; ++j){
-			//probs(i,j) = 
-		}
-	}
+
+	NMFMatrix patterns;
+	//should be PATTERNS and COLUMNS
+	createNMFMatrix(patterns,ROWS,COLUMNS);
+
+	NMFMatrix coefficients;
+	//should be ROWS and PATTERNS
+	createNMFMatrix(coefficients,ROWS,COLUMNS);
 
 	return 0;
 }
