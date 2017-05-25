@@ -23,6 +23,18 @@ int main(){
 	}
 
 	vector<vector<Value> > csv = file.readCSV(filename);
+	for(int i = 0; i < csv.size(); ++i){
+		int switcher = 0;
+		for(int j = 0; j < csv[i].size(); ++j){
+			if(switcher == 0){
+				cout << csv[i][j].asString() << " ";
+				++switcher;
+			}else{
+				cout << csv[i][j].asInt() << " ";
+			}
+		}
+		cout << "\n";
+	}
 	
 	return 0;
 }
