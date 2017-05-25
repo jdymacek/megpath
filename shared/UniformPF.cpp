@@ -14,9 +14,5 @@ double UniformPF::random(){
 }
 
 string UniformPF::toString(){
-<<<<<<< HEAD
-	return ""; //TODO
-=======
 	return "uniform: [0,1)";
->>>>>>> f592d1b04813e454aac0ab0e65ab64c64b26b4e4
 }
