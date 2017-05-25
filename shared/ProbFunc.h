@@ -20,9 +20,11 @@ struct Entry{
 
 class ProbFunc{
 	public:
-		virtual vector<Entry> random() = 0;
-		virtual void addObservation(double d) = 0;
+		virtual double random() = 0;
+		virtual void addObservation(double d){ };
 		virtual string toString() = 0;
+		virtual int size();
+		virtual Entry getEntry(int i);
 		static default_random_engine generator;
 };
 
