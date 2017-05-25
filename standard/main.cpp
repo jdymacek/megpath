@@ -3,11 +3,13 @@
 //Created on 5/25/2017
 //Last modified: 5/25/2017
 
-#include<iostream>
-#include"Value.h"
-#include"ArgFile.h"
-#include"CSVFile.h"
-#include"../../Eigen/Core"
+#include <iostream>
+#include "Value.h"
+#include "ArgFile.h"
+#include "CSVFile.h"
+#include "ProbFunc.h"
+#include "HistoPF.h"
+#include "../../Eigen/Core"
 
 using namespace std;
 using namespace Eigen;
@@ -35,6 +37,7 @@ void normalize(MatrixXd& m){
 }
 
 int main(){
+	//declare variabls
 	ArgFile args;
 	CSVFile file;
 	string analysis = "";
@@ -45,6 +48,7 @@ int main(){
 	vector<Value> columns;
 	//vector<Value> patterns;
 	
+	//grab arguments
 	args.load("arguments.txt");
 
 	if(args.isArgument("analysis")){
@@ -94,6 +98,7 @@ int main(){
 	}
 	cout << "\n";
 	
+	//expression matrix
 	COLUMNS = csv.size() - origin[1].asInt();
 	ROWS = csv[0].size() - origin[0].asInt();
 
@@ -111,5 +116,13 @@ int main(){
 	cout << "After Normalizing:\n";
 	cout << expression << "\n";
 	
+	//patternFunctions  matrix
+	ProbFunc* patternFunctions[ROWS][COLUMNS];	
+	for(int i = 0; i < COLUMNS; ++i){
+		for(int j = 0; j < ROWS; ++j){
+			//probs(i,j) = 
+		}
+	}
+
 	return 0;
 }
