@@ -26,6 +26,8 @@ struct NMFMatrix{
 };
 
 void createNMFMatrix(NMFMatrix& rv,int rows,int columns){
+	rv.matrix = MatrixXd(COLUMNS,ROWS);
+    rv.matrix = MatrixXd::Zero(COLUMNS,ROWS);
 	rv.rows = rows;
 	rv.columns = columns;
 	rv.functions = new ProbFunc**[rows];
