@@ -28,6 +28,10 @@ int main(){
 	if(args.isArgument("origin")){
 		Value val = args.getArgument("origin");
 		origin = val.asVector();
+	}else{
+		Value val;
+		origin.push_back(val);
+		origin.push_back(val);
 	}
 
 	vector<vector<Value> > csv = file.readCSV(filename);
@@ -44,9 +48,9 @@ int main(){
 	MatrixXd m(sizeY,sizeX);
 	m = MatrixXd::Zero(sizeY,sizeX);
 
-	for(int i = origin[1].asInt(); i < csv.size(); ++i){
-		for(int j = origin[0].asInt(); j < csv[i].size(); ++j){
-			m(i,j) = csv[i][j].asDouble();
+	for(int i = 0; i < sizeY; ++i){
+		for(int j = 0; j < sizeX; ++j){
+			m(i,j) = csv[i+origin[1].asInt()][j+origin[0].asInt()].asDouble();
 		}
 	}
 	
