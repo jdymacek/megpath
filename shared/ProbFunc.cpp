@@ -6,11 +6,11 @@
 
 default_random_engine ProbFunc::generator;
 
-virtual int ProbFunc::size(){
+int ProbFunc::size(){
 	return 1;
 }
 
-virtual Entry ProbFunc::getEntry(int i){
+Entry ProbFunc::getEntry(int i){
 	Entry ent = {0,0,0}
 	return ent;
 }
