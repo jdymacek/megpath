@@ -3,7 +3,7 @@ CFLAGS=-c -std=c++11 -I../shared/
 LDFLAGS=-L../shared/ 
 LIBS=
 VPATH = src:../shared
-SOURCES=main.cpp ArgFile.cpp CSVFile.cpp Value.cpp
+SOURCES=main.cpp ProbFunc.cpp HistoPF.cpp ArgFile.cpp CSVFile.cpp Value.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=connmf
 
