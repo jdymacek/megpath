@@ -1,32 +1,49 @@
 //ShiftPF.cpp -- Shifts a group of varibles
 //julian dymacek
 //created: 5/24/2017
-//modified: 5/24/2017
+//modified: 5/25/2017
 
 #include "ShiftPF.h"
 
 ShiftPF::ShiftPF(vector<Entry> vec){
-	for(int i =0; i < vec.size(); ++i){
-		org.push_back(vec[i]);
-		value.push_back(vec[i]);
-	}	
+	org = vec;
+	current = vec;
 	function = HistoPF(0,0);
 }
 
 
-vector<Entry> ShiftPF::random(){
-	vector<Entry> r  = function.random();
-	prevRandom = r[0].val;
+double ShiftPF::random(){
+	double r = function.random();
 	for(int i =0; i < org.size(); ++i){
-		value[i].val = org[i].val + prevRandom;
+		current[i].val = org[i].val + r;
 	}
-	return value;
+	return r;
 }
 
 string ShiftPF::toString(){
-	return "";
+	stringstream ss;
+	ss << "shiftpf: [";
+	for(int i =0; i < org.size(); ++i){
+		ss << current[i].val;
+		if(i < current.size()-1)
+			ss << ",";
+	}	
+	ss << "]";
+	//should print val
+	return ss.str();
 }
 
 void ShiftPF::addObservation(double d){
-	function.addObservation(prevRandom);	
+	function.addObservation(d);	
+}
+
+int ShiftPF::size(){
+	return org.size();
+}
+
+Entry ShiftPF::getEntry(int i){
+	Entry e;
+	if(i < 0 || i > org.size())
+		return e;
+	return current[i];
 }
