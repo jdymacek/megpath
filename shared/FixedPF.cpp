@@ -6,7 +6,7 @@
 
 #include "FixedPF.h"
 
-FixedPF::FixedPF(int x,int y, double v){
+FixedPF::FixedPF(double v){
 	value = v;
 }
 
@@ -15,5 +15,7 @@ double FixedPF::random(){
 }
 
 string FixedPF::toString(){
-	return "";//TODO
+	stringstream ss;
+	ss << "fixedpf: " << value;
+	return ss.str();
 }

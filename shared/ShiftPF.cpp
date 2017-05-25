@@ -8,7 +8,6 @@
 ShiftPF::ShiftPF(vector<Entry> vec){
 	org = vec;
 	current = vec;
-	function = HistoPF(0,0);
 }
 
 

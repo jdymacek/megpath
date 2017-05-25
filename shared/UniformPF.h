@@ -1,5 +1,6 @@
 //UniformPF.h
 //Matthew Dyer
+//Julian Dymacek
 //Created on 5/24/2017
 //Last Modified: 5/25/2017
 
@@ -14,7 +15,7 @@ using namespace std;
 
 class UniformPF: public ProbFunc{
 	public:
-		UniformPF(int x,int y);
+		UniformPF();
 		double random();
 		string toString();
 	private:

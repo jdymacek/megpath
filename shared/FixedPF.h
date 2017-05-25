@@ -9,12 +9,13 @@
 
 #include <vector>
 #include "ProbFunc.h"
+#include <sstream>
 
 using namespace std;
 
 class FixedPF: public ProbFunc{
 	public:
-		FixedPF(int x,int y, double v);
+		FixedPF(double v);
 		double random();
 		string toString();
 	private:

@@ -21,7 +21,7 @@ class ShiftPF: public ProbFunc{
 		void addObservation(double d);
 		string toString();
 	private:
-		HistoPF function = HistoPF(0,0);
+		HistoPF function;
 		vector<Entry> org;
 		vector<Entry> current;
 };

@@ -5,7 +5,7 @@
 
 #include "UniformPF.h"
 
-UniformPF::UniformPF(int x, int y){
+UniformPF::UniformPF(){
 	dist = uniform_real_distribution<double>(0.0,1.0);
 }
 
