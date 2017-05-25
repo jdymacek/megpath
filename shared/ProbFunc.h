@@ -1,7 +1,7 @@
 //ProbFunc.h
 //Matthew Dyer
 //Created on 5/23/2017
-//Last Modified: 5/23/2017
+//Last Modified: 5/25/2017
 
 #ifndef PROBFUNC__H
 #define PROBFUNC__H
