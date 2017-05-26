@@ -51,6 +51,7 @@ int main(){
 	ofstream outfile;
 	outfile.open("arguments.txt");
 	outfile << "analysis = \"test\"\n";
+	outfile << "test_patterns = [\"\",\"\",\"\"]\n";
 	outfile << "test_filename = \"../testing/testnmf/multiplied.csv\"\n";
 	outfile << "test_origin = [0,0]\n";
 	outfile.close();
