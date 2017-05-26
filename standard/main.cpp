@@ -132,6 +132,80 @@ void monteCarlo(){
 	//error distribution 
 }
 
+//TODO: does not work at all
+bool accept(double de, double t){
+	return true;
+//	return de < 0 ||  Math.exp(-de/t) > Math.random();
+}
+
+void annealStep(NMFMatrix& m,double t){
+
+	double olderror = findError();
+	vector<Entry> entries;
+	entries.push_back({0,0,0});
+
+	for(int x =0; x < m.columns; x++){
+		for(int y =0; y < m.rows; y++){
+			ProbFunc* function = m.functions[x][y];
+			double r = function->random();  
+			if(function->size() == 1){
+				entries[0].x = x;
+				entries[0].y = y;
+				entries[0].val = m.matrix(x,y);
+				m.matrix(x,y) = r;
+            }else{
+				while(entries.size() < function->size()){
+					entries.push_back({0,0,0});
+				}
+                for(int k=0; k < function->size(); ++k){
+                    Entry e = function->getEntry(k);
+					double old = m.matrix(e.x,e.y);
+			        m.matrix(e.x,e.y) = e.val;
+					e.val = old;
+					entries[k] = e;
+                }
+            }		
+	
+			double error = findError();
+			if(!accept(error-olderror,t)){
+				for(int i =0; i < function->size(); ++i){
+					m.matrix(entries[i].x,entries[i].y) = entries[i].val;
+				}
+				newExpression = coefficients.matrix*patterns.matrix;
+			}else{
+				olderror = error;
+			}
+		}
+	}
+}
+
+void anneal(){
+	int ndx = 0;
+	double t = 0.5;
+	//TODO: timing
+	//long oldTime = System.currentTimeMillis();
+    double formerError = 1000000;
+    bool running = true;
+	while(running && ndx < MAX_RUNS){
+        annealStep(coefficients,t);
+		annealStep(patterns,t);
+		if(ndx % 1000 == 0){
+			//TODO: timing
+			//long newTime = System.currentTimeMillis();
+			//System.out.println("** " + ndx + "\tError = " + error + "\tSeconds: " + (newTime-oldTime)/1000);
+			//oldTime = newTime;
+			double error = findError();    
+			if(formerError - error < 0.005 && error < formerError)
+                running = false;
+            formerError = error;
+		}
+		ndx++;
+		t *= 0.99975;
+	}
+	cout << "Error Histogram: " << errorDistribution(10);
+
+}
+
 
 void normalize(MatrixXd& m){
 	double max = 0;
