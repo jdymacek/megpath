@@ -31,7 +31,7 @@ void writeCSV(string filename, MatrixXd m){
 
 int main(){
 	MatrixXd patterns(3,5);
-	patterns << 0,0.15,0.2,0.15,0, 0,0.1,0.3,0.1,0, 0.1,0.25,0.5,0.25,0.1;
+	patterns << 0,0.1,0.2,0.3,0.4, 0.7,0.5,0.3,0.1,0, 0.1,0.25,0.5,0.25,0.1;
 
 	default_random_engine gen;
 	uniform_real_distribution<double> dist(0.0,1.0);
@@ -44,15 +44,15 @@ int main(){
 
 	MatrixXd mult = coefficients * patterns;
 
-	writeCSV("patterns.csv",patterns);
-	writeCSV("coefficients.csv",coefficients);
-	writeCSV("multiplied.csv",mult);
+	writeCSV("test_patterns.csv",patterns);
+	writeCSV("test_coefficients.csv",coefficients);
+	writeCSV("test_multiplied.csv",mult);
 
 	ofstream outfile;
-	outfile.open("arguments.txt");
+	outfile.open("test_arguments.txt");
 	outfile << "analysis = \"test\"\n";
 	outfile << "test_patterns = [\"\",\"\",\"\"]\n";
-	outfile << "test_filename = \"../testing/testnmf/multiplied.csv\"\n";
+	outfile << "test_filename = \"../testing/testnmf/test_multiplied.csv\"\n";
 	outfile << "test_origin = [0,0]\n";
 	outfile.close();
 
