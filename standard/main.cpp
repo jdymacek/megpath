@@ -35,15 +35,15 @@ static NMFMatrix coefficients;
 static MatrixXd  expression;
 static MatrixXd  newExpression;
 
-void createNMFMatrix(NMFMatrix& rv,int rows,int columns){
-	rv.matrix = MatrixXd(COLUMNS,ROWS);
-    rv.matrix = MatrixXd::Zero(COLUMNS,ROWS);
+void createNMFMatrix(NMFMatrix& rv,int columns,int rows){
+	rv.matrix = MatrixXd(columns,rows);
+    rv.matrix = MatrixXd::Zero(columns,rows);
 	rv.rows = rows;
 	rv.columns = columns;
-	rv.functions = new ProbFunc**[rows];
-	for(int i =0; i < rows; ++i){
-        rv.functions[i] = new ProbFunc*[columns];
-        for(int j =0; j < columns; ++j){
+	rv.functions = new ProbFunc**[columns];
+	for(int i =0; i < columns; ++i){
+        rv.functions[i] = new ProbFunc*[rows];
+        for(int j =0; j < rows; ++j){
             rv.functions[i][j] = new HistoPF();
         }
     }	
@@ -71,26 +71,27 @@ string errorDistribution(int b){
 
 double findError(){
 	//use patterns and coefficients to generate new matrix
-	//newExpression = coefficients.matrix * patterns.matrix;
-
-	//compare newExpression with expression
-	//return result;	
-
-	return -1;
+	newExpression = coefficients.matrix * patterns.matrix;
+	double error = 0;
+	for(int x = 0; x < expression.rows(); ++x){
+		for(int y = 0; y < expression.cols(); ++y){
+			error += abs(expression(x,y)-newExpression(x,y));
+		}
+	}
+	return error;
 }
 
 void monteCarloMatrix(NMFMatrix& m){
 	double oldError = findError();	
 
-	for(int i =0; i < m.rows; i++){
-		for(int j =0; j < m.columns; j++){
-			ProbFunc* function = m.functions[i][j];
+	for(int x =0; x < m.columns; ++x){
+		for(int y =0; y < m.rows; ++y){
+			ProbFunc* function = m.functions[x][y];
 			//double olderror = error;
 
 			double r = function->random();
 			if(function->size() == 1){
-				//eigen is column major -- c++ is row major
-				m.matrix(j,i) = r;				
+				m.matrix(x,y) = r;				
 			}else{
 				for(int k=0; k < function->size(); ++k){
 					Entry e = function->getEntry(k);
@@ -219,8 +220,11 @@ int main(){
 	//TODO: get from argument
 	MAX_RUNS = 40000;
 
-	MatrixXd expression(COLUMNS,ROWS);
+	expression = MatrixXd(COLUMNS,ROWS);
 	expression = MatrixXd::Zero(COLUMNS,ROWS);
+
+	newExpression = MatrixXd(COLUMNS,ROWS);
+    newExpression = MatrixXd::Zero(COLUMNS,ROWS);
 
 	for(int i = 0; i < COLUMNS; ++i){
 		for(int j = 0; j < ROWS; ++j){
@@ -233,13 +237,15 @@ int main(){
 	cout << "After Normalizing:\n";
 	cout << expression << "\n";
 
-	NMFMatrix patterns;
 	//should be PATTERNS and COLUMNS
-	createNMFMatrix(patterns,ROWS,COLUMNS);
+	createNMFMatrix(patterns,COLUMNS,ROWS);
 
-	NMFMatrix coefficients;
 	//should be ROWS and PATTERNS
-	createNMFMatrix(coefficients,ROWS,COLUMNS);
+	createNMFMatrix(coefficients,COLUMNS,ROWS);
+
+	monteCarlo();
+		
+
 
 	return 0;
 }
