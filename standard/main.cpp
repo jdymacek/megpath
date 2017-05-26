@@ -4,6 +4,7 @@
 //Created on 5/25/2017
 //Last modified: 5/26/2017
 #include <sstream>
+#include <fstream>
 #include <cmath>
 #include <vector>
 #include <iostream>
@@ -37,6 +38,21 @@ static NMFMatrix patterns;
 static NMFMatrix coefficients;
 static MatrixXd  expression;
 static MatrixXd  newExpression;
+
+void writeNMFMatrix(NMFMatrix& mat,string filename){
+	ofstream fout;
+	fout.open(filename);
+	for(int y = 0; y < mat.matrix.rows(); ++y){
+		for(int x = 0; x < mat.matrix.cols(); ++x){
+			fout << mat.matrix(y,x);
+			if(x != mat.matrix.cols()-1)
+			 fout << ",";
+		}
+		fout << "\n";
+	}
+	fout.close();
+}
+
 
 void createNMFMatrix(NMFMatrix& rv,int rows,int columns){
 	rv.matrix = MatrixXd(rows,columns);
@@ -223,6 +239,7 @@ void normalize(MatrixXd& m){
 
 int main(){
 	//declare variabls
+	int PATTERNS = 0;
 	ArgFile args;
 	CSVFile file;
 	string analysis = "";
@@ -231,7 +248,7 @@ int main(){
 	string dir = "";
 	vector<Value> controls;
 	vector<Value> columns;
-	//vector<Value> patterns;
+	vector<Value> patternArgs;
 
 	uniform = new UniformPF();
 	
@@ -250,6 +267,12 @@ int main(){
 		Value val = args.getArgument(analysis + "filename");
 		filename = val.asString();
 	}
+
+    if(args.isArgument(analysis + "patterns")){
+        Value val = args.getArgument(analysis + "patterns");
+        patternArgs = val.asVector();
+		PATTERNS = patternArgs.size();
+    }
 
 	if(args.isArgument(analysis + "origin")){
 		Value val = args.getArgument(analysis + "origin");
@@ -309,14 +332,16 @@ int main(){
 	cout << expression << "\n";
 
 	//should be PATTERNS and COLUMNS
-	createNMFMatrix(patterns,ROWS,COLUMNS);
+	createNMFMatrix(patterns,PATTERNS,COLUMNS);
 
 	//should be ROWS and PATTERNS
-	createNMFMatrix(coefficients,ROWS,COLUMNS);
+	createNMFMatrix(coefficients,ROWS,PATTERNS);
 
 	monteCarlo();
 	anneal();		
 
+	writeNMFMatrix(patterns,"patterns.csv");
+	writeNMFMatrix(coefficients,"coefficients.csv");
 
 	return 0;
 }
