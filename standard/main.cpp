@@ -237,7 +237,7 @@ void normalize(MatrixXd& m){
 	}
 }
 
-int main(){
+int main(int argc, char** argv){
 	//declare variabls
 	int PATTERNS = 0;
 	ArgFile args;
@@ -251,9 +251,13 @@ int main(){
 	vector<Value> patternArgs;
 
 	uniform = new UniformPF();
-	
+
+	if(argc < 2)
+		return 0;
+	string argFile = argv[1];	
 	//grab arguments
-	args.load("arguments.txt");
+	args.load(argFile);
+
 
 	if(args.isArgument("analysis")){
 		Value val = args.getArgument("analysis");
