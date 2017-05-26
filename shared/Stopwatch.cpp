@@ -4,6 +4,7 @@
 //Last Modified: 5/26/2017
 
 #include "Stopwatch.h"
+#include <sstream>
 
 void Stopwatch::start(){
 	startTime = time(0);
@@ -18,7 +19,7 @@ double Stopwatch::stop(){
 
 double Stopwatch::lap(){
 	time_t newLapTime = time(0);
-	double diff = difftime(lapTime-newLapTime)
+	double diff = difftime(lapTime,newLapTime);
 	lapTime = time(0);
 	return diff;
 }
@@ -40,6 +41,9 @@ string Stopwatch::formatTime(double num){
 		num = num - 60*minutes;
 	}
 	double seconds = num;
-	string rv = days + "d" + hours + "h" + minutes + "m" + seconds + "s";
+	string rv;
+	stringstream ss;
+	ss << days << "d" << hours << "h" << minutes << "m" << seconds << "s";
+	ss >> rv;
 	return rv;
 }
