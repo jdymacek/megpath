@@ -54,11 +54,11 @@ void monteCarloMatrix(NMFMatrix& m){
 			double r = function->random();
 			if(function->size() == 1){
 				//eigen is column major -- c++ is row major
-				m.matrix[j][i] = r;				
+				m.matrix(j,i) = r;				
 			}else{
 				for(int k=0; k < function->size(); ++k){
 					Entry e = function->getEntry(k);
-					m.matrix[e.x][e.y] = e.val;
+					m.matrix(e.x,e.y) = e.val;
 				}
 			}			
 
@@ -80,8 +80,8 @@ void monteCarlo(){
 
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < MAX_RUNS; i++){
-		monteCarloMatrix(patterns);
-		monteCarloMatrix(coefficients);
+	//	monteCarloMatrix(patterns);
+	//	monteCarloMatrix(coefficients);
 		if(i % 1000 == 0){
 			//TODO: timing
 			//long newTime = System.currentTimeMillis();
