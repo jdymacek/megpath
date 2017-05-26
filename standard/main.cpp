@@ -3,6 +3,9 @@
 //Julian Dymacek
 //Created on 5/25/2017
 //Last modified: 5/26/2017
+
+//#define EIGEN_DEFAULT_TO_ROW_MAJOR
+
 #include <sstream>
 #include <fstream>
 #include <cmath>
@@ -90,14 +93,8 @@ string errorDistribution(int b){
 
 double findError(){
 	//use patterns and coefficients to generate new matrix
-	newExpression = coefficients.matrix * patterns.matrix;
-	double error = 0;
-	for(int y = 0; y < expression.rows(); ++y){
-		for(int x = 0; x < expression.cols(); ++x){
-			error += abs(expression(y,x)-newExpression(y,x));
-		}
-	}
-	return error;
+	newExpression = expression - (coefficients.matrix * patterns.matrix);
+	return newExpression.cwiseAbs().sum();
 }
 
 void monteCarloMatrix(NMFMatrix& m){
@@ -146,7 +143,6 @@ void monteCarlo(){
 	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
 }
 
-//TODO: does not work at all
 bool accept(double de, double t){
 	return de < 0 ||  exp(-de/t) > uniform->random();
 }
@@ -211,7 +207,7 @@ void anneal(){
             formerError = error;
 		}
 		ndx++;
-		t *= 0.99975;
+		t *= 0.9975;
 	}
     cout << "Error Histogram: " << errorDistribution(10) << endl;
     cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
@@ -219,22 +215,10 @@ void anneal(){
 
 
 void normalize(MatrixXd& m){
-	double max = 0;
-	double min = 0;
-	for(int y = 0; y < m.rows(); ++y){
-		for(int x = 0; x < m.cols(); ++x){
-			if(m(y,x) < min)
-				min = m(y,x);
-			if(m(y,x) > max)
-				max = m(y,x);
-		}
-	}
-	double change = 0 - min;
-	for(int y = 0; y < m.rows(); ++y){
-		for(int x = 0; x < m.cols(); ++x){
-			m(y,x) = (m(y,x) + change)/(max-min);
-		}
-	}
+	double max = m.maxCoeff();
+	double min = m.minCoeff();
+	m = m.array() - min;
+	m = m/(max-min);
 }
 
 int main(int argc, char** argv){
@@ -316,7 +300,7 @@ int main(int argc, char** argv){
 	ROWS = csv.size() - origin[1].asInt();
 	COLUMNS = csv[0].size() - origin[0].asInt();
 	//TODO: get from argument
-	MAX_RUNS = 40000;
+	MAX_RUNS = 20000;
 
 	expression = MatrixXd(ROWS,COLUMNS);
 	expression = MatrixXd::Zero(ROWS,COLUMNS);
