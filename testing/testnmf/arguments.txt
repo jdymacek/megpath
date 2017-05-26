@@ -1,0 +1,3 @@
+analysis = "test"
+test_filename = "../testing/testnmf/multiplied.csv"
+test_origin = [0,0]
