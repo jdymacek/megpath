@@ -13,13 +13,13 @@ void Stopwatch::start(){
 
 double Stopwatch::stop(){
 	stopTime = time(0);
-	double diff = difftime(startTime,stopTime);
+	double diff = difftime(stopTime,startTime);
 	return diff;
 }
 
 double Stopwatch::lap(){
 	time_t newLapTime = time(0);
-	double diff = difftime(lapTime,newLapTime);
+	double diff = difftime(newLapTime,lapTime);
 	lapTime = time(0);
 	return diff;
 }
