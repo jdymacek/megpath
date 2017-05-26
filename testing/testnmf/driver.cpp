@@ -34,11 +34,16 @@ int main(){
 	patterns << 0,0.1,0.2,0.3,0.4, 0.7,0.5,0.3,0.1,0, 0.1,0.25,0.5,0.25,0.1;
 
 	default_random_engine gen;
-	uniform_real_distribution<double> dist(0.0,1.0);
+	normal_distribution<double> dist(0.5,0.1);
 	MatrixXd coefficients(500,3);
 	for(int i = 0; i < coefficients.rows(); ++i){
 		for(int j = 0; j < coefficients.cols(); ++j){
-			coefficients(i,j) = dist(gen);
+			double rando = dist(gen);
+			coefficients(i,j) = rando;
+			while(rando < 0.0 || rando > 1.0){
+				rando = dist(gen);
+				coefficients(i,j) = rando;
+			}
 		}
 	}
 
