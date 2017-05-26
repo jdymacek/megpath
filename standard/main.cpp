@@ -1,8 +1,10 @@
 //Main file
 //Matthew Dyer
+//Julian Dymacek
 //Created on 5/25/2017
-//Last modified: 5/25/2017
-
+//Last modified: 5/26/2017
+#include <sstream>
+#include <vector>
 #include <iostream>
 #include "Value.h"
 #include "ArgFile.h"
@@ -18,6 +20,7 @@ static int ROWS;
 static int COLUMNS;
 static int MAX_RUNS;
 
+
 struct NMFMatrix{
 	MatrixXd matrix;
 	ProbFunc*** functions;
@@ -25,6 +28,12 @@ struct NMFMatrix{
 	int columns;	
 
 };
+
+
+static NMFMatrix patterns;
+static NMFMatrix coefficients;
+static MatrixXd  expression;
+static MatrixXd  newExpression;
 
 void createNMFMatrix(NMFMatrix& rv,int rows,int columns){
 	rv.matrix = MatrixXd(COLUMNS,ROWS);
@@ -40,12 +49,39 @@ void createNMFMatrix(NMFMatrix& rv,int rows,int columns){
     }	
 }
 
+//vector or string?
+string errorDistribution(int b){
+	vector<int> bins(b,0);
+	for(int x = 0; x < expression.rows(); ++x){
+		for(int y = 0; y < expression.cols(); ++y){
+			double e = abs(expression(x,y)-newExpression(x,y));
+			bins[(int)(e*bins.size())] += 1;
+		}
+	}
+	stringstream ss;
+	ss << "[";
+	for(int i =0; i < bins.size(); ++i){
+		ss << bins[i];
+		if(i != bins.size()-1)
+			ss << ",";
+	}
+	ss << "]";
+	return ss.str();
+}
 
-//where should patterns and coefficients be declared
-//where should expression be declared?
+double findError(){
+	//use patterns and coefficients to generate new matrix
+	//newExpression = coefficients.matrix * patterns.matrix;
+
+	//compare newExpression with expression
+	//return result;	
+
+	return -1;
+}
 
 void monteCarloMatrix(NMFMatrix& m){
-	
+	double oldError = findError();	
+
 	for(int i =0; i < m.rows; i++){
 		for(int j =0; j < m.columns; j++){
 			ProbFunc* function = m.functions[i][j];
@@ -61,13 +97,12 @@ void monteCarloMatrix(NMFMatrix& m){
 					m.matrix(e.x,e.y) = e.val;
 				}
 			}			
-
-			//multiply
-			//newExpression = coefficents*patterns
-			//double error = findError(expression,newExpression)
-			//if(error < olderror){
-			//	function->addObservation(r);
-			//}
+			double error = findError();
+			if(error < oldError){
+				function->addObservation(r);
+			}
+			//changes stick so the error will as well
+			oldError = error;
 		}
 	}
 }
@@ -80,17 +115,20 @@ void monteCarlo(){
 
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < MAX_RUNS; i++){
-	//	monteCarloMatrix(patterns);
-	//	monteCarloMatrix(coefficients);
+		monteCarloMatrix(patterns);
+		monteCarloMatrix(coefficients);
+		double error = findError();
 		if(i % 1000 == 0){
 			//TODO: timing
 			//long newTime = System.currentTimeMillis();
-			//System.out.println("** " + i + " Error = " + error + "\tSeconds: " + (newTime-oldTime)/1000);
+			//Show that we are making progress
+			//write some code to print time in a meaning full way hms...
+			cout << i << "\t Error = " << error << "\t Time = " << endl;
 			//oldTime = newTime;
 		}
-		//System.out.println("** Max Error: " + this.format(theExpression.maxError()));
-		//System.out.println("** Histogram: " + theExpression.errorHistogram(10));		
 	}
+	cout << "Error Histogram: " << errorDistribution(10);	
+	//error distribution 
 }
 
 
