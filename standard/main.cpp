@@ -16,6 +16,7 @@ using namespace Eigen;
 
 static int ROWS;
 static int COLUMNS;
+static int MAX_RUNS;
 
 struct NMFMatrix{
 	MatrixXd matrix;
@@ -38,6 +39,60 @@ void createNMFMatrix(NMFMatrix& rv,int rows,int columns){
         }
     }	
 }
+
+
+//where should patterns and coefficients be declared
+//where should expression be declared?
+
+void monteCarloMatrix(NMFMatrix& m){
+	
+	for(int i =0; i < m.rows; i++){
+		for(int j =0; j < m.columns; j++){
+			ProbFunc* function = m.functions[i][j];
+			//double olderror = error;
+
+			double r = function->random();
+			if(function->size() == 1){
+				//eigen is column major -- c++ is row major
+				m.matrix[j][i] = r;				
+			}else{
+				for(int k=0; k < function->size(); ++k){
+					Entry e = function->getEntry(k);
+					m.matrix[e.x][e.y] = e.val;
+				}
+			}			
+
+			//multiply
+			//newExpression = coefficents*patterns
+			//double error = findError(expression,newExpression)
+			//if(error < olderror){
+			//	function->addObservation(r);
+			//}
+		}
+	}
+}
+
+	
+	/*Run a monte carlo markov chain*/
+void monteCarlo(){
+	//TODO: timing
+	//long oldTime = System.currentTimeMillis();
+
+	//For each spot take a gamble and record outcome
+	for(int i =0; i < MAX_RUNS; i++){
+		monteCarloMatrix(patterns);
+		monteCarloMatrix(coefficients);
+		if(i % 1000 == 0){
+			//TODO: timing
+			//long newTime = System.currentTimeMillis();
+			//System.out.println("** " + i + " Error = " + error + "\tSeconds: " + (newTime-oldTime)/1000);
+			//oldTime = newTime;
+		}
+		//System.out.println("** Max Error: " + this.format(theExpression.maxError()));
+		//System.out.println("** Histogram: " + theExpression.errorHistogram(10));		
+	}
+}
+
 
 void normalize(MatrixXd& m){
 	double max = 0;
@@ -123,6 +178,8 @@ int main(){
 	//expression matrix
 	COLUMNS = csv.size() - origin[1].asInt();
 	ROWS = csv[0].size() - origin[0].asInt();
+	//TODO: get from argument
+	MAX_RUNS = 40000;
 
 	MatrixXd expression(COLUMNS,ROWS);
 	expression = MatrixXd::Zero(COLUMNS,ROWS);
