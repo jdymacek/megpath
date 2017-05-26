@@ -4,6 +4,7 @@
 //Created on 5/25/2017
 //Last modified: 5/26/2017
 #include <sstream>
+#include <cmath>
 #include <vector>
 #include <iostream>
 #include "Value.h"
@@ -11,6 +12,7 @@
 #include "CSVFile.h"
 #include "ProbFunc.h"
 #include "HistoPF.h"
+#include "UniformPF.h"
 #include "../../Eigen/Core"
 
 using namespace std;
@@ -29,7 +31,7 @@ struct NMFMatrix{
 
 };
 
-
+static UniformPF* uniform;
 static NMFMatrix patterns;
 static NMFMatrix coefficients;
 static MatrixXd  expression;
@@ -134,8 +136,7 @@ void monteCarlo(){
 
 //TODO: does not work at all
 bool accept(double de, double t){
-	return true;
-//	return de < 0 ||  Math.exp(-de/t) > Math.random();
+	return de < 0 ||  exp(-de/t) > uniform->random();
 }
 
 void annealStep(NMFMatrix& m,double t){
@@ -237,6 +238,8 @@ int main(){
 	vector<Value> controls;
 	vector<Value> columns;
 	//vector<Value> patterns;
+
+	uniform = new UniformPF();
 	
 	//grab arguments
 	args.load("arguments.txt");
@@ -318,7 +321,7 @@ int main(){
 	createNMFMatrix(coefficients,COLUMNS,ROWS);
 
 	monteCarlo();
-		
+	anneal();		
 
 
 	return 0;
