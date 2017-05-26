@@ -12,12 +12,12 @@ void Stopwatch::start(){
 
 double Stopwatch::stop(){
 	stopTime = time(0);
-	double diff = difftime(startTime,endTime);
+	double diff = difftime(startTime,stopTime);
 	return diff;
 }
 
 double Stopwatch::lap(){
-	newLapTime = time(0);
+	time_t newLapTime = time(0);
 	double diff = difftime(lapTime-newLapTime)
 	lapTime = time(0);
 	return diff;
