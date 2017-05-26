@@ -7,6 +7,7 @@
 #include <cmath>
 #include <vector>
 #include <iostream>
+#include "Stopwatch.h"
 #include "Value.h"
 #include "ArgFile.h"
 #include "CSVFile.h"
@@ -113,25 +114,20 @@ void monteCarloMatrix(NMFMatrix& m){
 	
 	/*Run a monte carlo markov chain*/
 void monteCarlo(){
-	//TODO: timing
-	//long oldTime = System.currentTimeMillis();
-
+	Stopwatch watch;
+	watch.start();
+	
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < MAX_RUNS; i++){
 		monteCarloMatrix(patterns);
 		monteCarloMatrix(coefficients);
 		double error = findError();
 		if(i % 1000 == 0){
-			//TODO: timing
-			//long newTime = System.currentTimeMillis();
-			//Show that we are making progress
-			//write some code to print time in a meaning full way hms...
-			cout << i << "\t Error = " << error << "\t Time = " << endl;
-			//oldTime = newTime;
+			cout << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
 	}
-	cout << "Error Histogram: " << errorDistribution(10);	
-	//error distribution 
+	cout << "Error Histogram: " << errorDistribution(10) << endl;	
+	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
 }
 
 //TODO: does not work at all
@@ -181,21 +177,19 @@ void annealStep(NMFMatrix& m,double t){
 }
 
 void anneal(){
+	Stopwatch watch;
 	int ndx = 0;
 	double t = 0.5;
-	//TODO: timing
-	//long oldTime = System.currentTimeMillis();
-    double formerError = 1000000;
+	watch.start();
+
+	double formerError = 2*expression.rows()*expression.cols();
     bool running = true;
 	while(running && ndx < MAX_RUNS){
         annealStep(coefficients,t);
 		annealStep(patterns,t);
 		if(ndx % 1000 == 0){
-			//TODO: timing
-			//long newTime = System.currentTimeMillis();
-			//System.out.println("** " + ndx + "\tError = " + error + "\tSeconds: " + (newTime-oldTime)/1000);
-			//oldTime = newTime;
-			double error = findError();    
+			double error = findError();
+            cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 			if(formerError - error < 0.005 && error < formerError)
                 running = false;
             formerError = error;
@@ -203,8 +197,8 @@ void anneal(){
 		ndx++;
 		t *= 0.99975;
 	}
-	cout << "Error Histogram: " << errorDistribution(10);
-
+    cout << "Error Histogram: " << errorDistribution(10) << endl;
+    cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
 }
 
 
