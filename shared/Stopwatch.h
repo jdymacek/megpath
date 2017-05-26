@@ -21,6 +21,6 @@ class Stopwatch{
 		time_t startTime;
 		time_t stopTime;
 		time_t lapTime;
-}
+};
 
 #endif
