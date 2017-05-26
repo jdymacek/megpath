@@ -20,7 +20,7 @@ class Stopwatch{
 	private:
 		time_t startTime;
 		time_t stopTime;
-		time_t laptime;
+		time_t lapTime;
 }
 
 #endif
