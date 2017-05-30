@@ -35,7 +35,7 @@ int main(){
 
 	default_random_engine gen;
 	normal_distribution<double> dist(0.5,0.1);
-	MatrixXd coefficients(3000,3);
+	MatrixXd coefficients(500,3);
 	for(int i = 0; i < coefficients.rows(); ++i){
 		for(int j = 0; j < coefficients.cols(); ++j){
 			double rando = dist(gen);

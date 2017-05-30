@@ -13,6 +13,7 @@
 #include <iostream>
 #include "Stopwatch.h"
 #include "Value.h"
+#include "ShiftPF.h"
 #include "ArgFile.h"
 #include "CSVFile.h"
 #include "ProbFunc.h"
@@ -284,17 +285,6 @@ int main(int argc, char** argv){
 		Value val = args.getArgument(analysis + "patterns");
 		patternArgs = val.asVector();
 		PATTERNS = patternArgs.size();
-		for(int i = 0; i < patternArgs.size(); ++i){
-			vector<Value> intoMatrix;
-			string findPattern = patternArgs[i].asString();
-			if(args.isArgument(findPattern)){
-				Value newVal = args.getArgument(findPattern);
-				intoMatrix = newVal.asVector();
-				for(int j = 0; j < intoMatrix.size(); ++j){
-					patterns.matrix(i,j) = intoMatrix[j].asDouble();
-				}
-			}
-		}
 	}
 
 	if(args.isArgument(analysis + "origin")){
@@ -347,7 +337,7 @@ int main(int argc, char** argv){
 		}
 	}
 
-	//	normalize(expression);
+	normalize(expression);
 
 	cout << "After Normalizing:\n";
 	cout << expression << "\n";
@@ -371,6 +361,30 @@ int main(int argc, char** argv){
 
 	//should be ROWS and PATTERNS
 	createNMFMatrix(coefficients,ROWS,PATTERNS,&findErrorRow);
+
+
+	for(int i = 0; i < patternArgs.size(); ++i){
+		vector<Value> intoMatrix;
+		string findPattern = patternArgs[i].asString();
+		if(args.isArgument(findPattern)){
+			Value newVal = args.getArgument(findPattern);
+			intoMatrix = newVal.asVector();
+			
+			ShiftPF* shared = new ShiftPF();			
+			vector<Entry> constraints(intoMatrix.size(),{0,0,0});
+			for(int j = 0; j < intoMatrix.size(); ++j){
+				patterns.matrix(i,j) = intoMatrix[j].asDouble();
+				patterns.functions[i][j] = shared;	
+				constraints[j].x = j;
+				constraints[j].y = i;
+				constraints[j].val = patterns.matrix(i,j);	
+			}
+			shared->setEntries(constraints);
+		}
+	}
+
+
+
 
 	monteCarlo();
 	anneal();		

@@ -16,10 +16,12 @@ using namespace std;
 
 class ShiftPF: public ProbFunc{
 	public:
+		ShiftPF();
 		ShiftPF(vector<Entry> vec);
 		double random();
 		void addObservation(double d);
 		int size();
+		void setEntries(vector<Entry> vec);
 		Entry getEntry(int i);
 		string toString();
 	private:

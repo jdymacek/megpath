@@ -5,6 +5,15 @@
 
 #include "ShiftPF.h"
 
+ShiftPF::ShiftPF(){
+
+}
+
+void ShiftPF::setEntries(vector<Entry> vec){
+	org = vec;
+	current = vec;
+}
+
 ShiftPF::ShiftPF(vector<Entry> vec){
 	org = vec;
 	current = vec;
