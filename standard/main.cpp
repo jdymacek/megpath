@@ -103,26 +103,23 @@ double findError(int y,int x){
 double findErrorRow(int y,int x){
 	//multiply row from cofficients to pattern matrix
 	newExpression.noalias() = expression.row(y);
-	newExpression.noalias() -= coefficients.matrix.row(y) * patterns.matrix;
+	newExpression.noalias() -= (coefficients.matrix.row(y) * patterns.matrix);
 	return (newExpression.cwiseAbs()).sum();
 }
 
 
 double findErrorColumn(int y,int x){
     newExpression.noalias() = expression.col(x);
-    newExpression.noalias() -= coefficients.matrix * patterns.matrix.col(x);
+    newExpression.noalias() -= (coefficients.matrix * patterns.matrix.col(x));
     return (newExpression.cwiseAbs()).sum();
 }
 
 
 void monteCarloMatrix(NMFMatrix& m){
-	double oldError = findError(0,0);	
-
 	for(int y =0; y < m.rows; ++y){
 		for(int x =0; x < m.columns; ++x){
 			ProbFunc* function = m.functions[y][x];
-			//double olderror = error;
-
+			double oldError = m.errorFunction(y,x);
 			double r = function->random();
 			if(function->size() == 1){
 				m.matrix(y,x) = r;				
@@ -136,8 +133,6 @@ void monteCarloMatrix(NMFMatrix& m){
 			if(error <= oldError){
 				function->addObservation(r);
 			}
-			//changes stick so the error will as well
-			oldError = error;
 		}
 	}
 }
@@ -150,10 +145,10 @@ void monteCarlo(){
 	
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < MAX_RUNS; i++){
-		monteCarloMatrix(patterns,false);
-		monteCarloMatrix(coefficients,true);
-		double error = findError(0,0);
+		monteCarloMatrix(patterns);
+		monteCarloMatrix(coefficients);
 		if(i % 1000 == 0){
+			double error = findError(0,0);
 			cout << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
 	}
@@ -168,12 +163,13 @@ bool accept(double de, double t){
 
 void annealStep(NMFMatrix& m,double t){
 
-	double olderror = findError(0,0);
 	vector<Entry> entries;
 	entries.push_back({0,0,0});
 
 	for(int y =0; y < m.rows; y++){
 		for(int x =0; x < m.columns; x++){
+			double olderror = m.errorFunction(y,x);
+
 			ProbFunc* function = m.functions[y][x];
 			double r = function->random();  
 			if(function->size() == 1){
@@ -199,9 +195,7 @@ void annealStep(NMFMatrix& m,double t){
 				for(int i =0; i < function->size(); ++i){
 					m.matrix(entries[i].y,entries[i].x) = entries[i].val;
 				}
-				newExpression = coefficients.matrix*patterns.matrix;
-			}else{
-				olderror = error;
+				//newExpression = coefficients.matrix*patterns.matrix;
 			}
 		}
 	}
