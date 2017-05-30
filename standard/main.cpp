@@ -282,7 +282,7 @@ int main(int argc, char** argv){
 			string findPattern = patternArgs[i].asString();
 			if(args.isArgument(findPattern)){
 				Value newVal = args.getArgument(findPattern);
-				intoMatrix = val.asVector();
+				intoMatrix = newVal.asVector();
 				for(int j = 0; j < intoMatrix.size(); ++j){
 					patterns.matrix(i,j) = intoMatrix[j].asDouble();
 				}
