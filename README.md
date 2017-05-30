@@ -3,9 +3,13 @@
 Arguments:
 -----------------
 
-|Argument |Description								              |Example					           |
-|---------|:--------------------------------------:|----------------------------|
-|analysis | specifies which heading to follow      | analysis = **"one"**       |
-|filename | the name of the csv file we pass in    | filename = **"test.csv"**  |
-|origin   | the point in the csv where data starts | origin = *[**0**,**0**]*   |
-|directory|
+|Argument |Description								                       |Example					                                      |
+|---------|:------------------------------------------------:|------------------------------------------------------|
+|analysis | specifies which heading to follow                | analysis = **"one"**                                 |
+|filename | the name of the csv file we pass in              | filename = **"test.csv"**                            |
+|origin   | the point in the csv where data starts           | origin = *[**0,0**]*                                 |
+|directory| the directory where results will be written      | directory = **"../testRun"**                         |
+|patterns | holds the names of pattern files to specify      | patterns = *[**"pattern1.txt","pattern2.txt", ""**]* |
+|max_runs | the maximum number of times to run               | max_runs = **40000**                                 |
+|controls | the control columns that can be compared against | controls = *[**0,1,2,3**]*                           |
+|columns  | the columns to compare againt the controls       | columns = *[**4,5,6,7**]*                            |
