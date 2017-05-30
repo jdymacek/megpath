@@ -21,29 +21,17 @@ void HistoPF::addObservation(double v){
 	int bin = ((weights.size()-1)*v);
 	double current = intervals[bin];
 	double next = intervals[bin+1];
-	/*
-		double prev;
-		if((bin - 1) > 0){
-			prev = intervals[bin-1];
-		}else{
-			prev = 0.0;
-		}
-	 */
 	double mid = (current+next)/2;
 	double diff = next - current;
 
-	double howMuch = 0.0;
+	double howMuch = abs(v-mid)/diff;
 	if(v > mid){
-		howMuch = next - v;
-		weights[bin] += (howMuch+diff/2)*(weights.size());
-		weights[bin+1] += (howMuch-diff/2)*(weights.size());
+		weights[bin] += 1 - howMuch;
+		weights[bin+1] += howMuch;
 	}else if(v < mid){
-		howMuch = v - current;
-		weights[bin] += (howMuch+diff/2)*(weights.size());
-		if((bin -1) > 0){
+		weights[bin] += 1-howMuch;
+		if((bin - 1) > 0){
 			weights[bin-1] += (diff-howMuch/2)*(weights.size());
-		}else{
-			weights[bin] += (diff-howMuch/2)*(weights.size());
 		}
 	}else{
 		weights[bin] += 1;
