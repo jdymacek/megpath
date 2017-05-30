@@ -35,16 +35,18 @@ void HistoPF::addObservation(double v){
 	double howMuch = 0.0;
 	if(v > mid){
 		howMuch = next - v;
-		weights[bin] += (howMuch+diff/2)*(weights.size()-1);
-		weights[bin+1] += (howMuch-diff/2)*(weights.size()-1);
-	}else{
+		weights[bin] += (howMuch+diff/2)*(weights.size());
+		weights[bin+1] += (howMuch-diff/2)*(weights.size());
+	}else if(v < mid){
 		howMuch = v - current;
-		weights[bin] += (howMuch+diff/2)*(weights.size()-1);
+		weights[bin] += (howMuch+diff/2)*(weights.size());
 		if((bin -1) > 0){
-			weights[bin-1] += (howMuch-diff/2)*(weights.size()-1);
+			weights[bin-1] += (diff-howMuch/2)*(weights.size());
 		}else{
-			weights[bin] += (howMuch-diff/2)*(weights.size()-1);
+			weights[bin] += (diff-howMuch/2)*(weights.size());
 		}
+	}else{
+		weights[bin] += 1;
 	}
 
 	dist = piecewise_linear_distribution<double>(intervals.begin(),intervals.end(),weights.begin());
