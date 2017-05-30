@@ -33,7 +33,7 @@ struct NMFMatrix{
 	ProbFunc*** functions;
 	int rows;
 	int columns;	
-
+	double (*errorFunction)(int,int);
 };
 
 static UniformPF* uniform;
@@ -57,8 +57,9 @@ void writeNMFMatrix(NMFMatrix& mat,string filename){
 }
 
 
-void createNMFMatrix(NMFMatrix& rv,int rows,int columns){
+void createNMFMatrix(NMFMatrix& rv,int rows,int columns,double (*functionPtr)(int, int)){
 //	rv.matrix = MatrixXd(rows,columns);
+	rv.errorFunction = functionPtr;
     rv.matrix = MatrixXd::Zero(rows,columns);
 	rv.rows = rows;
 	rv.columns = columns;
@@ -92,15 +93,30 @@ string errorDistribution(int b){
 	return ss.str();
 }
 
-double findError(){
+double findError(int y,int x){
 	//use patterns and coefficients to generate new matrix
 	newExpression.noalias() = expression;
 	newExpression.noalias() -= (coefficients.matrix*patterns.matrix);
 	return (newExpression.cwiseAbs()).sum();
 }
 
+double findErrorRow(int y,int x){
+	//multiply row from cofficients to pattern matrix
+	newExpression.noalias() = expression.row(y);
+	newExpression.noalias() -= coefficients.matrix.row(y) * patterns.matrix;
+	return (newExpression.cwiseAbs()).sum();
+}
+
+
+double findErrorColumn(int y,int x){
+    newExpression.noalias() = expression.col(x);
+    newExpression.noalias() -= coefficients.matrix * patterns.matrix.col(x);
+    return (newExpression.cwiseAbs()).sum();
+}
+
+
 void monteCarloMatrix(NMFMatrix& m){
-	double oldError = findError();	
+	double oldError = findError(0,0);	
 
 	for(int y =0; y < m.rows; ++y){
 		for(int x =0; x < m.columns; ++x){
@@ -116,7 +132,7 @@ void monteCarloMatrix(NMFMatrix& m){
 					m.matrix(e.y,e.x) = e.val;
 				}
 			}			
-			double error = findError();
+			double error = m.errorFunction(y,x);
 			if(error <= oldError){
 				function->addObservation(r);
 			}
@@ -134,14 +150,14 @@ void monteCarlo(){
 	
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < MAX_RUNS; i++){
-		monteCarloMatrix(patterns);
-		monteCarloMatrix(coefficients);
-		double error = findError();
+		monteCarloMatrix(patterns,false);
+		monteCarloMatrix(coefficients,true);
+		double error = findError(0,0);
 		if(i % 1000 == 0){
 			cout << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
 	}
-	cout << "Final Error: " << findError() << endl;
+	cout << "Final Error: " << findError(0,0) << endl;
 	cout << "Error Histogram: " << errorDistribution(10) << endl;	
 	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
 }
@@ -152,7 +168,7 @@ bool accept(double de, double t){
 
 void annealStep(NMFMatrix& m,double t){
 
-	double olderror = findError();
+	double olderror = findError(0,0);
 	vector<Entry> entries;
 	entries.push_back({0,0,0});
 
@@ -177,8 +193,8 @@ void annealStep(NMFMatrix& m,double t){
 					entries[k] = e;
                 }
             }		
-	
-			double error = findError();
+
+			double error = m.errorFunction(y,x);
 			if(!accept(error-olderror,t)){
 				for(int i =0; i < function->size(); ++i){
 					m.matrix(entries[i].y,entries[i].x) = entries[i].val;
@@ -203,7 +219,7 @@ void anneal(){
         annealStep(coefficients,t);
 		annealStep(patterns,t);
 		if(ndx % 1000 == 0){
-			double error = findError();
+			double error = findError(0,0);
             cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 			if(abs(formerError - error) < 0.005 && error < formerError)
                 running = false;
@@ -212,7 +228,7 @@ void anneal(){
 		ndx++;
 		t *= 0.99975;
 	}
-	formerError = findError();
+	formerError = findError(0,0);
 	cout << "Final Error: " << formerError << endl;
     cout << "Error Histogram: " << errorDistribution(10) << endl;
     cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
@@ -329,10 +345,10 @@ int main(int argc, char** argv){
 	cout << expression << "\n";
 
 	//should be PATTERNS and COLUMNS
-	createNMFMatrix(patterns,PATTERNS,COLUMNS);
+	createNMFMatrix(patterns,PATTERNS,COLUMNS,&findErrorColumn);
 
 	//should be ROWS and PATTERNS
-	createNMFMatrix(coefficients,ROWS,PATTERNS);
+	createNMFMatrix(coefficients,ROWS,PATTERNS,&findErrorRow);
 
 	monteCarlo();
 	anneal();		
