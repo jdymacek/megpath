@@ -317,7 +317,7 @@ int main(int argc, char** argv){
 	}
 
 	if(args.isArgument(analysis + "columns")){
-		Value val = args.getArgument(analysis + "column");
+		Value val = args.getArgument(analysis + "columns");
 		columns = val.asVector();
 	}
 
