@@ -6,7 +6,7 @@
 #include "HistoPF.h"
 
 HistoPF::HistoPF(){
-	weights = vector<double>(22,1.0);
+	weights = vector<double>(40,1.0);
 	for(int i =0; i < weights.size(); ++i){
 		intervals.push_back(i*1.0/(weights.size()-1));
 	}	

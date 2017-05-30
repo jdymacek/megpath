@@ -37,10 +37,10 @@ struct NMFMatrix{
 };
 
 static UniformPF* uniform;
-static NMFMatrix patterns;
-static NMFMatrix coefficients;
-static MatrixXd  expression;
-static MatrixXd  newExpression;
+NMFMatrix patterns;
+NMFMatrix coefficients;
+MatrixXd  expression;
+MatrixXd  newExpression;
 
 void writeNMFMatrix(NMFMatrix& mat,string filename){
 	ofstream fout;
@@ -58,7 +58,7 @@ void writeNMFMatrix(NMFMatrix& mat,string filename){
 
 
 void createNMFMatrix(NMFMatrix& rv,int rows,int columns){
-	rv.matrix = MatrixXd(rows,columns);
+//	rv.matrix = MatrixXd(rows,columns);
     rv.matrix = MatrixXd::Zero(rows,columns);
 	rv.rows = rows;
 	rv.columns = columns;
@@ -74,6 +74,7 @@ void createNMFMatrix(NMFMatrix& rv,int rows,int columns){
 //vector or string?
 string errorDistribution(int b){
 	vector<int> bins(b,0);
+	newExpression = coefficients.matrix*patterns.matrix;
 	for(int y = 0; y < expression.rows(); ++y){
 		for(int x = 0; x < expression.cols(); ++x){
 			double e = abs(expression(y,x)-newExpression(y,x));
@@ -93,8 +94,9 @@ string errorDistribution(int b){
 
 double findError(){
 	//use patterns and coefficients to generate new matrix
-	newExpression = expression - (coefficients.matrix * patterns.matrix);
-	return newExpression.cwiseAbs().sum();
+	newExpression.noalias() = expression;
+	newExpression.noalias() -= (coefficients.matrix*patterns.matrix);
+	return (newExpression.cwiseAbs()).sum();
 }
 
 void monteCarloMatrix(NMFMatrix& m){
@@ -115,7 +117,7 @@ void monteCarloMatrix(NMFMatrix& m){
 				}
 			}			
 			double error = findError();
-			if(error < oldError){
+			if(error <= oldError){
 				function->addObservation(r);
 			}
 			//changes stick so the error will as well
@@ -139,6 +141,7 @@ void monteCarlo(){
 			cout << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
 	}
+	cout << "Final Error: " << findError() << endl;
 	cout << "Error Histogram: " << errorDistribution(10) << endl;	
 	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
 }
@@ -202,13 +205,15 @@ void anneal(){
 		if(ndx % 1000 == 0){
 			double error = findError();
             cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
-			if(formerError - error < 0.005 && error < formerError)
+			if(abs(formerError - error) < 0.005 && error < formerError)
                 running = false;
             formerError = error;
 		}
 		ndx++;
-		t *= 0.9975;
+		t *= 0.99975;
 	}
+	formerError = findError();
+	cout << "Final Error: " << formerError << endl;
     cout << "Error Histogram: " << errorDistribution(10) << endl;
     cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
 }
@@ -222,6 +227,9 @@ void normalize(MatrixXd& m){
 }
 
 int main(int argc, char** argv){
+
+    ProbFunc::generator.seed(time(0));
+
 	//declare variabls
 	int PATTERNS = 0;
 	ArgFile args;
@@ -235,6 +243,7 @@ int main(int argc, char** argv){
 	vector<Value> patternArgs;
 
 	uniform = new UniformPF();
+
 
 	if(argc < 2)
 		return 0;
@@ -314,7 +323,7 @@ int main(int argc, char** argv){
 		}
 	}
 
-	normalize(expression);
+	//normalize(expression);
 	
 	cout << "After Normalizing:\n";
 	cout << expression << "\n";
@@ -331,5 +340,9 @@ int main(int argc, char** argv){
 	writeNMFMatrix(patterns,"patterns.csv");
 	writeNMFMatrix(coefficients,"coefficients.csv");
 
+	ofstream fout;
+	fout.open("test_expression.txt");
+	fout << coefficients.matrix*patterns.matrix;
+	fout.close();
 	return 0;
 }
