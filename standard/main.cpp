@@ -49,7 +49,7 @@ void writeNMFMatrix(NMFMatrix& mat,string filename){
 		for(int x = 0; x < mat.matrix.cols(); ++x){
 			fout << mat.matrix(y,x);
 			if(x != mat.matrix.cols()-1)
-			 fout << ",";
+				fout << ",";
 		}
 		fout << "\n";
 	}
@@ -58,18 +58,18 @@ void writeNMFMatrix(NMFMatrix& mat,string filename){
 
 
 void createNMFMatrix(NMFMatrix& rv,int rows,int columns,double (*functionPtr)(int, int)){
-//	rv.matrix = MatrixXd(rows,columns);
+	//	rv.matrix = MatrixXd(rows,columns);
 	rv.errorFunction = functionPtr;
-    rv.matrix = MatrixXd::Zero(rows,columns);
+	rv.matrix = MatrixXd::Zero(rows,columns);
 	rv.rows = rows;
 	rv.columns = columns;
 	rv.functions = new ProbFunc**[rows];
 	for(int i =0; i < rows; ++i){
-        rv.functions[i] = new ProbFunc*[columns];
-        for(int j =0; j < columns; ++j){
-            rv.functions[i][j] = new HistoPF();
-        }
-    }	
+		rv.functions[i] = new ProbFunc*[columns];
+		for(int j =0; j < columns; ++j){
+			rv.functions[i][j] = new HistoPF();
+		}
+	}	
 }
 
 //vector or string?
@@ -109,9 +109,9 @@ double findErrorRow(int y,int x){
 
 
 double findErrorColumn(int y,int x){
-    newExpression.noalias() = expression.col(x);
-    newExpression.noalias() -= (coefficients.matrix * patterns.matrix.col(x));
-    return (newExpression.cwiseAbs()).sum();
+	newExpression.noalias() = expression.col(x);
+	newExpression.noalias() -= (coefficients.matrix * patterns.matrix.col(x));
+	return (newExpression.cwiseAbs()).sum();
 }
 
 
@@ -137,12 +137,12 @@ void monteCarloMatrix(NMFMatrix& m){
 	}
 }
 
-	
-	/*Run a monte carlo markov chain*/
+
+/*Run a monte carlo markov chain*/
 void monteCarlo(){
 	Stopwatch watch;
 	watch.start();
-	
+
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < MAX_RUNS; i++){
 		monteCarloMatrix(patterns);
@@ -177,18 +177,18 @@ void annealStep(NMFMatrix& m,double t){
 				entries[0].y = y;
 				entries[0].val = m.matrix(y,x);
 				m.matrix(y,x) = r;
-            }else{
+			}else{
 				while(entries.size() < function->size()){
 					entries.push_back({0,0,0});
 				}
-                for(int k=0; k < function->size(); ++k){
-                    Entry e = function->getEntry(k);
+				for(int k=0; k < function->size(); ++k){
+					Entry e = function->getEntry(k);
 					double old = m.matrix(e.y,e.x);
-			        m.matrix(e.y,e.x) = e.val;
+					m.matrix(e.y,e.x) = e.val;
 					e.val = old;
 					entries[k] = e;
-                }
-            }		
+				}
+			}		
 
 			double error = m.errorFunction(y,x);
 			if(!accept(error-olderror,t)){
@@ -208,24 +208,24 @@ void anneal(){
 	watch.start();
 
 	double formerError = 2*expression.rows()*expression.cols();
-    bool running = true;
+	bool running = true;
 	while(running && ndx < MAX_RUNS){
-        annealStep(coefficients,t);
+		annealStep(coefficients,t);
 		annealStep(patterns,t);
 		if(ndx % 1000 == 0){
 			double error = findError(0,0);
-            cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
+			cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 			if(abs(formerError - error) < 0.005 && error < formerError)
-                running = false;
-            formerError = error;
+				running = false;
+			formerError = error;
 		}
 		ndx++;
 		t *= 0.99975;
 	}
 	formerError = findError(0,0);
 	cout << "Final Error: " << formerError << endl;
-    cout << "Error Histogram: " << errorDistribution(10) << endl;
-    cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+	cout << "Error Histogram: " << errorDistribution(10) << endl;
+	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
 }
 
 
@@ -238,7 +238,7 @@ void normalize(MatrixXd& m){
 
 int main(int argc, char** argv){
 
-    ProbFunc::generator.seed(time(0));
+	ProbFunc::generator.seed(time(0));
 
 	//declare variabls
 	int PATTERNS = 0;
@@ -254,13 +254,11 @@ int main(int argc, char** argv){
 
 	uniform = new UniformPF();
 
-
 	if(argc < 2)
 		return 0;
 	string argFile = argv[1];	
 	//grab arguments
 	args.load(argFile);
-
 
 	if(args.isArgument("analysis")){
 		Value val = args.getArgument("analysis");
@@ -275,11 +273,22 @@ int main(int argc, char** argv){
 		filename = val.asString();
 	}
 
-    if(args.isArgument(analysis + "patterns")){
-        Value val = args.getArgument(analysis + "patterns");
-        patternArgs = val.asVector();
+	if(args.isArgument(analysis + "patterns")){
+		Value val = args.getArgument(analysis + "patterns");
+		patternArgs = val.asVector();
 		PATTERNS = patternArgs.size();
-    }
+		for(int i = 0; i < patternArgs.size(); ++i){
+			vector<Value> intoMatrix;
+			string findPattern = patternArgs[i].asString();
+			if(args.isArgument(findPattern)){
+				Value newVal = args.getArgument(findPattern);
+				intoMatrix = val.asVector();
+				for(int j = 0; j < intoMatrix.size(); ++j){
+					patterns.matrix(i,j) = intoMatrix[j].asDouble();
+				}
+			}
+		}
+	}
 
 	if(args.isArgument(analysis + "origin")){
 		Value val = args.getArgument(analysis + "origin");
@@ -290,8 +299,8 @@ int main(int argc, char** argv){
 		origin.push_back(val);
 	}
 
-	if(args.isArgument(analysis + "dir")){
-		Value val = args.getArgument(analysis + "dir");
+	if(args.isArgument(analysis + "directory")){
+		Value val = args.getArgument(analysis + "directory");
 		dir = val.asString();
 	}
 
@@ -304,7 +313,7 @@ int main(int argc, char** argv){
 		Value val = args.getArgument(analysis + "column");
 		columns = val.asVector();
 	}
-	
+
 	cout << "From the CSVFile:\n";
 	vector<vector<Value> > csv = file.readCSV(filename);
 	for(int y = origin[1].asInt(); y < csv.size(); ++y){
@@ -314,7 +323,7 @@ int main(int argc, char** argv){
 		cout << "\n";
 	}
 	cout << "\n";
-	
+
 	//expression matrix
 	ROWS = csv.size() - origin[1].asInt();
 	COLUMNS = csv[0].size() - origin[0].asInt();
@@ -325,7 +334,7 @@ int main(int argc, char** argv){
 	expression = MatrixXd::Zero(ROWS,COLUMNS);
 
 	newExpression = MatrixXd(ROWS,COLUMNS);
-    newExpression = MatrixXd::Zero(ROWS,COLUMNS);
+	newExpression = MatrixXd::Zero(ROWS,COLUMNS);
 
 	for(int y = 0; y < ROWS; ++y){
 		for(int x = 0; x < COLUMNS; ++x){
@@ -333,8 +342,8 @@ int main(int argc, char** argv){
 		}
 	}
 
-//	normalize(expression);
-	
+	//	normalize(expression);
+
 	cout << "After Normalizing:\n";
 	cout << expression << "\n";
 
@@ -347,11 +356,11 @@ int main(int argc, char** argv){
 	monteCarlo();
 	anneal();		
 
-	writeNMFMatrix(patterns,"test_patterns.csv");
-	writeNMFMatrix(coefficients,"test_coefficients.csv");
+	writeNMFMatrix(patterns, analysis + "patterns.csv");
+	writeNMFMatrix(coefficients, analysis + "coefficients.csv");
 
 	ofstream fout;
-	fout.open("test_expression.txt");
+	fout.open(analysis + "expression.txt");
 	fout << coefficients.matrix*patterns.matrix;
 	fout.close();
 	return 0;
