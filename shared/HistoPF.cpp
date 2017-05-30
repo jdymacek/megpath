@@ -31,7 +31,7 @@ void HistoPF::addObservation(double v){
 	}else if(v < mid){
 		weights[bin] += 1-howMuch;
 		if((bin - 1) > 0){
-			weights[bin-1] += (diff-howMuch/2)*(weights.size());
+			weights[bin-1] += howMuch;
 		}
 	}else{
 		weights[bin] += 1;
