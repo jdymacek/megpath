@@ -319,7 +319,7 @@ int main(int argc, char** argv){
 	ROWS = csv.size() - origin[1].asInt();
 	COLUMNS = csv[0].size() - origin[0].asInt();
 	//TODO: get from argument
-	MAX_RUNS = 20000;
+	MAX_RUNS = 40000;
 
 	expression = MatrixXd(ROWS,COLUMNS);
 	expression = MatrixXd::Zero(ROWS,COLUMNS);
@@ -333,7 +333,7 @@ int main(int argc, char** argv){
 		}
 	}
 
-	//normalize(expression);
+//	normalize(expression);
 	
 	cout << "After Normalizing:\n";
 	cout << expression << "\n";
@@ -347,8 +347,8 @@ int main(int argc, char** argv){
 	monteCarlo();
 	anneal();		
 
-	writeNMFMatrix(patterns,"patterns.csv");
-	writeNMFMatrix(coefficients,"coefficients.csv");
+	writeNMFMatrix(patterns,"test_patterns.csv");
+	writeNMFMatrix(coefficients,"test_coefficients.csv");
 
 	ofstream fout;
 	fout.open("test_expression.txt");
