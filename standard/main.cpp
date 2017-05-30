@@ -2,7 +2,7 @@
 //Matthew Dyer
 //Julian Dymacek
 //Created on 5/25/2017
-//Last modified: 5/26/2017
+//Last modified: 5/30/2017
 
 //#define EIGEN_DEFAULT_TO_ROW_MAJOR
 
@@ -247,15 +247,17 @@ int main(int argc, char** argv){
 	string analysis = "";
 	string filename = "";
 	vector<Value> origin;
-	string dir = "";
+	string directory = "";
 	vector<Value> controls;
 	vector<Value> columns;
 	vector<Value> patternArgs;
 
 	uniform = new UniformPF();
 
-	if(argc < 2)
+	if(argc < 2){
+		cout << "Needs an arguments file!\n";
 		return 0;
+	}
 	string argFile = argv[1];	
 	//grab arguments
 	args.load(argFile);
@@ -264,6 +266,11 @@ int main(int argc, char** argv){
 		Value val = args.getArgument("analysis");
 		analysis = val.asString();
 		analysis = analysis + "_";
+	}
+
+	if(args.isArgument("max_runs")){
+		Value val = args.getArgument("max_runs");
+		MAX_RUNS = val.asInt();
 	}
 
 	cout << "Using analysis: " << analysis.substr(0,analysis.size()-1) << "\n";
@@ -301,7 +308,7 @@ int main(int argc, char** argv){
 
 	if(args.isArgument(analysis + "directory")){
 		Value val = args.getArgument(analysis + "directory");
-		dir = val.asString();
+		directory = val.asString();
 	}
 
 	if(args.isArgument(analysis + "controls")){
@@ -327,8 +334,6 @@ int main(int argc, char** argv){
 	//expression matrix
 	ROWS = csv.size() - origin[1].asInt();
 	COLUMNS = csv[0].size() - origin[0].asInt();
-	//TODO: get from argument
-	MAX_RUNS = 40000;
 
 	expression = MatrixXd(ROWS,COLUMNS);
 	expression = MatrixXd::Zero(ROWS,COLUMNS);
@@ -347,6 +352,20 @@ int main(int argc, char** argv){
 	cout << "After Normalizing:\n";
 	cout << expression << "\n";
 
+	//test arg information
+	cout << "directory = " << directory << endl;
+	cout << "max_runs = " << MAX_RUNS  << endl;
+	cout << "controls = [";
+	for(int i = 0; i < controls.size(); ++i){
+		cout << controls[i].asDouble() << " ";
+	}
+	cout << "] \n";
+	cout << "columns = [";
+	for(int i = 0; i < columns.size(); ++i){
+		cout << columns[i].asDouble() << " ";
+	}
+	cout << "] \n";
+
 	//should be PATTERNS and COLUMNS
 	createNMFMatrix(patterns,PATTERNS,COLUMNS,&findErrorColumn);
 
@@ -358,6 +377,7 @@ int main(int argc, char** argv){
 
 	writeNMFMatrix(patterns, analysis + "patterns.csv");
 	writeNMFMatrix(coefficients, analysis + "coefficients.csv");
+
 
 	ofstream fout;
 	fout.open(analysis + "expression.txt");
