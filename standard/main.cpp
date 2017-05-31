@@ -343,11 +343,11 @@ int main(int argc, char** argv){
 
 	for(int i = 0; i < ROWS; ++i){
 		for(int j = 0; j < COLUMNS; ++j){
-			if(columns[j].asInt() == j){
-				expression(i,j) = csv[i+origin[1].asInt()][j+origin[0].asInt()].asDouble();
-			}
+			expression(i,j) = csv[i+origin[1].asInt()][columns[j].asInt()+origin[0].asInt()].asDouble();
 		}
 	}
+	
+	cout << expression << endl;
 
 	normalize(expression);
 
@@ -395,8 +395,6 @@ int main(int argc, char** argv){
 			shared->setEntries(constraints);
 		}
 	}
-
-
 
 
 	monteCarlo();
