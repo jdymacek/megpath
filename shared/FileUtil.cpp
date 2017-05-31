@@ -46,8 +46,8 @@ bool FileUtil::isFile(string file){
 
 string FileUtil::uniqueFile(string path){
 	int i = 1;
-	string rv = "";
-	while(isFile(path)){
+	string rv = path;
+	while(isFile(rv)){
 		stringstream ss;
 		ss.str(path);
 		string str = "";
@@ -60,7 +60,7 @@ string FileUtil::uniqueFile(string path){
 
 		stringstream append;
 		append << i;
-		rv = base + "_" + append.str()+ ext;
+		rv = base + "_" + append.str()+ "." + ext;
 		++i;
 	}
 	return rv;

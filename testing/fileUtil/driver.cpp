@@ -37,5 +37,10 @@ int main(){
 	outFile << "Seven for the dwarf lords in their halls of stone.";
 	outFile.close();
 
+	cout << "Making a unique file for 'testDir/file.txt' once more.\n";
+	outFile.open(FileUtil::uniqueFile("testDir/file.txt"));
+	outFile << "Nine for the mortal men doomed to die.";
+	outFile.close();
+
 	return 0;
 }
