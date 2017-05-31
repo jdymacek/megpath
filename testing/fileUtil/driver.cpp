@@ -18,12 +18,18 @@ int main(){
 	cout << "Is '../../shared/FileUtil.h' a directory?\n";
 	cout << FileUtil::isDirectory("../../shared/FileUtil.h") << endl;
 
-	cout << "Making the directory 'testDir' :\n";
+	cout << "Making the directory 'testDir'.\n";
 	FileUtil::mkDirectory("testDir");
 
-	cout << "Make the path: 'testDir/this/path/out/please' :\n";
+	cout << "Making the path: 'testDir/this/path/out/please'.\n";
 	FileUtil::mkPath("testDir/this/path/out/please");
 	cout << endl;
+
+	cout << "Making a unique file for 'testDir/file.txt'.\n";
+	FileUtil::uniqueFile("testDir/file.txt");
+
+	cout << "Making a unique file for 'testDir/file.txt' again.\n";
+	FileUtil::uniqueFile("testDir/file.txt");
 
 	return 0;
 }
