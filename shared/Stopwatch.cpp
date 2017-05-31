@@ -27,17 +27,17 @@ double Stopwatch::lap(){
 string Stopwatch::formatTime(double num){
 	double days = 0;
 	if(num >= 86400){
-		days = num/86400;
+		days = (int)(num/86400);
 		num = num - 86400*days;
 	}
 	double hours = 0;
 	if(num >= 3600){
-		hours = num/3600;
+		hours = (int)(num/3600);
 		num = num - 3600*hours;
 	}
 	double minutes = 0; 
 	if(num >= 60){
-		minutes = num/60;
+		minutes = (int)(num/60);
 		num = num - 60*minutes;
 	}
 	double seconds = num;
