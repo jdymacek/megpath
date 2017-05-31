@@ -1,3 +1,4 @@
 *.o
 test_*
 connmf
+distnmf
