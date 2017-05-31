@@ -1,6 +1,7 @@
 #ifndef FILEUTIL__H
 #define FILEUTIL__H
 
+#include <iostream>
 #include <sstream>
 #include <sys/stat.h>
 using namespace std;

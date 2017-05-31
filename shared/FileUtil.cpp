@@ -3,7 +3,7 @@
 bool FileUtil::mkDirectory(string dir){
 	if(isDirectory(dir))
 		return false;
-	if (mkdir(dir.c_str(),755) != 0){
+	if (mkdir(dir.c_str(),0777) != 0){
 		return false;
 	}
 	return true;
@@ -26,7 +26,7 @@ bool FileUtil::mkPath(string path){
 	string str;
 	string dir = "";
 	while(getline(ss,str,'/')){
-		dir += "/" + str;
+		dir += str + "/";
 		mkDirectory(dir);			
 	}
 	if(isDirectory(path)){
