@@ -1,4 +1,9 @@
 #test argument file
 analysis = "one"
+max_runs = 10;
 one_filename = "test.csv"
 one_origin = [1,0]
+one_patterns = ["","","","",""]
+one_directory = "."
+one_controls = [0]
+one_columns = [1,2]

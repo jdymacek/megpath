@@ -2,7 +2,7 @@
 //Matthew Dyer
 //Julian Dymacek
 //Created on 5/25/2017
-//Last modified: 5/30/2017
+//Last modified: 5/31/2017
 
 //#define EIGEN_DEFAULT_TO_ROW_MAJOR
 
@@ -320,8 +320,8 @@ int main(int argc, char** argv){
 		columns = val.asVector();
 	}
 
-	cout << "From the CSVFile:\n";
 	vector<vector<Value> > csv = file.readCSV(filename);
+/*	cout << "From the CSVFile:\n";
 	for(int y = origin[1].asInt(); y < csv.size(); ++y){
 		for(int x = origin[0].asInt(); x < csv[y].size(); ++x){
 			cout << csv[y][x].asDouble() << " ";
@@ -329,10 +329,11 @@ int main(int argc, char** argv){
 		cout << "\n";
 	}
 	cout << "\n";
+*/
 
 	//expression matrix
 	ROWS = csv.size() - origin[1].asInt();
-	COLUMNS = csv[0].size() - origin[0].asInt();
+	COLUMNS = columns.size();
 
 	expression = MatrixXd(ROWS,COLUMNS);
 	expression = MatrixXd::Zero(ROWS,COLUMNS);
@@ -340,16 +341,19 @@ int main(int argc, char** argv){
 	newExpression = MatrixXd(ROWS,COLUMNS);
 	newExpression = MatrixXd::Zero(ROWS,COLUMNS);
 
-	for(int y = 0; y < ROWS; ++y){
-		for(int x = 0; x < COLUMNS; ++x){
-			expression(y,x) = csv[y+origin[1].asInt()][x+origin[0].asInt()].asDouble();
+	for(int i = 0; i < ROWS; ++i){
+		for(int j = 0; j < COLUMNS; ++j){
+			if(columns[j].asInt() == j){
+				expression(i,j) = csv[i+origin[1].asInt()][j+origin[0].asInt()].asDouble();
+			}
 		}
 	}
 
 	normalize(expression);
 
-	cout << "After Normalizing:\n";
+/*	cout << "After Normalizing:\n";
 	cout << expression << "\n";
+*/
 
 	//test arg information
 	cout << "directory = " << directory << endl;
