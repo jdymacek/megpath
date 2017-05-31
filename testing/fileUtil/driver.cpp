@@ -18,5 +18,12 @@ int main(){
 	cout << "Is '../../shared/FileUtil.h' a directory?\n";
 	cout << FileUtil::isDirectory("../../shared/FileUtil.h") << endl;
 
+	cout << "Making the directory 'testDir' :\n";
+	FileUtil::mkDirectory("testDir");
+
+	cout << "Make the path: 'testDir/this/path/out/please' :\n";
+	FileUtil::mkPath("testDir/this/path/out/please");
+	cout << endl;
+
 	return 0;
 }
