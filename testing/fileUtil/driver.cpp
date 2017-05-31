@@ -3,7 +3,8 @@
 //Created on 5/31/2017
 //Last Modified: 5/31/2017
 
-#include<iostream>
+#include <iostream>
+#include <fstream>
 #include "../../shared/FileUtil.h"
 
 using namespace std;
@@ -26,10 +27,15 @@ int main(){
 	cout << endl;
 
 	cout << "Making a unique file for 'testDir/file.txt'.\n";
-	FileUtil::uniqueFile("testDir/file.txt");
+	ofstream outFile;
+	outFile.open(FileUtil::uniqueFile("testDir/file.txt"));
+	outFile << "Three rings for the elven kings under the sky.";
+	outFile.close();
 
 	cout << "Making a unique file for 'testDir/file.txt' again.\n";
-	FileUtil::uniqueFile("testDir/file.txt");
+	outFile.open(FileUtil::uniqueFile("testDir/file.txt"));
+	outFile << "Seven for the dwarf lords in their halls of stone.";
+	outFile.close();
 
 	return 0;
 }
