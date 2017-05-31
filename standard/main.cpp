@@ -340,20 +340,30 @@ int main(int argc, char** argv){
 
 	newExpression = MatrixXd(ROWS,COLUMNS);
 	newExpression = MatrixXd::Zero(ROWS,COLUMNS);
+	
+	if(columns.size() != controls.size() && args.isArgument(analysis + "controls")){
+		cout << "Columns and controls must be the same size.";
+		return 0;
+	}
 
 	for(int i = 0; i < ROWS; ++i){
 		for(int j = 0; j < COLUMNS; ++j){
-			expression(i,j) = csv[i+origin[1].asInt()][columns[j].asInt()+origin[0].asInt()].asDouble();
+			if(columns.size() == controls.size()){
+				expression(i,j) = csv[i+origin[1].asInt()][columns[j].asInt()+origin[0].asInt()].asDouble() - csv[i+origin[1].asInt()][controls[j].asInt()+origin[0].asInt()].asDouble();
+			}else{
+				expression(i,j) = csv[i+origin[1].asInt()][columns[j].asInt()+origin[0].asInt()].asDouble();
+			}
 		}
 	}
-	
+
+
 	cout << expression << endl;
 
 	normalize(expression);
 
-/*	cout << "After Normalizing:\n";
-	cout << expression << "\n";
-*/
+	/*	cout << "After Normalizing:\n";
+		cout << expression << "\n";
+	 */
 
 	//test arg information
 	cout << "directory = " << directory << endl;
@@ -382,7 +392,7 @@ int main(int argc, char** argv){
 		if(args.isArgument(findPattern)){
 			Value newVal = args.getArgument(findPattern);
 			intoMatrix = newVal.asVector();
-			
+
 			ShiftPF* shared = new ShiftPF();			
 			vector<Entry> constraints(intoMatrix.size(),{0,0,0});
 			for(int j = 0; j < intoMatrix.size(); ++j){
