@@ -94,7 +94,7 @@ string errorDistribution(int b){
 	return ss.str();
 }
 
-double findError(int y,int x){
+double findError(){
 	//use patterns and coefficients to generate new matrix
 	newExpression.noalias() = expression;
 	newExpression.noalias() -= (coefficients.matrix*patterns.matrix);
@@ -116,11 +116,20 @@ double findErrorColumn(int y,int x){
 }
 
 
+double findError(NMFMatrix& m,int y,int x){
+	ProbFunc* prob = m.functions[y][x];
+	if(prob->size() > 1){
+		return findError();
+	}
+	return m.errorFunction(y,x);
+}
+
+
 void monteCarloMatrix(NMFMatrix& m){
 	for(int y =0; y < m.rows; ++y){
 		for(int x =0; x < m.columns; ++x){
 			ProbFunc* function = m.functions[y][x];
-			double oldError = m.errorFunction(y,x);
+			double oldError = findError(m,y,x);
 			double r = function->random();
 			if(function->size() == 1){
 				m.matrix(y,x) = r;				
@@ -130,7 +139,7 @@ void monteCarloMatrix(NMFMatrix& m){
 					m.matrix(e.y,e.x) = e.val;
 				}
 			}			
-			double error = m.errorFunction(y,x);
+			double error = findError(m,y,x);
 			if(error <= oldError){
 				function->addObservation(r);
 			}
@@ -149,11 +158,11 @@ void monteCarlo(){
 		monteCarloMatrix(patterns);
 		monteCarloMatrix(coefficients);
 		if(i % 1000 == 0){
-			double error = findError(0,0);
+			double error = findError();
 			cout << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
 	}
-	cout << "Final Error: " << findError(0,0) << endl;
+	cout << "Final Error: " << findError() << endl;
 	cout << "Error Histogram: " << errorDistribution(10) << endl;	
 	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
 }
@@ -169,7 +178,7 @@ void annealStep(NMFMatrix& m,double t){
 
 	for(int y =0; y < m.rows; y++){
 		for(int x =0; x < m.columns; x++){
-			double olderror = m.errorFunction(y,x);
+			double olderror = findError(m,y,x);
 
 			ProbFunc* function = m.functions[y][x];
 			double r = function->random();  
@@ -191,7 +200,7 @@ void annealStep(NMFMatrix& m,double t){
 				}
 			}		
 
-			double error = m.errorFunction(y,x);
+			double error = findError(m,y,x);
 			if(!accept(error-olderror,t)){
 				for(int i =0; i < function->size(); ++i){
 					m.matrix(entries[i].y,entries[i].x) = entries[i].val;
@@ -214,7 +223,7 @@ void anneal(){
 		annealStep(coefficients,t);
 		annealStep(patterns,t);
 		if(ndx % 1000 == 0){
-			double error = findError(0,0);
+			double error = findError();
 			cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 			if(abs(formerError - error) < 0.005 && error < formerError)
 				running = false;
@@ -223,7 +232,7 @@ void anneal(){
 		ndx++;
 		t *= 0.99975;
 	}
-	formerError = findError(0,0);
+	formerError = findError();
 	cout << "Final Error: " << formerError << endl;
 	cout << "Error Histogram: " << errorDistribution(10) << endl;
 	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
