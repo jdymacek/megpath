@@ -7,8 +7,9 @@ using namespace std;
 
 
 class FileUtil{
-static bool mkDirectory(string dir);
-static bool isDirectory(string path);
-static bool mkPath(string path);
+	public:
+		static bool mkDirectory(string dir);
+		static bool isDirectory(string path);
+		static bool mkPath(string path);
 };
 #endif
