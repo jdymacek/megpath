@@ -2,3 +2,6 @@
 test_*
 connmf
 distnmf
+*.aux
+*.log
+*.pdf
