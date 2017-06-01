@@ -2,7 +2,7 @@
 //Matthew Dyer
 //Julian Dymacek
 //Created on 5/25/2017
-//Last modified: 5/31/2017
+//Last modified: 6/1/2017
 
 //#define EIGEN_DEFAULT_TO_ROW_MAJOR
 
@@ -342,10 +342,10 @@ int main(int argc, char** argv){
 	cout << "] \n";
 
 	//should be PATTERNS and COLUMNS
-	NMFMatrix patterns = NMFMatrix(PATTERNS,COLUMNS,&findErrorColumn);
+	patterns = NMFMatrix(PATTERNS,COLUMNS,&findErrorColumn);
 
 	//should be ROWS and PATTERNS
-	NMFMatrix coefficients = NMFMatrix(ROWS,PATTERNS,&findErrorRow);
+	coefficients = NMFMatrix(ROWS,PATTERNS,&findErrorRow);
 
 
 	for(int i = 0; i < patternArgs.size(); ++i){
