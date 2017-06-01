@@ -1,21 +1,10 @@
-#include <iostream>
-#include <cmath>
-#include "../../Eigen/Core"
-#include "NMFMatrix.h"
-#include "ProbFunc.h"
-
-using namespace std;
-using namespace Eigen;
-
-static int ROWS;
-static int COLUMNS;
-static int MAX_RUNS;
-
-static UniformPF* uniform;
-NMFMatrix patterns;
-NMFMatrix coefficients;
-MatrixXd  expression;
-MatrixXd  newExpression;
+/*
+	Globals.cpp
+		Matthew Dyer
+			Created on 6/1/2017
+			Last Modified: 6/1/2017
+*/
+#include "Globals.h"
 
 void normalize(MatrixXd& m){
 	double max = m.maxCoeff();
@@ -71,7 +60,6 @@ double findError(NMFMatrix& m,int y,int x){
 	}
 	return m.errorFunction(y,x);
 }
-
 
 void monteCarloMatrix(NMFMatrix& m){
 	for(int y =0; y < m.rows; ++y){

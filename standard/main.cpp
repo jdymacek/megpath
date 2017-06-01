@@ -21,94 +21,10 @@
 #include "HistoPF.h"
 #include "UniformPF.h"
 #include "../../Eigen/Core"
+#include "Globals.cpp"
 
 using namespace std;
 using namespace Eigen;
-
-static int ROWS;
-static int COLUMNS;
-static int MAX_RUNS;
-
-static UniformPF* uniform;
-NMFMatrix patterns;
-NMFMatrix coefficients;
-MatrixXd  expression;
-MatrixXd  newExpression;
-
-//vector or string?
-string errorDistribution(int b){
-	vector<int> bins(b,0);
-	newExpression = coefficients.matrix*patterns.matrix;
-	for(int y = 0; y < expression.rows(); ++y){
-		for(int x = 0; x < expression.cols(); ++x){
-			double e = abs(expression(y,x)-newExpression(y,x));
-			bins[(int)(e*bins.size())] += 1;
-		}
-	}
-	stringstream ss;
-	ss << "[";
-	for(int i =0; i < bins.size(); ++i){
-		ss << bins[i];
-		if(i != bins.size()-1)
-			ss << ",";
-	}
-	ss << "]";
-	return ss.str();
-}
-
-double findError(){
-	//use patterns and coefficients to generate new matrix
-	newExpression.noalias() = expression;
-	newExpression.noalias() -= (coefficients.matrix*patterns.matrix);
-	return (newExpression.cwiseAbs()).sum();
-}
-
-double findErrorRow(int y,int x){
-	//multiply row from cofficients to pattern matrix
-	newExpression.noalias() = expression.row(y);
-	newExpression.noalias() -= (coefficients.matrix.row(y) * patterns.matrix);
-	return (newExpression.cwiseAbs()).sum();
-}
-
-
-double findErrorColumn(int y,int x){
-	newExpression.noalias() = expression.col(x);
-	newExpression.noalias() -= (coefficients.matrix * patterns.matrix.col(x));
-	return (newExpression.cwiseAbs()).sum();
-}
-
-
-double findError(NMFMatrix& m,int y,int x){
-	ProbFunc* prob = m.functions[y][x];
-	if(prob->size() > 1){
-		return findError();
-	}
-	return m.errorFunction(y,x);
-}
-
-
-void monteCarloMatrix(NMFMatrix& m){
-	for(int y =0; y < m.rows; ++y){
-		for(int x =0; x < m.columns; ++x){
-			ProbFunc* function = m.functions[y][x];
-			double oldError = findError(m,y,x);
-			double r = function->random();
-			if(function->size() == 1){
-				m.matrix(y,x) = r;				
-			}else{
-				for(int k=0; k < function->size(); ++k){
-					Entry e = function->getEntry(k);
-					m.matrix(e.y,e.x) = e.val;
-				}
-			}			
-			double error = findError(m,y,x);
-			if(error <= oldError){
-				function->addObservation(r);
-			}
-		}
-	}
-}
-
 
 /*Run a monte carlo markov chain*/
 void monteCarlo(){
@@ -127,50 +43,6 @@ void monteCarlo(){
 	cout << "Final Error: " << findError() << endl;
 	cout << "Error Histogram: " << errorDistribution(10) << endl;	
 	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
-}
-
-bool accept(double de, double t){
-	return de < 0 ||  exp(-de/t) > uniform->random();
-}
-
-void annealStep(NMFMatrix& m,double t){
-
-	vector<Entry> entries;
-	entries.push_back({0,0,0});
-
-	for(int y =0; y < m.rows; y++){
-		for(int x =0; x < m.columns; x++){
-			double olderror = findError(m,y,x);
-
-			ProbFunc* function = m.functions[y][x];
-			double r = function->random();  
-			if(function->size() == 1){
-				entries[0].x = x;
-				entries[0].y = y;
-				entries[0].val = m.matrix(y,x);
-				m.matrix(y,x) = r;
-			}else{
-				while(entries.size() < function->size()){
-					entries.push_back({0,0,0});
-				}
-				for(int k=0; k < function->size(); ++k){
-					Entry e = function->getEntry(k);
-					double old = m.matrix(e.y,e.x);
-					m.matrix(e.y,e.x) = e.val;
-					e.val = old;
-					entries[k] = e;
-				}
-			}		
-
-			double error = findError(m,y,x);
-			if(!accept(error-olderror,t)){
-				for(int i =0; i < function->size(); ++i){
-					m.matrix(entries[i].y,entries[i].x) = entries[i].val;
-				}
-				//newExpression = coefficients.matrix*patterns.matrix;
-			}
-		}
-	}
 }
 
 void anneal(){
@@ -198,14 +70,6 @@ void anneal(){
 	cout << "Final Error: " << formerError << endl;
 	cout << "Error Histogram: " << errorDistribution(10) << endl;
 	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
-}
-
-
-void normalize(MatrixXd& m){
-	double max = m.maxCoeff();
-	double min = m.minCoeff();
-	m = m.array() - min;
-	m = m/(max-min);
 }
 
 int main(int argc, char** argv){
@@ -283,6 +147,7 @@ int main(int argc, char** argv){
 	}
 
 	vector<vector<Value> > csv = file.readCSV(filename);
+
 /*	cout << "From the CSVFile:\n";
 	for(int y = origin[1].asInt(); y < csv.size(); ++y){
 		for(int x = origin[0].asInt(); x < csv[y].size(); ++x){
@@ -318,8 +183,7 @@ int main(int argc, char** argv){
 		}
 	}
 
-
-	cout << expression << endl;
+	//cout << expression << endl;
 
 	normalize(expression);
 
@@ -347,7 +211,6 @@ int main(int argc, char** argv){
 	//should be ROWS and PATTERNS
 	coefficients = NMFMatrix(ROWS,PATTERNS,&findErrorRow);
 
-
 	for(int i = 0; i < patternArgs.size(); ++i){
 		vector<Value> intoMatrix;
 		string findPattern = patternArgs[i].asString();
@@ -368,13 +231,11 @@ int main(int argc, char** argv){
 		}
 	}
 
-
 	monteCarlo();
 	anneal();		
 
 	patterns.write(analysis + "patterns.csv");
 	coefficients.write(analysis + "coefficients.csv");
-
 
 	ofstream fout;
 	fout.open(analysis + "expression.txt");
