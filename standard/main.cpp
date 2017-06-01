@@ -11,6 +11,7 @@
 #include <cmath>
 #include <vector>
 #include <iostream>
+#include "NMFMatrix.h"
 #include "Stopwatch.h"
 #include "Value.h"
 #include "ShiftPF.h"
@@ -28,50 +29,11 @@ static int ROWS;
 static int COLUMNS;
 static int MAX_RUNS;
 
-
-struct NMFMatrix{
-	MatrixXd matrix;
-	ProbFunc*** functions;
-	int rows;
-	int columns;	
-	double (*errorFunction)(int,int);
-};
-
 static UniformPF* uniform;
 NMFMatrix patterns;
 NMFMatrix coefficients;
 MatrixXd  expression;
 MatrixXd  newExpression;
-
-void writeNMFMatrix(NMFMatrix& mat,string filename){
-	ofstream fout;
-	fout.open(filename);
-	for(int y = 0; y < mat.matrix.rows(); ++y){
-		for(int x = 0; x < mat.matrix.cols(); ++x){
-			fout << mat.matrix(y,x);
-			if(x != mat.matrix.cols()-1)
-				fout << ",";
-		}
-		fout << "\n";
-	}
-	fout.close();
-}
-
-
-void createNMFMatrix(NMFMatrix& rv,int rows,int columns,double (*functionPtr)(int, int)){
-	//	rv.matrix = MatrixXd(rows,columns);
-	rv.errorFunction = functionPtr;
-	rv.matrix = MatrixXd::Zero(rows,columns);
-	rv.rows = rows;
-	rv.columns = columns;
-	rv.functions = new ProbFunc**[rows];
-	for(int i =0; i < rows; ++i){
-		rv.functions[i] = new ProbFunc*[columns];
-		for(int j =0; j < columns; ++j){
-			rv.functions[i][j] = new HistoPF();
-		}
-	}	
-}
 
 //vector or string?
 string errorDistribution(int b){
@@ -250,7 +212,7 @@ int main(int argc, char** argv){
 
 	ProbFunc::generator.seed(time(0));
 
-	//declare variabls
+	//declare variables
 	int PATTERNS = 0;
 	ArgFile args;
 	CSVFile file;
@@ -261,7 +223,7 @@ int main(int argc, char** argv){
 	vector<Value> controls;
 	vector<Value> columns;
 	vector<Value> patternArgs;
-
+		
 	uniform = new UniformPF();
 
 	if(argc < 2){
@@ -380,10 +342,10 @@ int main(int argc, char** argv){
 	cout << "] \n";
 
 	//should be PATTERNS and COLUMNS
-	createNMFMatrix(patterns,PATTERNS,COLUMNS,&findErrorColumn);
+	NMFMatrix patterns = NMFMatrix(PATTERNS,COLUMNS,&findErrorColumn);
 
 	//should be ROWS and PATTERNS
-	createNMFMatrix(coefficients,ROWS,PATTERNS,&findErrorRow);
+	NMFMatrix coefficients = NMFMatrix(ROWS,PATTERNS,&findErrorRow);
 
 
 	for(int i = 0; i < patternArgs.size(); ++i){
@@ -410,8 +372,8 @@ int main(int argc, char** argv){
 	monteCarlo();
 	anneal();		
 
-	writeNMFMatrix(patterns, analysis + "patterns.csv");
-	writeNMFMatrix(coefficients, analysis + "coefficients.csv");
+	patterns.write(analysis + "patterns.csv");
+	coefficients.write(analysis + "coefficients.csv");
 
 
 	ofstream fout;
