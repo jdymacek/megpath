@@ -21,7 +21,7 @@
 #include "HistoPF.h"
 #include "UniformPF.h"
 #include "../../Eigen/Core"
-#include "Globals.cpp"
+#include "Globals.h"
 
 using namespace std;
 using namespace Eigen;
