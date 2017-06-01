@@ -6,6 +6,13 @@
 */
 #include "Globals.h"
 
+UniformPF* uniform;
+int MAX_RUNS;
+NMFMatrix patterns;
+NMFMatrix coefficients;
+MatrixXd  expression;
+MatrixXd  newExpression;
+
 void normalize(MatrixXd& m){
 	double max = m.maxCoeff();
 	double min = m.minCoeff();

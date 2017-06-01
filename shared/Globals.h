@@ -1,3 +1,5 @@
+#ifndef GLOBALS__H
+#define GLOBALS__H
 /*
 	Globals.h
 		Matthew Dyer
@@ -14,15 +16,14 @@
 using namespace std;
 using namespace Eigen;
 
-extern int ROWS;
-extern int COLUMNS;
 extern int MAX_RUNS;
-
 extern UniformPF* uniform;
-NMFMatrix patterns;
-NMFMatrix coefficients;
-MatrixXd  expression;
-MatrixXd  newExpression;
+
+extern int MAX_RUNS;
+extern NMFMatrix patterns;
+extern NMFMatrix coefficients;
+extern MatrixXd  expression;
+extern MatrixXd  newExpression;
 
 void normalize(MatrixXd& m);
 
@@ -38,3 +39,5 @@ void monteCarloMatrix(NMFMatrix& m);
 bool accept(double de, double t);
 
 void annealStep(NMFMatrix& m,double t);
+
+#endif

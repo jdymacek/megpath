@@ -26,6 +26,7 @@
 using namespace std;
 using namespace Eigen;
 
+
 /*Run a monte carlo markov chain*/
 void monteCarlo(){
 	Stopwatch watch;
@@ -73,7 +74,8 @@ void anneal(){
 }
 
 int main(int argc, char** argv){
-
+	int ROWS = 0;
+	int COLUMNS = 0;
 	ProbFunc::generator.seed(time(0));
 
 	//declare variables
