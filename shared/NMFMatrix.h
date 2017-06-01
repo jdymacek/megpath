@@ -18,7 +18,7 @@ using namespace Eigen;
 class NMFMatrix{
 	public:
 		NMFMatrix();
-		NMFMatrix(int rowss, int cols, double (*functionPtr)(int, int)){
+		NMFMatrix(int rowss, int cols, double (*functionPtr)(int, int));
 		void writeNMFMatrix(string filename);
 
 		MatrixXd matrix;
