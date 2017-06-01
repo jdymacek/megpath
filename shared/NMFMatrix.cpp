@@ -23,7 +23,7 @@ NMFMatrix::NMFMatrix(int rowss, int cols, double (*functionPtr)(int, int)){
 
 }
 
-void NMFMatrix::writeNMFMatrix(string filename){
+void NMFMatrix::write(string filename){
 	ofstream fout;
 	fout.open(filename);
 	for(int y = 0; y < matrix.rows(); ++y){

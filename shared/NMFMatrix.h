@@ -19,7 +19,7 @@ class NMFMatrix{
 	public:
 		NMFMatrix();
 		NMFMatrix(int rowss, int cols, double (*functionPtr)(int, int));
-		void writeNMFMatrix(string filename);
+		void write(string filename);
 
 		MatrixXd matrix;
 		ProbFunc*** functions;
