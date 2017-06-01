@@ -18,8 +18,8 @@ using namespace Eigen;
 class NMFMatrix{
 	public:
 		NMFMatrix();
+		NMFMatrix(int rowss, int cols, double (*functionPtr)(int, int)){
 		void writeNMFMatrix(NMFMatrix& mat,string filename);
-		void createNMFMatrix(NMFMatrix& rv,int rows,int columns,double (*functionPtr)(int, int));
 
 		MatrixXd matrix;
 		ProbFunc*** functions;

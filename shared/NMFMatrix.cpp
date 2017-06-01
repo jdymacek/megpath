@@ -8,6 +8,21 @@
 NMFMatrix::NMFMatrix(){
 }
 
+NMFMatrix::NMFMatrix(int rowss, int cols, double (*functionPtr)(int, int)){
+	rows = rowss;
+	columns = cols;
+	errorFunction = functionPtr;
+	matrix = MatrixXd::Zero(rows,columns);
+	functions = new ProbFunc**[rows];
+	for(int i =0; i < rows; ++i){
+		functions[i] = new ProbFunc*[columns];
+		for(int j =0; j < columns; ++j){
+			functions[i][j] = new HistoPF();
+		}
+	}	
+
+}
+
 void NMFMatrix::writeNMFMatrix(NMFMatrix& mat,string filename){
 	ofstream fout;
 	fout.open(filename);
@@ -22,17 +37,3 @@ void NMFMatrix::writeNMFMatrix(NMFMatrix& mat,string filename){
 	fout.close();
 }
 
-
-void NMFMatrix::createNMFMatrix(NMFMatrix& rv,int rows,int columns,double (*functionPtr)(int, int)){
-	rv.errorFunction = functionPtr;
-	rv.matrix = MatrixXd::Zero(rows,columns);
-	rv.rows = rows;
-	rv.columns = columns;
-	rv.functions = new ProbFunc**[rows];
-	for(int i =0; i < rows; ++i){
-		rv.functions[i] = new ProbFunc*[columns];
-		for(int j =0; j < columns; ++j){
-			rv.functions[i][j] = new HistoPF();
-		}
-	}	
-}
