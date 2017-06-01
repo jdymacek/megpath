@@ -40,5 +40,6 @@ int main(int argc, char*argv[]){
 		inFile.close();
 	}
 
+	MPI_Finalize();
 	return 0;
 }
