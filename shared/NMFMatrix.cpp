@@ -23,13 +23,13 @@ NMFMatrix::NMFMatrix(int rowss, int cols, double (*functionPtr)(int, int)){
 
 }
 
-void NMFMatrix::writeNMFMatrix(NMFMatrix& mat,string filename){
+void NMFMatrix::writeNMFMatrix(string filename){
 	ofstream fout;
 	fout.open(filename);
-	for(int y = 0; y < mat.matrix.rows(); ++y){
-		for(int x = 0; x < mat.matrix.cols(); ++x){
-			fout << mat.matrix(y,x);
-			if(x != mat.matrix.cols()-1)
+	for(int y = 0; y < matrix.rows(); ++y){
+		for(int x = 0; x < matrix.cols(); ++x){
+			fout << matrix(y,x);
+			if(x != matrix.cols()-1)
 				fout << ",";
 		}
 		fout << "\n";
