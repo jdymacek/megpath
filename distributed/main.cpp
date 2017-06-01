@@ -29,7 +29,7 @@ int main(int argc, char*argv[]){
 	if(rank == 0){
 		int x = 2;
 		cout << "Hello from the master! " << "I created " << process << " processes.\n";
-		for(int i = 1; i < rank; ++i){
+		for(int i = 1; i < process; ++i){
 			MPI_Send(&x,sizeof(int),MPI_INT,i,tag,MPI_COMM_WORLD);
 		}
 	}else{
@@ -56,9 +56,9 @@ int main(int argc, char*argv[]){
 	if(rank == 0){
 		int x;
 		cout << "Begin receiving: \n";
-		for(source = 1; source < rank; ++source){
+		for(source = 1; source < process; ++source){
 			MPI_Recv(&x,sizeof(int),MPI_INT,MPI_ANY_SOURCE,tag,MPI_COMM_WORLD,&status);
-			cout << x << endl;
+			cout << "From " << source << " : " << x << endl;
 		}
 	}
 
