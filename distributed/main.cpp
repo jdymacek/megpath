@@ -2,10 +2,11 @@
 	Distributed main file
 		Matthew Dyer
 			Created on 5/31/2017
-			Last Modified: 5/31/2017
+			Last Modified: 6/1/2017
 */
 
 #include <iostream>
+#include <fstream>
 #include <unistd.h>
 #include <mpi.h>
 
@@ -23,12 +24,21 @@ int main(int argc, char*argv[]){
 	gethostname(hostname,99);
 
 	if(id == 0){
-		cout << "Hello from the master!\n";
-		cout << "I created " << process << " processes.\n";
+		cout << "Hello from the master! " << "I created " << process << " processes.\n";
+	}else{
+		string myName = "";
+		cout << hostname << " with process " << id << " says hello.\n";
+		ifstream inFile;
+		inFile.open("workingHosts");
+		while(inFile){
+			inFile >> myName;
+			if(myName == hostname){
+				cout << hostname << " on " << id << " found " << myName << ".\n";
+				break;
+			}
+		}
+		inFile.close();
 	}
 
-	cout << hostname << " with process " << id << " says hello.\n";
-
-	MPI_Finalize();
 	return 0;
 }
