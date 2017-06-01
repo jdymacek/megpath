@@ -29,9 +29,9 @@ int main(int argc, char*argv[]){
 	if(rank == 0){
 		int x = 2;
 		cout << "Hello from the master! " << "I created " << process << " processes.\n";
-//		for(int i = 1; i < rank; ++i){
-			MPI_Send(&x,sizeof(int),MPI_INT,1,tag,MPI_COMM_WORLD);
-//		}
+		for(int i = 1; i < rank; ++i){
+			MPI_Send(&x,sizeof(int),MPI_INT,i,tag,MPI_COMM_WORLD);
+		}
 	}else{
 
 		string myName = "";
@@ -47,21 +47,19 @@ int main(int argc, char*argv[]){
 		}
 		inFile.close();
 
-		if(rank == 1){
-			int y = 0;
-			MPI_Recv(&y,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD,&status);
-			y = y * 2;
-			MPI_Send(&y,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD);
-		}
+		int y = 0;
+		MPI_Recv(&y,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD,&status);
+		y = y * 2;
+		MPI_Send(&y,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD);
 	}
 
 	if(rank == 0){
 		int x;
 		cout << "Begin receiving: \n";
-//		for(source = 0; source < process; ++source){
-			MPI_Recv(&x,sizeof(int),MPI_INT,1,tag,MPI_COMM_WORLD,&status);
+		for(source = 1; source < rank; ++source){
+			MPI_Recv(&x,sizeof(int),MPI_INT,MPI_ANY_SOURCE,tag,MPI_COMM_WORLD,&status);
 			cout << x << endl;
-//		}
+		}
 	}
 
 	MPI_Finalize();
