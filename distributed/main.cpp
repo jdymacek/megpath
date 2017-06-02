@@ -9,11 +9,23 @@
 #include <fstream>
 #include <unistd.h>
 #include <mpi.h>
+#include "Globals.h"
+#include "ArgFile.h"
+#include "CSVFile.h"
+#include "Value.h"
 
 using namespace std;
 
 int main(int argc, char*argv[]){
 
+	if(argc < 2){
+		cout << "Needs an arguments file!\n";
+		return 0;
+	}
+
+	string argFile = argv[1];	
+
+	//MPI variables
 	int process = 0;
 	int rank = 0;
 	char hostname[100];
@@ -21,46 +33,77 @@ int main(int argc, char*argv[]){
 	int source;
 	MPI_Status status;
 
+	//Initialize MPI
 	MPI_Init(&argc, &argv);
 	MPI_Comm_rank (MPI_COMM_WORLD, &rank);
 	MPI_Comm_size (MPI_COMM_WORLD, &process);
 	gethostname(hostname,99);
+		
+	//grab arguments
+	ArgFile args;
+	CSVFile file;
+	int PATTERNS = 0;
+	int MAX_RUNS = 0;
+	string analysis = "";
+	string filename = "";
+	vector<Value> origin;
+	string directory = "";
+	vector<Value> controls;
+	vector<Value> columns;
+	vector<Value> patternArgs;
+		
+	args.load(argFile);
 
-	if(rank == 0){
-		int x = 2;
-		cout << "Hello from the master! " << "I created " << process << " processes.\n";
-		for(int i = 1; i < process; ++i){
-			MPI_Send(&x,sizeof(int),MPI_INT,i,tag,MPI_COMM_WORLD);
-		}
+	if(args.isArgument("analysis")){
+		Value val = args.getArgument("analysis");
+		analysis = val.asString();
+		analysis = analysis + "_";
+	}
+
+	if(args.isArgument("max_runs")){
+		Value val = args.getArgument("max_runs");
+		MAX_RUNS = val.asInt();
+	}
+
+	if(args.isArgument(analysis + "filename")){
+		Value val = args.getArgument(analysis + "filename");
+		filename = val.asString();
+	}
+
+	if(args.isArgument(analysis + "patterns")){
+		Value val = args.getArgument(analysis + "patterns");
+		patternArgs = val.asVector();
+		PATTERNS = patternArgs.size();
+	}
+
+	if(args.isArgument(analysis + "origin")){
+		Value val = args.getArgument(analysis + "origin");
+		origin = val.asVector();
 	}else{
-
-		string myName = "";
-		cout << hostname << " with process " << rank << " says hello.\n";
-		ifstream inFile;
-		inFile.open("workingHosts");
-		while(inFile){
-			inFile >> myName;
-			if(myName == hostname){
-				cout << hostname << " on " << rank << " found " << myName << ".\n";
-				break;
-			}
-		}
-		inFile.close();
-
-		int y = 0;
-		MPI_Recv(&y,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD,&status);
-		y = y * 2;
-		MPI_Send(&y,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD);
+		Value val;
+		origin.push_back(val);
+		origin.push_back(val);
 	}
 
-	if(rank == 0){
-		int x;
-		cout << "Begin receiving: \n";
-		for(source = 1; source < process; ++source){
-			MPI_Recv(&x,sizeof(int),MPI_INT,MPI_ANY_SOURCE,tag,MPI_COMM_WORLD,&status);
-			cout << "From " << source << " : " << x << endl;
-		}
+	if(args.isArgument(analysis + "directory")){
+		Value val = args.getArgument(analysis + "directory");
+		directory = val.asString();
 	}
+
+	if(args.isArgument(analysis + "controls")){
+		Value val = args.getArgument(analysis + "controls");
+		controls = val.asVector();
+	}
+
+	if(args.isArgument(analysis + "columns")){
+		Value val = args.getArgument(analysis + "columns");
+		columns = val.asVector();
+	}
+
+	cout << hostname << " got : " << analysis << " " << MAX_RUNS << " " << filename << endl;
+
+	//MPI_Send(&y,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD);
+	//MPI_Recv(&y,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD,&status);
 
 	MPI_Finalize();
 	return 0;
