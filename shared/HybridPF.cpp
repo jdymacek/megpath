@@ -1,15 +1,16 @@
-//HybridPF.h
+//HybridPF.cpp
 //Matthew Dyer
 //Created on 6/2/2017
 //Last Modified: 6/2/2017
 
 #include "HybridPF.h"
 
-HybridPF::HybridPF(){
+HybridPF::HybridPF(int samps){
+	samples = samps;
 }
 
 double HybridPF::random(){
-	if(n < 1000){
+	if(n < samples){
 		++n;
 		return unif.random();
 	}
@@ -21,5 +22,8 @@ void HybridPF::addObservation(double obs){
 }
 
 string HybridPF::toString(){
-	return "TODO";
+	if(n < samples){
+		return unif.toString();
+	}
+	return norm.toString();
 }

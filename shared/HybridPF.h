@@ -18,12 +18,13 @@ using namespace std;
 
 class HybridPF: public ProbFunc{
 	public:
-		HybridPF();
+		HybridPF(int samps);
 		double random();
 		void addObservation(double obs);	
 		string toString();
 	private:
-		int n;
+		int n = 0;
+		int samples = 0;
 		NormalPF norm = NormalPF(0.5,0.1);
 		UniformPF unif = UniformPF();
 };
