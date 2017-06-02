@@ -8,18 +8,26 @@
 #define NORMALPF__H
 
 #include <iostream>
+#include <sstream>
 #include <vector>
+#include <cmath>
 #include "ProbFunc.h"
 
 using namespace std;
 
 class NormalPF: public ProbFunc{
 	public:
-		NormalPF(double u,double sd);
+		NormalPF(double mu,double sd);
 		double random();
+		void addObservation(double obs);	
 		string toString();
 	private:
 		normal_distribution<double> dist;
+		int total;
+		int n;
+		double squares;
+		double mu;
+		double sd;
 };
 
 #endif

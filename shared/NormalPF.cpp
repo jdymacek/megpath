@@ -5,14 +5,29 @@
 
 #include "NormalPF.h"
 
-NormalPF::NormalPF(double u,double sd){
-	dist = normal_distribution<double>(u,sd);
+NormalPF::NormalPF(double mu,double sd){
+	dist = normal_distribution<double>(mu,sd);
 }
 
 double NormalPF::random(){
 	return dist(generator);
 }
 
+void NormalPF::addObservation(double obs){
+	total += obs;
+	++n;
+	squares += obs + obs;
+	mu = total/n;
+	sd = squares + (n * mu * mu - 2 * total * mu);
+	sd = sd/(n-1);
+	sd = sqrt(sd);
+	dist = normal_distribution<double>(mu,sd);
+}
+
 string NormalPF::toString(){
-	return "NORMAL PF -- TODO print mean and sd";
+	string rv = "";
+	stringstream ss;
+	ss << "Mean: " << mu << " Std Dev: " << sd << endl;
+	ss >> rv;
+	return rv;
 }
