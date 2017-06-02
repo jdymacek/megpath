@@ -10,7 +10,11 @@ NormalPF::NormalPF(double mu,double sd){
 }
 
 double NormalPF::random(){
-	return dist(generator);
+	double rando = dist(generator);
+	while(rando < 0.0 || rando > 1.0){
+		rando = dist(generator);
+	}
+	return rando;
 }
 
 void NormalPF::addObservation(double obs){
