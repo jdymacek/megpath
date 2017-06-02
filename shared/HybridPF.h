@@ -11,6 +11,8 @@
 #include <vector>
 #include <cmath>
 #include "ProbFunc.h"
+#include "UniformPF.h"
+#include "NormalPF.h"
 
 using namespace std;
 
@@ -22,8 +24,8 @@ class HybridPF: public ProbFunc{
 		string toString();
 	private:
 		int n;
-		normal_distribution<double> norm;
-		uniform_real_distribution<double> uni;
+		NormalPF norm = NormalPF(0.5,0.1);
+		UniformPF unif = UniformPF();
 };
 
 #endif
