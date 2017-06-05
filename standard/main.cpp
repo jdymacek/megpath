@@ -143,26 +143,22 @@ int main(int argc, char** argv){
 		controls = val.asVector();
 	}
 
-	if(args.isArgument(analysis + "columns")){
-		Value val = args.getArgument(analysis + "columns");
-		columns = val.asVector();
-	}
-
 	vector<vector<Value> > csv = file.readCSV(filename);
-
-/*	cout << "From the CSVFile:\n";
-	for(int y = origin[1].asInt(); y < csv.size(); ++y){
-		for(int x = origin[0].asInt(); x < csv[y].size(); ++x){
-			cout << csv[y][x].asDouble() << " ";
-		}
-		cout << "\n";
-	}
-	cout << "\n";
-*/
 
 	//expression matrix
 	ROWS = csv.size() - origin[1].asInt();
-	COLUMNS = columns.size();
+	ROWS = csv.size() - origin[1].asInt();
+	if(args.isArgument(analysis + "columns")){
+		Value val = args.getArgument(analysis + "columns");
+		columns = val.asVector();
+		COLUMNS = columns.size();
+	}else{
+		COLUMNS = csv[0].size() - origin[0].asInt();
+		for(int i = 0; i < COLUMNS;++i){
+			Value newVal(i);
+			columns.push_back(newVal);
+		}
+	}
 
 	expression = MatrixXd(ROWS,COLUMNS);
 	expression = MatrixXd::Zero(ROWS,COLUMNS);
