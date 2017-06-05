@@ -174,7 +174,7 @@ int main(int argc, char*argv[]){
 	newExpression = MatrixXd::Zero(ROWS,COLUMNS);
 	
 	if(columns.size() != controls.size() && args.isArgument(analysis + "controls")){
-		cout << "Columns and controls must be the same size.";
+		cout << "Columns and controls must be the same size.\n";
 		return 0;
 	}
 
@@ -236,6 +236,7 @@ int main(int argc, char*argv[]){
 			MPI_Send(&request,sizeof(int),MPI_INT,minRank,tag,MPI_COMM_WORLD);
 		}else{
 			cout << "The manager found the smallest error.\n";
+			cout << patterns.matrix << endl;
 		}
 		
 		request = 0;
@@ -243,13 +244,20 @@ int main(int argc, char*argv[]){
 			if(i != minRank){
 				MPI_Send(&request,sizeof(int),MPI_INT,i,tag,MPI_COMM_WORLD);
 			}
-		}	
+		}
+
+		if(minRank != 0){
+			MPI_Recv(patterns.matrix.data(),patterns.matrix.rows(),MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
+			cout << patterns.matrix << endl;
+		}
 
 	}else{ //I am a child
 		MPI_Recv(&flag,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD,&status);
 		if(flag == 1){
 			// I did the best! Send my matrices to the manager
 			cout << hostname << " found the smallest error.\n";
+			cout << patterns.matrix << endl;
+			MPI_Send(patterns.matrix.data(),patterns.matrix.rows(),MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
 		}
 	}
 
