@@ -37,7 +37,8 @@ void monteCarlo(){
 	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
 }
 
-void anneal(){
+void anneal(int rank){
+	int tag = 0;
 	Stopwatch watch;
 	int ndx = 0;
 	double t = 0.5;
@@ -62,6 +63,8 @@ void anneal(){
 	cout << "Final Error: " << formerError << endl;
 	cout << "Error Histogram: " << errorDistribution(10) << endl;
 	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+
+	MPI_Send(&formerError,sizeof(double),MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
 }
 
 int main(int argc, char*argv[]){
@@ -72,14 +75,13 @@ int main(int argc, char*argv[]){
 	}
 
 	ProbFunc::generator.seed(time(0));
-	string argFile = argv[1];	
+	string argFile = argv[1];
 
 	//MPI variables
 	int process = 0;
 	int rank = 0;
 	char hostname[100];
 	int tag = 0;
-	int source;
 	MPI_Status status;
 
 	//Initialize MPI
@@ -92,7 +94,6 @@ int main(int argc, char*argv[]){
 	int ROWS = 0;
 	int COLUMNS = 0;
 	int PATTERNS = 0;
-//	int MAX_RUNS = 0;
 	ArgFile args;
 	CSVFile file;
 	string analysis = "";
@@ -102,6 +103,8 @@ int main(int argc, char*argv[]){
 	vector<Value> controls;
 	vector<Value> columns;
 	vector<Value> patternArgs;
+
+	uniform = new UniformPF();
 		
 	args.load(argFile);
 
@@ -159,6 +162,8 @@ int main(int argc, char*argv[]){
 	ROWS = csv.size() - origin[1].asInt();
 	COLUMNS = columns.size();
 
+	double minError = ROWS * COLUMNS;
+
 	expression = MatrixXd(ROWS,COLUMNS);
 	expression = MatrixXd::Zero(ROWS,COLUMNS);
 
@@ -211,7 +216,20 @@ int main(int argc, char*argv[]){
 	}
 
 	monteCarlo();
-	anneal();	
+	anneal(rank);
+
+	if(rank == 0){
+		double err;
+		for(int i = 0; i < process; ++i){
+			MPI_Recv(&err,sizeof(double),MPI_DOUBLE,i,tag,MPI_COMM_WORLD,&status);
+			if(err < minError){
+				minError = err;
+			}
+		}	
+		cout << "Minimum error: " << minError << endl;
+	}
+
+
 	
 /*
 	patterns.write(analysis + "patterns.csv");
