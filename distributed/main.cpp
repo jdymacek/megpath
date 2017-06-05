@@ -51,7 +51,7 @@ void anneal(int rank){
 		annealStep(patterns,t);
 		if(ndx % 1000 == 0){
 			double error = findError();
-		//	cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
+			//	cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 			if(abs(formerError - error) < 0.005 && error < formerError)
 				running = false;
 			formerError = error;
@@ -84,7 +84,7 @@ int main(int argc, char*argv[]){
 	char hostname[100];
 	int tag = 0;
 	MPI_Status status;
-	
+
 	int flag = 0;
 
 	//Initialize MPI
@@ -92,7 +92,7 @@ int main(int argc, char*argv[]){
 	MPI_Comm_rank (MPI_COMM_WORLD, &rank);
 	MPI_Comm_size (MPI_COMM_WORLD, &process);
 	gethostname(hostname,99);
-		
+
 	//grab arguments
 	int ROWS = 0;
 	int COLUMNS = 0;
@@ -108,7 +108,7 @@ int main(int argc, char*argv[]){
 	vector<Value> patternArgs;
 
 	uniform = new UniformPF();
-		
+
 	args.load(argFile);
 
 	if(args.isArgument("analysis")){
@@ -172,7 +172,7 @@ int main(int argc, char*argv[]){
 
 	newExpression = MatrixXd(ROWS,COLUMNS);
 	newExpression = MatrixXd::Zero(ROWS,COLUMNS);
-	
+
 	if(columns.size() != controls.size() && args.isArgument(analysis + "controls")){
 		cout << "Columns and controls must be the same size.\n";
 		return 0;
@@ -238,7 +238,7 @@ int main(int argc, char*argv[]){
 			cout << "The manager found the smallest error.\n";
 			cout << patterns.matrix << endl;
 		}
-		
+
 		request = 0;
 		for(int i = 0; i < process; ++i){
 			if(i != minRank){
@@ -263,16 +263,16 @@ int main(int argc, char*argv[]){
 		}
 	}
 
-	
-/*
-	patterns.write(analysis + "patterns.csv");
-	coefficients.write(analysis + "coefficients.csv");
+	if(rank == 0){
+		//write out the best matrices to files
+		patterns.write(analysis + "patterns.csv");
+		coefficients.write(analysis + "coefficients.csv");
 
-	ofstream fout;
-	fout.open(analysis + "expression.txt");
-	fout << coefficients.matrix*patterns.matrix;
-	fout.close();
-*/
+		ofstream fout;
+		fout.open(analysis + "expression.txt");
+		fout << coefficients.matrix*patterns.matrix;
+		fout.close();
+	}
 
 	//MPI_Send(&y,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD);
 	//MPI_Recv(&y,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD,&status);
