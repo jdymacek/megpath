@@ -247,7 +247,8 @@ int main(int argc, char*argv[]){
 		}
 
 		if(minRank != 0){
-			MPI_Recv(patterns.matrix.data(),patterns.matrix.rows(),MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
+			MPI_Recv(patterns.matrix.data(),patterns.matrix.rows()*patterns.matrix.cols(),MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
+			MPI_Recv(coefficients.matrix.data(),coefficients.matrix.rows()*coefficients.matrix.cols(),MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
 			cout << patterns.matrix << endl;
 		}
 
@@ -256,8 +257,9 @@ int main(int argc, char*argv[]){
 		if(flag == 1){
 			// I did the best! Send my matrices to the manager
 			cout << hostname << " found the smallest error.\n";
-			cout << patterns.matrix << endl;
-			MPI_Send(patterns.matrix.data(),patterns.matrix.rows(),MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
+			cout << hostname <<" matrix: \n" << patterns.matrix << endl;
+			MPI_Send(patterns.matrix.data(),patterns.matrix.rows()*patterns.matrix.cols(),MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
+			MPI_Send(coefficients.matrix.data(),coefficients.matrix.rows()*coefficients.matrix.cols(),MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
 		}
 	}
 
