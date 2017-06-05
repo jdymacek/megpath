@@ -2,7 +2,7 @@
 	Distributed main file
 	Matthew Dyer
 	Created on 5/31/2017
-	Last Modified: 6/1/2017
+	Last Modified: 6/5/2017
  */
 
 #include <iostream>
@@ -14,6 +14,7 @@
 #include "CSVFile.h"
 #include "Value.h"
 #include "Stopwatch.h"
+#include "ShiftPF.h"
 
 using namespace std;
 
@@ -70,6 +71,7 @@ int main(int argc, char*argv[]){
 		return 0;
 	}
 
+	ProbFunc::generator.seed(time(0));
 	string argFile = argv[1];	
 
 	//MPI variables
@@ -87,10 +89,12 @@ int main(int argc, char*argv[]){
 	gethostname(hostname,99);
 		
 	//grab arguments
+	int ROWS = 0;
+	int COLUMNS = 0;
+	int PATTERNS = 0;
+//	int MAX_RUNS = 0;
 	ArgFile args;
 	CSVFile file;
-	int PATTERNS = 0;
-	int MAX_RUNS = 0;
 	string analysis = "";
 	string filename = "";
 	vector<Value> origin;
@@ -148,6 +152,76 @@ int main(int argc, char*argv[]){
 	}
 
 	cout << hostname << " got : " << analysis << " " << MAX_RUNS << " " << filename << endl;
+
+	vector<vector<Value> > csv = file.readCSV(filename);
+
+	//expression matrix
+	ROWS = csv.size() - origin[1].asInt();
+	COLUMNS = columns.size();
+
+	expression = MatrixXd(ROWS,COLUMNS);
+	expression = MatrixXd::Zero(ROWS,COLUMNS);
+
+	newExpression = MatrixXd(ROWS,COLUMNS);
+	newExpression = MatrixXd::Zero(ROWS,COLUMNS);
+	
+	if(columns.size() != controls.size() && args.isArgument(analysis + "controls")){
+		cout << "Columns and controls must be the same size.";
+		return 0;
+	}
+
+	for(int i = 0; i < ROWS; ++i){
+		for(int j = 0; j < COLUMNS; ++j){
+			if(columns.size() == controls.size()){
+				expression(i,j) = csv[i+origin[1].asInt()][columns[j].asInt()+origin[0].asInt()].asDouble() - csv[i+origin[1].asInt()][controls[j].asInt()+origin[0].asInt()].asDouble();
+			}else{
+				expression(i,j) = csv[i+origin[1].asInt()][columns[j].asInt()+origin[0].asInt()].asDouble();
+			}
+		}
+	}
+
+	cout << expression << endl;
+
+	normalize(expression);
+
+	//should be PATTERNS and COLUMNS
+	patterns = NMFMatrix(PATTERNS,COLUMNS,&findErrorColumn);
+
+	//should be ROWS and PATTERNS
+	coefficients = NMFMatrix(ROWS,PATTERNS,&findErrorRow);
+
+	for(int i = 0; i < patternArgs.size(); ++i){
+		vector<Value> intoMatrix;
+		string findPattern = patternArgs[i].asString();
+		if(args.isArgument(findPattern)){
+			Value newVal = args.getArgument(findPattern);
+			intoMatrix = newVal.asVector();
+
+			ShiftPF* shared = new ShiftPF();			
+			vector<Entry> constraints(intoMatrix.size(),{0,0,0});
+			for(int j = 0; j < intoMatrix.size(); ++j){
+				patterns.matrix(i,j) = intoMatrix[j].asDouble();
+				patterns.functions[i][j] = shared;	
+				constraints[j].x = j;
+				constraints[j].y = i;
+				constraints[j].val = patterns.matrix(i,j);	
+			}
+			shared->setEntries(constraints);
+		}
+	}
+
+	monteCarlo();
+	anneal();	
+	
+/*
+	patterns.write(analysis + "patterns.csv");
+	coefficients.write(analysis + "coefficients.csv");
+
+	ofstream fout;
+	fout.open(analysis + "expression.txt");
+	fout << coefficients.matrix*patterns.matrix;
+	fout.close();
+*/
 
 	//MPI_Send(&y,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD);
 	//MPI_Recv(&y,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD,&status);
