@@ -13,8 +13,55 @@
 #include "ArgFile.h"
 #include "CSVFile.h"
 #include "Value.h"
+#include "Stopwatch.h"
 
 using namespace std;
+
+/*Run a monte carlo markov chain*/
+void monteCarlo(){
+	Stopwatch watch;
+	watch.start();
+
+	//For each spot take a gamble and record outcome
+	for(int i =0; i < MAX_RUNS; i++){
+		monteCarloMatrix(patterns);
+		monteCarloMatrix(coefficients);
+		if(i % 1000 == 0){
+			double error = findError();
+			cout << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
+		}
+	}
+	cout << "Final Error: " << findError() << endl;
+	cout << "Error Histogram: " << errorDistribution(10) << endl;	
+	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+}
+
+void anneal(){
+	Stopwatch watch;
+	int ndx = 0;
+	double t = 0.5;
+	watch.start();
+
+	double formerError = 2*expression.rows()*expression.cols();
+	bool running = true;
+	while(running && ndx < MAX_RUNS){
+		annealStep(coefficients,t);
+		annealStep(patterns,t);
+		if(ndx % 1000 == 0){
+			double error = findError();
+			cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
+			if(abs(formerError - error) < 0.005 && error < formerError)
+				running = false;
+			formerError = error;
+		}
+		ndx++;
+		t *= 0.99975;
+	}
+	formerError = findError();
+	cout << "Final Error: " << formerError << endl;
+	cout << "Error Histogram: " << errorDistribution(10) << endl;
+	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+}
 
 int main(int argc, char*argv[]){
 
