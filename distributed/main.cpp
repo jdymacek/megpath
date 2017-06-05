@@ -29,7 +29,7 @@ void monteCarlo(){
 		monteCarloMatrix(coefficients);
 		if(i % 1000 == 0){
 			double error = findError();
-			cout << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
+			//cout << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
 	}
 	cout << "Final Error: " << findError() << endl;
@@ -51,7 +51,7 @@ void anneal(int rank){
 		annealStep(patterns,t);
 		if(ndx % 1000 == 0){
 			double error = findError();
-			cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
+		//	cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 			if(abs(formerError - error) < 0.005 && error < formerError)
 				running = false;
 			formerError = error;
@@ -76,6 +76,7 @@ int main(int argc, char*argv[]){
 
 	ProbFunc::generator.seed(time(0));
 	string argFile = argv[1];
+	int minRank = 0;
 
 	//MPI variables
 	int process = 0;
@@ -83,6 +84,8 @@ int main(int argc, char*argv[]){
 	char hostname[100];
 	int tag = 0;
 	MPI_Status status;
+	
+	int flag = 0;
 
 	//Initialize MPI
 	MPI_Init(&argc, &argv);
@@ -218,17 +221,37 @@ int main(int argc, char*argv[]){
 	monteCarlo();
 	anneal(rank);
 
-	if(rank == 0){
-		double err;
+	if(rank == 0){ //I am the manager
+		double err = 0;
 		for(int i = 0; i < process; ++i){
 			MPI_Recv(&err,sizeof(double),MPI_DOUBLE,i,tag,MPI_COMM_WORLD,&status);
 			if(err < minError){
 				minError = err;
+				minRank = i;
 			}
 		}	
 		cout << "Minimum error: " << minError << endl;
-	}
+		int request = 1;
+		if(minRank != 0){
+			MPI_Send(&request,sizeof(int),MPI_INT,minRank,tag,MPI_COMM_WORLD);
+		}else{
+			cout << "The manager found the smallest error.\n";
+		}
+		
+		request = 0;
+		for(int i = 0; i < process; ++i){
+			if(i != minRank){
+				MPI_Send(&request,sizeof(int),MPI_INT,i,tag,MPI_COMM_WORLD);
+			}
+		}	
 
+	}else{ //I am a child
+		MPI_Recv(&flag,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD,&status);
+		if(flag == 1){
+			// I did the best! Send my matrices to the manager
+			cout << hostname << " found the smallest error.\n";
+		}
+	}
 
 	
 /*
