@@ -29,7 +29,7 @@ void monteCarlo(){
 		monteCarloMatrix(coefficients);
 		if(i % 1000 == 0){
 			double error = findError();
-			//cout << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
+			cout << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
 	}
 	cout << "Final Error: " << findError() << endl;
@@ -51,7 +51,7 @@ void anneal(int rank){
 		annealStep(patterns,t);
 		if(ndx % 1000 == 0){
 			double error = findError();
-			//	cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
+				cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 			if(abs(formerError - error) < 0.005 && error < formerError)
 				running = false;
 			formerError = error;
@@ -165,6 +165,10 @@ int main(int argc, char*argv[]){
 		COLUMNS = columns.size();
 	}else{
 		COLUMNS = csv[0].size() - origin[0].asInt();
+		for(int i = 0; i < COLUMNS;++i){
+			Value newVal(i);
+			columns.push_back(newVal);
+		}
 	}
 
 	double minError = ROWS * COLUMNS;
@@ -190,7 +194,7 @@ int main(int argc, char*argv[]){
 		}
 	}
 
-	cout << expression << endl;
+//	cout << expression << endl;
 
 	normalize(expression);
 

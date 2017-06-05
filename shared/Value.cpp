@@ -8,6 +8,12 @@ Value::Value(string d){
 	data = d;
 }
 
+Value::Value(int d){
+	stringstream ss;
+	ss << d;
+	data = ss.str();
+}
+
 int Value::asInt() const{
 	string str = data;
 	return atoi(str.c_str());
