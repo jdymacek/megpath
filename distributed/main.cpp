@@ -152,10 +152,6 @@ int main(int argc, char*argv[]){
 		controls = val.asVector();
 	}
 
-	if(args.isArgument(analysis + "columns")){
-		Value val = args.getArgument(analysis + "columns");
-		columns = val.asVector();
-	}
 
 	cout << hostname << " got : " << analysis << " " << MAX_RUNS << " " << filename << endl;
 
@@ -163,7 +159,13 @@ int main(int argc, char*argv[]){
 
 	//expression matrix
 	ROWS = csv.size() - origin[1].asInt();
-	COLUMNS = columns.size();
+	if(args.isArgument(analysis + "columns")){
+		Value val = args.getArgument(analysis + "columns");
+		columns = val.asVector();
+		COLUMNS = columns.size();
+	}else{
+		COLUMNS = csv[0].size() - origin[0].asInt();
+	}
 
 	double minError = ROWS * COLUMNS;
 
