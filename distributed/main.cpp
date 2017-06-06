@@ -1,14 +1,16 @@
 /*
+	int source = 0;
 	Distributed main file
 	Matthew Dyer
 	Created on 5/31/2017
-	Last Modified: 6/5/2017
+	Last Modified: 6/6/2017
  */
 
 #include <iostream>
 #include <fstream>
 #include <unistd.h>
 #include <mpi.h>
+#include <string.h>
 #include "Globals.h"
 #include "ArgFile.h"
 #include "CSVFile.h"
@@ -18,8 +20,13 @@
 
 using namespace std;
 
+double *buf;
+
 /*Run a monte carlo markov chain*/
-void monteCarlo(){
+void monteCarlo(int myRank, char* myHost, int numProcs){
+	int tag = 0;
+	MPI_Request req;
+	double* myBuf = new double[patterns.matrix.size()+1];
 	Stopwatch watch;
 	watch.start();
 
@@ -29,15 +36,38 @@ void monteCarlo(){
 		monteCarloMatrix(coefficients);
 		if(i % 1000 == 0){
 			double error = findError();
-			cout << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
+			double theirError = 0;
+			buf[0] = error;
+			memcpy(&buf[1],patterns.matrix.data(),(patterns.matrix.size()+sizeof(double)));
+			MPI_Isend(&buf,sizeof(buf),MPI_DOUBLE,rand()%numProcs,tag,MPI_COMM_WORLD,&req);
+			if(myRank == 0){
+				int rows = patterns.matrix.rows();
+				int columns = patterns.matrix.cols();
+				Map<MatrixXd> mapper(&buf[1],rows,columns);
+				patterns.matrix = mapper;
+				cout << "what I sent--->" << patterns.matrix << endl;
+			}
+			MPI_Irecv(&myBuf,sizeof(myBuf),MPI_DOUBLE,MPI_ANY_SOURCE,tag,MPI_COMM_WORLD,&req);
+			if(myBuf[0] < error){
+				cout << "My error was " << error << ". The better error was " << myBuf[0] << ".\n";
+				int rows = patterns.matrix.rows();
+				int columns = patterns.matrix.cols();
+				Map<MatrixXd> mapper(&myBuf[1],rows,columns);
+				patterns.matrix = mapper;
+				if(myRank == 0){
+					cout << "what I got--->" << patterns.matrix << endl;
+				}
+			}
+			cout << myHost << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
 	}
-	cout << "Final Error: " << findError() << endl;
-	cout << "Error Histogram: " << errorDistribution(10) << endl;	
-	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+	cout << myHost << "\tFinal Error: " << findError() << endl;
+	cout << myHost << "\tError Histogram: " << errorDistribution(10) << endl;	
+	cout << myHost << "\tTotal time: " << watch.formatTime(watch.stop()) << endl;
+	delete myBuf;
 }
 
-void anneal(int rank){
+void anneal(int myRank, char* myHost, int numProcs){
 	int tag = 0;
 	Stopwatch watch;
 	int ndx = 0;
@@ -51,7 +81,7 @@ void anneal(int rank){
 		annealStep(patterns,t);
 		if(ndx % 1000 == 0){
 			double error = findError();
-				cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
+			cout << myHost << ": " << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 			if(abs(formerError - error) < 0.005 && error < formerError)
 				running = false;
 			formerError = error;
@@ -60,14 +90,16 @@ void anneal(int rank){
 		t *= 0.99975;
 	}
 	formerError = findError();
-	cout << "Final Error: " << formerError << endl;
-	cout << "Error Histogram: " << errorDistribution(10) << endl;
-	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+	cout << myHost << "\tFinal Error: " << findError() << endl;
+	cout << myHost << "\tError Histogram: " << errorDistribution(10) << endl;	
+	cout << myHost << "\tTotal time: " << watch.formatTime(watch.stop()) << endl;
 
 	MPI_Send(&formerError,sizeof(double),MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
 }
 
 int main(int argc, char*argv[]){
+	Stopwatch watch;
+	watch.start();
 
 	if(argc < 2){
 		cout << "Needs an arguments file!\n";
@@ -75,6 +107,7 @@ int main(int argc, char*argv[]){
 	}
 
 	ProbFunc::generator.seed(time(0));
+	srand(time(0));
 	string argFile = argv[1];
 	int minRank = 0;
 
@@ -194,12 +227,12 @@ int main(int argc, char*argv[]){
 		}
 	}
 
-//	cout << expression << endl;
-
 	normalize(expression);
 
 	//should be PATTERNS and COLUMNS
 	patterns = NMFMatrix(PATTERNS,COLUMNS,&findErrorColumn);
+
+	buf = new double[patterns.matrix.size()+1];
 
 	//should be ROWS and PATTERNS
 	coefficients = NMFMatrix(ROWS,PATTERNS,&findErrorRow);
@@ -224,11 +257,11 @@ int main(int argc, char*argv[]){
 		}
 	}
 
-	monteCarlo();
-	anneal(rank);
+	monteCarlo(rank,hostname,process);
+	anneal(rank,hostname,process);
 
 	if(rank == 0){ //I am the manager
-		double err = 0;
+/*		double err = 0;
 		for(int i = 0; i < process; ++i){
 			MPI_Recv(&err,sizeof(double),MPI_DOUBLE,i,tag,MPI_COMM_WORLD,&status);
 			if(err < minError){
@@ -256,21 +289,21 @@ int main(int argc, char*argv[]){
 			MPI_Recv(patterns.matrix.data(),patterns.matrix.rows()*patterns.matrix.cols(),MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
 			MPI_Recv(coefficients.matrix.data(),coefficients.matrix.rows()*coefficients.matrix.cols(),MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
 			cout << patterns.matrix << endl;
-		}
+		}*/
 
 	}else{ //I am a child
-		MPI_Recv(&flag,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD,&status);
+		/*MPI_Recv(&flag,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD,&status);
 		if(flag == 1){
 			// I did the best! Send my matrices to the manager
 			cout << hostname << " found the smallest error.\n";
 			cout << hostname <<" matrix: \n" << patterns.matrix << endl;
 			MPI_Send(patterns.matrix.data(),patterns.matrix.rows()*patterns.matrix.cols(),MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
 			MPI_Send(coefficients.matrix.data(),coefficients.matrix.rows()*coefficients.matrix.cols(),MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
-		}
+		}*/
 	}
 
+	//write out the best matrices to files
 	if(rank == 0){
-		//write out the best matrices to files
 		patterns.write(analysis + "patterns.csv");
 		coefficients.write(analysis + "coefficients.csv");
 
@@ -280,9 +313,13 @@ int main(int argc, char*argv[]){
 		fout.close();
 	}
 
-	//MPI_Send(&y,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD);
-	//MPI_Recv(&y,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD,&status);
-
 	MPI_Finalize();
+
+	if(rank == 0){
+		cout << "Total program running time: " << watch.formatTime(watch.stop()) << endl;
+	}
+
+	delete buf;
+	
 	return 0;
 }
