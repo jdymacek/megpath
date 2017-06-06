@@ -13,3 +13,6 @@ Arguments:
 |max_runs | the maximum number of times to run               | max_runs = **40000**                                 |
 |controls | the control columns that can be compared against | controls = *[**0,1,2,3**]*                           |
 |columns  | the columns to compare againt the controls       | columns = *[**4,5,6,7**]*                            |
+
+Notes:
+*Controls and columns must be the same size.
