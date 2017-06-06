@@ -5,22 +5,6 @@
 
 #include "StandardAnalysis.h"
 
-#include <sstream>
-#include <fstream>
-#include <cmath>
-#include <vector>
-#include <iostream>
-#include "NMFMatrix.h"
-#include "Stopwatch.h"
-#include "Value.h"
-#include "ShiftPF.h"
-#include "ArgFile.h"
-#include "CSVFile.h"
-#include "ProbFunc.h"
-#include "HistoPF.h"
-#include "UniformPF.h"
-#include "../../Eigen/Core"
-#include "Globals.h"
 
 using namespace std;
 using namespace Eigen;
@@ -51,11 +35,11 @@ void StandardAnalysis::anneal(){
 	double t = 0.5;
 	watch.start();
 
-	double formerError = 2*expression.rows()*expression.cols();
+	double formerError = 2*start->expression.rows()*start->expression.cols();
 	bool running = true;
 	while(running && ndx < MAX_RUNS){
-		annealStep(coefficients,t);
-		annealStep(patterns,t);
+		annealStep(start->coefficients,t);
+		annealStep(start->patterns,t);
 		if(ndx % 1000 == 0){
 			double error = findError();
 			cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
