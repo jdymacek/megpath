@@ -40,7 +40,7 @@ void monteCarlo(int myRank, char* myHost, int numProcs){
 			double error = findError();
 			double theirError = 0;
 			buf[0] = error;
-			memcpy(&buf[1],patterns.matrix.data(),(patterns.matrix.size()+sizeof(double)));
+			memcpy(&buf[1],patterns.matrix.data(),(patterns.matrix.size()*sizeof(double)));
 			MPI_Isend(&buf,sizeof(buf),MPI_DOUBLE,rand()%numProcs,tag,MPI_COMM_WORLD,&req);
 			MPI_Iprobe(MPI_ANY_SOURCE,tag,MPI_COMM_WORLD,&flag,&status);
 			if(flag == 1){
