@@ -1,7 +1,8 @@
 //HistoPF -- Histogram based probabilty function
 //Julian Dymacek
+//Matthew Dyer
 //Created 5/24/2017
-//Modified  5/25/2017
+//Modified on: 6/6/2017
 
 #include "HistoPF.h"
 
@@ -42,14 +43,22 @@ void HistoPF::addObservation(double v){
 
 string HistoPF::toString(){
 	stringstream ss;
-	ss << "histopf [";
 	for(int i =0; i < weights.size(); ++i){
 		ss << weights[i];
 		if(i != weights.size()-1){
 			ss << ",";
 		}
 	}
-	ss << "]";
 	return ss.str();
 }
 
+void HistoPF::fromString(string toParse){
+	stringstream ss;
+	int i = 0;
+	while(getline(ss,toParse,',')){
+		string value = ss.str();
+		weights[i] = atof(value.c_str());
+		++i;
+	}
+		
+}
