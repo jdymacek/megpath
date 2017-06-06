@@ -74,9 +74,22 @@ void anneal(){
 }
 
 int main(int argc, char** argv){
-	int ROWS = 0;
-	int COLUMNS = 0;
+	if(argc < 2){
+		cerr << "Need an argument file!";
+		return 0;
+	}
+	string argFile = argv[1];
+	Analysis* a = new StandarAnalysis();
+	a->start(argFile);
+	a->run();
+	a->stop();
+
+	return 0;
+}
+
 	ProbFunc::generator.seed(time(0));
+
+
 
 	//declare variables
 	int PATTERNS = 0;
