@@ -25,7 +25,9 @@ double *buf;
 /*Run a monte carlo markov chain*/
 void monteCarlo(int myRank, char* myHost, int numProcs){
 	int tag = 0;
+	int flag = 0;
 	MPI_Request req;
+	MPI_Status status;
 	double* myBuf = new double[patterns.matrix.size()+1];
 	Stopwatch watch;
 	watch.start();
@@ -40,22 +42,19 @@ void monteCarlo(int myRank, char* myHost, int numProcs){
 			buf[0] = error;
 			memcpy(&buf[1],patterns.matrix.data(),(patterns.matrix.size()+sizeof(double)));
 			MPI_Isend(&buf,sizeof(buf),MPI_DOUBLE,rand()%numProcs,tag,MPI_COMM_WORLD,&req);
-			if(myRank == 0){
-				int rows = patterns.matrix.rows();
-				int columns = patterns.matrix.cols();
-				Map<MatrixXd> mapper(&buf[1],rows,columns);
-				patterns.matrix = mapper;
-				cout << "what I sent--->" << patterns.matrix << endl;
-			}
-			MPI_Irecv(&myBuf,sizeof(myBuf),MPI_DOUBLE,MPI_ANY_SOURCE,tag,MPI_COMM_WORLD,&req);
-			if(myBuf[0] < error){
-				cout << "My error was " << error << ". The better error was " << myBuf[0] << ".\n";
-				int rows = patterns.matrix.rows();
-				int columns = patterns.matrix.cols();
-				Map<MatrixXd> mapper(&myBuf[1],rows,columns);
-				patterns.matrix = mapper;
-				if(myRank == 0){
-					cout << "what I got--->" << patterns.matrix << endl;
+			MPI_Iprobe(MPI_ANY_SOURCE,tag,MPI_COMM_WORLD,&flag,&status);
+			if(flag == 1){
+				int source = status.MPI_SOURCE;
+				MPI_Recv(&myBuf,sizeof(myBuf),MPI_DOUBLE,source,tag,MPI_COMM_WORLD,&status);
+				if(myBuf[0] < error){
+					cout << "My error was " << error << ". The better error was " << myBuf[0] << ".\n";
+					int rows = patterns.matrix.rows();
+					int columns = patterns.matrix.cols();
+					Map<MatrixXd> mapper(&myBuf[1],rows,columns);
+					patterns.matrix = mapper;
+					if(myRank == 0){
+						cout << "what I got--->" << patterns.matrix << endl;
+					}
 				}
 			}
 			cout << myHost << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
