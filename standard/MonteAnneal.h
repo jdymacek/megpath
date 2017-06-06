@@ -7,10 +7,11 @@
 #include <iostream>
 #include "NMFMatrix.h"
 #include "Stopwatch.h"
-#include "UniformPF.h"
+#include "ProbFunc.h"
+
 
 using namespace std;
-class MonteAnneal: Analysis{
+class MonteAnneal:public Analysis{
 	public:
 		MonteAnneal();
 		virtual bool accept(double de,double t);
@@ -21,6 +22,8 @@ class MonteAnneal: Analysis{
 		virtual void run();
 		virtual void stop();
 		virtual void start();
+	protected:
+		UniformPF* uniform;
 
 };
 

@@ -5,20 +5,68 @@
 
 #include "MonteAnneal.h"
 
-
-using namespace std;
-using namespace Eigen;
-
 bool MonteAnneal::accept(double de,double t){
-	return true;
+    return de < 0 ||  exp(-de/t) > uniform->random();
 }
 
 void MonteAnneal::monteCarloStep(NMFMatrix& m){
-
+   for(int y =0; y < m.rows; ++y){
+        for(int x =0; x < m.columns; ++x){
+            ProbFunc* function = m.functions[y][x];
+            double oldError = findError(m,y,x);
+            double r = function->random();
+            if(function->size() == 1){
+                m.matrix(y,x) = r;
+            }else{
+                for(int k=0; k < function->size(); ++k){
+                    Entry e = function->getEntry(k);
+                    m.matrix(e.y,e.x) = e.val;
+                }
+            }
+            double error = findError(m,y,x);
+            if(error <= oldError){
+                function->addObservation(r);
+            }
+        }
+    }
 }
 
 void MonteAnneal::annealStep(NMFMatrix& m, double t){
+    vector<Entry> entries;
+    entries.push_back({0,0,0});
 
+    for(int y =0; y < m.rows; y++){
+        for(int x =0; x < m.columns; x++){
+            double olderror = findError(m,y,x);
+
+            ProbFunc* function = m.functions[y][x];
+            double r = function->random();
+            if(function->size() == 1){
+                entries[0].x = x;
+                entries[0].y = y;
+                entries[0].val = m.matrix(y,x);
+                m.matrix(y,x) = r;
+            }else{
+                while(entries.size() < function->size()){
+                    entries.push_back({0,0,0});
+                }
+                for(int k=0; k < function->size(); ++k){
+                    Entry e = function->getEntry(k);
+                    double old = m.matrix(e.y,e.x);
+                    m.matrix(e.y,e.x) = e.val;
+                    e.val = old;
+                    entries[k] = e;
+                }
+            }
+
+            double error = findError(m,y,x);
+            if(!accept(error-olderror,t)){
+                for(int i =0; i < function->size(); ++i){
+                    m.matrix(entries[i].y,entries[i].x) = entries[i].val;
+                }
+            }
+        }
+    }
 }
 
 /*Run a monte carlo markov chain*/
