@@ -40,6 +40,26 @@ void monteCarlo(int myRank, char* myHost, int numProcs){
 			double theirError = 0;
 			buf[0] = error;
 			memcpy(&buf[1],patterns.matrix.data(),(patterns.matrix.size()*sizeof(double)));
+		
+			
+
+			//MPI_Pack(/*the buf and the probfuncs*/);
+	
+			//change it from trying to process strings to just using a vector of doubles
+			//getVector can return a vector from the specified ProbFunc that can be read into a double array
+			/*
+			stringstream ss;
+			for(int i = 0; i < patterns.rows; ++i){
+				for(int j = 0; j < patterns.columns; ++j){
+					ss << patterns.functions[i][j]->toString();
+					ss << " ";
+				}
+			}
+			string histos = ss.str();
+
+			char* probFuncs[histos.size()] = histos.c_str();
+			*/
+	
 			MPI_Isend(buf,sizeof(buf),MPI_DOUBLE,rand()%numProcs,tag,MPI_COMM_WORLD,&req);
 			MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&status);
 			if(flag == 1){
