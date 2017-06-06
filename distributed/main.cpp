@@ -1,5 +1,4 @@
 /*
-	int source = 0;
 	Distributed main file
 	Matthew Dyer
 	Created on 5/31/2017
@@ -41,20 +40,17 @@ void monteCarlo(int myRank, char* myHost, int numProcs){
 			double theirError = 0;
 			buf[0] = error;
 			memcpy(&buf[1],patterns.matrix.data(),(patterns.matrix.size()*sizeof(double)));
-			MPI_Isend(&buf,sizeof(buf),MPI_DOUBLE,rand()%numProcs,tag,MPI_COMM_WORLD,&req);
-			MPI_Iprobe(MPI_ANY_SOURCE,tag,MPI_COMM_WORLD,&flag,&status);
+			MPI_Isend(buf,sizeof(buf),MPI_DOUBLE,rand()%numProcs,tag,MPI_COMM_WORLD,&req);
+			MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&status);
 			if(flag == 1){
 				int source = status.MPI_SOURCE;
-				MPI_Recv(&myBuf,sizeof(myBuf),MPI_DOUBLE,source,tag,MPI_COMM_WORLD,&status);
+				MPI_Recv(myBuf,sizeof(myBuf),MPI_DOUBLE,source,tag,MPI_COMM_WORLD,&status);
 				if(myBuf[0] < error){
-					cout << "My error was " << error << ". The better error was " << myBuf[0] << ".\n";
+					cout << myHost << ": My error was " << error << ". The better error was " << myBuf[0] << ".\n";
 					int rows = patterns.matrix.rows();
 					int columns = patterns.matrix.cols();
 					Map<MatrixXd> mapper(&myBuf[1],rows,columns);
 					patterns.matrix = mapper;
-					if(myRank == 0){
-						cout << "what I got--->" << patterns.matrix << endl;
-					}
 				}
 			}
 			cout << myHost << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
@@ -89,7 +85,7 @@ void anneal(int myRank, char* myHost, int numProcs){
 		t *= 0.99975;
 	}
 	formerError = findError();
-	cout << myHost << "\tFinal Error: " << findError() << endl;
+	cout << myHost << "\t----------------------------------------------------Final Error: " << findError() << endl;
 	cout << myHost << "\tError Histogram: " << errorDistribution(10) << endl;	
 	cout << myHost << "\tTotal time: " << watch.formatTime(watch.stop()) << endl;
 
@@ -256,49 +252,42 @@ int main(int argc, char*argv[]){
 		}
 	}
 
-	monteCarlo(rank,hostname,process);
-	anneal(rank,hostname,process);
 
 	if(rank == 0){ //I am the manager
-/*		double err = 0;
-		for(int i = 0; i < process; ++i){
+		double err = 0;
+		for(int i = 1; i < process; ++i){
 			MPI_Recv(&err,sizeof(double),MPI_DOUBLE,i,tag,MPI_COMM_WORLD,&status);
 			if(err < minError){
 				minError = err;
 				minRank = i;
 			}
-		}	
-		cout << "Minimum error: " << minError << endl;
-		int request = 1;
-		if(minRank != 0){
-			MPI_Send(&request,sizeof(int),MPI_INT,minRank,tag,MPI_COMM_WORLD);
-		}else{
-			cout << "The manager found the smallest error.\n";
-			cout << patterns.matrix << endl;
 		}
 
+		int request = 1;
+		MPI_Send(&request,sizeof(int),MPI_INT,minRank,tag,MPI_COMM_WORLD);
+
 		request = 0;
-		for(int i = 0; i < process; ++i){
+		for(int i = 1; i < process; ++i){
 			if(i != minRank){
 				MPI_Send(&request,sizeof(int),MPI_INT,i,tag,MPI_COMM_WORLD);
 			}
 		}
 
-		if(minRank != 0){
-			MPI_Recv(patterns.matrix.data(),patterns.matrix.rows()*patterns.matrix.cols(),MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
-			MPI_Recv(coefficients.matrix.data(),coefficients.matrix.rows()*coefficients.matrix.cols(),MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
-			cout << patterns.matrix << endl;
-		}*/
+		MPI_Recv(patterns.matrix.data(),patterns.matrix.rows()*patterns.matrix.cols(),MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
+		MPI_Recv(coefficients.matrix.data(),coefficients.matrix.rows()*coefficients.matrix.cols(),MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
+		cout << patterns.matrix << endl;
 
 	}else{ //I am a child
-		/*MPI_Recv(&flag,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD,&status);
+		monteCarlo(rank,hostname,process);
+		anneal(rank,hostname,process);
+		MPI_Recv(&flag,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD,&status);
 		if(flag == 1){
 			// I did the best! Send my matrices to the manager
 			cout << hostname << " found the smallest error.\n";
 			cout << hostname <<" matrix: \n" << patterns.matrix << endl;
 			MPI_Send(patterns.matrix.data(),patterns.matrix.rows()*patterns.matrix.cols(),MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
 			MPI_Send(coefficients.matrix.data(),coefficients.matrix.rows()*coefficients.matrix.cols(),MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
-		}*/
+		}
 	}
 
 	//write out the best matrices to files
@@ -316,6 +305,7 @@ int main(int argc, char*argv[]){
 
 	if(rank == 0){
 		cout << "Total program running time: " << watch.formatTime(watch.stop()) << endl;
+		cout << "Minimum error: " << minError << endl;
 	}
 
 	delete buf;
