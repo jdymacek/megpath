@@ -1,117 +1,27 @@
-//Main file
-//Matthew Dyer
-//Julian Dymacek
-//Created on 5/25/2017
-//Last modified: 6/1/2017
+#include "State.h"
 
-//#define EIGEN_DEFAULT_TO_ROW_MAJOR
-
-#include <sstream>
-#include <fstream>
-#include <cmath>
-#include <vector>
-#include <iostream>
-#include "NMFMatrix.h"
-#include "Stopwatch.h"
-#include "Value.h"
-#include "ShiftPF.h"
-#include "ArgFile.h"
-#include "CSVFile.h"
-#include "ProbFunc.h"
-#include "HistoPF.h"
-#include "UniformPF.h"
-#include "../../Eigen/Core"
-#include "Globals.h"
-
-using namespace std;
-using namespace Eigen;
-
-
-/*Run a monte carlo markov chain*/
-void monteCarlo(){
-	Stopwatch watch;
-	watch.start();
-
-	//For each spot take a gamble and record outcome
-	for(int i =0; i < MAX_RUNS; i++){
-		monteCarloMatrix(patterns);
-		monteCarloMatrix(coefficients);
-		if(i % 1000 == 0){
-			double error = findError();
-			cout << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
-		}
-	}
-	cout << "Final Error: " << findError() << endl;
-	cout << "Error Histogram: " << errorDistribution(10) << endl;	
-	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+State::State(){
+	analysis = "";
+	directory = "";
+	filename = "";
 }
 
-void anneal(){
-	Stopwatch watch;
-	int ndx = 0;
-	double t = 0.5;
-	watch.start();
 
-	double formerError = 2*expression.rows()*expression.cols();
-	bool running = true;
-	while(running && ndx < MAX_RUNS){
-		annealStep(coefficients,t);
-		annealStep(patterns,t);
-		if(ndx % 1000 == 0){
-			double error = findError();
-			cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
-			if(abs(formerError - error) < 0.005 && error < formerError)
-				running = false;
-			formerError = error;
-		}
-		ndx++;
-		t *= 0.99975;
-	}
-	formerError = findError();
-	cout << "Final Error: " << formerError << endl;
-	cout << "Error Histogram: " << errorDistribution(10) << endl;
-	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
-}
-
-int main(int argc, char** argv){
-	if(argc < 2){
-		cerr << "Need an argument file!";
-		return 0;
-	}
-	string argFile = argv[1];
-	Analysis* a = new StandarAnalysis();
-	a->start(argFile);
-	a->run();
-	a->stop();
-
-	return 0;
-}
-
-	ProbFunc::generator.seed(time(0));
-
-
-
-	//declare variables
+bool State::read(string argFileName){
+	int ROWS = 0;
+	int COLUMNS = 0;
 	int PATTERNS = 0;
+	
 	ArgFile args;
 	CSVFile file;
-	string analysis = "";
-	string filename = "";
+	
 	vector<Value> origin;
-	string directory = "";
 	vector<Value> controls;
 	vector<Value> columns;
 	vector<Value> patternArgs;
 		
-	uniform = new UniformPF();
-
-	if(argc < 2){
-		cout << "Needs an arguments file!\n";
-		return 0;
-	}
-	string argFile = argv[1];	
 	//grab arguments
-	args.load(argFile);
+	args.load(argFileName);
 
 	if(args.isArgument("analysis")){
 		Value val = args.getArgument("analysis");
@@ -124,7 +34,7 @@ int main(int argc, char** argv){
 		MAX_RUNS = val.asInt();
 	}
 
-	cout << "Using analysis: " << analysis.substr(0,analysis.size()-1) << "\n";
+	//cout << "Using analysis: " << analysis.substr(0,analysis.size()-1) << "\n";
 
 	if(args.isArgument(analysis + "filename")){
 		Value val = args.getArgument(analysis + "filename");
@@ -175,13 +85,10 @@ int main(int argc, char** argv){
 
 	expression = MatrixXd(ROWS,COLUMNS);
 	expression = MatrixXd::Zero(ROWS,COLUMNS);
-
-	newExpression = MatrixXd(ROWS,COLUMNS);
-	newExpression = MatrixXd::Zero(ROWS,COLUMNS);
 	
 	if(columns.size() != controls.size() && args.isArgument(analysis + "controls")){
 		cout << "Columns and controls must be the same size.";
-		return 0;
+		return false;
 	}
 
 	for(int i = 0; i < ROWS; ++i){
@@ -196,14 +103,15 @@ int main(int argc, char** argv){
 
 	//cout << expression << endl;
 
-	normalize(expression);
+	normalize();
 
 	/*	cout << "After Normalizing:\n";
 		cout << expression << "\n";
 	 */
 
+	
 	//test arg information
-	cout << "directory = " << directory << endl;
+	/*cout << "directory = " << directory << endl;
 	cout << "max_runs = " << MAX_RUNS  << endl;
 	cout << "controls = [";
 	for(int i = 0; i < controls.size(); ++i){
@@ -215,8 +123,11 @@ int main(int argc, char** argv){
 		cout << columns[i].asDouble() << " ";
 	}
 	cout << "] \n";
+	*/
 
 	//should be PATTERNS and COLUMNS
+
+	//how to fix error
 	patterns = NMFMatrix(PATTERNS,COLUMNS,&findErrorColumn);
 
 	//should be ROWS and PATTERNS
@@ -241,16 +152,12 @@ int main(int argc, char** argv){
 			shared->setEntries(constraints);
 		}
 	}
+	return true;
+}
 
-	monteCarlo();
-	anneal();		
-
-	patterns.write(analysis + "patterns.csv");
-	coefficients.write(analysis + "coefficients.csv");
-
-	ofstream fout;
-	fout.open(analysis + "expression.txt");
-	fout << coefficients.matrix*patterns.matrix;
-	fout.close();
-	return 0;
+void State::normalize(){
+	double max = expression.maxCoeff();
+	double min = expression.minCoeff();
+	expression = expression.array() - min;
+	expression = expression/(max-min);
 }
