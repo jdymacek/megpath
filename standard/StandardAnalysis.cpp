@@ -3,22 +3,33 @@
 //Julian Dymacek
 //Created on 6/6/2017
 
-#include "StandardAnalysis.h"
+#include "MonteAnneal.h"
 
 
 using namespace std;
 using namespace Eigen;
 
+bool MonteAnneal::accept(double de,double t){
+	return true;
+}
+
+void MonteAnneal::monteCarloStep(NMFMatrix& m){
+
+}
+
+void MonteAnneal::annealStep(NMFMatrix& m, double t){
+
+}
 
 /*Run a monte carlo markov chain*/
-void StandardAnalysis::monteCarlo(){
+void MonteAnneal::monteCarlo(){
 	Stopwatch watch;
 	watch.start();
 
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < state->MAX_RUNS; i++){
-		monteCarloMatrix(state->patterns);
-		monteCarloMatrix(state->coefficients);
+		monteCarloStep(state->patterns);
+		monteCarloStep(state->coefficients);
 		if(i % 1000 == 0){
 			double error = findError();
 			cout << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
@@ -29,7 +40,7 @@ void StandardAnalysis::monteCarlo(){
 	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
 }
 
-void StandardAnalysis::anneal(){
+void MonteAnneal::anneal(){
 	Stopwatch watch;
 	int ndx = 0;
 	double t = 0.5;
@@ -56,14 +67,14 @@ void StandardAnalysis::anneal(){
 	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
 }
 
-void StandardAnalysis::run(){
+void MonteAnneal::run(){
 	//Could put stop watch in here
 	ProbFunc::generator.seed(time(0));
 	monteCarlo();
 	anneal();		
 }
 
-void StandardAnalysis::stop(){
+void MonteAnneal::stop(){
 	state->patterns.write(analysis + "patterns.csv");
 	state->coefficients.write(analysis + "coefficients.csv");
 
