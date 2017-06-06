@@ -6,6 +6,7 @@
 #define STATE__H
 
 #include "ArgFile.h"
+#include "CSVFile.h"
 #include "NMFMatrix.h"
 #include "../../Eigen/Core"
 #include <cmath>
@@ -15,14 +16,16 @@ using namespace Eigen;
 
 class State{
 	public:
+		State();
 		int MAX_RUNS;
 		NMFMatrix patterns;
 		NMFMatrix coefficients;
-		NMFMatrix expression;
+		MatrixXd expression;
 		string directory;
 		string analysis;
-		void read(string filename);
-	private:
+		string filename;
+		bool load(string argFileName);
+	protected:
 		void normalize();
 
 
