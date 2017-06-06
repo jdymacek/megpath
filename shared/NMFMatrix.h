@@ -25,6 +25,7 @@ class NMFMatrix{
 		ProbFunc*** functions;
 		int rows;
 		int columns;	
+		//Error* errorFunc;
 		double (*errorFunction)(int,int);
 };
 

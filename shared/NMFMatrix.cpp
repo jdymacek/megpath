@@ -20,7 +20,6 @@ NMFMatrix::NMFMatrix(int rowss, int cols, double (*functionPtr)(int, int)){
 			functions[i][j] = new HistoPF();
 		}
 	}	
-
 }
 
 void NMFMatrix::write(string filename){

@@ -7,7 +7,7 @@ State::State(){
 }
 
 
-bool State::read(string argFileName){
+bool State::load(string argFileName){
 	int ROWS = 0;
 	int COLUMNS = 0;
 	int PATTERNS = 0;
