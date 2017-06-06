@@ -7,6 +7,11 @@
 
 #include "ArgFile.h"
 #include "NMFMatrix.h"
+#include "../../Eigen/Core"
+#include <cmath>
+
+using namespace std;
+using namespace Eigen;
 
 class State{
 	public:
