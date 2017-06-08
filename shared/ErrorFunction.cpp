@@ -10,7 +10,7 @@ double ErrorFunction::error(){
     return (newExpression.cwiseAbs()).sum();		
 }
 
-double ErrorFunction::fastError(){
+double ErrorFunction::fastError(int y,int x){
 	return error();
 }
 

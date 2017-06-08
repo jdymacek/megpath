@@ -9,7 +9,7 @@ class ErrorFunction{
 	public:
 		ErrorFunction(State* st);
 		virtual double error();
-		virtual double fastError();
+		virtual double fastError(int y,int x);
 		string errorDistribution(int b);
 	protected:
 		MatrixXd newExpression;	
