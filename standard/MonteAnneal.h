@@ -5,9 +5,12 @@
 #include <cmath>
 #include <vector>
 #include <iostream>
+#include "Analysis.h"
 #include "NMFMatrix.h"
 #include "Stopwatch.h"
 #include "ProbFunc.h"
+#include "UniformPF.h"
+#include "ErrorFunction.h"
 #include "ErrorFunctionRow.h"
 #include "ErrorFunctionCol.h"
 
@@ -16,13 +19,12 @@ class MonteAnneal:public Analysis{
 	public:
 		MonteAnneal();
 		virtual bool accept(double de,double t);
-		virtual void monteCarloStep(NMFMatrix& m);
-		virtual void annealStep(NMFMatrix& m);
+		virtual void monteCarloStep(NMFMatrix& m,ErrorFunction* ef);
+		virtual void annealStep(NMFMatrix& m,double t, ErrorFunction* ef);
 		virtual void monteCarlo();
-		virtual void annealStep();
+		virtual void anneal();
 		virtual void run();
 		virtual void stop();
-		virtual void start();
 	protected:
 		UniformPF* uniform;
 

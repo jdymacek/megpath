@@ -5,6 +5,9 @@
 
 #include "MonteAnneal.h"
 
+
+MonteAnneal::MonteAnneal(){}
+
 bool MonteAnneal::accept(double de,double t){
     return de < 0 ||  exp(-de/t) > uniform->random();
 }
@@ -20,9 +23,9 @@ void MonteAnneal::monteCarloStep(NMFMatrix& m,ErrorFunction* ef){
             ProbFunc* function = m.functions[y][x];
 			double r = function->random();
             if(function->size() == 1){
-				oldError = ef->fastError();
+				oldError = ef->fastError(y,x);
                 m.matrix(y,x) = r;
-				error = ef->error();
+				error = ef->fastError(y,x);
             }else{
 				oldError = ef->error();
                 for(int k=0; k < function->size(); ++k){
@@ -46,17 +49,15 @@ void MonteAnneal::annealStep(NMFMatrix& m, double t,ErrorFunction* ef){
 
     for(int y =0; y < m.rows; y++){
         for(int x =0; x < m.columns; x++){
-            double olderror = findError(m,y,x);
-
             ProbFunc* function = m.functions[y][x];
             double r = function->random();
             if(function->size() == 1){
-				olderror = ef->fastError();
+				olderror = ef->fastError(y,x);
                 entries[0].x = x;
                 entries[0].y = y;
                 entries[0].val = m.matrix(y,x);
                 m.matrix(y,x) = r;
-				error = ef->error();
+				error = ef->fastError(y,x);
             }else{
                 while(entries.size() < function->size()){
                     entries.push_back({0,0,0});
@@ -84,7 +85,7 @@ void MonteAnneal::annealStep(NMFMatrix& m, double t,ErrorFunction* ef){
 void MonteAnneal::monteCarlo(){
 	Stopwatch watch;
 	watch.start();
-	ErrorFunctionRow efRow(state)
+	ErrorFunctionRow efRow(state);
 	ErrorFunctionCol efCol(state);
 
 	//For each spot take a gamble and record outcome
@@ -107,16 +108,16 @@ void MonteAnneal::anneal(){
 	double t = 0.5;
 	watch.start();
 
-    ErrorFunctionRow efRow(state)
+    ErrorFunctionRow efRow(state);
     ErrorFunctionCol efCol(state);
 
-	double formerError = 2*start->expression.rows()*start->expression.cols();
+	double formerError = 2*state->expression.rows()*state->expression.cols();
 	bool running = true;
-	while(running && ndx < MAX_RUNS){
-		annealStep(start->coefficients,t,&efCol);
-		annealStep(start->patterns,t,&efRow);
+	while(running && ndx < state->MAX_RUNS){
+		annealStep(state->coefficients,t,&efCol);
+		annealStep(state->patterns,t,&efRow);
 		if(ndx % 1000 == 0){
-			double error = efRow.findError();
+			double error = efRow.error();
 			cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 			if(abs(formerError - error) < 0.005 && error < formerError)
 				running = false;
@@ -125,7 +126,7 @@ void MonteAnneal::anneal(){
 		ndx++;
 		t *= 0.99975;
 	}
-	cout << "Final Error: " << efRow.findError() << endl;
+	cout << "Final Error: " << efRow.error() << endl;
 	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
 	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
 }
@@ -138,8 +139,8 @@ void MonteAnneal::run(){
 }
 
 void MonteAnneal::stop(){
-	state->patterns.write(analysis + "patterns.csv");
-	state->coefficients.write(analysis + "coefficients.csv");
+	state->patterns.write(state->analysis + "patterns.csv");
+	state->coefficients.write(state->analysis + "coefficients.csv");
 
 	ofstream fout;
 	fout.open(state->analysis + "expression.txt");
