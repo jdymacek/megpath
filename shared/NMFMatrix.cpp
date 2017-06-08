@@ -9,9 +9,22 @@ NMFMatrix::NMFMatrix(){
 }
 
 NMFMatrix::NMFMatrix(int rowss, int cols, double (*functionPtr)(int, int)){
+	    rows = rowss;
+    columns = cols;
+    errorFunction = functionPtr;
+    matrix = MatrixXd::Zero(rows,columns);
+    functions = new ProbFunc**[rows];
+    for(int i =0; i < rows; ++i){
+        functions[i] = new ProbFunc*[columns];
+        for(int j =0; j < columns; ++j){
+            functions[i][j] = new HistoPF();
+        }
+    }
+}
+
+NMFMatrix::NMFMatrix(int rowss, int cols){
 	rows = rowss;
 	columns = cols;
-	errorFunction = functionPtr;
 	matrix = MatrixXd::Zero(rows,columns);
 	functions = new ProbFunc**[rows];
 	for(int i =0; i < rows; ++i){

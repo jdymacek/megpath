@@ -8,7 +8,8 @@
 #include "NMFMatrix.h"
 #include "Stopwatch.h"
 #include "ProbFunc.h"
-
+#include "ErrorFunctionRow.h"
+#include "ErrorFunctionCol.h"
 
 using namespace std;
 class MonteAnneal:public Analysis{

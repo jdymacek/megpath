@@ -128,10 +128,10 @@ bool State::load(string argFileName){
 	//should be PATTERNS and COLUMNS
 
 	//how to fix error
-	patterns = NMFMatrix(PATTERNS,COLUMNS,&findErrorColumn);
+	patterns = NMFMatrix(PATTERNS,COLUMNS);
 
 	//should be ROWS and PATTERNS
-	coefficients = NMFMatrix(ROWS,PATTERNS,&findErrorRow);
+	coefficients = NMFMatrix(ROWS,PATTERNS);
 
 	for(int i = 0; i < patternArgs.size(); ++i){
 		vector<Value> intoMatrix;

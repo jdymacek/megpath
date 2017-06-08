@@ -10,6 +10,7 @@
 #include "NMFMatrix.h"
 #include "../../Eigen/Core"
 #include <cmath>
+#include "ShiftPF.h"
 
 using namespace std;
 using namespace Eigen;
