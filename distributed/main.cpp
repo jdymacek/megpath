@@ -71,7 +71,7 @@ void monteCarlo(int myRank, char* myHost, int numProcs){
 
 					double* ptr = histoBuf;
 					for(int i = 0; i < 22; ++i){
-						cout << histoBuf[i];
+						cout << ptr[i];
 					}
 				}
 			}
