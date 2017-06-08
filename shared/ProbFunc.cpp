@@ -19,3 +19,6 @@ vector<double> ProbFunc::getVector(){
 	vector<double> vec;
 	return vec;
 }
+
+void ProbFunc::setVector(vector<double> vec){
+}
