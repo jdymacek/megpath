@@ -54,11 +54,11 @@ void monteCarlo(int myRank, char* myHost, int numProcs){
 			}
 
 			int rando = (rand()%numProcs-1)+1;
-			MPI_Isend(buf,sizeof(buf),MPI_DOUBLE,rando,tag,MPI_COMM_WORLD,&req);
+			MPI_Isend(buf,23*patterns.matrix.size()+1,MPI_DOUBLE,rando,tag,MPI_COMM_WORLD,&req);
 			MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&status);
 			if(flag == 1){
 				int source = status.MPI_SOURCE;
-				MPI_Recv(myBuf,sizeof(myBuf),MPI_DOUBLE,source,tag,MPI_COMM_WORLD,&status);
+				MPI_Recv(myBuf,23*patterns.matrix.size()+1,MPI_DOUBLE,source,tag,MPI_COMM_WORLD,&status);
 				if(myBuf[0] < error){
 					cout << myHost << ": My error was " << error << ". The better error was " << myBuf[0] << ".\n";
 					int rows = patterns.matrix.rows();
@@ -116,7 +116,7 @@ void anneal(int myRank, char* myHost, int numProcs){
 	cout << myHost << "\tError Histogram: " << errorDistribution(10) << endl;	
 	cout << myHost << "\tTotal time: " << watch.formatTime(watch.stop()) << endl;
 
-	MPI_Send(&formerError,sizeof(double),MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
+	MPI_Send(&formerError,1,MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
 }
 
 int main(int argc, char*argv[]){
@@ -282,7 +282,7 @@ int main(int argc, char*argv[]){
 	if(rank == 0){ //I am the manager
 		double err = 0;
 		for(int i = 1; i < process; ++i){
-			MPI_Recv(&err,sizeof(double),MPI_DOUBLE,i,tag,MPI_COMM_WORLD,&status);
+			MPI_Recv(&err,1,MPI_DOUBLE,i,tag,MPI_COMM_WORLD,&status);
 			cout << status.MPI_SOURCE << " " << err << endl;
 			if(err < minError){
 				minError = err;
@@ -291,12 +291,12 @@ int main(int argc, char*argv[]){
 		}
 
 		int request = 1;
-		MPI_Send(&request,sizeof(int),MPI_INT,minRank,tag,MPI_COMM_WORLD);
+		MPI_Send(&request,1,MPI_INT,minRank,tag,MPI_COMM_WORLD);
 
 		request = 0;
 		for(int i = 1; i < process; ++i){
 			if(i != minRank){
-				MPI_Send(&request,sizeof(int),MPI_INT,i,tag,MPI_COMM_WORLD);
+				MPI_Send(&request,1,MPI_INT,i,tag,MPI_COMM_WORLD);
 			}
 		}
 
@@ -306,7 +306,7 @@ int main(int argc, char*argv[]){
 	}else{ //I am a child
 		monteCarlo(rank,hostname,process);
 		anneal(rank,hostname,process);
-		MPI_Recv(&flag,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD,&status);
+		MPI_Recv(&flag,1,MPI_INT,0,tag,MPI_COMM_WORLD,&status);
 		if(flag == 1){
 			// I did the best! Send my matrices to the manager
 			cout << hostname << " found the smallest error.\n";
@@ -333,7 +333,7 @@ int main(int argc, char*argv[]){
 		cout << "Total program running time: " << watch.formatTime(watch.stop()) << endl;
 		cout << "Minimum error: " << minError << endl;
 	}
-
+	
 	delete buf;
 
 	return 0;
