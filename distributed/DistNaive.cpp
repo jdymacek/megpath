@@ -50,7 +50,7 @@ void DistNaive::run(){
 	if(rank == 0){ //I am the manager
 		double err = 0;
 		for(int i = 0; i < process; ++i){
-			MPI_Recv(&err,sizeof(double),MPI_DOUBLE,i,tag,MPI_COMM_WORLD,&status);
+			MPI_Recv(&err,1,MPI_DOUBLE,i,tag,MPI_COMM_WORLD,&status);
 			if(err < minError){
 				minError = err;
 				minRank = i;
@@ -58,7 +58,7 @@ void DistNaive::run(){
 		}	
 		int request = 1;
 		if(minRank != 0){
-			MPI_Send(&request,sizeof(int),MPI_INT,minRank,tag,MPI_COMM_WORLD);
+			MPI_Send(&request,1,MPI_INT,minRank,tag,MPI_COMM_WORLD);
 		}else{
 			cout << "The manager found the smallest error.\n";
 			cout << state->patterns.matrix << endl;
@@ -67,7 +67,7 @@ void DistNaive::run(){
 		request = 0;
 		for(int i = 0; i < process; ++i){
 			if(i != minRank){
-				MPI_Send(&request,sizeof(int),MPI_INT,i,tag,MPI_COMM_WORLD);
+				MPI_Send(&request,1,MPI_INT,i,tag,MPI_COMM_WORLD);
 			}
 		}
 
@@ -79,7 +79,7 @@ void DistNaive::run(){
 		cout << "Minimum error: " << minError << endl;
 
 	}else{ //I am a child
-		MPI_Recv(&flag,sizeof(int),MPI_INT,0,tag,MPI_COMM_WORLD,&status);
+		MPI_Recv(&flag,1,MPI_INT,0,tag,MPI_COMM_WORLD,&status);
 		if(flag == 1){
 			// I did the best! Send my matrices to the manager
 			cout << hostname << " found the smallest error.\n";
