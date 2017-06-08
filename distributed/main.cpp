@@ -27,12 +27,14 @@ void monteCarlo(int myRank, char* myHost, int numProcs){
 	int flag = 0;
 	MPI_Request req;
 	MPI_Status status;
-	double* myBuf = new double[patterns.matrix.size()+1];
+	buf = new double[23*patterns.matrix.size()+1];
+	double* myBuf = new double[23*patterns.matrix.size()+1];
 	Stopwatch watch;
 	watch.start();
 
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < MAX_RUNS; i++){
+		flag = 0;
 		monteCarloMatrix(patterns);
 		monteCarloMatrix(coefficients);
 		if(i % 1000 == 0){
@@ -42,26 +44,21 @@ void monteCarlo(int myRank, char* myHost, int numProcs){
 			buf[0] = error;
 			memcpy(&buf[1],patterns.matrix.data(),(patterns.matrix.size()*sizeof(double)));
 
-			vector<vector<double> > histoVec;
+			double *ptr = &buf[patterns.matrix.size()+1];
 			for(int i = 0; i < patterns.rows; ++i){
 				for(int j = 0; j < patterns.columns; ++j){
-					histoVec.push_back(patterns.functions[i][j]->getVector());
+					vector<double> vec = patterns.functions[i][j]->getVector();
+					memcpy(ptr,vec.data(),vec.size()*sizeof(double));
+					ptr += vec.size();
 				}
 			}
 
-			double* histoBuf = new double[histoVec.size()];
-			memcpy(&histoBuf,&histoVec,histoVec.size());
-
 			int rando = rand()%numProcs;
-			tag = rando;
 			MPI_Isend(buf,sizeof(buf),MPI_DOUBLE,rando,tag,MPI_COMM_WORLD,&req);
-			MPI_Isend(histoBuf,sizeof(histoBuf),MPI_DOUBLE,rando,tag+100,MPI_COMM_WORLD,&req);
 			MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&status);
-			tag = status.MPI_TAG;
 			if(flag == 1){
 				int source = status.MPI_SOURCE;
 				MPI_Recv(myBuf,sizeof(myBuf),MPI_DOUBLE,source,tag,MPI_COMM_WORLD,&status);
-				MPI_Recv(histoBuf,sizeof(histoBuf),MPI_DOUBLE,source,tag+100,MPI_COMM_WORLD,&status);
 				if(myBuf[0] < error){
 					cout << myHost << ": My error was " << error << ". The better error was " << myBuf[0] << ".\n";
 					int rows = patterns.matrix.rows();
@@ -69,14 +66,21 @@ void monteCarlo(int myRank, char* myHost, int numProcs){
 					Map<MatrixXd> mapper(&myBuf[1],rows,columns);
 					patterns.matrix = mapper;
 
-					double* ptr = histoBuf;
-					for(int i = 0; i < 22; ++i){
-						cout << ptr[i];
+					double *ptr = &myBuf[patterns.matrix.size()+1];
+					for(int i = 0; i < patterns.rows; ++i){
+						for(int j = 0; j < patterns.columns; ++j){
+							vector<double> vec = patterns.functions[i][j]->getVector();
+							for(int k = 0; k < vec.size(); ++k){
+								vec[k] = *ptr;
+								++ptr;
+							}
+							patterns.functions[i][j]->setVector(vec);
+						}
 					}
+
 				}
 			}
 			cout << myHost << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
-			delete histoBuf;
 		}
 	}
 	cout << myHost << "\tFinal Error: " << findError() << endl;
@@ -250,7 +254,6 @@ int main(int argc, char*argv[]){
 	//should be PATTERNS and COLUMNS
 	patterns = NMFMatrix(PATTERNS,COLUMNS,&findErrorColumn);
 
-	buf = new double[patterns.matrix.size()+1];
 
 	//should be ROWS and PATTERNS
 	coefficients = NMFMatrix(ROWS,PATTERNS,&findErrorRow);
@@ -298,7 +301,6 @@ int main(int argc, char*argv[]){
 
 		MPI_Recv(patterns.matrix.data(),patterns.matrix.rows()*patterns.matrix.cols(),MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
 		MPI_Recv(coefficients.matrix.data(),coefficients.matrix.rows()*coefficients.matrix.cols(),MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
-		cout << patterns.matrix << endl;
 
 	}else{ //I am a child
 		monteCarlo(rank,hostname,process);
