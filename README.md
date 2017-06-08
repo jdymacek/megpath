@@ -14,5 +14,13 @@ Arguments:
 |controls | the control columns that can be compared against | controls = *[**0,1,2,3**]*                           |
 |columns  | the columns to compare againt the controls       | columns = *[**4,5,6,7**]*                            |
 
-Notes:
-*Controls and columns must be the same size.
+- Notes:
+  * Controls and columns must be the same size.
+
+Running the Program
+-------------------------------------------------------------
+- Standard
+	* ./connnmf <argument file>
+
+- Distributed
+	* ./run.sh distnmf **argument file** **number of hosts**
