@@ -83,6 +83,8 @@ bool State::load(string argFileName){
 		}
 	}
 
+	cout << ROWS << "x" << COLUMNS << endl;
+
 	expression = MatrixXd(ROWS,COLUMNS);
 	expression = MatrixXd::Zero(ROWS,COLUMNS);
 	

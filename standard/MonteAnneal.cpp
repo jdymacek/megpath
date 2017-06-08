@@ -90,8 +90,8 @@ void MonteAnneal::monteCarlo(){
 
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < state->MAX_RUNS; i++){
-		monteCarloStep(state->patterns,&efRow);
-		monteCarloStep(state->coefficients,&efCol);
+		monteCarloStep(state->patterns,&efCol);
+		monteCarloStep(state->coefficients,&efRow);
 		if(i % 1000 == 0){
 			double error = efRow.error();
 			cout << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
@@ -114,8 +114,8 @@ void MonteAnneal::anneal(){
 	double formerError = 2*state->expression.rows()*state->expression.cols();
 	bool running = true;
 	while(running && ndx < state->MAX_RUNS){
-		annealStep(state->coefficients,t,&efCol);
-		annealStep(state->patterns,t,&efRow);
+		annealStep(state->coefficients,t,&efRow);
+		annealStep(state->patterns,t,&efCol);
 		if(ndx % 1000 == 0){
 			double error = efRow.error();
 			cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;

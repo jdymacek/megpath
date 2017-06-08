@@ -11,6 +11,7 @@ double ErrorFunction::error(){
 }
 
 double ErrorFunction::fastError(int y,int x){
+	cout << "calling error!" << endl;
 	return error();
 }
 
