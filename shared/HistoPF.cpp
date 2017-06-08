@@ -55,3 +55,7 @@ string HistoPF::toString(){
 vector<double> HistoPF::getVector(){
 	return weights;
 }
+
+void HistoPF::setVector(vector<double> vec){
+	weights = vec;
+}
