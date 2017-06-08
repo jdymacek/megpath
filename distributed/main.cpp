@@ -53,7 +53,7 @@ void monteCarlo(int myRank, char* myHost, int numProcs){
 				}
 			}
 
-			int rando = rand()%numProcs;
+			int rando = (rand()%numProcs-1)+1;
 			MPI_Isend(buf,sizeof(buf),MPI_DOUBLE,rando,tag,MPI_COMM_WORLD,&req);
 			MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&status);
 			if(flag == 1){
@@ -283,6 +283,7 @@ int main(int argc, char*argv[]){
 		double err = 0;
 		for(int i = 1; i < process; ++i){
 			MPI_Recv(&err,sizeof(double),MPI_DOUBLE,i,tag,MPI_COMM_WORLD,&status);
+			cout << status.MPI_SOURCE << " " << err << endl;
 			if(err < minError){
 				minError = err;
 				minRank = i;
