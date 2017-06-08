@@ -6,7 +6,9 @@
 #include "MonteAnneal.h"
 
 
-MonteAnneal::MonteAnneal(){}
+MonteAnneal::MonteAnneal(){
+	uniform = new UniformPF();
+}
 
 bool MonteAnneal::accept(double de,double t){
     return de < 0 ||  exp(-de/t) > uniform->random();
