@@ -25,6 +25,7 @@ class ProbFunc{
 		virtual string toString() = 0;
 		virtual int size();
 		virtual Entry getEntry(int i);
+		virtual vector<double> getVector();
 		static default_random_engine generator;
 };
 

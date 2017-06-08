@@ -14,3 +14,8 @@ Entry ProbFunc::getEntry(int i){
 	Entry ent = {0,0,0};
 	return ent;
 }
+
+vector<double> ProbFunc::getVector(){
+	vector<double> vec;
+	return vec;
+}

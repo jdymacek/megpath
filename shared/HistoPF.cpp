@@ -52,13 +52,6 @@ string HistoPF::toString(){
 	return ss.str();
 }
 
-void HistoPF::fromString(string toParse){
-	stringstream ss;
-	int i = 0;
-	while(getline(ss,toParse,',')){
-		string value = ss.str();
-		weights[i] = atof(value.c_str());
-		++i;
-	}
-		
+vector<double> HistoPF::getVector(){
+	return weights;
 }

@@ -19,7 +19,7 @@ class HistoPF: public ProbFunc{
 		double random();
 		void addObservation(double d);
 		string toString();
-		void fromString(string toParse);
+		vector<double> getVector();
 	private:
 		piecewise_linear_distribution<double> dist;
 		vector<double> intervals;
