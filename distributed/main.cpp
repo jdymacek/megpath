@@ -38,34 +38,39 @@ void monteCarlo(int myRank, char* myHost, int numProcs){
 		if(i % 1000 == 0){
 			double error = findError();
 			double theirError = 0;
+
+			//stuff to pack
 			buf[0] = error;
 			memcpy(&buf[1],patterns.matrix.data(),(patterns.matrix.size()*sizeof(double)));
 		
-			
-
-			//MPI_Pack(/*the buf and the probfuncs*/);
-	
-			//change it from trying to process strings to just using a vector of doubles
-			//getVector can return a vector from the specified ProbFunc that can be read into a double array
-			/*
-			stringstream ss;
+			vector<vector<double> > histoVec;
 			for(int i = 0; i < patterns.rows; ++i){
 				for(int j = 0; j < patterns.columns; ++j){
-					ss << patterns.functions[i][j]->toString();
-					ss << " ";
+					histoVec.push_back(patterns.functions[i][j]->getVector());
 				}
 			}
-			string histos = ss.str();
+			
+			double* histoBuf = new double[histoVec.size()];
+			memcpy(&histoBuf,&histoVec,histoVec.size());
 
-			char* probFuncs[histos.size()] = histos.c_str();
-			*/
+			//pack it in
+			char packed[100000];
+			int position;
+			MPI_Pack(&buf,sizeof(buf),MPI_DOUBLE,packed,100000,&position,MPI_COMM_WORLD);
+			MPI_Pack(&histoBuf,sizeof(histoBuf),MPI_DOUBLE,packed,100000,&position,MPI_COMM_WORLD);
 	
-			MPI_Isend(buf,sizeof(buf),MPI_DOUBLE,rand()%numProcs,tag,MPI_COMM_WORLD,&req);
+			//send the pack
+			MPI_Isend(packed,sizeof(packed),MPI_PACKED,rand()%numProcs,tag,MPI_COMM_WORLD,&req);
 			MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&status);
 			if(flag == 1){
+				//open the pack
+				char unpacked[100000];
 				int source = status.MPI_SOURCE;
-				MPI_Recv(myBuf,sizeof(myBuf),MPI_DOUBLE,source,tag,MPI_COMM_WORLD,&status);
+				MPI_Recv(unpacked,sizeof(unpacked),MPI_PACKED,source,tag,MPI_COMM_WORLD,&status);
+				MPI_Unpack(unpacked,sizeof(unpacked),&position,myBuf,sizeof(myBuf),MPI_DOUBLE,MPI_COMM_WORLD);
+				MPI_Unpack(unpacked,sizeof(unpacked),&position,histoBuf,sizeof(histoBuf),MPI_DOUBLE,MPI_COMM_WORLD);
 				if(myBuf[0] < error){
+					//pull out the information
 					cout << myHost << ": My error was " << error << ". The better error was " << myBuf[0] << ".\n";
 					int rows = patterns.matrix.rows();
 					int columns = patterns.matrix.cols();
@@ -74,6 +79,7 @@ void monteCarlo(int myRank, char* myHost, int numProcs){
 				}
 			}
 			cout << myHost << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
+	//		delete histoBuf;
 		}
 	}
 	cout << myHost << "\tFinal Error: " << findError() << endl;
