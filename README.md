@@ -20,7 +20,7 @@ Arguments:
 Running the Program
 -------------------------------------------------------------
 - Standard
-	* ./connmf	*argument file*
+	* ./connmf	"*argument file*"
 
 - Distributed
-	* ./run.sh 	distnmf		*argument file*		*number of hosts*
+	* ./run.sh 	distnmf		"*argument file*"	"*number of hosts*"
