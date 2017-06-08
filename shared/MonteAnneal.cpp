@@ -84,7 +84,7 @@ void MonteAnneal::annealStep(NMFMatrix& m, double t,ErrorFunction* ef){
 }
 
 /*Run a monte carlo markov chain*/
-void MonteAnneal::monteCarlo(){
+double MonteAnneal::monteCarlo(){
 	Stopwatch watch;
 	watch.start();
 	ErrorFunctionRow efRow(state);
@@ -102,9 +102,10 @@ void MonteAnneal::monteCarlo(){
 	cout << "Final Error: " << efRow.error() << endl;
 	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;	
 	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+	return efRow.error();
 }
 
-void MonteAnneal::anneal(){
+double MonteAnneal::anneal(){
 	Stopwatch watch;
 	int ndx = 0;
 	double t = 0.5;
@@ -131,6 +132,7 @@ void MonteAnneal::anneal(){
 	cout << "Final Error: " << efRow.error() << endl;
 	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
 	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+	return efRow.error();
 }
 
 void MonteAnneal::run(){

@@ -45,6 +45,7 @@ void DistNaive::run(){
 	double formerError = anneal();
 
 	MPI_Send(&formerError,sizeof(double),MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
+	double minError = formerError;
 
 	if(rank == 0){ //I am the manager
 		double err = 0;
@@ -73,7 +74,7 @@ void DistNaive::run(){
 		if(minRank != 0){
 			MPI_Recv(state->patterns.matrix.data(),state->patterns.matrix.rows()*state->patterns.matrix.cols(),MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
 			MPI_Recv(state->coefficients.matrix.data(),state->coefficients.matrix.rows()*state->coefficients.matrix.cols(),MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
-			cout << patterns.matrix << endl;
+			cout << state->patterns.matrix << endl;
 		}
 		cout << "Minimum error: " << minError << endl;
 
@@ -82,7 +83,7 @@ void DistNaive::run(){
 		if(flag == 1){
 			// I did the best! Send my matrices to the manager
 			cout << hostname << " found the smallest error.\n";
-			cout << hostname <<" matrix: \n" << patterns.matrix << endl;
+			cout << hostname <<" matrix: \n" << state->patterns.matrix << endl;
 			MPI_Send(state->patterns.matrix.data(),state->patterns.matrix.rows()*state->patterns.matrix.cols(),MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
 			MPI_Send(state->coefficients.matrix.data(),state->coefficients.matrix.rows()*state->coefficients.matrix.cols(),MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
 		}
@@ -107,5 +108,4 @@ void DistNaive::stop(){
 
 	MPI_Finalize();
 
-	return 0;
 }

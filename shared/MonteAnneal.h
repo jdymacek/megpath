@@ -21,8 +21,8 @@ class MonteAnneal:public Analysis{
 		virtual bool accept(double de,double t);
 		virtual void monteCarloStep(NMFMatrix& m,ErrorFunction* ef);
 		virtual void annealStep(NMFMatrix& m,double t, ErrorFunction* ef);
-		virtual void monteCarlo();
-		virtual void anneal();
+		virtual double monteCarlo();
+		virtual double anneal();
 		virtual void run();
 		virtual void stop();
 	protected:
