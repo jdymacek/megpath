@@ -88,6 +88,7 @@ void FuncThrow::run(){
 		error = state->expression.rows()*state->expression.cols();
 		for(int i =1;i < process; ++i){
 			if(error >= allError[i]){
+				error = allError[i];
 				minRank = i;
 			}
 		}
@@ -96,16 +97,15 @@ void FuncThrow::run(){
 	MPI_Bcast(&minRank, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
 	if(rank == 0){
-	cout << "before the rank 0 receive 1" << endl; //XXX
 		MPI_Recv(state->patterns.matrix.data(),
 				state->patterns.matrix.rows()*state->patterns.matrix.cols(),
 				MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
-	cout << "before the rank 0 receive 2" << endl; //XXX
 		MPI_Recv(state->coefficients.matrix.data(),
 				state->coefficients.matrix.rows()*state->coefficients.matrix.cols(),
 				MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
 	}else if(minRank == rank){
-		cout << hostname << " is sending the final data" << endl;
+		char c = 7;
+		cout << c << hostname << " is sending the final data. The minimum error was " << error << "." << endl;
 		MPI_Send(state->patterns.matrix.data(),
 				state->patterns.matrix.rows()*state->patterns.matrix.cols(),
 				MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
