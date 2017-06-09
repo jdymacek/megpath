@@ -15,6 +15,10 @@ Entry ProbFunc::getEntry(int i){
 	return ent;
 }
 
+int ProbFunc::dataSize(){
+	return 0;
+}
+
 vector<double> ProbFunc::getVector(){
 	vector<double> vec;
 	return vec;

@@ -21,6 +21,7 @@ struct Entry{
 class ProbFunc{
 	public:
 		virtual double random() = 0;
+		virtual int dataSize();
 		virtual void addObservation(double d){ };
 		virtual string toString() = 0;
 		virtual int size();

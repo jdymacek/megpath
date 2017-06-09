@@ -35,6 +35,28 @@ NMFMatrix::NMFMatrix(int rowss, int cols){
 	}	
 }
 
+//Size in terms of doubles
+int NMFMatrix::size(){
+	int rv = 0;
+	for(int y =0; y < matrix.rows(); ++y){
+		for(int x = 0; x < matrix.cols(); ++x){
+			rv += functions[y][x]->dataSize();		
+		}
+	}
+	return rv;
+}
+
+void NMFMatrix::toDoubles(double* data){
+	memcpy(data,matrix.data(),(matrix.size()*sizeof(double)));
+	for(int y = 0; y < matrix.rows(); ++y){
+		for(int x = 0; x < matrix.rows(); ++x){
+			functions[y][x]->toDoubles(data);
+			data += functions[y][x]->dataSize();
+		}
+	}
+}
+
+
 void NMFMatrix::write(string filename){
 	ofstream fout;
 	fout.open(filename);

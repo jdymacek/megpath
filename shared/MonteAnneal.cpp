@@ -7,6 +7,7 @@
 
 
 MonteAnneal::MonteAnneal(){
+    ProbFunc::generator.seed(time(0));
 	uniform = new UniformPF();
 }
 

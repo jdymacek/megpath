@@ -19,10 +19,7 @@ void DistNaive::start(string filename){
 
 
 void DistNaive::run(){
-	Stopwatch watch;
-	watch.start();
 
-	ProbFunc::generator.seed(time(0));
 	int minRank = 0;
 
 	//MPI variables
@@ -88,10 +85,6 @@ void DistNaive::run(){
 			MPI_Send(state->coefficients.matrix.data(),state->coefficients.matrix.rows()*state->coefficients.matrix.cols(),MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
 		}
 	}
-    if(rank == 0){
-        cout << "Total program running time: " << watch.formatTime(watch.stop()) << endl;
-    }
-
 }
 
 void DistNaive::stop(){

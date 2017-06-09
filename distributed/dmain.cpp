@@ -7,6 +7,7 @@
 //#define EIGEN_DEFAULT_TO_ROW_MAJOR
 
 #include "DistNaive.h"
+#include "StopWatch.h"
 
 using namespace std;
 
@@ -18,7 +19,10 @@ int main(int argc, char** argv){
 	string argFile = argv[1];
 	Analysis* a = new DistNaive();
 	a->start(argFile);
+	Stopwatch watch;
+    watch.start();	
 	a->run();
+	cout << "Total program running time: " << watch.formatTime(watch.stop()) << endl;
 	a->stop();
 
 	return 0;
