@@ -1,5 +1,5 @@
 CC=mpic++
-CFLAGS=-O3 -c -std=c++11 -I../shared/
+CFLAGS=-O3 -c -Wfatal-errors -std=c++11 -I../shared/
 LDFLAGS=-L../shared/ 
 LIBS=
 VPATH = src:../shared
