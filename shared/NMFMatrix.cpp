@@ -46,6 +46,19 @@ int NMFMatrix::size(){
 	return rv;
 }
 
+void NMFMatrix::read(double* data){
+
+	Map<MatrixXd> mapper(data,matrix.rows(),matrix.cols());
+	matrix = mapper;
+
+    for(int y = 0; y < matrix.rows(); ++y){
+        for(int x = 0; x < matrix.rows(); ++x){
+            functions[y][x]->fromDoubles(data);
+            data += functions[y][x]->dataSize();
+        }
+    }
+}
+
 void NMFMatrix::write(double* data){
 	memcpy(data,matrix.data(),(matrix.size()*sizeof(double)));
 	for(int y = 0; y < matrix.rows(); ++y){

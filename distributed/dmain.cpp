@@ -6,8 +6,9 @@
 
 //#define EIGEN_DEFAULT_TO_ROW_MAJOR
 
+#include "FuncThrow.h"
 #include "DistNaive.h"
-#include "StopWatch.h"
+#include "Stopwatch.h"
 
 using namespace std;
 
@@ -17,7 +18,7 @@ int main(int argc, char** argv){
 		return 0;
 	}
 	string argFile = argv[1];
-	Analysis* a = new DistNaive();
+	Analysis* a = new FuncThrow();
 	a->start(argFile);
 	Stopwatch watch;
     watch.start();	

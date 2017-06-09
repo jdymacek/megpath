@@ -9,6 +9,7 @@
 #include <vector>
 #include <random>
 #include <sstream>
+#include <string.h>
 #include "ProbFunc.h"
 
 using namespace std;
@@ -23,7 +24,7 @@ class HistoPF: public ProbFunc{
 		void setVector(vector<double> vec);
 		void toDoubles(double* buffer);
 		void fromDoubles(double* buffer);
-	
+		int dataSize();	
 	private:
 		piecewise_linear_distribution<double> dist;
 		vector<double> intervals;

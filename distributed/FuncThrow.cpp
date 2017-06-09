@@ -48,7 +48,7 @@ double FuncThrow::monteCarlo(){
 		        int source = status.MPI_SOURCE;
 			    MPI_Recv(buffer,bufferSize,MPI_DOUBLE,source,tag,MPI_COMM_WORLD,&status);
 				if(buffer[0] < error){
-					state->patterns.write(&buffer[1]);
+					state->patterns.read(&buffer[1]);
 				}
 				cout << hostname << " switched patterns -- old error: " << error << endl;
 				error = efRow.error();

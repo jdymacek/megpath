@@ -53,13 +53,16 @@ string HistoPF::toString(){
 }
 
 void HistoPF::toDoubles(double* buffer){
-	
+	memcpy(buffer,weights.data(),weights.size()*sizeof(double));	
 }
 
 void HistoPF::fromDoubles(double* buffer){
-	
+	memcpy(weights.data(),buffer,weights.size()*sizeof(double));	
 }
 
+int HistoPF::dataSize(){
+	return weights.size();
+}
 
 vector<double> HistoPF::getVector(){
 	return weights;
