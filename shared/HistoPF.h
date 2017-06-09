@@ -21,6 +21,9 @@ class HistoPF: public ProbFunc{
 		string toString();
 		vector<double> getVector();
 		void setVector(vector<double> vec);
+		void toDoubles(double* buffer);
+		void fromDoubles(double* buffer);
+	
 	private:
 		piecewise_linear_distribution<double> dist;
 		vector<double> intervals;

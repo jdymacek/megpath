@@ -52,6 +52,15 @@ string HistoPF::toString(){
 	return ss.str();
 }
 
+void HistoPF::toDoubles(double* buffer){
+	
+}
+
+void HistoPF::fromDoubles(double* buffer){
+	
+}
+
+
 vector<double> HistoPF::getVector(){
 	return weights;
 }
