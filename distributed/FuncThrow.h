@@ -1,5 +1,5 @@
-#ifndef DISTNAIVE__H
-#define DISTNAIVE__H
+#ifndef FUNCTHROW__H
+#define FUNCTHROW__H
 
 #include "MonteAnneal.h"
 #include <mpi.h>
@@ -10,7 +10,7 @@ using namespace std;
 class FuncThrow: public MonteAnneal{
 	public:
 		FuncThrow();	
-		virtual void monteCarlo();
+		virtual double monteCarlo();
 		virtual void start(string filename);
 		virtual void run();
 		virtual void stop();

@@ -20,6 +20,7 @@ class NMFMatrix{
 		NMFMatrix();
 		NMFMatrix(int rowss, int cols);
 		NMFMatrix(int rowss, int cols, double (*functionPtr)(int, int));
+		void write(double* data);
 		void write(string filename);
 		int size();
 		void toDoubles(double* data);

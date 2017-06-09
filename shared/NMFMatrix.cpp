@@ -46,7 +46,7 @@ int NMFMatrix::size(){
 	return rv;
 }
 
-void NMFMatrix::toDoubles(double* data){
+void NMFMatrix::write(double* data){
 	memcpy(data,matrix.data(),(matrix.size()*sizeof(double)));
 	for(int y = 0; y < matrix.rows(); ++y){
 		for(int x = 0; x < matrix.rows(); ++x){

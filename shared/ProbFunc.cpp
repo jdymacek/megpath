@@ -19,6 +19,14 @@ int ProbFunc::dataSize(){
 	return 0;
 }
 
+void ProbFunc::toDoubles(double* buffer){
+
+}
+
+void ProbFunc::fromDoubles(double* buffer){
+
+}
+
 vector<double> ProbFunc::getVector(){
 	vector<double> vec;
 	return vec;

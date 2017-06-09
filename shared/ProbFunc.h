@@ -28,6 +28,9 @@ class ProbFunc{
 		virtual Entry getEntry(int i);
 		virtual vector<double> getVector();
 		virtual void setVector(vector<double> vec);
+		virtual void toDoubles(double* buffer);
+		virtual void fromDoubles(double* buffer);
+
 		static default_random_engine generator;
 };
 

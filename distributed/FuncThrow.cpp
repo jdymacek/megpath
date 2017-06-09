@@ -1,4 +1,6 @@
 
+#include "FuncThrow.h"
+
 FuncThrow::FuncThrow(): MonteAnneal(){}
 
 
@@ -14,13 +16,16 @@ void FuncThrow::start(string filename){
 }
 
 
-void FuncThrow::monteCarlo(){
+double FuncThrow::monteCarlo(){
 	int tag = 0;
 	int flag = 0;
 	MPI_Status status;
+	MPI_Request req;
 	int bufferSize = state->patterns.size()+1;
 	double* buffer = new double[bufferSize];
-    Stopwatch watch;
+    
+	double error = 0;
+	Stopwatch watch;
     watch.start();
 
 
@@ -33,7 +38,7 @@ void FuncThrow::monteCarlo(){
         monteCarloStep(state->coefficients,&efRow);
 
 		if(i%1000 == 0){
-			double error = efRow.error();
+			error = efRow.error();
 			buffer[0] = error;
 			state->patterns.write(&buffer[1]);	
 			int randProcess = (rand()%process-1)+1;
@@ -48,7 +53,7 @@ void FuncThrow::monteCarlo(){
 				cout << hostname << " switched patterns -- old error: " << error << endl;
 				error = efRow.error();
 			}
-			cout << myHost << ": " << i << "\t Error = " 
+			cout << hostname << ": " << i << "\t Error = " 
 				 << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
 	}
@@ -58,13 +63,13 @@ void FuncThrow::monteCarlo(){
     cout << hostname << "\tTotal time: " << watch.formatTime(watch.stop()) << endl;
 
 	delete buffer;
+
+	return error;
 }
 
 void FuncThrow::run(){
 	double error = 0;
 	double* allError;
-
-    int minRank = 0;
 
     //MPI variables
     int process = 0;
@@ -95,7 +100,7 @@ void FuncThrow::run(){
 
 	MPI_Bcast(&minRank, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
-	if(rank ==0)	
+	if(rank ==0){
 		MPI_Recv(state->patterns.matrix.data(),
 			state->patterns.matrix.rows()*state->patterns.matrix.cols(),
 			MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
@@ -113,7 +118,7 @@ void FuncThrow::run(){
 	}	
 }
 
-void DistNaive::stop(){
+void FuncThrow::stop(){
     //write out the best matrices to files
     if(rank == 0){
         state->patterns.write(state->analysis + "patterns.csv");
