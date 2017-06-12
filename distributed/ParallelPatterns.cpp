@@ -1,8 +1,12 @@
+//Parallel Patterns main file
+//Julian Dymacek
+//Matthew Dyer
+//Created on : 6/9/2017
+//Last Modified 6/12/2017
 
 #include "ParallelPatterns.h"
 
 ParallelPatterns::ParallelPatterns(): MonteAnneal(){}
-
 
 void ParallelPatterns::start(string filename){
 	MonteAnneal::start(filename);

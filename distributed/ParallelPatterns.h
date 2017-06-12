@@ -1,3 +1,8 @@
+//Parallel Patterns
+//Matthew Dyer
+//Created on : 6/9/2017
+//Last Modified 6/12/2017
+
 #ifndef PARALLELPATTERNS__H
 #define PARALLELPATTERNS__H
 
