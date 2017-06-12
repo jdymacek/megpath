@@ -19,8 +19,10 @@ void ParallelPatterns::start(string filename){
 
 	//split the coefficients
 	int split = state->coefficients.size()/size;
-	state->coefficients.resize(split,state->coefficients.columns);
+	cout << "before resize\n"; //XXX
+	//state->coefficients.resize(split,state->coefficients.columns);
 
+	cout << "after resize\n"; //XXX
 }
 
 double ParallelPatterns::monteCarlo(){
@@ -47,7 +49,7 @@ double ParallelPatterns::monteCarlo(){
 		if(i%1000 == 0){
 			error = efRow.error();
 			sendBuffer[0] = error;
-			state->patterns.write(&sendBuffer[1]);
+//			state->patterns.write(&sendBuffer[1]);
 			//all reduce
 //			state->patterns.read(&recvBuffer);
 
@@ -61,6 +63,7 @@ double ParallelPatterns::monteCarlo(){
 	cout << hostname << "\tTotal time: " << watch.formatTime(watch.stop()) << endl;
 
 	delete sendBuffer;
+	delete recvBuffer;
 
 	return error;
 }
@@ -73,7 +76,9 @@ void ParallelPatterns::run(){
 	int tag  = 0;
 	MPI_Status status;
 
-	allError = new double[size];
+	if(rank == 0)
+		allError = new double[size];
+
 	monteCarlo();
 	error = anneal();
 	cout << hostname << " has " << error << " error" << endl;

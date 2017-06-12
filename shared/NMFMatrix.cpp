@@ -6,9 +6,13 @@
 #include "NMFMatrix.h"
 
 NMFMatrix::NMFMatrix(){
+	functions = NULL;
 }
 
 NMFMatrix::~NMFMatrix(){
+	if(functions == NULL)
+		return;
+
 	for(int i =0; i < rows; ++i){
 		for(int j =0; j < columns; ++j){
 			delete functions[i][j];
@@ -86,6 +90,9 @@ void NMFMatrix::write(string filename){
 
 	
 void NMFMatrix::resize(int newRows, int newCols){
+	if(functions == NULL)
+		return;
+
 	for(int i =0; i < rows; ++i){
 		for(int j =0; j < columns; ++j){
 			delete functions[i][j];
