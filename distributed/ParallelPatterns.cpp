@@ -22,7 +22,6 @@ void ParallelPatterns::start(string filename){
 	cout << "before resize\n"; //XXX
 	state->coefficients.resize(split,state->coefficients.columns);
 
-	cout << "after resize\n"; //XXX
 }
 
 double ParallelPatterns::monteCarlo(){
@@ -38,12 +37,17 @@ double ParallelPatterns::monteCarlo(){
 	Stopwatch watch;
 	watch.start();
 
+	cout << hostname << " entering montecarlo" << endl;
+
 	ErrorFunctionRow efRow(state);
 	ErrorFunctionCol efCol(state);
 
+	cout << hostname << " starting loop" << endl;
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < state->MAX_RUNS; i++){
 		monteCarloStep(state->patterns,&efCol);
+		cout << hostname << " monteCarloStep with patterns" << endl;
+
 		monteCarloStep(state->coefficients,&efRow);
 
 		if(i%1000 == 0){
