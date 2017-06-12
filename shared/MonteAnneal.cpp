@@ -29,6 +29,7 @@ void MonteAnneal::monteCarloStep(NMFMatrix& m,ErrorFunction* ef){
 			cout << "after random value" << endl;
             if(function->size() == 1){
 				oldError = ef->fastError(y,x);
+				cout << "old error: " << oldError << endl;
                 m.matrix(y,x) = r;
 				error = ef->fastError(y,x);
             }else{
