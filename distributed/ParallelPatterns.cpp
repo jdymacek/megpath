@@ -18,9 +18,10 @@ void ParallelPatterns::start(string filename){
 	hostname = string(hostbuff);
 
 	//split the coefficients
-	int split = state->coefficients.size()/size;
+	int split = state->coefficients.rows/size;
 	cout << "before resize\n"; //XXX
 	state->coefficients.resize(split,state->coefficients.columns);
+	cout << hostname << " " << state->coefficients.matrix << endl;
 
 }
 
