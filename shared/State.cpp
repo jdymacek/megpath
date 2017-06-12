@@ -34,7 +34,7 @@ bool State::load(string argFileName){
 		MAX_RUNS = val.asInt();
 	}
 
-	//cout << "Using analysis: " << analysis.substr(0,analysis.size()-1) << "\n";
+	cout << "Using analysis: " << analysis.substr(0,analysis.size()-1) << "\n";
 
 	if(args.isArgument(analysis + "filename")){
 		Value val = args.getArgument(analysis + "filename");
@@ -66,10 +66,11 @@ bool State::load(string argFileName){
 		controls = val.asVector();
 	}
 
+	cout << filename << endl;
+
 	vector<vector<Value> > csv = file.readCSV(filename);
 
 	//expression matrix
-	ROWS = csv.size() - origin[1].asInt();
 	ROWS = csv.size() - origin[1].asInt();
 	if(args.isArgument(analysis + "columns")){
 		Value val = args.getArgument(analysis + "columns");
