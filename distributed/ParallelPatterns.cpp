@@ -17,12 +17,18 @@ void ParallelPatterns::start(string filename){
 	gethostname(hostbuff,99);
 	hostname = string(hostbuff);
 
+	cout << "Normalized: " << endl;
+	cout << state->expression << endl;
 	//split the coefficients
 	int split = state->coefficients.rows/size;
-	cout << "before resize\n"; //XXX
 	state->coefficients.resize(split,state->coefficients.columns);
-	cout << hostname << " " << state->coefficients.matrix << endl;
+	cout << hostname << " coefficients:" << endl;
+	cout << state->coefficients.matrix << endl;
+	MatrixXd temp = state->expression.block(rank*split,0,split,state->expression.cols());
+	state->expression = temp;
 
+	cout << hostname << " expression:" << endl;
+	cout << state->expression << endl;
 }
 
 double ParallelPatterns::monteCarlo(){
@@ -38,16 +44,13 @@ double ParallelPatterns::monteCarlo(){
 	Stopwatch watch;
 	watch.start();
 
-	cout << hostname << " entering montecarlo" << endl;
 
 	ErrorFunctionRow efRow(state);
 	ErrorFunctionCol efCol(state);
 
-	cout << hostname << " starting loop" << endl;
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < state->MAX_RUNS; i++){
 		monteCarloStep(state->patterns,&efCol);
-		cout << hostname << " monteCarloStep with patterns" << endl;
 
 		monteCarloStep(state->coefficients,&efRow);
 

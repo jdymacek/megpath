@@ -23,13 +23,10 @@ void MonteAnneal::monteCarloStep(NMFMatrix& m,ErrorFunction* ef){
 	double error = 0; 
 	 for(int y =0; y < m.rows; ++y){
         for(int x =0; x < m.columns; ++x){
-			cout << "starting inner loop "<< y << "," << x << endl;
             ProbFunc* function = m.functions[y][x];
 			double r = function->random();
-			cout << "after random value" << endl;
             if(function->size() == 1){
 				oldError = ef->fastError(y,x);
-				cout << "old error: " << oldError << endl;
                 m.matrix(y,x) = r;
 				error = ef->fastError(y,x);
             }else{
