@@ -23,6 +23,8 @@ void ParallelPatterns::start(string filename){
 	MPI_Comm_rank(workers, &workers_rank);
 	MPI_Comm_size(workers, &workers_size);
 
+	nums = new int[workers_size];
+
 	char hostbuff[100];
 	gethostname(hostbuff,99);
 	hostname = string(hostbuff);
@@ -148,6 +150,8 @@ void ParallelPatterns::stop(){
 		fout << state->coefficients.matrix*state->patterns.matrix;
 		fout.close();
 	}
+	
+	delete nums;
 
 	MPI_Comm_free(&workers);
 	MPI_Finalize();

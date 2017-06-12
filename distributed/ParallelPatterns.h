@@ -28,7 +28,7 @@ class ParallelPatterns: public MonteAnneal{
 		MPI_Comm workers;
 		int workers_rank;
 		int workers_size;
-		int nums[workers_size];
+		int *nums;
 
 };
 
