@@ -8,18 +8,32 @@
 NMFMatrix::NMFMatrix(){
 }
 
+NMFMatrix::~NMFMatrix(){
+	for(int i =0; i < rows; ++i){
+		for(int j =0; j < columns; ++j){
+			delete functions[i][j];
+		}
+	}
+
+	for(int i = 0; i < rows; ++i){
+		delete functions[i];
+	}
+
+	delete functions;
+}
+
 NMFMatrix::NMFMatrix(int rowss, int cols, double (*functionPtr)(int, int)){
-	    rows = rowss;
-    columns = cols;
-    errorFunction = functionPtr;
-    matrix = MatrixXd::Zero(rows,columns);
-    functions = new ProbFunc**[rows];
-    for(int i =0; i < rows; ++i){
-        functions[i] = new ProbFunc*[columns];
-        for(int j =0; j < columns; ++j){
-            functions[i][j] = new HistoPF();
-        }
-    }
+	rows = rowss;
+	columns = cols;
+	errorFunction = functionPtr;
+	matrix = MatrixXd::Zero(rows,columns);
+	functions = new ProbFunc**[rows];
+	for(int i =0; i < rows; ++i){
+		functions[i] = new ProbFunc*[columns];
+		for(int j =0; j < columns; ++j){
+			functions[i][j] = new HistoPF();
+		}
+	}
 }
 
 NMFMatrix::NMFMatrix(int rowss, int cols){
@@ -51,12 +65,12 @@ void NMFMatrix::read(double* data){
 	Map<MatrixXd> mapper(data,matrix.rows(),matrix.cols());
 	matrix = mapper;
 
-    for(int y = 0; y < matrix.rows(); ++y){
-        for(int x = 0; x < matrix.rows(); ++x){
-            functions[y][x]->fromDoubles(data);
-            data += functions[y][x]->dataSize();
-        }
-    }
+	for(int y = 0; y < matrix.rows(); ++y){
+		for(int x = 0; x < matrix.rows(); ++x){
+			functions[y][x]->fromDoubles(data);
+			data += functions[y][x]->dataSize();
+		}
+	}
 }
 
 void NMFMatrix::write(double* data){

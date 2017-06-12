@@ -18,12 +18,15 @@ using namespace Eigen;
 class NMFMatrix{
 	public:
 		NMFMatrix();
+		~NMFMatrix();
 		NMFMatrix(int rowss, int cols);
 		NMFMatrix(int rowss, int cols, double (*functionPtr)(int, int));
 		void read(double* data);
 		void write(double* data);
 		void write(string filename);
 		int size();
+
+
 		MatrixXd matrix;
 		ProbFunc*** functions;
 		int rows;
