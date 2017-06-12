@@ -1,7 +1,7 @@
 //NMFMatrix.h
 //Matthew Dyer
 //Created on 6/1/2017
-//Last Modified: 6/1/2017
+//Last Modified: 6/12/2017
 
 #ifndef NMFMATRIX__H
 #define NMFMATRIX__H
@@ -20,7 +20,6 @@ class NMFMatrix{
 		NMFMatrix();
 		~NMFMatrix();
 		NMFMatrix(int rowss, int cols);
-		NMFMatrix(int rowss, int cols, double (*functionPtr)(int, int));
 		void read(double* data);
 		void write(double* data);
 		void write(string filename);
@@ -31,8 +30,6 @@ class NMFMatrix{
 		ProbFunc*** functions;
 		int rows;
 		int columns;	
-		//Error* errorFunc;
-		double (*errorFunction)(int,int);
 };
 
 #endif
