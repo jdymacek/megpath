@@ -20,7 +20,7 @@ void ParallelPatterns::start(string filename){
 	//split the coefficients
 	int split = state->coefficients.size()/size;
 	cout << "before resize\n"; //XXX
-	//state->coefficients.resize(split,state->coefficients.columns);
+	state->coefficients.resize(split,state->coefficients.columns);
 
 	cout << "after resize\n"; //XXX
 }

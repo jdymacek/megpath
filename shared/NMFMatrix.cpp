@@ -110,7 +110,6 @@ void NMFMatrix::resize(int newRows, int newCols){
 	}
 
 	matrix.resize(newRows,newCols);
-	matrix = MatrixXd::Zero(newRows,newCols);
 
 	rows = newRows;
 	columns = newCols;
