@@ -6,5 +6,7 @@ int main(int argc, char** argv){
 		
 	state->load(filename);
 
+	state->coefficients.resize(5,state->coefficients.columns);
+
 	return 0;
 }
