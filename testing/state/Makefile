@@ -5,7 +5,7 @@ LIBS=
 VPATH = src:../../shared
 SOURCES=CSVFile.cpp ProbFunc.cpp HistoPF.cpp ShiftPF.cpp NMFMatrix.cpp Value.cpp ArgFile.cpp State.cpp driver.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=state
+EXECUTABLE=test_state
 
 all: $(SOURCES) $(EXECUTABLE) 
 
