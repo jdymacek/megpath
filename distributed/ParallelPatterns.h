@@ -23,13 +23,6 @@ class ParallelPatterns: public MonteAnneal{
 		int rank;
 		int size;
 		string hostname;
-		
-		//for allgather
-		MPI_Comm workers;
-		int workers_rank;
-		int workers_size;
-		int *nums;
-
 };
 
 

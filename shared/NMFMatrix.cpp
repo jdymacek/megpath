@@ -10,20 +10,23 @@ NMFMatrix::NMFMatrix(){
 }
 
 NMFMatrix::~NMFMatrix(){
-	if(functions == NULL)
+	if(functions == NULL){
 		return;
+	}else{
 
-	for(int i =0; i < rows; ++i){
-		for(int j =0; j < columns; ++j){
-			delete functions[i][j];
+		for(int i =0; i < rows; ++i){
+			for(int j =0; j < columns; ++j){
+				delete functions[i][j];
+			}
 		}
-	}
 
-	for(int i = 0; i < rows; ++i){
-		delete functions[i];
-	}
+		for(int i = 0; i < rows; ++i){
+			delete functions[i];
+		}
 
-	delete functions;
+		delete functions;
+
+	}
 }
 
 NMFMatrix::NMFMatrix(int rowss, int cols){
@@ -88,23 +91,24 @@ void NMFMatrix::write(string filename){
 	fout.close();
 }
 
-	
+
 void NMFMatrix::resize(int newRows, int newCols){
-	if(functions == NULL)
-		return;
+	if(functions != NULL){
 
-	for(int i =0; i < rows; ++i){
-		for(int j =0; j < columns; ++j){
-			delete functions[i][j];
+		for(int i =0; i < rows; ++i){
+			for(int j =0; j < columns; ++j){
+				delete functions[i][j];
+			}
 		}
+
+		for(int i = 0; i < rows; ++i){
+			delete functions[i];
+		}
+
+		delete functions;
+
 	}
 
-	for(int i = 0; i < rows; ++i){
-		delete functions[i];
-	}
-
-	delete functions;
-	
 	matrix.resize(newRows,newCols);
 	matrix = MatrixXd::Zero(newRows,newCols);
 

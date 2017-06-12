@@ -20,7 +20,7 @@ int main(int argc, char** argv){
 	Analysis* a = new ParallelPatterns();
 	a->start(argFile);
 	Stopwatch watch;
-    watch.start();	
+	watch.start();	
 	a->run();
 	cout << "Total program running time: " << watch.formatTime(watch.stop()) << endl;
 	a->stop();
