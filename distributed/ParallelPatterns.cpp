@@ -132,7 +132,7 @@ void ParallelPatterns::run(){
 
 	if(rank != 0 && workers_rank == 0){
 		cout << ">-----[ ";
-		for(int i = 0; i < size; ++i){
+		for(int i = 0; i < workers_size; ++i){
 			cout << nums[i] << " ";
 		}
 		cout << "]-----<" << endl;
