@@ -25,7 +25,7 @@ class NMFMatrix{
 		void write(double* data);
 		void write(string filename);
 		int size();
-
+		void resize(int newRows, int newCols);
 
 		MatrixXd matrix;
 		ProbFunc*** functions;

@@ -98,3 +98,32 @@ void NMFMatrix::write(string filename){
 	fout.close();
 }
 
+	
+void NMFMatrix::resize(int newRows, int newCols){
+	for(int i =0; i < rows; ++i){
+		for(int j =0; j < columns; ++j){
+			delete functions[i][j];
+		}
+	}
+
+	for(int i = 0; i < rows; ++i){
+		delete functions[i];
+	}
+
+	delete functions;
+	
+	matrix.resize(newRows,newCols);
+	matrix = MatrixXd::Zero(newRows,newCols);
+
+	rows = newRows;
+	columns = newCols;
+
+	functions = new ProbFunc**[rows];
+	for(int i =0; i < rows; ++i){
+		functions[i] = new ProbFunc*[columns];
+		for(int j =0; j < columns; ++j){
+			functions[i][j] = new HistoPF();
+		}
+	}
+
+}
