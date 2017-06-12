@@ -21,8 +21,14 @@ class ParallelPatterns: public MonteAnneal{
 		virtual void stop();
 	protected:
 		int rank;
+		int size;
 		string hostname;
-		int process;
+		
+		//for allgather
+		MPI_Comm workers;
+		int workers_rank;
+		int workers_size;
+		int nums[workers_size];
 
 };
 

@@ -12,7 +12,17 @@ void ParallelPatterns::start(string filename){
 	MonteAnneal::start(filename);
 	MPI_Init(NULL,NULL);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	MPI_Comm_size (MPI_COMM_WORLD, &process);
+	MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+	if(rank != 0){
+		MPI_Comm_split(MPI_COMM_WORLD, 0, rank, &workers);
+	}else{
+		MPI_Comm_split(MPI_COMM_WORLD, 1, rank, &workers);
+	}
+		
+	MPI_Comm_rank(workers, &workers_rank);
+	MPI_Comm_size(workers, &workers_size);
+
 	char hostbuff[100];
 	gethostname(hostbuff,99);
 	hostname = string(hostbuff);
@@ -40,10 +50,11 @@ double ParallelPatterns::monteCarlo(){
 		monteCarloStep(state->coefficients,&efRow);
 
 		if(i%1000 == 0){
-			error = efRow.error();
+		MPI_Allgather(&workers_rank, 1, MPI_INT, nums, 1, MPI_INT, workers);
+			/*error = efRow.error();
 			buffer[0] = error;
 			state->patterns.write(&buffer[1]);	
-			int randProcess = (rand()%(process-1))+1;
+			int randProcess = (rand()%(size-1))+1;
 			MPI_Isend(buffer,bufferSize,MPI_DOUBLE,randProcess,tag,MPI_COMM_WORLD,&req);
 			MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&status);
 			if(flag == 1){
@@ -54,7 +65,7 @@ double ParallelPatterns::monteCarlo(){
 				}
 				cout << hostname << " switched patterns -- old error: " << error << endl;
 				error = efRow.error();
-			}
+			}*/
 			cout << hostname << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
 	}
@@ -76,9 +87,8 @@ void ParallelPatterns::run(){
 	int tag  = 0;
 	MPI_Status status;
 
-
 	if(rank == 0){
-		allError = new double[process];
+		allError = new double[size];
 	}else{
 		monteCarlo();
 		error = anneal();
@@ -90,7 +100,7 @@ void ParallelPatterns::run(){
 	int minRank = 0;
 	if(rank == 0){
 		error = state->expression.rows()*state->expression.cols();
-		for(int i =1;i < process; ++i){
+		for(int i =1;i < size; ++i){
 			if(error >= allError[i]){
 				error = allError[i];
 				minRank = i;
@@ -117,6 +127,14 @@ void ParallelPatterns::run(){
 				state->coefficients.matrix.rows()*state->coefficients.matrix.cols(),
 				MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
 	}
+
+	if(rank != 0 && workers_rank == 0){
+		cout << ">-----[ ";
+		for(int i = 0; i < size; ++i){
+			cout << nums[i] << " ";
+		}
+		cout << "]-----<" << endl;
+	}
 }
 
 void ParallelPatterns::stop(){
@@ -131,6 +149,7 @@ void ParallelPatterns::stop(){
 		fout.close();
 	}
 
+	MPI_Comm_free(&workers);
 	MPI_Finalize();
 
 }
