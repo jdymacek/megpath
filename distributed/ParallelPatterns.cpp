@@ -13,21 +13,13 @@ void ParallelPatterns::start(string filename){
 	MPI_Init(NULL,NULL);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
-
-	if(rank != 0){
-		MPI_Comm_split(MPI_COMM_WORLD, 0, rank, &workers);
-	}else{
-		MPI_Comm_split(MPI_COMM_WORLD, 1, rank, &workers);
-	}
-		
-	MPI_Comm_rank(workers, &workers_rank);
-	MPI_Comm_size(workers, &workers_size);
-
-	nums = new int[workers_size];
-
 	char hostbuff[100];
 	gethostname(hostbuff,99);
 	hostname = string(hostbuff);
+
+	//split the coefficients
+	int split = state->coefficients.size()/size;
+	state->coefficients.resize(split,state->coefficients.columns);
 
 }
 
@@ -37,7 +29,8 @@ double ParallelPatterns::monteCarlo(){
 	MPI_Status status;
 	MPI_Request req;
 	int bufferSize = state->patterns.size()+1;
-	double* buffer = new double[bufferSize];
+	double* sendBuffer = new double[bufferSize];
+	double* recvBuffer = new double[bufferSize];
 
 	double error = 0;
 	Stopwatch watch;
@@ -52,31 +45,22 @@ double ParallelPatterns::monteCarlo(){
 		monteCarloStep(state->coefficients,&efRow);
 
 		if(i%1000 == 0){
-		MPI_Allgather(&workers_rank, 1, MPI_INT, nums, 1, MPI_INT, workers);
-			/*error = efRow.error();
-			buffer[0] = error;
-			state->patterns.write(&buffer[1]);	
-			int randProcess = (rand()%(size-1))+1;
-			MPI_Isend(buffer,bufferSize,MPI_DOUBLE,randProcess,tag,MPI_COMM_WORLD,&req);
-			MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&status);
-			if(flag == 1){
-				int source = status.MPI_SOURCE;
-				MPI_Recv(buffer,bufferSize,MPI_DOUBLE,source,tag,MPI_COMM_WORLD,&status);
-				if(buffer[0] < error){
-					state->patterns.read(&buffer[1]);
-				}
-				cout << hostname << " switched patterns -- old error: " << error << endl;
-				error = efRow.error();
-			}*/
+			error = efRow.error();
+			sendBuffer[0] = error;
+			state->patterns.write(&sendBuffer[1]);
+			//all reduce
+//			state->patterns.read(&recvBuffer);
+
 			cout << hostname << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
+
 	}
 
 	cout << hostname << "\tFinal Error: " << efRow.error() << endl;
 	cout << hostname << "\tError Histogram: " << efRow.errorDistribution(10) << endl;
 	cout << hostname << "\tTotal time: " << watch.formatTime(watch.stop()) << endl;
 
-	delete buffer;
+	delete sendBuffer;
 
 	return error;
 }
@@ -89,13 +73,10 @@ void ParallelPatterns::run(){
 	int tag  = 0;
 	MPI_Status status;
 
-	if(rank == 0){
-		allError = new double[size];
-	}else{
-		monteCarlo();
-		error = anneal();
-		cout << hostname << " has " << error << " error" << endl;
-	}
+	allError = new double[size];
+	monteCarlo();
+	error = anneal();
+	cout << hostname << " has " << error << " error" << endl;
 
 	MPI_Gather(&error, 1, MPI_DOUBLE, allError, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
@@ -130,13 +111,6 @@ void ParallelPatterns::run(){
 				MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
 	}
 
-	if(rank != 0 && workers_rank == 0){
-		cout << ">-----[ ";
-		for(int i = 0; i < workers_size; ++i){
-			cout << nums[i] << " ";
-		}
-		cout << "]-----<" << endl;
-	}
 }
 
 void ParallelPatterns::stop(){
@@ -151,9 +125,6 @@ void ParallelPatterns::stop(){
 		fout.close();
 	}
 	
-	delete nums;
-
-	MPI_Comm_free(&workers);
 	MPI_Finalize();
 
 }
