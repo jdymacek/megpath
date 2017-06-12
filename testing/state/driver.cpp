@@ -2,7 +2,9 @@
 
 int main(int argc, char** argv){
 	State* state = new State();
-	state->load(argv[1]);
+	string filename = string(argv[1]);
+		
+	state->load(filename);
 
 	return 0;
 }
