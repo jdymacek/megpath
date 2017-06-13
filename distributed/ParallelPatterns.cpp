@@ -48,7 +48,7 @@ void ParallelPatterns::start(string filename){
 	state->coefficients.resize(myRows, state->coefficients.columns);
 	for(int y = 0; y < state->coefficients.matrix.rows(); ++y){
 	    for(int x = 0; x < state->coefficients.matrix.cols(); ++x){
-			state->coefficients.matrix(y,x) = rank;
+			state->coefficients.matrix(y,x) = 100*(x+1)+rank;
 		}
 	}
 
@@ -211,8 +211,13 @@ void ParallelPatterns::run(){
 	send = state->coefficients.matrix.cols()*startPoint;
 	MPI_Gather(&send,1,MPI_INT,&allDispls[0],1,MPI_INT, 0, MPI_COMM_WORLD);
 
+	state->coefficients.matrix.transposeInPlace();
+
 	MPI_Gatherv(state->coefficients.matrix.data(),state->coefficients.matrix.size(),MPI_DOUBLE,
 			buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+   state->coefficients.matrix.transposeInPlace();
+
 
 	if(rank == 0){
 
