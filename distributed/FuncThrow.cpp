@@ -12,6 +12,7 @@ void FuncThrow::start(string filename){
 	char hostbuff[100];
 	gethostname(hostbuff,99);
 	hostname = string(hostbuff);
+	srand(time(0));
 
 }
 
@@ -76,6 +77,9 @@ void FuncThrow::run(){
 	int tag  = 0;
 	MPI_Status status;
 
+	if(rank == 0){
+		cout << "rank 0 is " << hostname << endl;
+	}
 
 	if(rank == 0){
 		allError = new double[process];
