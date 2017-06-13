@@ -50,7 +50,7 @@ int NMFMatrix::size(){
 			rv += functions[y][x]->dataSize();		
 		}
 	}
-	return rv;
+	return matrix.size()+rv;
 }
 
 void NMFMatrix::read(double* data){
