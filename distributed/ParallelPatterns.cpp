@@ -46,11 +46,11 @@ void ParallelPatterns::start(string filename){
 	//split the coefficients
 	int myRows = findRows(rank, size, state->coefficients.rows);
 	state->coefficients.resize(myRows, state->coefficients.columns);
-	for(int y = 0; y < state->coefficients.matrix.rows(); ++y){
+/*	for(int y = 0; y < state->coefficients.matrix.rows(); ++y){
 	    for(int x = 0; x < state->coefficients.matrix.cols(); ++x){
 			state->coefficients.matrix(y,x) = 100*(x+1)+rank;
 		}
-	}
+	}*/
 
 
 	//cout << hostname << " coefficients:" << endl;
@@ -201,9 +201,9 @@ void ParallelPatterns::run(){
 		buffer = new double[oexpression.rows()*state->coefficients.matrix.cols()];
 	}
 
-	//monteCarlo();
-	//error = anneal();
-	//annealAgain();
+	monteCarlo();
+	error = anneal();
+	annealAgain();
 
 	int send = state->coefficients.matrix.size();
 	MPI_Gather(&send,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
@@ -227,14 +227,14 @@ void ParallelPatterns::run(){
 
 		state->coefficients.rows = state->coefficients.matrix.rows();
 		state->coefficients.columns = state->coefficients.matrix.cols();
-		cout << "Coefficients:" << endl;
-		cout << state->coefficients.matrix << endl;
-		//state->expression = oexpression;
-		//ErrorFunctionRow efRow(state);
-		//error = efRow.error();
-		//cout << "Final Error: " << error << endl;
-		//cout << "Patterns: " << endl;
-		//cout << state->patterns.matrix << endl;;
+		//cout << "Coefficients:" << endl;
+		//cout << state->coefficients.matrix << endl;
+		state->expression = oexpression;
+		ErrorFunctionRow efRow(state);
+		error = efRow.error();
+		cout << "Final Error: " << error << endl;
+		cout << "Patterns: " << endl;
+		cout << state->patterns.matrix << endl;;
 		delete buffer;
 	}
 
