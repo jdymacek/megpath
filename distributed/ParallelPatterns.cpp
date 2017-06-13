@@ -46,6 +46,13 @@ void ParallelPatterns::start(string filename){
 	//split the coefficients
 	int myRows = findRows(rank, size, state->coefficients.rows);
 	state->coefficients.resize(myRows, state->coefficients.columns);
+	for(int y = 0; y < state->coefficients.matrix.rows(); ++y){
+	    for(int x = 0; x < state->coefficients.matrix.cols(); ++x){
+			state->coefficients.matrix(y,x) = rank;
+		}
+	}
+
+
 	//cout << hostname << " coefficients:" << endl;
 	//cout << state->coefficients.matrix << endl;
 
@@ -188,14 +195,15 @@ void ParallelPatterns::run(){
 	int  allDispls[size];
 	//MPI variables
 	int tag  = 0;
-	MatrixXd temp;
+	double* buffer;
 	MPI_Status status;
 	if(rank == 0){
-		temp = MatrixXd::Zero(oexpression.rows(),state->coefficients.matrix.cols());
+		buffer = new double[oexpression.rows()*state->coefficients.matrix.cols()];
 	}
 
-	monteCarlo();
-	error = anneal();
+	//monteCarlo();
+	//error = anneal();
+	//annealAgain();
 
 	int send = state->coefficients.matrix.size();
 	MPI_Gather(&send,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
@@ -204,18 +212,25 @@ void ParallelPatterns::run(){
 	MPI_Gather(&send,1,MPI_INT,&allDispls[0],1,MPI_INT, 0, MPI_COMM_WORLD);
 
 	MPI_Gatherv(state->coefficients.matrix.data(),state->coefficients.matrix.size(),MPI_DOUBLE,
-			temp.data(), allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+			buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
 	if(rank == 0){
-		state->coefficients.rows = temp.rows();
-		state->coefficients.columns = temp.cols();
-		state->coefficients.matrix = temp;
-		state->expression = oexpression;
-		ErrorFunctionRow efRow(state);
-		error = efRow.error();
-		cout << "Final Error: " << error << endl;
-		cout << "Patterns: " << endl;
-		cout << state->patterns.matrix << endl;;
+
+		Map<Matrix<double,Dynamic,Dynamic,RowMajor> > mapper(buffer,oexpression.rows(),state->coefficients.matrix.cols());
+		state->coefficients.matrix = mapper;
+
+
+		state->coefficients.rows = state->coefficients.matrix.rows();
+		state->coefficients.columns = state->coefficients.matrix.cols();
+		cout << "Coefficients:" << endl;
+		cout << state->coefficients.matrix << endl;
+		//state->expression = oexpression;
+		//ErrorFunctionRow efRow(state);
+		//error = efRow.error();
+		//cout << "Final Error: " << error << endl;
+		//cout << "Patterns: " << endl;
+		//cout << state->patterns.matrix << endl;;
+		delete buffer;
 	}
 
 }
