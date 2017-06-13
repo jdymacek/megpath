@@ -100,6 +100,54 @@ double ParallelPatterns::monteCarlo(){
 	return error;
 }
 
+double ParallelPatterns::anneal(){
+	int tag = 0;
+	int flag = 0;
+	MPI_Status status;
+	MPI_Request req;
+	int bufferSize = state->patterns.size()+1;
+	double* sendBuffer = new double[bufferSize];
+	double* recvBuffer = new double[bufferSize];
+
+	Stopwatch watch;
+	int ndx = 0;
+	double t = 0.5;
+	watch.start();
+
+    ErrorFunctionRow efRow(state);
+    ErrorFunctionCol efCol(state);
+
+	double formerError = 2*state->expression.rows()*state->expression.cols();
+	bool running = true;
+	while(running && ndx < state->MAX_RUNS){
+		annealStep(state->coefficients,t,&efRow);
+		annealStep(state->patterns,t,&efCol);
+		if(ndx % 1000 == 0){
+			double error = efRow.error();
+			sendBuffer[0] = error;
+			state->patterns.write(&sendBuffer[1]);
+			//all reduce
+			MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+			state->patterns.read(&recvBuffer[1]);
+			state->patterns.matrix /= size;
+
+			cout << hostname << " " << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
+			if(abs(formerError - error) < 0.005 && error < formerError)
+				running = false;
+			formerError = error;
+		}
+		ndx++;
+		t *= 0.99975;
+	}
+	cout << "Final Error: " << efRow.error() << endl;
+	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
+	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+	delete sendBuffer;
+	delete recvBuffer;
+
+	return efRow.error();
+}
+
 void ParallelPatterns::run(){
 	double error = 0;
 	double* allError;

@@ -16,6 +16,7 @@ class ParallelPatterns: public MonteAnneal{
 	public:
 		ParallelPatterns();	
 		virtual double monteCarlo();
+		virtual double anneal();
 		virtual void start(string filename);
 		virtual void run();
 		virtual void stop();
