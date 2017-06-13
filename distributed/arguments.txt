@@ -1,6 +1,6 @@
 #test argument file
 analysis = "one"
-max_runs = 10000;
+max_runs = 1001;
 one_filename = "test.csv"
 one_origin = [1,0]
 one_patterns = ["","",""]

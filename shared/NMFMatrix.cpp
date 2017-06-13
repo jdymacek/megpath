@@ -57,9 +57,10 @@ void NMFMatrix::read(double* data){
 
 	Map<MatrixXd> mapper(data,matrix.rows(),matrix.cols());
 	matrix = mapper;
+	data += matrix.size();
 
 	for(int y = 0; y < matrix.rows(); ++y){
-		for(int x = 0; x < matrix.rows(); ++x){
+		for(int x = 0; x < matrix.cols(); ++x){
 			functions[y][x]->fromDoubles(data);
 			data += functions[y][x]->dataSize();
 		}
@@ -68,8 +69,9 @@ void NMFMatrix::read(double* data){
 
 void NMFMatrix::write(double* data){
 	memcpy(data,matrix.data(),(matrix.size()*sizeof(double)));
+	data += matrix.size();
 	for(int y = 0; y < matrix.rows(); ++y){
-		for(int x = 0; x < matrix.rows(); ++x){
+		for(int x = 0; x < matrix.cols(); ++x){
 			functions[y][x]->toDoubles(data);
 			data += functions[y][x]->dataSize();
 		}
