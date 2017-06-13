@@ -44,9 +44,9 @@ double FuncThrow::monteCarlo(){
 			MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&status);
 			if(flag == 1){
 				int source = status.MPI_SOURCE;
-				cout << "after recieve\n"; //XXX
-				MPI_Recv(buffer,bufferSize,MPI_DOUBLE,source,tag,MPI_COMM_WORLD,&status);
 				cout << "before recieve\n"; //XXX
+				MPI_Recv(buffer,bufferSize,MPI_DOUBLE,source,tag,MPI_COMM_WORLD,&status);
+				cout << "after recieve\n"; //XXX
 				if(buffer[0] < error){
 					cout << "before read\n"; //XXX
 					state->patterns.read(&buffer[1]);
