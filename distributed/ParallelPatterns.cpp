@@ -42,8 +42,8 @@ void ParallelPatterns::start(string filename){
 	//split the coefficients
 	int myRows = findRows(rank, size, state->coefficients.rows);
 	state->coefficients.resize(myRows, state->coefficients.columns);
-	cout << hostname << " coefficients:" << endl;
-	cout << state->coefficients.matrix << endl;
+	//cout << hostname << " coefficients:" << endl;
+	//cout << state->coefficients.matrix << endl;
 
 	//split the expression	
 	int start = findStart(rank, size, state->expression.rows());
@@ -51,8 +51,8 @@ void ParallelPatterns::start(string filename){
 	MatrixXd temp = state->expression.block(start, 0, myRows, state->expression.cols());
 	state->expression = temp;
 
-	cout << hostname << " expression:" << endl;
-	cout << state->expression << endl;
+	//cout << hostname << " expression:" << endl;
+	//cout << state->expression << endl;
 }
 
 double ParallelPatterns::monteCarlo(){
