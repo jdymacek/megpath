@@ -75,15 +75,21 @@ double ParallelPatterns::monteCarlo(){
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < state->MAX_RUNS; i++){
 		monteCarloStep(state->patterns,&efCol);
-
 		monteCarloStep(state->coefficients,&efRow);
 
 		if(i%1000 == 0){
 			error = efRow.error();
 			sendBuffer[0] = error;
-//			state->patterns.write(&sendBuffer[1]);
+			cout << hostname << " " <<  i  << " before divide:" << state->patterns.matrix << endl;
+			state->patterns.write(&sendBuffer[1]);
+			cout << hostname << " " <<  i  << " send error:" << sendBuffer[0] << endl;
 			//all reduce
-//			state->patterns.read(&recvBuffer);
+			MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+			state->patterns.read(recvBuffer);
+			cout << hostname << " " <<  i  << " recieve error:" << recvBuffer[0] << endl;
+		
+			state->patterns.matrix /= size;
+			cout << hostname << " " <<  i  << " after divide:" << state->patterns.matrix << endl;
 
 			cout << hostname << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
