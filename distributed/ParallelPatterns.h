@@ -23,6 +23,8 @@ class ParallelPatterns: public MonteAnneal{
 		int findStart(int myRank, int curSize, int numRows);
 		int findRows(int myRank, int curSize, int numRows);
 	protected:
+		MatrixXd oexpression;
+		int startPoint;
 		int rank;
 		int size;
 		string hostname;

@@ -52,6 +52,7 @@ void MonteAnneal::annealStep(NMFMatrix& m, double t,ErrorFunction* ef){
 
     for(int y =0; y < m.rows; y++){
         for(int x =0; x < m.columns; x++){
+
             ProbFunc* function = m.functions[y][x];
             double r = function->random();
             if(function->size() == 1){

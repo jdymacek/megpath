@@ -39,6 +39,10 @@ void ParallelPatterns::start(string filename){
 	gethostname(hostbuff,99);
 	hostname = string(hostbuff);
 
+	if(rank == 0){
+		oexpression = state->expression;
+	}
+
 	//split the coefficients
 	int myRows = findRows(rank, size, state->coefficients.rows);
 	state->coefficients.resize(myRows, state->coefficients.columns);
@@ -46,9 +50,9 @@ void ParallelPatterns::start(string filename){
 	//cout << state->coefficients.matrix << endl;
 
 	//split the expression	
-	int start = findStart(rank, size, state->expression.rows());
+	startPoint = findStart(rank, size, state->expression.rows());
 	myRows = findRows(rank, size, state->expression.rows());
-	MatrixXd temp = state->expression.block(start, 0, myRows, state->expression.cols());
+	MatrixXd temp = state->expression.block(startPoint, 0, myRows, state->expression.cols());
 	state->expression = temp;
 
 	//cout << hostname << " expression:" << endl;
@@ -132,8 +136,8 @@ double ParallelPatterns::anneal(){
 			state->patterns.matrix /= size;
 
 			cout << hostname << " " << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
-			if(abs(formerError - error) < 0.005 && error < formerError)
-				running = false;
+			//if(abs(formerError - error) < 0.005 && error < formerError)
+			//	running = false;
 			formerError = error;
 		}
 		ndx++;
@@ -150,50 +154,46 @@ double ParallelPatterns::anneal(){
 
 void ParallelPatterns::run(){
 	double error = 0;
-	double* allError;
-
+	int  allCounts[size];
+	int  allDispls[size];
 	//MPI variables
 	int tag  = 0;
+	MatrixXd temp;
 	MPI_Status status;
-
-	if(rank == 0)
-		allError = new double[size];
+	if(rank == 0){
+		temp = MatrixXd::Zero(oexpression.rows(),state->coefficients.matrix.cols());
+	}
 
 	monteCarlo();
 	error = anneal();
-	cout << hostname << " has " << error << " error" << endl;
 
-	MPI_Gather(&error, 1, MPI_DOUBLE, allError, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+	int send = state->coefficients.matrix.size();
+	MPI_Gather(&send,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
 
-	int minRank = 0;
+	send = state->coefficients.matrix.cols()*startPoint;
+	MPI_Gather(&send,1,MPI_INT,&allDispls[0],1,MPI_INT, 0, MPI_COMM_WORLD);
+
+
+	MPI_Gatherv(state->coefficients.matrix.data(),state->coefficients.matrix.size(),MPI_DOUBLE,
+			temp.data(), allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+	cout << hostname << " all but done" << endl;
 	if(rank == 0){
-		error = state->expression.rows()*state->expression.cols();
-		for(int i =1;i < size; ++i){
-			if(error >= allError[i]){
-				error = allError[i];
-				minRank = i;
-			}
-		}
-	}
-
-	MPI_Bcast(&minRank, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
-	if(rank == 0){
-		MPI_Recv(state->patterns.matrix.data(),
-				state->patterns.matrix.rows()*state->patterns.matrix.cols(),
-				MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
-		MPI_Recv(state->coefficients.matrix.data(),
-				state->coefficients.matrix.rows()*state->coefficients.matrix.cols(),
-				MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
-	}else if(minRank == rank){
-		char c = 7;
-		cout << c << hostname << " is sending the final data. The minimum error was " << error << "." << endl;
-		MPI_Send(state->patterns.matrix.data(),
-				state->patterns.matrix.rows()*state->patterns.matrix.cols(),
-				MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
-		MPI_Send(state->coefficients.matrix.data(),
-				state->coefficients.matrix.rows()*state->coefficients.matrix.cols(),
-				MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
+		cout << temp << endl;
+		cout << temp.rows() << " " << temp.cols() << endl;
+		//cout << temp << endl;
+		state->coefficients.rows = temp.rows();
+		state->coefficients.columns = temp.cols();
+		state->coefficients.matrix = temp;
+		cout << "one" << endl;
+		state->expression = oexpression;
+		cout << "two" << endl;
+		ErrorFunctionRow efRow(state);
+		cout << "three" << endl;
+		error = efRow.error();
+		cout << "Final Error: " << error << endl;
+		cout << "Patterns: " << endl;
+		cout << state->patterns.matrix << endl;;
 	}
 
 }
@@ -201,13 +201,13 @@ void ParallelPatterns::run(){
 void ParallelPatterns::stop(){
 	//write out the best matrices to files
 	if(rank == 0){
-		state->patterns.write(state->analysis + "patterns.csv");
-		state->coefficients.write(state->analysis + "coefficients.csv");
+		//state->patterns.write(state->analysis + "patterns.csv");
+		//state->coefficients.write(state->analysis + "coefficients.csv");
 
-		ofstream fout;
-		fout.open(state->analysis + "expression.txt");
-		fout << state->coefficients.matrix*state->patterns.matrix;
-		fout.close();
+		//ofstream fout;
+		//fout.open(state->analysis + "expression.txt");
+		//fout << state->coefficients.matrix*state->patterns.matrix;
+		//fout.close();
 	}
 	
 	MPI_Finalize();
