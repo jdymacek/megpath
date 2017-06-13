@@ -2,7 +2,7 @@
 //Julian Dymacek
 //Matthew Dyer
 //Created on : 6/9/2017
-//Last Modified 6/12/2017
+//Last Modified 6/13/2017
 
 #include "ParallelPatterns.h"
 
@@ -68,7 +68,6 @@ double ParallelPatterns::monteCarlo(){
 	Stopwatch watch;
 	watch.start();
 
-
 	ErrorFunctionRow efRow(state);
 	ErrorFunctionCol efCol(state);
 
@@ -80,19 +79,11 @@ double ParallelPatterns::monteCarlo(){
 		if(i%1000 == 0){
 			error = efRow.error();
 			sendBuffer[0] = error;
-			cout << hostname << " " <<  i  << " before send:" << state->patterns.matrix << endl;
-			cout << hostname << " " <<  i  << " pre write " << sendBuffer[1] << endl;
 			state->patterns.write(&sendBuffer[1]);
-			cout << hostname << " " <<  i  << " post write " << sendBuffer[1] << endl;
-		//	cout << hostname << " " <<  i  << " send error:" << sendBuffer[0] << endl;
 			//all reduce
 			MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 			state->patterns.read(&recvBuffer[1]);
-		//	cout << hostname << " " <<  i  << " recieve error:" << recvBuffer[0] << endl;
-		
-			cout << hostname << " " <<  i  << " after recv:" << state->patterns.matrix << endl;
 			state->patterns.matrix /= size;
-			cout << hostname << " " <<  i  << " after divide:" << state->patterns.matrix << endl;
 
 			cout << hostname << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}

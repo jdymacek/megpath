@@ -17,7 +17,7 @@ int main(int argc, char** argv){
 		return 0;
 	}
 	string argFile = argv[1];
-	Analysis* a = new FuncThrow();
+	Analysis* a = new ParallelPatterns();
 	a->start(argFile);
 	Stopwatch watch;
 	watch.start();	
