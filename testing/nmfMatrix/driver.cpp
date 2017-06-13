@@ -19,7 +19,7 @@ int main(int argc, char** argv){
 	cout << "This is the matrix : \n" << a.matrix << endl;
 
 	
-	int bufferSize = a.matrix.size()+1;
+	int bufferSize = a.size()+1;
 	double* buffer = new double[bufferSize];
 
 	cout << "Before writing buffer[1] is " << buffer[1] << endl;
