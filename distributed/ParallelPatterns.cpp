@@ -60,10 +60,6 @@ void ParallelPatterns::start(string filename){
 }
 
 double ParallelPatterns::monteCarlo(){
-	int tag = 0;
-	int flag = 0;
-	MPI_Status status;
-	MPI_Request req;
 	int bufferSize = state->patterns.size()+1;
 	double* sendBuffer = new double[bufferSize];
 	double* recvBuffer = new double[bufferSize];
@@ -105,10 +101,6 @@ double ParallelPatterns::monteCarlo(){
 }
 
 double ParallelPatterns::anneal(){
-	int tag = 0;
-	int flag = 0;
-	MPI_Status status;
-	MPI_Request req;
 	int bufferSize = state->patterns.size()+1;
 	double* sendBuffer = new double[bufferSize];
 	double* recvBuffer = new double[bufferSize];
@@ -143,11 +135,49 @@ double ParallelPatterns::anneal(){
 		ndx++;
 		t *= 0.99975;
 	}
+	//final reduction
+	state->patterns.write(&sendBuffer[1]);
+	MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+	state->patterns.read(&recvBuffer[1]);
+	state->patterns.matrix /= size;
+
 	cout << "Final Error: " << efRow.error() << endl;
 	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
 	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+
 	delete sendBuffer;
 	delete recvBuffer;
+
+	return efRow.error();
+}
+
+double ParallelPatterns::annealAgain(){
+	Stopwatch watch;
+	int ndx = 0;
+	double t = 0.5;
+	watch.start();
+
+   ErrorFunctionRow efRow(state);
+   ErrorFunctionCol efCol(state);
+
+	double formerError = 2*state->expression.rows()*state->expression.cols();
+	bool running = true;
+	while(running && ndx < state->MAX_RUNS){
+		annealStep(state->coefficients,t,&efRow);
+		//annealStep(state->patterns,t,&efCol);
+		if(ndx % 1000 == 0){
+			double error = efRow.error();
+			cout << hostname << " " << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
+			//if(abs(formerError - error) < 0.005 && error < formerError)
+			//	running = false;
+			formerError = error;
+		}
+		ndx++;
+		t *= 0.99975;
+	}
+	cout << "Final Error: " << efRow.error() << endl;
+	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
+	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
 
 	return efRow.error();
 }
@@ -173,23 +203,15 @@ void ParallelPatterns::run(){
 	send = state->coefficients.matrix.cols()*startPoint;
 	MPI_Gather(&send,1,MPI_INT,&allDispls[0],1,MPI_INT, 0, MPI_COMM_WORLD);
 
-
 	MPI_Gatherv(state->coefficients.matrix.data(),state->coefficients.matrix.size(),MPI_DOUBLE,
 			temp.data(), allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-	cout << hostname << " all but done" << endl;
 	if(rank == 0){
-		cout << temp << endl;
-		cout << temp.rows() << " " << temp.cols() << endl;
-		//cout << temp << endl;
 		state->coefficients.rows = temp.rows();
 		state->coefficients.columns = temp.cols();
 		state->coefficients.matrix = temp;
-		cout << "one" << endl;
 		state->expression = oexpression;
-		cout << "two" << endl;
 		ErrorFunctionRow efRow(state);
-		cout << "three" << endl;
 		error = efRow.error();
 		cout << "Final Error: " << error << endl;
 		cout << "Patterns: " << endl;
@@ -200,16 +222,16 @@ void ParallelPatterns::run(){
 
 void ParallelPatterns::stop(){
 	//write out the best matrices to files
-	if(rank == 0){
-		//state->patterns.write(state->analysis + "patterns.csv");
-		//state->coefficients.write(state->analysis + "coefficients.csv");
+/*	if(rank == 0){
+		state->patterns.write(state->analysis + "patterns.csv");
+		state->coefficients.write(state->analysis + "coefficients.csv");
 
-		//ofstream fout;
-		//fout.open(state->analysis + "expression.txt");
-		//fout << state->coefficients.matrix*state->patterns.matrix;
-		//fout.close();
+		ofstream fout;
+		fout.open(state->analysis + "expression.txt");
+		fout << state->coefficients.matrix*state->patterns.matrix;
+		fout.close();
 	}
-	
+*/	
 	MPI_Finalize();
 
 }

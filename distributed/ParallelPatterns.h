@@ -22,6 +22,7 @@ class ParallelPatterns: public MonteAnneal{
 		virtual void stop();
 		int findStart(int myRank, int curSize, int numRows);
 		int findRows(int myRank, int curSize, int numRows);
+		double annealAgain();
 	protected:
 		MatrixXd oexpression;
 		int startPoint;
