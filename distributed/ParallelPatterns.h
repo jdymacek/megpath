@@ -19,6 +19,8 @@ class ParallelPatterns: public MonteAnneal{
 		virtual void start(string filename);
 		virtual void run();
 		virtual void stop();
+		int findStart(int myRank, int curSize, int numRows);
+		int findRows(int myRank, int curSize, int numRows);
 	protected:
 		int rank;
 		int size;

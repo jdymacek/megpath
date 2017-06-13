@@ -8,6 +8,28 @@
 
 ParallelPatterns::ParallelPatterns(): MonteAnneal(){}
 
+int ParallelPatterns::findStart(int myRank, int curSize, int numRows){
+	int startRow = 0;
+	int split = numRows/curSize;
+	int leftover = numRows%curSize;
+	if(myRank < leftover){
+		split = split + 1;
+		startRow = myRank*split;
+	}else{
+		startRow = numRows - (curSize - myRank) * split;
+	}
+	return startRow;
+}
+
+int ParallelPatterns::findRows(int myRank, int curSize, int numRows){
+	int split = numRows/curSize;
+	int leftover = numRows%curSize;
+	if(myRank < leftover){
+		split = split + 1;
+	}
+	return split;
+}
+
 void ParallelPatterns::start(string filename){
 	MonteAnneal::start(filename);
 	MPI_Init(NULL,NULL);
@@ -17,14 +39,16 @@ void ParallelPatterns::start(string filename){
 	gethostname(hostbuff,99);
 	hostname = string(hostbuff);
 
-	cout << "Normalized: " << endl;
-	cout << state->expression << endl;
 	//split the coefficients
-	int split = state->coefficients.rows/size;
-	state->coefficients.resize(split,state->coefficients.columns);
+	int myRows = findRows(rank, size, state->coefficients.rows);
+	state->coefficients.resize(myRows, state->coefficients.columns);
 	cout << hostname << " coefficients:" << endl;
 	cout << state->coefficients.matrix << endl;
-	MatrixXd temp = state->expression.block(rank*split,0,split,state->expression.cols());
+
+	//split the expression	
+	int start = findStart(rank, size, state->expression.rows());
+	myRows = findRows(rank, size, state->expression.rows());
+	MatrixXd temp = state->expression.block(start, 0, myRows, state->expression.cols());
 	state->expression = temp;
 
 	cout << hostname << " expression:" << endl;
