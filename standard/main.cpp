@@ -18,8 +18,15 @@ int main(int argc, char** argv){
 	string argFile = argv[1];
 	Analysis* a = new MonteAnneal();
 	a->start(argFile);
+	Stopwatch watch;
+	watch.start();	
 	a->run();
+	cout << "Total program running time: " << watch.formatTime(watch.stop()) << endl;
 	a->stop();
+
+	char c = 7;
+	
+	cout << c;
 
 	return 0;
 }

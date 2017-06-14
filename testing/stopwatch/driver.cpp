@@ -5,7 +5,8 @@
 
 #include "../../shared/Stopwatch.h"
 #include <iostream>
-#include <cmath>
+#include <cstdlib>
+#include <unistd.h>
 
 using namespace std;
 
@@ -13,13 +14,13 @@ int main(){
 	Stopwatch watch;
 	
 	watch.start();
-	for(int i = 0; i < 100000000; ++i){
-		int num = sqrt(i);
-	}
+
+	sleep(10);
+
 	string end = watch.formatTime(watch.stop());
 	cout << end << "\n";
 
-	cout << watch.formatTime(122) << endl;
+	cout << "Should say two minutes and two seconds : " << watch.formatTime(122) << endl;
 	
 	return 0;
 }
