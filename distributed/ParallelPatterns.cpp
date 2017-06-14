@@ -87,7 +87,7 @@ double ParallelPatterns::monteCarlo(){
 		monteCarloStep(state->patterns,&efCol);
 		monteCarloStep(state->coefficients,&efRow);
 
-		if(i%500 == 0){
+		if(i%1000 == 0){
 			error = efRow.error();
 			if(isnan(error)){
 				cout << state->patterns.matrix << endl;
@@ -135,7 +135,7 @@ double ParallelPatterns::anneal(){
 	while(running && ndx < state->MAX_RUNS){
 		annealStep(state->coefficients,t,&efRow);
 		annealStep(state->patterns,t,&efCol);
-		if(ndx % 500 == 0){
+		if(ndx % 1000 == 0){
 			double error = efRow.error();
 			sendBuffer[0] = error;
 			state->patterns.write(&sendBuffer[1]);

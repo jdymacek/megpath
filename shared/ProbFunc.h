@@ -31,7 +31,7 @@ class ProbFunc{
 		virtual void toDoubles(double* buffer);
 		virtual void fromDoubles(double* buffer);
 
-		static default_random_engine generator;
+		static mt19937_64 generator;
 };
 
 

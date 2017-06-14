@@ -4,7 +4,7 @@
 //Last Modified: 5/25/2017
 #include "ProbFunc.h"
 
-default_random_engine ProbFunc::generator;
+mt19937_64 ProbFunc::generator;
 
 int ProbFunc::size(){
 	return 1;
