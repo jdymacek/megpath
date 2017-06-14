@@ -70,6 +70,10 @@ double ParallelPatterns::monteCarlo(){
 	int bufferSize = state->patterns.size()+1;
 	double* sendBuffer = new double[bufferSize];
 	double* recvBuffer = new double[bufferSize];
+	for(int i =0; i < bufferSize; ++i){
+		recvBuffer[i] = 0;
+	}
+
 
 	double error = 0;
 	Stopwatch watch;
@@ -83,14 +87,21 @@ double ParallelPatterns::monteCarlo(){
 		monteCarloStep(state->patterns,&efCol);
 		monteCarloStep(state->coefficients,&efRow);
 
-		if(i%1000 == 0){
+		if(i%500 == 0){
 			error = efRow.error();
+			if(isnan(error)){
+				cout << state->patterns.matrix << endl;
+
+			}
 			sendBuffer[0] = error;
 			state->patterns.write(&sendBuffer[1]);
-			//all reduce
+
 			MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+			for(int q = 0; q < bufferSize; q++){
+				recvBuffer[q] /= size;
+			}
+
 			state->patterns.read(&recvBuffer[1]);
-			state->patterns.matrix /= size;
 			cout << hostname << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
 
@@ -124,7 +135,7 @@ double ParallelPatterns::anneal(){
 	while(running && ndx < state->MAX_RUNS){
 		annealStep(state->coefficients,t,&efRow);
 		annealStep(state->patterns,t,&efCol);
-		if(ndx % 1000 == 0){
+		if(ndx % 500 == 0){
 			double error = efRow.error();
 			sendBuffer[0] = error;
 			state->patterns.write(&sendBuffer[1]);

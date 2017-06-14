@@ -25,6 +25,9 @@ void MonteAnneal::monteCarloStep(NMFMatrix& m,ErrorFunction* ef){
         for(int x =0; x < m.columns; ++x){
             ProbFunc* function = m.functions[y][x];
 			double r = function->random();
+			if(isnan(r)){
+				cout << function->toString() << endl;
+			}
             if(function->size() == 1){
 				oldError = ef->fastError(y,x);
                 m.matrix(y,x) = r;

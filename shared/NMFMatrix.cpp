@@ -70,6 +70,8 @@ void NMFMatrix::read(double* data){
 void NMFMatrix::write(double* data){
 	memcpy(data,matrix.data(),(matrix.size()*sizeof(double)));
 	data += matrix.size();
+ 
+
 	for(int y = 0; y < matrix.rows(); ++y){
 		for(int x = 0; x < matrix.cols(); ++x){
 			functions[y][x]->toDoubles(data);

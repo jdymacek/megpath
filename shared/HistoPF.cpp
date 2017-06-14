@@ -58,6 +58,17 @@ void HistoPF::toDoubles(double* buffer){
 
 void HistoPF::fromDoubles(double* buffer){
 	memcpy(weights.data(),buffer,weights.size()*sizeof(double));	
+/*	double max = 0;
+	for(int i = 0;  i < weights.size(); ++i){
+		if(buffer[i] > max){
+			max = buffer[i];
+		}
+	}
+    for(int i = 0;  i < weights.size(); ++i){
+        weights[i] = buffer[i]/ max;
+    }*/
+
+	dist = piecewise_linear_distribution<double>(intervals.begin(),intervals.end(),weights.begin());
 }
 
 int HistoPF::dataSize(){
