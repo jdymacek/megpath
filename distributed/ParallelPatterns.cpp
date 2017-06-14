@@ -91,7 +91,6 @@ double ParallelPatterns::monteCarlo(){
 			MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 			state->patterns.read(&recvBuffer[1]);
 			state->patterns.matrix /= size;
-
 			cout << hostname << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
 
