@@ -59,5 +59,9 @@ int main(){
 
 	cout << "\n";
 
+
+	cout << "Should fail now: \n";
+	vec = file.readCSV("garbage.csv");
+
 	return 0;
 }

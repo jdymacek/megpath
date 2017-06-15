@@ -1,7 +1,7 @@
 //CSVFile.cpp
 //Matthew Dyer
 //Created on 5/23/2017
-//Last Modified: 5/23/2017
+//Last Modified: 6/15/2017
 
 #include "CSVFile.h"
 vector<vector<Value> > CSVFile::readCSV(string filename, bool tab){
@@ -11,6 +11,11 @@ vector<vector<Value> > CSVFile::readCSV(string filename, bool tab){
 	
 	ifstream inFile;
 	inFile.open(filename);
+
+	if(inFile.fail()){
+		cout << "CSVFile could not be opened!\n";
+		exit(-1);
+	}
 
 	while(getline(inFile,line)){
 		if(tab == false){
