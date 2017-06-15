@@ -16,6 +16,9 @@ UniformPF* uniform;
 
 string triangle(double ay, double by, double cy){
 
+	ay = by - abs(ay-by);
+	cy = by - abs(cy-by);
+
 	double u = uniform->random();
 	double v = uniform->random();
 
@@ -66,6 +69,7 @@ int main(){
 
 	writeTriangle("10.15.5_triangle.csv",10,15,5);
 	writeTriangle("15.5.10_triangle.csv",15,5,10);
+	writeTriangle("15-12-5_triangle.csv",15,12,5);
 
 	return 0;
 }
