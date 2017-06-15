@@ -154,11 +154,21 @@ int main(int argc, char* argv[]){
 		double* buf = new double[pf->dataSize()];
 
 		pf->toDoubles(buf);
-
 		for(int i = 0 ; i < pf->dataSize(); ++i){
 			cout << buf[i] << " ";
 		}
 		cout << endl;
+
+		cout << "Now testing fromDoubles: \n";
+		pf->fromDoubles(buf);
+
+		pf->toDoubles(buf);
+		for(int i = 0 ; i < pf->dataSize(); ++i){
+			cout << buf[i] << " ";
+		}
+		cout << endl;
+
+		delete buf;
 
 	}
 
