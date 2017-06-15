@@ -146,6 +146,8 @@ int main(int argc, char* argv[]){
 
 		vector<Entry> vec;
 		vec.push_back({0,0,3.0});
+		vec.push_back({0,1,4.0});
+		vec.push_back({0,2,5.0});
 
 		ProbFunc* pf = new ShiftPF(vec);
 
