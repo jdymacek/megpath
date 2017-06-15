@@ -24,7 +24,7 @@ void triangle(){
 	double space = 0.25;
 
 	double ay = 15;
-	double by = 10;
+	double by = 12;
 	double cy = 5;
 	bool flip = false;	
 

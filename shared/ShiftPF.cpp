@@ -62,32 +62,25 @@ int ShiftPF::dataSize(){
 }
 
 void ShiftPF::toDoubles(double* buffer){
-	double* fromEntries = new double[3];
+	double fromEntries[3];
 	for(int i = 0; i < org.size(); ++i){
 		fromEntries[0] = org[i].x;
 		fromEntries[1] = org[i].y;
 		fromEntries[2] = org[i].val;
-		cout << "copying in entries " << i << endl;
-		memcpy(buffer,fromEntries,3*sizeof(double));
+		memcpy(buffer,&fromEntries[0],3*sizeof(double));
 		buffer += 3;
 	}
-	delete fromEntries;
-	cout << "that loop ended" << endl;
-
-	buffer += org.size();
 	function.toDoubles(buffer);
 }
 
 void ShiftPF::fromDoubles(double* buffer){
 	Entry ent;
-	for(int i = 0; i < org.size()*3; i+=3){
-		ent.x = buffer[i];
-		ent.y = buffer[i+1];
-		ent.val = buffer[i+2];
-		org.push_back(ent);
+	for(int i = 0; i < org.size(); ++i){
+		ent.x   = buffer[0];
+		ent.y   = buffer[1];
+		ent.val = buffer[2];
+		org[i]  = ent;
 		buffer += 3;
 	}
-
-	buffer += org.size();
 	function.fromDoubles(buffer);
 }
