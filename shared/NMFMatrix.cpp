@@ -1,4 +1,4 @@
-//NMFMatrix.cpp
+://NMFMatrix.cpp
 //Matthew Dyer
 //Created on 6/1/2017
 //Last Modified: 6/12/2017
@@ -37,7 +37,7 @@ NMFMatrix::NMFMatrix(int rowss, int cols){
 	for(int i =0; i < rows; ++i){
 		functions[i] = new ProbFunc*[columns];
 		for(int j =0; j < columns; ++j){
-			functions[i][j] = new HistoPF();
+			functions[i][j] = new PiecewisePF();
 		}
 	}	
 }

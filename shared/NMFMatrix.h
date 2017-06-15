@@ -10,7 +10,7 @@
 #include <fstream>
 #include "../../Eigen/Core"
 #include "ProbFunc.h"
-#include "HistoPF.h"
+#include "PiecewisePF.h"
 
 using namespace std;
 using namespace Eigen;
