@@ -1,14 +1,20 @@
+//Triangle tester
+//Julian Dymacek
+//Matthew Dyer
+//Created On 6/15/2017
+//Last Modified: 6/15/2017
+
 #include <iostream>
 #include <algorithm>
+#include <fstream>
+#include <sstream>
 #include "../../shared/UniformPF.h"
 
 using namespace std;
 
-
 UniformPF* uniform;
 
-
-void triangle(){
+string triangle(double ay, double by, double cy){
 
 	double u = uniform->random();
 	double v = uniform->random();
@@ -16,16 +22,12 @@ void triangle(){
 	double MIN = min(u,v);
 	double MAX = max(u,v);
 
-
 	double ax = 0.25;
 	double bx = 0.5;
 	double cx = 0.75;
 
 	double space = 0.25;
 
-	double ay = 15;
-	double by = 12;
-	double cy = 5;
 	bool flip = false;	
 
 	if(abs(by-ay) > abs(by-cy)){
@@ -34,7 +36,6 @@ void triangle(){
 		cy = temp;
 		flip = true;
 	}	
-
 
 	cx = ax + space + space * (1 - (abs(cy-ay)/abs(cy-by)));
 
@@ -45,15 +46,22 @@ void triangle(){
 		px = bx-(px-bx);
 	}
 
-	cout << px << "," << py << endl;
+	stringstream ss;
+	ss << px << "," << py << endl;
+	return ss.str();
 }
 
 int main(){
 	ProbFunc::generator.seed(time(0));
-    uniform = new UniformPF();
+	uniform = new UniformPF();
+
+	ofstream outFile;
+	outFile.open("triangle.csv");
 
 	for(int i =0; i < 1000; ++i){
-		triangle();
+		outFile << triangle(15,12,5);
 	}
+
+	outFile.close();
 	return 0;
 }
