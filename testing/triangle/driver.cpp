@@ -50,18 +50,22 @@ string triangle(double ay, double by, double cy){
 	ss << px << "," << py << endl;
 	return ss.str();
 }
+	
+void writeTriangle(string filename, double a, double b, double c){
+	ofstream outFile;
+	outFile.open(filename);
+	for(int i =0; i < 1000; ++i){
+		outFile << triangle(a,b,c);
+	}
+	outFile.close();
+}
 
 int main(){
 	ProbFunc::generator.seed(time(0));
 	uniform = new UniformPF();
 
-	ofstream outFile;
-	outFile.open("triangle.csv");
+	writeTriangle("10.15.5_triangle.csv",10,15,5);
+	writeTriangle("15.5.10_triangle.csv",15,5,10);
 
-	for(int i =0; i < 1000; ++i){
-		outFile << triangle(15,12,5);
-	}
-
-	outFile.close();
 	return 0;
 }
