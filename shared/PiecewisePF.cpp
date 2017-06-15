@@ -7,7 +7,7 @@
 #include "PiecewisePF.h"
 
 PiecewisePF::PiecewisePF(){
-	SIZE = 11;
+	SIZE = 301;
 	total = SIZE;
 	weights = new double[SIZE];
 	for(int i =0; i < SIZE; ++i){
