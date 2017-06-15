@@ -10,7 +10,7 @@
 #include <vector>
 #include <sstream>
 #include "ProbFunc.h"
-#include "HistoPF.h"
+#include "PiecewisePF.h"
 
 using namespace std;
 
@@ -28,7 +28,7 @@ class ShiftPF: public ProbFunc{
 		void toDoubles(double* buffer);
 		void fromDoubles(double* buffer);
 	private:
-		HistoPF function;
+		PiecewisePF function;
 		vector<Entry> org;
 		vector<Entry> current;
 };
