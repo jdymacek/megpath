@@ -140,8 +140,27 @@ int main(int argc, char* argv[]){
 		uniformTest();
 	}else if(type == "-shift"){
 		shiftTest();
-	}else{
+	}else if(type == "-normal"){
 		normalTest();
+	}else{
+
+		vector<Entry> vec;
+		vec.push_back({1});
+		vec.push_back({2});
+		vec.push_back({3});
+		vec.push_back({4});
+
+		ProbFunc* pf = new ShiftPF(vec);
+
+		double* buf = new double[pf->dataSize()];
+
+		pf->toDoubles(buf);
+
+		for(int i = 0 ; i < pf->dataSize(); ++i){
+			cout << buf[i] << " ";
+		}
+
 	}
+
 	return 0;
 }
