@@ -1,7 +1,8 @@
 //ShiftPF.cpp -- Shifts a group of varibles
 //julian dymacek
+//Matthew Dyer
 //created: 5/24/2017
-//modified: 5/25/2017
+//modified: 6/15/2017
 
 #include "ShiftPF.h"
 
@@ -54,4 +55,16 @@ Entry ShiftPF::getEntry(int i){
 	if(i < 0 || i > org.size())
 		return e;
 	return current[i];
+}
+
+int ShiftPF::dataSize(){
+	return function.dataSize() + org.size();
+}
+
+void ShiftPF::toDoubles(double* buffer){
+	memcpy(buffer,org.data(),org.size()*sizeof(double));	
+}
+
+void ShiftPF::fromDoubles(double* buffer){
+	memcpy(org.data(),buffer,org.size()*sizeof(double));	
 }

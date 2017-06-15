@@ -2,7 +2,7 @@
 //julian dymacek
 //Matthew Dyer
 //created: 5/24/2017
-//modified: 5/25/2017
+//modified: 6/15/2017
 
 #ifndef SHIFTPF__H
 #define SHIFTPF__H
@@ -24,6 +24,9 @@ class ShiftPF: public ProbFunc{
 		void setEntries(vector<Entry> vec);
 		Entry getEntry(int i);
 		string toString();
+		int dataSize();
+		void toDoubles(double* buffer);
+		void fromDoubles(double* buffer);
 	private:
 		HistoPF function;
 		vector<Entry> org;
