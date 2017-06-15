@@ -27,10 +27,10 @@ void triangle(){
 	double by = 20;
 	double cy = 5;
 	
-	ax = ax + space + space * (1 - ((cy-ay)/(cy-by)));
+	cx = ax + space + space * (1 - ((cy-ay)/(cy-by)));
 
 	double px = ax*MIN + bx*(1-MAX) + cx*(MAX-MIN);
-	double py = ay*MIN + by*(1-MAX) + cy*(MAX-MIN);
+	double py = ay*MIN + by*(1-MAX) + ay*(MAX-MIN);
 
 	cout << px << "," << py << endl;
 }
@@ -39,7 +39,7 @@ int main(){
 	ProbFunc::generator.seed(time(0));
     uniform = new UniformPF();
 
-	for(int i =0; i < 100; ++i){
+	for(int i =0; i < 1000; ++i){
 		triangle();
 	}
 	return 0;
