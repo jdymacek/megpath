@@ -23,7 +23,6 @@ PiecewisePF::~PiecewisePF(){
 
 double PiecewisePF::random(){
 	double r = uniform->random();
-	double u = uniform->random();
 
 	int bin =0;
 	double running = weights[bin]/total;
@@ -37,18 +36,46 @@ double PiecewisePF::random(){
 	if(bin == SIZE-1)
 		return 1;
 
-	double s = ((double)(SIZE-1));
-	double a = ((double)(bin-1))/s;
-    double b = ((double)(bin+1))/s;
+	double ay = weights[bin-1];
+	double by = weights[bin];
+	double cy = weights[bin+1];
 
-	double su = sqrt(u)/s;
 
-	if(u < 0.5){
-		return a + su;
-	}
-	return b - su;
+    ay = by - abs(ay-by);
+    cy = by - abs(cy-by);
+
+    double u = uniform->random();
+    double v = uniform->random();
+
+    double MIN = min(u,v);
+    double MAX = max(u,v);
+
+    double space = 1.0/((double)(SIZE-1));
+
+    double ax = (bin-1)*space;
+    double bx = bin*space;
+    double cx = (bin+1)*space;	
+
+    bool flip = false;
+
+    if(abs(by-ay) > abs(by-cy)){
+        double temp = ay;
+        ay = cy;
+        cy = temp;
+        flip = true;
+    }
+
+    cx = ax + space + space * (1 - (abs(cy-ay)/abs(cy-by)));
+
+    double px = ax*MIN + bx*(1-MAX) + cx*(MAX-MIN);
+    //double py = ay*MIN + by*(1-MAX) + ay*(MAX-MIN);
+
+    if(flip){
+        px = bx-(px-bx);
+    }
+
+	return px;
 }
-
 void PiecewisePF::addObservation(double v){
 	total += 1;
 
