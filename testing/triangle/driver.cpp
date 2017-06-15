@@ -23,14 +23,27 @@ void triangle(){
 
 	double space = 0.25;
 
-	double ay = 10;
-	double by = 20;
+	double ay = 15;
+	double by = 10;
 	double cy = 5;
-	
-	cx = ax + space + space * (1 - ((cy-ay)/(cy-by)));
+	bool flip = false;	
+
+	if(abs(by-ay) > abs(by-cy)){
+		double temp = ay;
+		ay = cy;
+		cy = temp;
+		flip = true;
+	}	
+
+
+	cx = ax + space + space * (1 - (abs(cy-ay)/abs(cy-by)));
 
 	double px = ax*MIN + bx*(1-MAX) + cx*(MAX-MIN);
 	double py = ay*MIN + by*(1-MAX) + ay*(MAX-MIN);
+
+	if(flip){
+		px = bx-(px-bx);
+	}
 
 	cout << px << "," << py << endl;
 }
