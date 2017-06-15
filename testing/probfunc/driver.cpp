@@ -11,6 +11,7 @@
 #include "../../shared/UniformPF.h"
 #include "../../shared/NormalPF.h"
 #include "../../shared/ShiftPF.h"
+#include "../../shared/PiecewisePF.h"
 
 using namespace std;
 
@@ -38,6 +39,22 @@ void histoTest(){
 		double d = pf->random();
 		cout << d << "\n";
 	}
+}
+
+void pieceTest(){
+    ProbFunc* pf = new PiecewisePF();
+    normal_distribution<double> distro(0.5,0.1);
+    for(int i = 0; i < 5000; ++i){
+        double d = distro(ProbFunc::generator);
+        if(d >= 0 && d <= 1){
+            pf->addObservation(d);
+			//cout << pf->toString() << endl;
+        }
+    }
+    for(int i = 0; i < 5000; ++i){
+        double d = pf->random();
+        cout << d << "\n";
+    }
 }
 
 void shiftTest(){
@@ -117,6 +134,8 @@ int main(int argc, char* argv[]){
 		fixedTest();
 	}else if(type == "-histo"){
 		histoTest();
+	}else if(type == "-piecewise"){
+        pieceTest();
 	}else if(type == "-uniform"){
 		uniformTest();
 	}else if(type == "-shift"){

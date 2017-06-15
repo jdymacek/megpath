@@ -37,7 +37,7 @@ NMFMatrix::NMFMatrix(int rowss, int cols){
 	for(int i =0; i < rows; ++i){
 		functions[i] = new ProbFunc*[columns];
 		for(int j =0; j < columns; ++j){
-			functions[i][j] = new HistoPF();
+			functions[i][j] = new PiecewisePF();
 		}
 	}	
 }
