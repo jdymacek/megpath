@@ -62,7 +62,7 @@ int main(){
 	outfile << "test_origin = [0,0]\n";
 	outfile << "test_directory = \".\"\n";
 	outfile << "test_columns = [0,1,2,3,4]\n";
-	outfile << "patternOne = [0.1,0.25,0.5,0.25,0.1]\n";
+	//outfile << "patternOne = [0.1,0.25,0.5,0.25,0.1]\n";
 	outfile.close();
 
 	return 0;

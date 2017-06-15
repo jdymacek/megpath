@@ -26,6 +26,7 @@ void MonteAnneal::monteCarloStep(NMFMatrix& m,ErrorFunction* ef){
             ProbFunc* function = m.functions[y][x];
 			double r = function->random();
 			if(isnan(r)){
+				cout << "nan error" << endl;
 				cout << function->toString() << endl;
 			}
             if(function->size() == 1){

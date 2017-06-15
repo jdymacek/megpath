@@ -7,7 +7,7 @@
 #include "PiecewisePF.h"
 
 PiecewisePF::PiecewisePF(){
-	SIZE = 51;
+	SIZE = 21;
 	total = SIZE;
 	weights = new double[SIZE];
 	for(int i =0; i < SIZE; ++i){
@@ -40,15 +40,18 @@ double PiecewisePF::random(){
 	double by = weights[bin];
 	double cy = weights[bin+1];
 
-
-    ay = by - abs(ay-by);
-    cy = by - abs(cy-by);
-
     double u = uniform->random();
     double v = uniform->random();
 
     double MIN = min(u,v);
     double MAX = max(u,v);
+
+
+
+
+    ay = by - abs(ay-by);
+    cy = by - abs(cy-by);
+
 
     double space = 1.0/((double)(SIZE-1));
 
@@ -65,9 +68,11 @@ double PiecewisePF::random(){
         flip = true;
     }
 
-    cx = ax + space + space * (1 - (abs(cy-ay)/abs(cy-by)));
-
-    double px = ax*MIN + bx*(1-MAX) + cx*(MAX-MIN);
+	double px = 0;
+	if(abs(ay-by) >= 0.00005){
+		cx = ax + space + space * (1 - (abs(cy-ay)/abs(cy-by)));
+	}
+    px = ax*MIN + bx*(1-MAX) + cx*(MAX-MIN);
     //double py = ay*MIN + by*(1-MAX) + ay*(MAX-MIN);
 
     if(flip){
