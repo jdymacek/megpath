@@ -1,4 +1,4 @@
-://NMFMatrix.cpp
+//NMFMatrix.cpp
 //Matthew Dyer
 //Created on 6/1/2017
 //Last Modified: 6/12/2017
