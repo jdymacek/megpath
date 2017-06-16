@@ -48,9 +48,9 @@ int main(){
 			}
 			total += coefficients(i,j);
 		}
-		for(int j = 0; j < coefficients.cols(); ++j){
-			coefficients(i,j) /= total;
-		}
+	//	for(int j = 0; j < coefficients.cols(); ++j){
+	//		coefficients(i,j) /= total;
+	//	}
 	}
 
 	MatrixXd mult = coefficients * patterns;

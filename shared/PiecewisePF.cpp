@@ -39,8 +39,8 @@ double PiecewisePF::random(){
 	double space = 1.0/((double)(SIZE-1)); 
 	double center = bin*space + space/2;
 	
-//	double px = uniform->random()*space+bin*space;
-	double px = uniform->random()
+	double px = uniform->random()*space+bin*space;
+//	double px = uniform->random()
 
 
 	return max(0.0,min(px,0.99));
