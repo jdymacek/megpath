@@ -216,7 +216,7 @@ void ParallelPatterns::run(){
 //	error = anneal();
 //	annealAgain();
 
-	int send = state->coefficients.matrix.size();
+/*	int send = state->coefficients.matrix.size();
 	MPI_Gather(&send,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
 
 	send = state->coefficients.matrix.cols()*startPoint;
@@ -267,7 +267,7 @@ void ParallelPatterns::run(){
 		delete buffer;
 	}
 	delete sendBuf;
-
+*/
 }
 
 void ParallelPatterns::stop(){
