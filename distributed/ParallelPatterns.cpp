@@ -216,23 +216,29 @@ void ParallelPatterns::run(){
 //	error = anneal();
 //	annealAgain();
 
-/*	int send = state->coefficients.matrix.size();
+	int send = state->coefficients.matrix.size();
 	MPI_Gather(&send,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
 
 	send = state->coefficients.matrix.cols()*startPoint;
 	MPI_Gather(&send,1,MPI_INT,&allDispls[0],1,MPI_INT, 0, MPI_COMM_WORLD);
-	
-	cout << hostname << "before gatherv" << endl;
 
-	state->coefficients.matrix.transposeInPlace();
+	if(rank == 0){
+		for(int i = 0; i < size; ++i){
+			cout << i << "\t" <<  allCounts[i] << "\t" << allDispls[i] << endl;
+		}
+		cout << oexpression.rows()*state->coefficients.matrix.cols() << endl;
+	}	
 
-	memcpy(sendBuf,state->coefficients.matrix.data(),sizeof(double)*state->coefficients.matrix.size());
 
-	MPI_Gatherv(sendBuf,state->coefficients.matrix.size(),MPI_DOUBLE,
+
+	MatrixXd ct = state->coefficients.matrix.transpose();
+
+	memcpy(sendBuf,ct.data(),sizeof(double)*ct.size());
+
+	MPI_Gatherv(sendBuf,ct.size(),MPI_DOUBLE,
 			buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-	state->coefficients.matrix.transposeInPlace();
-	cout << hostname << "after retranspose" << endl;
+	cout << hostname << " entering rank 0 area" << endl;
 
 	if(rank == 0){
 		
@@ -250,24 +256,23 @@ void ParallelPatterns::run(){
 
 
 		state->coefficients.matrix = temp;
-        //state->coefficients.write(state->analysis + "test_coefficients.csv");
 
-//		cout << "past mapping" << endl;
 
 		state->coefficients.rows = state->coefficients.matrix.rows();
 		state->coefficients.columns = state->coefficients.matrix.cols();
-		//cout << "Coefficients:" << endl;
-		//cout << state->coefficients.matrix << endl;
+		cout << "Coefficients:" << endl;
+		cout << state->coefficients.matrix << endl;
+
 		state->expression = oexpression;
 		ErrorFunctionRow efRow(state);
 		error = efRow.error();
 		cout << "Final Error: " << error << endl;
 		cout << "Patterns: " << endl;
 		cout << state->patterns.matrix << endl;;
-		delete buffer;
+//		delete buffer;
 	}
 	delete sendBuf;
-*/
+
 }
 
 void ParallelPatterns::stop(){
