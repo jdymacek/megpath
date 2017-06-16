@@ -83,8 +83,19 @@ double PiecewisePF::random(){
 }
 void PiecewisePF::addObservation(double v){
 	total += 1;
+	double width = 1.0/((double)(SIZE-1));
+	int bin = v*(SIZE-1);
+	double center = (double)bin/((double)(SIZE-1)) + width/2;
+	double alpha = abs(v-center)/width;
+	weights[bin] += 1-alpha;
+	if(v > center){
+		if(bin+1 < SIZE)
+			weights[bin+1] += alpha;
+	}else if(bin > 0){
+		weights[bin-1] += alpha;
+	}
 
-	double space = 1.0/((double)(SIZE-1));
+/*	double space = 1.0/((double)(SIZE-1));
 	int bin = v*(SIZE-1);
 	
 	double b = (double)bin/((double)(SIZE-1));	
@@ -92,6 +103,7 @@ void PiecewisePF::addObservation(double v){
 	weights[bin] += 1-alpha;
 	if(bin+1 < SIZE)
 		weights[bin+1] += alpha;
+*/
 }
 
 string PiecewisePF::toString(){
