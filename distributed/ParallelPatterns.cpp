@@ -206,14 +206,15 @@ void ParallelPatterns::run(){
 	//MPI variables
 	int tag  = 0;
 	double* buffer = NULL;
+	double* sendBuf = new double[state->coefficients.matrix.cols()*state->coefficients.matrix.rows()];
 	MPI_Status status;
 	if(rank == 0){
 		buffer = new double[oexpression.rows()*state->coefficients.matrix.cols()];
 	}
 
 	monteCarlo();
-	error = anneal();
-	annealAgain();
+//	error = anneal();
+//	annealAgain();
 
 	int send = state->coefficients.matrix.size();
 	MPI_Gather(&send,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
@@ -225,19 +226,33 @@ void ParallelPatterns::run(){
 
 	state->coefficients.matrix.transposeInPlace();
 
-	MPI_Gatherv(state->coefficients.matrix.data(),state->coefficients.matrix.size(),MPI_DOUBLE,
+	memcpy(sendBuf,state->coefficients.matrix.data(),sizeof(double)*state->coefficients.matrix.size());
+
+	MPI_Gatherv(sendBuf,state->coefficients.matrix.size(),MPI_DOUBLE,
 			buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-   state->coefficients.matrix.transposeInPlace();
+	state->coefficients.matrix.transposeInPlace();
 	cout << hostname << "after retranspose" << endl;
 
 	if(rank == 0){
 		
+	
+		MatrixXd temp = MatrixXd::Zero(oexpression.rows(),state->coefficients.matrix.cols());
+		for(int i =0; i < temp.rows(); ++i){
+			for(int j=0; j < temp.cols(); ++j){
+				temp(i,j) = *buffer;
+//				cout << *buffer << " ";
+				buffer += 1;
+			}
+//			cout << endl;
+		}
+//		cout << "temp is fine" << endl;
 
-		Map<Matrix<double,Dynamic,Dynamic,RowMajor> > mapper(buffer,oexpression.rows(),state->coefficients.matrix.cols());
-		cout << "middle" << endl;
-		state->coefficients.matrix = mapper;
-		cout << "past mapping" << endl;
+
+		state->coefficients.matrix = temp;
+        //state->coefficients.write(state->analysis + "test_coefficients.csv");
+
+//		cout << "past mapping" << endl;
 
 		state->coefficients.rows = state->coefficients.matrix.rows();
 		state->coefficients.columns = state->coefficients.matrix.cols();
@@ -251,6 +266,7 @@ void ParallelPatterns::run(){
 		cout << state->patterns.matrix << endl;;
 		delete buffer;
 	}
+	delete sendBuf;
 
 }
 

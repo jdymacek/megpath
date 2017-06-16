@@ -40,7 +40,7 @@ double PiecewisePF::random(){
 	double center = bin*space + space/2;
 	
 	double px = uniform->random()*space+bin*space;
-	return px;
+	return max(0.0,min(px,0.99));
 
 /*	if(bin == 0)
 		return 0;
