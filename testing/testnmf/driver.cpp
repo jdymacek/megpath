@@ -34,7 +34,7 @@ int main(){
 	patterns << 0.1,0.35,0.5,0.65,0.8, 0.7,0.5,0.3,0.1,0, 0.1,0.25,0.5,0.25,0.1;
 
 	default_random_engine gen;
-	normal_distribution<double> dist(0.5,0.1);
+	uniform_real_distribution<double> dist(0.0,1.0);
 	MatrixXd coefficients(5000,3);
 	for(int i = 0; i < coefficients.rows(); ++i){
 		for(int j = 0; j < coefficients.cols(); ++j){
