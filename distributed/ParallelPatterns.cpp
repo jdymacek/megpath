@@ -158,9 +158,9 @@ double ParallelPatterns::anneal(){
 	state->patterns.read(&recvBuffer[1]);
 	state->patterns.matrix /= size;
 
-	cout << "Final Error: " << efRow.error() << endl;
-	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
-	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+	cout << hostname << " Anneal Final Error: " << efRow.error() << endl;
+	cout << "Anneal Error Histogram: " << efRow.errorDistribution(10) << endl;
+	cout << "Anneal Total time: " << watch.formatTime(watch.stop()) << endl;
 
 	delete sendBuffer;
 	delete recvBuffer;
@@ -192,9 +192,9 @@ double ParallelPatterns::annealAgain(){
 		ndx++;
 		t *= 0.99975;
 	}
-	cout << "Final Error: " << efRow.error() << endl;
-	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
-	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+	cout << hostname << " Final Error: " << efRow.error() << endl;
+	cout << hostname << " Error Histogram: " << efRow.errorDistribution(10) << endl;
+	cout << hostname << " Total time: " << watch.formatTime(watch.stop()) << endl;
 
 	return efRow.error();
 }
@@ -205,7 +205,7 @@ void ParallelPatterns::run(){
 	int  allDispls[size];
 	//MPI variables
 	int tag  = 0;
-	double* buffer;
+	double* buffer = NULL;
 	MPI_Status status;
 	if(rank == 0){
 		buffer = new double[oexpression.rows()*state->coefficients.matrix.cols()];
@@ -220,6 +220,8 @@ void ParallelPatterns::run(){
 
 	send = state->coefficients.matrix.cols()*startPoint;
 	MPI_Gather(&send,1,MPI_INT,&allDispls[0],1,MPI_INT, 0, MPI_COMM_WORLD);
+	
+	cout << hostname << "before gatherv" << endl;
 
 	state->coefficients.matrix.transposeInPlace();
 
@@ -227,13 +229,15 @@ void ParallelPatterns::run(){
 			buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
    state->coefficients.matrix.transposeInPlace();
-
+	cout << hostname << "after retranspose" << endl;
 
 	if(rank == 0){
+		
 
 		Map<Matrix<double,Dynamic,Dynamic,RowMajor> > mapper(buffer,oexpression.rows(),state->coefficients.matrix.cols());
+		cout << "middle" << endl;
 		state->coefficients.matrix = mapper;
-
+		cout << "past mapping" << endl;
 
 		state->coefficients.rows = state->coefficients.matrix.rows();
 		state->coefficients.columns = state->coefficients.matrix.cols();
