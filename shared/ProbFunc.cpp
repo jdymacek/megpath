@@ -6,6 +6,8 @@
 
 mt19937_64 ProbFunc::generator;
 
+ProbFunc::~ProbFunc(){}
+
 int ProbFunc::size(){
 	return 1;
 }

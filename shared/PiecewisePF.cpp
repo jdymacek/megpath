@@ -23,15 +23,26 @@ PiecewisePF::~PiecewisePF(){
 
 double PiecewisePF::random(){
 	double r = uniform->random();
-
 	int bin =0;
 	double running = weights[bin]/total;
-	while(r > running){
+	while(r > running && bin < SIZE){
 		bin += 1;
 		running += weights[bin]/total;
 	}
+/*	if(bin == 0){
+		cout << "zero" << endl;
+	}
+	if(bin == SIZE-1){
+		cout << SIZE-1 << endl;
+	}*/
 
-	if(bin == 0)
+	double space = 1.0/((double)(SIZE-1)); 
+	double center = bin*space + space/2;
+	
+	double px = uniform->random()*space+bin*space;
+	return px;
+
+/*	if(bin == 0)
 		return 0;
 	if(bin == SIZE-1)
 		return 1;
@@ -80,6 +91,7 @@ double PiecewisePF::random(){
     }
 
 	return px;
+*/
 }
 void PiecewisePF::addObservation(double v){
 	total += 1;

@@ -20,6 +20,7 @@ struct Entry{
 
 class ProbFunc{
 	public:
+		virtual ~ProbFunc();
 		virtual double random() = 0;
 		virtual int dataSize();
 		virtual void addObservation(double d){ };
