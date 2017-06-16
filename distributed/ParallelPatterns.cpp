@@ -213,8 +213,8 @@ void ParallelPatterns::run(){
 	}
 
 	monteCarlo();
-//	error = anneal();
-//	annealAgain();
+	error = anneal();
+	annealAgain();
 
 	int send = state->coefficients.matrix.size();
 	MPI_Gather(&send,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
@@ -260,8 +260,8 @@ void ParallelPatterns::run(){
 
 		state->coefficients.rows = state->coefficients.matrix.rows();
 		state->coefficients.columns = state->coefficients.matrix.cols();
-		cout << "Coefficients:" << endl;
-		cout << state->coefficients.matrix << endl;
+//		cout << "Coefficients:" << endl;
+//		cout << state->coefficients.matrix << endl;
 
 		state->expression = oexpression;
 		ErrorFunctionRow efRow(state);
