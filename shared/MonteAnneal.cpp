@@ -165,24 +165,34 @@ void MonteAnneal::output(){
 
 	ErrorFunctionRow efRow(state);
 
+	//args and information
 	ofstream out;
 	out.open(outputFile);
 
 	out << "Date : " << curTime << endl;
 	out << "File : " << state->filename << endl;
-	out << "Number_of_genes : " << state->coefficients.matrix.rows() << endl;
+	out << "Number_of_genes : " << state->coefficients.rows << endl;
 	out << "Program : " << program << endl;
 	out << "MAX_RUNS : " << state->MAX_RUNS << endl; 
 	out << "Total_error : " << efRow.error() << endl;
 
 	out.close();
 
+	//matrices
+	ofstream fout;
 	outputFile = outputFile.substr(0,outputFile.size()-4) + "--";
 
-	state->patterns.write(outputFile + state->analysis + "patterns.csv");
+	//ouput
 	state->coefficients.write(outputFile + state->analysis + "coefficients.csv");
 
-	ofstream fout;
+	//output patterns
+	fout.open(outputFile + state->analysis + "patterns.csv");
+	for(int i = 0; i < state->patterns.rows; ++i){
+		fout << state->patternNames[i] << " " << state->patterns.matrix.row(i) << endl; 
+	}
+	fout.close();
+
+	//output expression
 	fout.open( outputFile + state->analysis + "expression.txt");
 	fout << state->coefficients.matrix*state->patterns.matrix;
 	fout.close();
