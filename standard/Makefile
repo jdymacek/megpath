@@ -16,6 +16,7 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:	
+	rm $(EXECUTABLE)
 	rm -f *.o 
 	touch *.cpp
 
