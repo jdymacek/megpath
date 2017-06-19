@@ -9,7 +9,9 @@
 
 using namespace std;
 
-DistNaive::DistNaive():Distributed(){}
+DistNaive::DistNaive():Distributed(){
+	program = "DistNaive";
+}
 
 void DistNaive::start(string filename){
 	Distributed::start(filename);
