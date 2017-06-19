@@ -25,6 +25,7 @@ class State{
 		string directory;
 		string analysis;
 		string filename;
+		vector<string> patternNames;
 		bool load(string argFileName);
 	protected:
 		void normalize();

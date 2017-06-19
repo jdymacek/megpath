@@ -44,6 +44,11 @@ bool State::load(string argFileName){
 		Value val = args.getArgument(analysis + "patterns");
 		patternArgs = val.asVector();
 		PATTERNS = patternArgs.size();
+		int i = 0;
+		while(i < PATTERNS){
+			patternNames.push_back(patternArgs[i].toString());
+			++i;
+		}
 	}
 
 	if(args.isArgument(analysis + "origin")){
