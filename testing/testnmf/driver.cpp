@@ -36,7 +36,9 @@ int main(){
 	default_random_engine gen;
 	uniform_real_distribution<double> dist(0.0,1.0);
 	MatrixXd coefficients(5000,3);
+	double total = 0;
 	for(int i = 0; i < coefficients.rows(); ++i){
+		total = 0;
 		for(int j = 0; j < coefficients.cols(); ++j){
 			double rando = dist(gen);
 			coefficients(i,j) = rando;
@@ -44,7 +46,11 @@ int main(){
 				rando = dist(gen);
 				coefficients(i,j) = rando;
 			}
+			total += coefficients(i,j);
 		}
+	//	for(int j = 0; j < coefficients.cols(); ++j){
+	//		coefficients(i,j) /= total;
+	//	}
 	}
 
 	MatrixXd mult = coefficients * patterns;

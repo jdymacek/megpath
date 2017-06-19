@@ -6,7 +6,7 @@
 
 #include "ParallelPatterns.h"
 
-ParallelPatterns::ParallelPatterns(): MonteAnneal(){}
+ParallelPatterns::ParallelPatterns(): Distributed(){}
 
 int ParallelPatterns::findStart(int myRank, int curSize, int numRows){
 	int startRow = 0;
@@ -31,14 +31,7 @@ int ParallelPatterns::findRows(int myRank, int curSize, int numRows){
 }
 
 void ParallelPatterns::start(string filename){
-	MonteAnneal::start(filename);
-	MPI_Init(NULL,NULL);
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	MPI_Comm_size(MPI_COMM_WORLD, &size);
-	char hostbuff[100];
-	gethostname(hostbuff,99);
-	hostname = string(hostbuff);
-
+	Distributed::start(filename);
 	if(rank == 0){
 		oexpression = state->expression;
 	}
@@ -261,18 +254,4 @@ void ParallelPatterns::run(){
 
 }
 
-void ParallelPatterns::stop(){
-	//write out the best matrices to files
-	if(rank == 0){
-		state->patterns.write(state->analysis + "patterns.csv");
-		state->coefficients.write(state->analysis + "coefficients.csv");
-
-		ofstream fout;
-		fout.open(state->analysis + "expression.txt");
-		fout << state->coefficients.matrix*state->patterns.matrix;
-		fout.close();
-	}
-
-	MPI_Finalize();
-
-}
+Distributed::stop();
