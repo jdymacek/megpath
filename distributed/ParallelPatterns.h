@@ -6,17 +6,18 @@
 #ifndef PARALLELPATTERNS__H
 #define PARALLELPATTERNS__H
 
-#include "MonteAnneal.h"
+#include "Distributed.h"
 #include <mpi.h>
 #include <unistd.h>
+#include <algorithm>
 
 using namespace std;
 
-class ParallelPatterns: public MonteAnneal{
+class ParallelPatterns: public Distributed{
 	public:
 		ParallelPatterns();	
 		virtual double monteCarlo();
-		virtual double anneal();
+		virtual double anneal(bool both);
 		virtual void start(string filename);
 		virtual void run();
 		virtual void stop();
@@ -26,9 +27,6 @@ class ParallelPatterns: public MonteAnneal{
 	protected:
 		MatrixXd oexpression;
 		int startPoint;
-		int rank;
-		int size;
-		string hostname;
 };
 
 

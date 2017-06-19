@@ -5,11 +5,11 @@
 #ifndef STATE__H
 #define STATE__H
 
+#include <cmath>
 #include "ArgFile.h"
 #include "CSVFile.h"
 #include "NMFMatrix.h"
 #include "../../Eigen/Core"
-#include <cmath>
 #include "ShiftPF.h"
 
 using namespace std;

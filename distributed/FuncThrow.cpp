@@ -45,13 +45,9 @@ double FuncThrow::monteCarlo(){
 			MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&status);
 			if(flag == 1){
 				int source = status.MPI_SOURCE;
-				//cout << "before recieve\n"; //XXX
 				MPI_Recv(buffer,bufferSize,MPI_DOUBLE,source,tag,MPI_COMM_WORLD,&status);
-				//cout << "after recieve\n"; //XXX
 				if(buffer[0] < error){
-					//cout << "before read\n"; //XXX
 					state->patterns.read(&buffer[1]);
-					//cout << "after read\n"; //XXX
 				}
 				cout << hostname << " switched patterns -- old error: " << error << endl;
 				error = efRow.error();
@@ -64,7 +60,7 @@ double FuncThrow::monteCarlo(){
 	cout << hostname << "\tError Histogram: " << efRow.errorDistribution(10) << endl;
 	cout << hostname << "\tTotal time: " << watch.formatTime(watch.stop()) << endl;
 
-	delete buffer;
+	delete[] buffer;
 
 	return error;
 }
@@ -89,9 +85,7 @@ void FuncThrow::run(){
 		cout << hostname << " has " << error << " error" << endl;
 	}
 
-	cout << "before gather\n"; //XXX
 	MPI_Gather(&error, 1, MPI_DOUBLE, allError, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-	cout << "after gather\n"; //XXX
 
 	int minRank = 0;
 	if(rank == 0){
@@ -113,6 +107,7 @@ void FuncThrow::run(){
 		MPI_Recv(state->coefficients.matrix.data(),
 				state->coefficients.matrix.rows()*state->coefficients.matrix.cols(),
 				MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
+		delete[] allError;
 	}else if(minRank == rank){
 		char c = 7;
 		cout << c << hostname << " is sending the final data. The minimum error was " << error << "." << endl;

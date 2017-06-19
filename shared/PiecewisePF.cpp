@@ -17,7 +17,7 @@ PiecewisePF::PiecewisePF(){
 }
 
 PiecewisePF::~PiecewisePF(){
-	delete weights;
+	delete[] weights;
 	delete uniform;
 }
 
