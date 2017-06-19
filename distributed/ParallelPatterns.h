@@ -9,6 +9,7 @@
 #include "Distributed.h"
 #include <mpi.h>
 #include <unistd.h>
+#include <algorithm>
 
 using namespace std;
 

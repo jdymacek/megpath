@@ -192,7 +192,7 @@ void ParallelPatterns::run(){
 
 	MatrixXd ct = state->coefficients.matrix.transpose();
 
-	memcpy(sendBuf,ct.data(),sizeof(double)*ct.size());
+	copy(ct.data(),ct.data()+ct.size(), sendBuf);
 
 	MPI_Gatherv(sendBuf,ct.size(),MPI_DOUBLE,
 			buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
