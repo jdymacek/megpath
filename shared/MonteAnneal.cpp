@@ -164,9 +164,9 @@ void MonteAnneal::output(){
 
 	out << "Date: " << curTime << endl;
 	out << "File: " << state->filename << endl;
+	out << "Number of genes: " << state->coefficients.matrix.rows << endl;
 	out << "MAX_RUNS: " << state->MAX_RUNS << endl; 
 	out << "Program: " << endl; //TODO
-	out << "Number of genes: " << endl; //TODO
 	out << "Total error: " << endl; //TODO
 
 	out.close();
