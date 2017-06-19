@@ -6,7 +6,7 @@
 
 #include "ParallelPatterns.h"
 
-ParallelPatterns::ParallelPatterns(): MonteAnneal(){}
+ParallelPatterns::ParallelPatterns(): Distributed(){}
 
 int ParallelPatterns::findStart(int myRank, int curSize, int numRows){
 	int startRow = 0;
@@ -31,14 +31,7 @@ int ParallelPatterns::findRows(int myRank, int curSize, int numRows){
 }
 
 void ParallelPatterns::start(string filename){
-	MonteAnneal::start(filename);
-	MPI_Init(NULL,NULL);
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	MPI_Comm_size(MPI_COMM_WORLD, &size);
-	char hostbuff[100];
-	gethostname(hostbuff,99);
-	hostname = string(hostbuff);
-
+	Distributed::start(filename);
 	if(rank == 0){
 		oexpression = state->expression;
 	}
@@ -46,15 +39,6 @@ void ParallelPatterns::start(string filename){
 	//split the coefficients
 	int myRows = findRows(rank, size, state->coefficients.rows);
 	state->coefficients.resize(myRows, state->coefficients.columns);
-/*	for(int y = 0; y < state->coefficients.matrix.rows(); ++y){
-	    for(int x = 0; x < state->coefficients.matrix.cols(); ++x){
-			state->coefficients.matrix(y,x) = 100*(x+1)+rank;
-		}
-	}*/
-
-
-	//cout << hostname << " coefficients:" << endl;
-	//cout << state->coefficients.matrix << endl;
 
 	//split the expression	
 	startPoint = findStart(rank, size, state->expression.rows());
@@ -62,8 +46,6 @@ void ParallelPatterns::start(string filename){
 	MatrixXd temp = state->expression.block(startPoint, 0, myRows, state->expression.cols());
 	state->expression = temp;
 
-	//cout << hostname << " expression:" << endl;
-	//cout << state->expression << endl;
 }
 
 double ParallelPatterns::monteCarlo(){
@@ -287,6 +269,5 @@ void ParallelPatterns::stop(){
 		fout.close();
 	}
 */	
-	MPI_Finalize();
-
+	Distributed::stop();
 }

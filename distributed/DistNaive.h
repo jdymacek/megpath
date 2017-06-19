@@ -7,16 +7,12 @@
 
 using namespace std;
 
-class DistNaive: public MonteAnneal{
+class DistNaive: public Distributed{
 	public:
 		DistNaive();
 		virtual void start(string filename);
 		virtual void run();
 		virtual void stop();
-
-	protected:
-		int rank;
-
 };
 
 
