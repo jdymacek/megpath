@@ -160,7 +160,7 @@ void MonteAnneal::output(){
 	time(&curTime);	
 
 	ofstream out;
-	out.open("output.txt");
+	out.open(uniqueFile("output.txt"));
 
 	out << "Date: " << curTime << endl;
 	out << "File: " << state->filename << endl;

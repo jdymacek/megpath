@@ -13,6 +13,7 @@
 #include "ErrorFunction.h"
 #include "ErrorFunctionRow.h"
 #include "ErrorFunctionCol.h"
+#include "FileUtil.h"
 
 using namespace std;
 class MonteAnneal:public Analysis{
