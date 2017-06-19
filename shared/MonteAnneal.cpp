@@ -183,7 +183,18 @@ void MonteAnneal::output(){
 	outputFile = outputFile.substr(0,outputFile.size()-4) + "--";
 
 	//ouput
-	state->coefficients.write(outputFile + state->analysis + "coefficients.csv");
+	double max = 0;
+	double min = 0;
+	fout.open(outputFile + state->analysis + "coefficients.csv");	
+	for(int i = 0; i < state->coefficients.rows; ++i){
+		MatrixXd temp = state->coefficients.matrix.row(i);
+		max = temp.maxCoeff();
+		min = temp.minCoeff();
+		temp = temp.array() - min;
+		temp = temp/(max-min);
+		fout << i << " " << temp << endl;
+	}
+	fout.close();
 
 	//output patterns
 	fout.open(outputFile + state->analysis + "patterns.csv");
@@ -197,3 +208,4 @@ void MonteAnneal::output(){
 	fout << state->coefficients.matrix*state->patterns.matrix;
 	fout.close();
 }
+

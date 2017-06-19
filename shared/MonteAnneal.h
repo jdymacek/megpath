@@ -14,6 +14,7 @@
 #include "ErrorFunctionRow.h"
 #include "ErrorFunctionCol.h"
 #include "FileUtil.h"
+#include "../../Eigen/Core"
 
 using namespace std;
 class MonteAnneal:public Analysis{
