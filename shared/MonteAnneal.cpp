@@ -147,19 +147,33 @@ void MonteAnneal::run(){
 }
 
 void MonteAnneal::stop(){
-	state->patterns.write(state->analysis + "patterns.csv");
+	/*state->patterns.write(state->analysis + "patterns.csv");
 	state->coefficients.write(state->analysis + "coefficients.csv");
 
 	ofstream fout;
 	fout.open(state->analysis + "expression.txt");
 	fout << state->coefficients.matrix*state->patterns.matrix;
 	fout.close();
+	*/
 }
 
 void MonteAnneal::output(){
-	time_t curTime;
-	time(&curTime);
-	FileUtil fileUt;
+	char curTime[20];
+	time_t t;
+	struct tm *tmp;
+	
+	t = time(NULL);
+	tmp = localtime(&t);
+	if(tmp == NULL){
+		fprintf(stderr,"%s",strerror(errno));
+		exit(-1);
+	}
+
+	int timef = strftime(curTime, sizeof(curTime), "%T %m-%d-%Y" ,tmp);
+	if(timef == 0){
+		fprintf(stderr,"strftime returned 0\n");
+		exit(-1);
+	}
 
 	string outputFile = FileUtil::uniqueFile("output.txt");
 
@@ -182,22 +196,21 @@ void MonteAnneal::output(){
 	ofstream fout;
 	outputFile = outputFile.substr(0,outputFile.size()-4) + "--";
 
-	//ouput
+	//ouput coefficients
 	double max = 0;
-	double min = 0;
 	fout.open(outputFile + state->analysis + "coefficients.csv");	
 	for(int i = 0; i < state->coefficients.rows; ++i){
 		MatrixXd temp = state->coefficients.matrix.row(i);
 		max = temp.sum();
 		temp = temp/(max);
-		fout << i << " " << temp << endl;
+		fout << "id_" << i << "\t" << temp << endl;
 	}
 	fout.close();
 
 	//output patterns
 	fout.open(outputFile + state->analysis + "patterns.csv");
 	for(int i = 0; i < state->patterns.rows; ++i){
-		fout << state->patternNames[i] << " " << state->patterns.matrix.row(i) << endl; 
+		fout << state->patternNames[i] << "\t" << state->patterns.matrix.row(i) << endl; 
 	}
 	fout.close();
 

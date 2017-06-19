@@ -5,6 +5,7 @@
 #include <fstream>
 #include <cmath>
 #include <vector>
+#include <ctime>
 #include "Analysis.h"
 #include "NMFMatrix.h"
 #include "Stopwatch.h"

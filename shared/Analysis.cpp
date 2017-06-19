@@ -24,3 +24,7 @@ void Analysis::stop(){
 
 }
 
+void Analysis::output(){
+
+}
+

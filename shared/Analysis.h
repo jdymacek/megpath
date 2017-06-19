@@ -11,6 +11,7 @@ class Analysis{
 		virtual void start(string filename);
 		virtual void run();
 		virtual void stop();
+		virtual void output();
 	protected:
 		State* state;
 		string program;
