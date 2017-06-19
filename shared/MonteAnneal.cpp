@@ -188,10 +188,8 @@ void MonteAnneal::output(){
 	fout.open(outputFile + state->analysis + "coefficients.csv");	
 	for(int i = 0; i < state->coefficients.rows; ++i){
 		MatrixXd temp = state->coefficients.matrix.row(i);
-		max = temp.maxCoeff();
-		min = temp.minCoeff();
-		temp = temp.array() - min;
-		temp = temp/(max-min);
+		max = temp.sum();
+		temp = temp/(max);
 		fout << i << " " << temp << endl;
 	}
 	fout.close();
