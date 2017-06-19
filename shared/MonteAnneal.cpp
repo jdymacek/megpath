@@ -159,15 +159,27 @@ void MonteAnneal::output(){
 	time_t curTime;
 	time(&curTime);	
 
-	ofstream out;
-	out.open(uniqueFile("output.txt"));
+	string outputFile = uniqueFile("output.txt");
 
-	out << "Date: " << curTime << endl;
-	out << "File: " << state->filename << endl;
-	out << "Number of genes: " << state->coefficients.matrix.rows << endl;
-	out << "MAX_RUNS: " << state->MAX_RUNS << endl; 
-	out << "Program: " << endl; //TODO
-	out << "Total error: " << endl; //TODO
+	ofstream out;
+	out.open(outputFile);
+
+	out << "Date : " << curTime << endl;
+	out << "File : " << state->filename << endl;
+	out << "Number_of_genes : " << state->coefficients.matrix.rows << endl;
+	out << "MAX_RUNS : " << state->MAX_RUNS << endl; 
+	out << "Program : " << endl; //TODO
+	out << "Total_error : " << endl; //TODO
 
 	out.close();
+
+	outputFile = outputFile.substr(0,outputFile.size()-4) + "--";
+
+	state->patterns.write(outputFile + state->analysis + "patterns.csv");
+	state->coefficients.write(outputFile + state->analysis + "coefficients.csv");
+
+	ofstream fout;
+	fout.open( outputFile + state->analysis + "expression.txt");
+	fout << state->coefficients.matrix*state->patterns.matrix;
+	fout.close();
 }
