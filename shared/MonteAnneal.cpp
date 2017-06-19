@@ -159,17 +159,19 @@ void MonteAnneal::output(){
 	time_t curTime;
 	time(&curTime);	
 
-	string outputFile = uniqueFile("output.txt");
+	string outputFile = FileUtil::uniqueFile("output.txt");
+
+	ErrorFunctionRow efRow(state);
 
 	ofstream out;
 	out.open(outputFile);
 
 	out << "Date : " << curTime << endl;
 	out << "File : " << state->filename << endl;
-	out << "Number_of_genes : " << state->coefficients.matrix.rows << endl;
+	out << "Number_of_genes : " << state->coefficients.matrix.rows() << endl;
+	out << "Program : " << program << endl;
 	out << "MAX_RUNS : " << state->MAX_RUNS << endl; 
-	out << "Program : " << endl; //TODO
-	out << "Total_error : " << endl; //TODO
+	out << "Total_error : " << efRow.error() << endl;
 
 	out.close();
 

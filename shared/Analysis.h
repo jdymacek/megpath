@@ -13,6 +13,7 @@ class Analysis{
 		virtual void stop();
 	protected:
 		State* state;
+		string program;
 };
 
 #endif
