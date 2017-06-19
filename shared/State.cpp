@@ -6,7 +6,6 @@ State::State(){
 	filename = "";
 }
 
-
 bool State::load(string argFileName){
 	int ROWS = 0;
 	int COLUMNS = 0;
@@ -140,19 +139,3 @@ void State::normalize(){
 	expression = expression/(max-min);
 }
 
-void State::output(){
-	time_t curTime;
-	time(&curTime);	
-
-	ofstream out;
-	out.open("output.txt");
-	
-	out << "Date: " << curTime << endl;
-	out << "File: " << filename << endl;
-	out << "MAX_RUNS: " << MAX_RUNS << endl; 
-	out << "Program: " << endl; //TODO
-	out << "Number of genes: " << endl; //TODO
-	out << "Total error: " << endl; //TODO
-	
-	out.close();
-}
