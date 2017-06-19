@@ -3,7 +3,7 @@
 Arguments:
 -------------------------------------------------------------
 
-|Argument |Description								                       |Example					                                      |
+|Argument |Description				             |Example			                            |
 |---------|:------------------------------------------------:|------------------------------------------------------|
 |analysis | specifies which heading to follow                | analysis = **"one"**                                 |
 |filename | the name of the csv file we pass in              | filename = **"test.csv"**                            |
