@@ -9,6 +9,7 @@
 MonteAnneal::MonteAnneal(){
 	ProbFunc::generator.seed(time(0));
 	uniform = new UniformPF();
+	program = "MonteAnneal";
 }
 
 bool MonteAnneal::accept(double de,double t){
