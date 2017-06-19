@@ -6,7 +6,6 @@
 #define STATE__H
 
 #include <cmath>
-#include <fstream>
 #include "ArgFile.h"
 #include "CSVFile.h"
 #include "NMFMatrix.h"
@@ -27,7 +26,6 @@ class State{
 		string analysis;
 		string filename;
 		bool load(string argFileName);
-		void output();
 	protected:
 		void normalize();
 
