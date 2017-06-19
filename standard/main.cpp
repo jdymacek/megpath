@@ -1,10 +1,8 @@
-//Main file
+//Main file for standard
 //Matthew Dyer
 //Julian Dymacek
 //Created on 5/25/2017
-//Last modified: 6/6/2017
-
-//#define EIGEN_DEFAULT_TO_ROW_MAJOR
+//Last modified: 6/19/2017
 
 #include "MonteAnneal.h"
 
@@ -24,10 +22,10 @@ int main(int argc, char** argv){
 	cout << "Total program running time: " << watch.formatTime(watch.stop()) << endl;
 	a->stop();
 
-	char c = 7;
-	
-	cout << c;
+	char bell = 7;
+	cout << bell;
 
+	delete a;
 	return 0;
 }
 

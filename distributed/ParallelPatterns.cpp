@@ -46,24 +46,12 @@ void ParallelPatterns::start(string filename){
 	//split the coefficients
 	int myRows = findRows(rank, size, state->coefficients.rows);
 	state->coefficients.resize(myRows, state->coefficients.columns);
-/*	for(int y = 0; y < state->coefficients.matrix.rows(); ++y){
-	    for(int x = 0; x < state->coefficients.matrix.cols(); ++x){
-			state->coefficients.matrix(y,x) = 100*(x+1)+rank;
-		}
-	}*/
-
-
-	//cout << hostname << " coefficients:" << endl;
-	//cout << state->coefficients.matrix << endl;
 
 	//split the expression	
 	startPoint = findStart(rank, size, state->expression.rows());
 	myRows = findRows(rank, size, state->expression.rows());
 	MatrixXd temp = state->expression.block(startPoint, 0, myRows, state->expression.cols());
 	state->expression = temp;
-
-	//cout << hostname << " expression:" << endl;
-	//cout << state->expression << endl;
 }
 
 double ParallelPatterns::monteCarlo(){
@@ -106,13 +94,18 @@ double ParallelPatterns::monteCarlo(){
 		}
 
 	}
+	//final reduction
+	state->patterns.write(&sendBuffer[1]);
+	MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+	state->patterns.read(&recvBuffer[1]);
+	state->patterns.matrix /= size;
 
 	cout << hostname << "\tFinal Error: " << efRow.error() << endl;
 	cout << hostname << "\tError Histogram: " << efRow.errorDistribution(10) << endl;
 	cout << hostname << "\tTotal time: " << watch.formatTime(watch.stop()) << endl;
 
-	delete sendBuffer;
-	delete recvBuffer;
+	delete[] sendBuffer;
+	delete[] recvBuffer;
 
 	return error;
 }
@@ -162,8 +155,8 @@ double ParallelPatterns::anneal(){
 	cout << "Anneal Error Histogram: " << efRow.errorDistribution(10) << endl;
 	cout << "Anneal Total time: " << watch.formatTime(watch.stop()) << endl;
 
-	delete sendBuffer;
-	delete recvBuffer;
+	delete[] sendBuffer;
+	delete[] recvBuffer;
 
 	return efRow.error();
 }
@@ -181,7 +174,6 @@ double ParallelPatterns::annealAgain(){
 	bool running = true;
 	while(running && ndx < state->MAX_RUNS){
 		annealStep(state->coefficients,t,&efRow);
-		//annealStep(state->patterns,t,&efCol);
 		if(ndx % 1000 == 0){
 			double error = efRow.error();
 			cout << hostname << " " << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
@@ -242,21 +234,15 @@ void ParallelPatterns::run(){
 
 	if(rank == 0){
 		
-	
 		MatrixXd temp = MatrixXd::Zero(oexpression.rows(),state->coefficients.matrix.cols());
 		for(int i =0; i < temp.rows(); ++i){
 			for(int j=0; j < temp.cols(); ++j){
 				temp(i,j) = *buffer;
-//				cout << *buffer << " ";
 				buffer += 1;
 			}
-//			cout << endl;
 		}
-//		cout << "temp is fine" << endl;
-
 
 		state->coefficients.matrix = temp;
-
 
 		state->coefficients.rows = state->coefficients.matrix.rows();
 		state->coefficients.columns = state->coefficients.matrix.cols();
@@ -269,15 +255,15 @@ void ParallelPatterns::run(){
 		cout << "Final Error: " << error << endl;
 		cout << "Patterns: " << endl;
 		cout << state->patterns.matrix << endl;;
-//		delete buffer;
+		delete[] buffer;
 	}
-	delete sendBuf;
+	delete[] sendBuf;
 
 }
 
 void ParallelPatterns::stop(){
 	//write out the best matrices to files
-/*	if(rank == 0){
+	if(rank == 0){
 		state->patterns.write(state->analysis + "patterns.csv");
 		state->coefficients.write(state->analysis + "coefficients.csv");
 
@@ -286,7 +272,7 @@ void ParallelPatterns::stop(){
 		fout << state->coefficients.matrix*state->patterns.matrix;
 		fout.close();
 	}
-*/	
+
 	MPI_Finalize();
 
 }
