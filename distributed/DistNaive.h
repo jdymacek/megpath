@@ -1,7 +1,7 @@
 #ifndef DISTNAIVE__H
 #define DISTNAIVE__H
 
-#include "MonteAnneal.h"
+#include "Distributed.h"
 #include <mpi.h>
 #include <unistd.h>
 
