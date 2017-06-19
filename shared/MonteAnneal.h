@@ -1,10 +1,10 @@
 #ifndef MONTEANNEAL__H
 #define MONTEANNEAL__H
 
+#include <iostream>
 #include <fstream>
 #include <cmath>
 #include <vector>
-#include <iostream>
 #include "Analysis.h"
 #include "NMFMatrix.h"
 #include "Stopwatch.h"
@@ -25,9 +25,9 @@ class MonteAnneal:public Analysis{
 		virtual double anneal();
 		virtual void run();
 		virtual void stop();
+		void output();
 	protected:
 		UniformPF* uniform;
-
 };
 
 #endif
