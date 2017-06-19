@@ -25,7 +25,6 @@ int main(int argc, char** argv){
 	cout << "Total program running time: " << watch.formatTime(watch.stop()) << endl;
 	a->stop();
 
-	delete a;
 	return 0;
 }
 

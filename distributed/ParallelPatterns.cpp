@@ -55,7 +55,6 @@ double ParallelPatterns::monteCarlo(){
 		recvBuffer[i] = 0;
 	}
 
-
 	double error = 0;
 	Stopwatch watch;
 	watch.start();
@@ -72,7 +71,6 @@ double ParallelPatterns::monteCarlo(){
 			error = efRow.error();
 			if(isnan(error)){
 				cout << state->patterns.matrix << endl;
-
 			}
 			sendBuffer[0] = error;
 			state->patterns.write(&sendBuffer[1]);
@@ -103,7 +101,7 @@ double ParallelPatterns::monteCarlo(){
 	return error;
 }
 
-double ParallelPatterns::anneal(){
+double ParallelPatterns::anneal(bool both){
 	int bufferSize = state->patterns.size()+1;
 	double* sendBuffer = new double[bufferSize];
 	double* recvBuffer = new double[bufferSize];
@@ -113,36 +111,43 @@ double ParallelPatterns::anneal(){
 	double t = 0.5;
 	watch.start();
 
-    ErrorFunctionRow efRow(state);
-    ErrorFunctionCol efCol(state);
+	ErrorFunctionRow efRow(state);
+	ErrorFunctionCol efCol(state);
 
 	double formerError = 2*state->expression.rows()*state->expression.cols();
 	bool running = true;
 	while(running && ndx < state->MAX_RUNS){
-		annealStep(state->coefficients,t,&efRow);
-		annealStep(state->patterns,t,&efCol);
+		if(both == true){
+			annealStep(state->coefficients,t,&efRow);
+			annealStep(state->patterns,t,&efCol);
+		}else{
+			annealStep(state->coefficients,t,&efRow);
+		}
+
 		if(ndx % 1000 == 0){
 			double error = efRow.error();
-			sendBuffer[0] = error;
-			state->patterns.write(&sendBuffer[1]);
-			//all reduce
-			MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-			state->patterns.read(&recvBuffer[1]);
-			state->patterns.matrix /= size;
-
+			if(both == true){
+				sendBuffer[0] = error;
+				state->patterns.write(&sendBuffer[1]);
+				//all reduce
+				MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+				state->patterns.read(&recvBuffer[1]);
+				state->patterns.matrix /= size;
+			}
 			cout << hostname << " " << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
-			//if(abs(formerError - error) < 0.005 && error < formerError)
-			//	running = false;
 			formerError = error;
 		}
+
 		ndx++;
 		t *= 0.99975;
 	}
-	//final reduction
-	state->patterns.write(&sendBuffer[1]);
-	MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-	state->patterns.read(&recvBuffer[1]);
-	state->patterns.matrix /= size;
+	if(both == true){
+		//final reduction
+		state->patterns.write(&sendBuffer[1]);
+		MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+		state->patterns.read(&recvBuffer[1]);
+		state->patterns.matrix /= size;
+	}
 
 	cout << hostname << " Anneal Final Error: " << efRow.error() << endl;
 	cout << "Anneal Error Histogram: " << efRow.errorDistribution(10) << endl;
@@ -154,40 +159,11 @@ double ParallelPatterns::anneal(){
 	return efRow.error();
 }
 
-double ParallelPatterns::annealAgain(){
-	Stopwatch watch;
-	int ndx = 0;
-	double t = 0.5;
-	watch.start();
-
-   ErrorFunctionRow efRow(state);
-   ErrorFunctionCol efCol(state);
-
-	double formerError = 2*state->expression.rows()*state->expression.cols();
-	bool running = true;
-	while(running && ndx < state->MAX_RUNS){
-		annealStep(state->coefficients,t,&efRow);
-		if(ndx % 1000 == 0){
-			double error = efRow.error();
-			cout << hostname << " " << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
-			//if(abs(formerError - error) < 0.005 && error < formerError)
-			//	running = false;
-			formerError = error;
-		}
-		ndx++;
-		t *= 0.99975;
-	}
-	cout << hostname << " Final Error: " << efRow.error() << endl;
-	cout << hostname << " Error Histogram: " << efRow.errorDistribution(10) << endl;
-	cout << hostname << " Total time: " << watch.formatTime(watch.stop()) << endl;
-
-	return efRow.error();
-}
-
 void ParallelPatterns::run(){
 	double error = 0;
 	int  allCounts[size];
 	int  allDispls[size];
+
 	//MPI variables
 	int tag  = 0;
 	double* buffer = NULL;
@@ -198,8 +174,8 @@ void ParallelPatterns::run(){
 	}
 
 	monteCarlo();
-	error = anneal();
-	annealAgain();
+	error = anneal(true);
+	anneal(false);
 
 	int send = state->coefficients.matrix.size();
 	MPI_Gather(&send,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
@@ -214,8 +190,6 @@ void ParallelPatterns::run(){
 		cout << oexpression.rows()*state->coefficients.matrix.cols() << endl;
 	}	
 
-
-
 	MatrixXd ct = state->coefficients.matrix.transpose();
 
 	memcpy(sendBuf,ct.data(),sizeof(double)*ct.size());
@@ -226,7 +200,6 @@ void ParallelPatterns::run(){
 	cout << hostname << " entering rank 0 area" << endl;
 
 	if(rank == 0){
-		
 		MatrixXd temp = MatrixXd::Zero(oexpression.rows(),state->coefficients.matrix.cols());
 		for(int i =0; i < temp.rows(); ++i){
 			for(int j=0; j < temp.cols(); ++j){
@@ -236,22 +209,22 @@ void ParallelPatterns::run(){
 		}
 
 		state->coefficients.matrix = temp;
-
 		state->coefficients.rows = state->coefficients.matrix.rows();
 		state->coefficients.columns = state->coefficients.matrix.cols();
-//		cout << "Coefficients:" << endl;
-//		cout << state->coefficients.matrix << endl;
-
 		state->expression = oexpression;
 		ErrorFunctionRow efRow(state);
 		error = efRow.error();
+
 		cout << "Final Error: " << error << endl;
 		cout << "Patterns: " << endl;
 		cout << state->patterns.matrix << endl;;
 		delete[] buffer;
 	}
+
 	delete[] sendBuf;
 
 }
 
-Distributed::stop();
+void ParallelPatterns::stop(){
+	Distributed::stop();
+}

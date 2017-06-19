@@ -16,7 +16,7 @@ class ParallelPatterns: public Distributed{
 	public:
 		ParallelPatterns();	
 		virtual double monteCarlo();
-		virtual double anneal();
+		virtual double anneal(bool both);
 		virtual void start(string filename);
 		virtual void run();
 		virtual void stop();
