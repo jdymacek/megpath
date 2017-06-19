@@ -1,7 +1,9 @@
 
 #include "FuncThrow.h"
 
-FuncThrow::FuncThrow(): MonteAnneal(){}
+FuncThrow::FuncThrow(): MonteAnneal(){
+	program = "FuncThrow";
+}
 
 
 void FuncThrow::start(string filename){

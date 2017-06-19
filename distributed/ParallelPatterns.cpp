@@ -6,7 +6,9 @@
 
 #include "ParallelPatterns.h"
 
-ParallelPatterns::ParallelPatterns(): Distributed(){}
+ParallelPatterns::ParallelPatterns(): Distributed(){
+	program = "ParallelPatterns";
+}
 
 int ParallelPatterns::findStart(int myRank, int curSize, int numRows){
 	int startRow = 0;
