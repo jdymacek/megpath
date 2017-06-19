@@ -161,7 +161,7 @@ void MonteAnneal::output(){
 	time(&curTime);
 	FileUtil fileUt;
 
-	string outputFile = fileUt.uniqueFile("output.txt");
+	string outputFile = FileUtil::uniqueFile("output.txt");
 
 	ErrorFunctionRow efRow(state);
 
