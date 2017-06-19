@@ -200,6 +200,7 @@ void ParallelPatterns::run(){
 	cout << hostname << " entering rank 0 area" << endl;
 
 	if(rank == 0){
+		double* nb = buffer;
 		MatrixXd temp = MatrixXd::Zero(oexpression.rows(),state->coefficients.matrix.cols());
 		for(int i =0; i < temp.rows(); ++i){
 			for(int j=0; j < temp.cols(); ++j){
@@ -218,7 +219,7 @@ void ParallelPatterns::run(){
 		cout << "Final Error: " << error << endl;
 		cout << "Patterns: " << endl;
 		cout << state->patterns.matrix << endl;;
-		delete[] buffer;
+		delete[] nb;
 	}
 
 	delete[] sendBuf;
