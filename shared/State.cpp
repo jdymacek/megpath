@@ -104,37 +104,11 @@ bool State::load(string argFileName){
 		}
 	}
 
-	//cout << expression << endl;
-
 	normalize();
 
-	/*	cout << "After Normalizing:\n";
-		cout << expression << "\n";
-	 */
-
-	
-	//test arg information
-	/*cout << "directory = " << directory << endl;
-	cout << "max_runs = " << MAX_RUNS  << endl;
-	cout << "controls = [";
-	for(int i = 0; i < controls.size(); ++i){
-		cout << controls[i].asDouble() << " ";
-	}
-	cout << "] \n";
-	cout << "columns = [";
-	for(int i = 0; i < columns.size(); ++i){
-		cout << columns[i].asDouble() << " ";
-	}
-	cout << "] \n";
-	*/
-
 	//should be PATTERNS and COLUMNS
-
-	//how to fix error
-	//patterns = NMFMatrix(PATTERNS,COLUMNS);
 	patterns.resize(PATTERNS,COLUMNS);
 	//should be ROWS and PATTERNS
-	//coefficients = NMFMatrix(ROWS,PATTERNS);
 	coefficients.resize(ROWS,PATTERNS);	
 
 	for(int i = 0; i < patternArgs.size(); ++i){
@@ -164,4 +138,21 @@ void State::normalize(){
 	double min = expression.minCoeff();
 	expression = expression.array() - min;
 	expression = expression/(max-min);
+}
+
+void State::output(){
+	time_t curTime;
+	time(&curTime);	
+
+	ofstream out;
+	out.open("output.txt");
+	
+	out << "Date: " << curTime << endl;
+	out << "File: " << filename << endl;
+	out << "MAX_RUNS: " << MAX_RUNS << endl; 
+	out << "Program: " << endl; //TODO
+	out << "Number of genes: " << endl; //TODO
+	out << "Total error: " << endl; //TODO
+	
+	out.close();
 }

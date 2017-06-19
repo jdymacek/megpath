@@ -5,11 +5,12 @@
 #ifndef STATE__H
 #define STATE__H
 
+#include <cmath>
+#include <fstream>
 #include "ArgFile.h"
 #include "CSVFile.h"
 #include "NMFMatrix.h"
 #include "../../Eigen/Core"
-#include <cmath>
 #include "ShiftPF.h"
 
 using namespace std;
@@ -26,6 +27,7 @@ class State{
 		string analysis;
 		string filename;
 		bool load(string argFileName);
+		void output();
 	protected:
 		void normalize();
 
