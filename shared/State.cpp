@@ -71,7 +71,10 @@ bool State::load(string argFileName){
 		controls = val.asVector();
 	}
 
-	cout << filename << endl;
+	if(args.isArgument("print_runs")){
+		Value val = args.getArgument("print_runs");
+		printRuns = val.asInt();
+	}
 
 	vector<vector<Value> > csv = file.readCSV(filename);
 
