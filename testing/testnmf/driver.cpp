@@ -63,7 +63,8 @@ int main(){
 	outfile.open("test_arguments.txt");
 	outfile << "analysis = \"test\"\n";
 	outfile << "max_runs = 40000\n";
-	outfile << "test_patterns = [\"patternOne\",\"\",\"\"]\n";
+	outfile << "print_runs = 10000\n";
+	outfile << "test_patterns = [\"\",\"\",\"\"]\n";
 	outfile << "test_filename = \"../testing/testnmf/test_multiplied.csv\"\n";
 	outfile << "test_origin = [0,0]\n";
 	outfile << "test_directory = \".\"\n";
