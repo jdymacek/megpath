@@ -1,21 +1,13 @@
 
 #include "FuncThrow.h"
 
-FuncThrow::FuncThrow(): MonteAnneal(){
+FuncThrow::FuncThrow(): Distributed(){
 	program = "FuncThrow";
 }
 
-
 void FuncThrow::start(string filename){
-	MonteAnneal::start(filename);
-	MPI_Init(NULL,NULL);
-	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	MPI_Comm_size (MPI_COMM_WORLD, &process);
-	char hostbuff[100];
-	gethostname(hostbuff,99);
-	hostname = string(hostbuff);
+	Distributed::start(filename);
 	srand(time(0));
-
 }
 
 double FuncThrow::monteCarlo(){

@@ -1,7 +1,7 @@
 #ifndef FUNCTHROW__H
 #define FUNCTHROW__H
 
-#include "MonteAnneal.h"
+#include "Distributed.h"
 #include <mpi.h>
 #include <unistd.h>
 
