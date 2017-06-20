@@ -38,7 +38,7 @@ double FuncThrow::monteCarlo(){
 		monteCarloStep(state->patterns,&efCol);
 		monteCarloStep(state->coefficients,&efRow);
 
-		if(i%1000 == 0){
+		if(i%1000 == 0){ //for switching
 			error = efRow.error();
 			buffer[0] = error;
 			state->patterns.write(&buffer[1]);	
@@ -54,6 +54,10 @@ double FuncThrow::monteCarlo(){
 				cout << hostname << " switched patterns -- old error: " << error << endl;
 				error = efRow.error();
 			}
+		}
+
+		if(i % state->printRuns == 0){ //for printing
+			error = efRow.error();
 			cout << hostname << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
 	}
