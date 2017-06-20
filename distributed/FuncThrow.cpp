@@ -68,54 +68,43 @@ void FuncThrow::run(){
 	double* allError;
 
 	//MPI variables
-	int tag  = 0;
+	int tag = 0;
 	MPI_Status status;
 
 	if(rank == 0){
-		cout << "rank 0 is " << hostname << endl;
+		cout << "Rank 0 is " << hostname << endl;
 	}
 
-	if(rank == 0){
-		allError = new double[process];
-	}else{
-		monteCarlo();
-		error = anneal();
-		cout << hostname << " has " << error << " error" << endl;
-	}
+	monteCarlo();
+	double formerError = anneal();
 
-	MPI_Gather(&error, 1, MPI_DOUBLE, allError, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+	double* recvBuffer = new double[size];
 
-	int minRank = 0;
-	if(rank == 0){
-		error = state->expression.rows()*state->expression.cols();
-		for(int i =1;i < process; ++i){
-			if(error >= allError[i]){
-				error = allError[i];
-				minRank = i;
-			}
+	MPI_Allgather(&formerError,1, MPI_DOUBLE, recvBuffer, 1, MPI_DOUBLE, MPI_COMM_WORLD);
+
+	//find the smallest
+	int smallest = -1;
+	double minError = state->coefficients.matrix.size()*2;
+	for(int i =0; i < size; ++i){
+		if(minError > recvBuffer[i]){
+			minError = recvBuffer[i];
+			smallest = i;
 		}
 	}
 
-	MPI_Bcast(&minRank, 1, MPI_INT, 0, MPI_COMM_WORLD);
+	//if i have the smallest send
+	if(smallest == rank){
+		cout << hostname << " has the smallest error: " << formerError << endl;
+		sendMatrix(state->patterns.matrix,0);
+		sendMatrix(state->coefficients.matrix,0);
+	}
 
 	if(rank == 0){
-		MPI_Recv(state->patterns.matrix.data(),
-				state->patterns.matrix.rows()*state->patterns.matrix.cols(),
-				MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
-		MPI_Recv(state->coefficients.matrix.data(),
-				state->coefficients.matrix.rows()*state->coefficients.matrix.cols(),
-				MPI_DOUBLE,minRank,tag,MPI_COMM_WORLD,&status);
-		delete[] allError;
-	}else if(minRank == rank){
-		char c = 7;
-		cout << c << hostname << " is sending the final data. The minimum error was " << error << "." << endl;
-		MPI_Send(state->patterns.matrix.data(),
-				state->patterns.matrix.rows()*state->patterns.matrix.cols(),
-				MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
-		MPI_Send(state->coefficients.matrix.data(),
-				state->coefficients.matrix.rows()*state->coefficients.matrix.cols(),
-				MPI_DOUBLE,0,tag,MPI_COMM_WORLD);
+		//recieve info
+		recvMatrix(state->patterns.matrix,smallest);	
+		recvMatrix(state->coefficients.matrix,smallest);
 	}
+	delete[] recvBuffer;
 }
 
 void FuncThrow::stop(){
