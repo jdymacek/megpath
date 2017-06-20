@@ -137,13 +137,18 @@ double ParallelPatterns::anneal(bool both){
 				state->patterns.read(&recvBuffer[1]);
 				state->patterns.matrix /= size;
 			}
-			cout << hostname << " " << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 			formerError = error;
+		}
+
+		if(i % state->printRuns == 0){ //for switching
+			error = efRow.error();
+			cout << hostname << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
 
 		ndx++;
 		t *= 0.99975;
 	}
+
 	if(both == true){
 		//final reduction
 		state->patterns.write(&sendBuffer[1]);
