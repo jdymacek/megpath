@@ -76,16 +76,17 @@ double ParallelPatterns::monteCarlo(){
 			}
 			sendBuffer[0] = error;
 			state->patterns.write(&sendBuffer[1]);
-
 			MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 			for(int q = 0; q < bufferSize; q++){
 				recvBuffer[q] /= size;
 			}
-
 			state->patterns.read(&recvBuffer[1]);
-			cout << hostname << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
 
+		if(i % state->printRuns == 0){ //for switching
+			error = efRow.error();
+			cout << hostname << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
+		}
 	}
 	//final reduction
 	state->patterns.write(&sendBuffer[1]);
