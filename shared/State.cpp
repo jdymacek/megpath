@@ -4,6 +4,7 @@ State::State(){
 	analysis = "";
 	directory = "";
 	filename = "";
+	printRuns = 1000;
 }
 
 bool State::load(string argFileName){

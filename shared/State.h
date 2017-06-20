@@ -1,7 +1,9 @@
 //State.h
 //Julian Dymacek
+//Matthew Dyer
 //Created: 6/6/2017
-//Modified: 6/6/2017
+//Modified: 6/20/2017
+
 #ifndef STATE__H
 #define STATE__H
 
@@ -26,6 +28,7 @@ class State{
 		string analysis;
 		string filename;
 		vector<string> patternNames;
+		int printRuns;
 		bool load(string argFileName);
 	protected:
 		void normalize();
