@@ -14,11 +14,6 @@ class FuncThrow: public Distributed{
 		virtual void start(string filename);
 		virtual void run();
 		virtual void stop();
-	protected:
-		int rank;
-		string hostname;
-		int process;
-
 };
 
 
