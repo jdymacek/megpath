@@ -7,6 +7,9 @@ FuncThrow::FuncThrow(): Distributed(){
 
 void FuncThrow::start(string filename){
 	Distributed::start(filename);
+	bufferSize = state->patterns.size()+1;
+	buffer = new double[bufferSize];
+	recvBuffer = new double[bufferSize];
 	srand(time(0));
 }
 
@@ -15,9 +18,6 @@ double FuncThrow::monteCarlo(){
 	int flag = 0;
 	MPI_Status status;
 	MPI_Request req;
-	int bufferSize = state->patterns.size()+1;
-	double* buffer = new double[bufferSize];
-	double* recvBuffer = new double[bufferSize];
 
 	double error = 0;
 	Stopwatch watch;
@@ -59,9 +59,6 @@ double FuncThrow::monteCarlo(){
 	cout << hostname << "\tError Histogram: " << efRow.errorDistribution(10) << endl;
 	cout << hostname << "\tTotal time: " << watch.formatTime(watch.stop()) << endl;
 
-	delete[] buffer;
-	delete[] recvBuffer;
-
 	return error;
 }
 
@@ -80,16 +77,16 @@ void FuncThrow::run(){
 	monteCarlo();
 	double formerError = anneal();
 
-	double* recvBuffer = new double[size];
+	double* getBuffer = new double[size];
 
-	MPI_Allgather(&formerError,1, MPI_DOUBLE, recvBuffer, 1, MPI_DOUBLE, MPI_COMM_WORLD);
+	MPI_Allgather(&formerError,1, MPI_DOUBLE, getBuffer, 1, MPI_DOUBLE, MPI_COMM_WORLD);
 
 	//find the smallest
 	int smallest = -1;
 	double minError = state->coefficients.matrix.size()*2;
 	for(int i =0; i < size; ++i){
-		if(minError > recvBuffer[i]){
-			minError = recvBuffer[i];
+		if(minError > getBuffer[i]){
+			minError = getBuffer[i];
 			smallest = i;
 		}
 	}
@@ -106,7 +103,7 @@ void FuncThrow::run(){
 		recvMatrix(state->patterns.matrix,smallest);	
 		recvMatrix(state->coefficients.matrix,smallest);
 	}
-	delete[] recvBuffer;
+	delete[] getBuffer;
 }
 
 void FuncThrow::stop(){
@@ -120,6 +117,9 @@ void FuncThrow::stop(){
 		fout << state->coefficients.matrix*state->patterns.matrix;
 		fout.close();
 	}
+
+	delete[] buffer;
+	delete[] recvBuffer;
 
 	MPI_Finalize();
 
