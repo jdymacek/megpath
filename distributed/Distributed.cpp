@@ -1,6 +1,8 @@
 #include "Distributed.h"
 
-Distributed::Distributed():MonteAnneal(){}
+Distributed::Distributed():MonteAnneal(){
+	program = "Dist_MonteAnneal";
+}
 
 void Distributed::start(string filename){
     MonteAnneal::start(filename);
