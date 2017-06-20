@@ -2,7 +2,7 @@
 //Matthew Dyer
 //Julian Dymacek
 //Created on 6/6/2017
-//Last Modified: 6/19/2017
+//Last Modified: 6/20/2017
 
 #include "MonteAnneal.h"
 
@@ -98,7 +98,7 @@ double MonteAnneal::monteCarlo(){
 	for(int i =0; i < state->MAX_RUNS; i++){
 		monteCarloStep(state->patterns,&efCol);
 		monteCarloStep(state->coefficients,&efRow);
-		if(i % 1000 == 0){
+		if(i % state->printRuns == 0){
 			double error = efRow.error();
 			cout << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
@@ -123,7 +123,7 @@ double MonteAnneal::anneal(){
 	while(running && ndx < state->MAX_RUNS){
 		annealStep(state->coefficients,t,&efRow);
 		annealStep(state->patterns,t,&efCol);
-		if(ndx % 1000 == 0){
+		if(ndx % state->printRuns == 0){
 			double error = efRow.error();
 			cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 			if(abs(formerError - error) < 0.005 && error < formerError)
