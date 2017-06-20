@@ -17,6 +17,7 @@ double FuncThrow::monteCarlo(){
 	MPI_Request req;
 	int bufferSize = state->patterns.size()+1;
 	double* buffer = new double[bufferSize];
+	double* recvBuffer = new double[bufferSize];
 
 	double error = 0;
 	Stopwatch watch;
@@ -34,16 +35,16 @@ double FuncThrow::monteCarlo(){
 			error = efRow.error();
 			buffer[0] = error;
 			state->patterns.write(&buffer[1]);	
-			int randProcess = (rand()%(process-1))+1;
+			int randProcess = (rand()%(size-1))+1;
 			MPI_Isend(buffer,bufferSize,MPI_DOUBLE,randProcess,tag,MPI_COMM_WORLD,&req);
 			MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&status);
 			if(flag == 1){
 				int source = status.MPI_SOURCE;
-				MPI_Recv(buffer,bufferSize,MPI_DOUBLE,source,tag,MPI_COMM_WORLD,&status);
-				if(buffer[0] < error){
-					state->patterns.read(&buffer[1]);
+				MPI_Recv(recvBuffer,bufferSize,MPI_DOUBLE,source,tag,MPI_COMM_WORLD,&status);
+				if(recvBuffer[0] < error){
+					state->patterns.read(&recvBuffer[1]);
 				}
-				cout << hostname << " switched patterns -- old error: " << error << endl;
+			//	cout << hostname << " switched patterns -- old error: " << error << endl;
 				error = efRow.error();
 			}
 		}
@@ -59,6 +60,7 @@ double FuncThrow::monteCarlo(){
 	cout << hostname << "\tTotal time: " << watch.formatTime(watch.stop()) << endl;
 
 	delete[] buffer;
+	delete[] recvBuffer;
 
 	return error;
 }
