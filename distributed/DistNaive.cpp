@@ -17,7 +17,6 @@ void DistNaive::start(string filename){
 	Distributed::start(filename);
 }
 
-
 void DistNaive::run(){
 	int tag = 0;
 	MPI_Status status;
@@ -40,7 +39,6 @@ void DistNaive::run(){
 			smallest = i;
 		}
 	}
-
 
 	//if i have the smallest send
 	if(smallest == rank){

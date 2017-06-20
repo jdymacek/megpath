@@ -112,6 +112,7 @@ double ParallelPatterns::anneal(bool both){
 	Stopwatch watch;
 	int ndx = 0;
 	double t = 0.5;
+	double error = 0;
 	watch.start();
 
 	ErrorFunctionRow efRow(state);
@@ -128,7 +129,7 @@ double ParallelPatterns::anneal(bool both){
 		}
 
 		if(ndx % 1000 == 0){
-			double error = efRow.error();
+			error = efRow.error();
 			if(both == true){
 				sendBuffer[0] = error;
 				state->patterns.write(&sendBuffer[1]);
@@ -140,9 +141,9 @@ double ParallelPatterns::anneal(bool both){
 			formerError = error;
 		}
 
-		if(i % state->printRuns == 0){ //for switching
+		if(ndx % state->printRuns == 0){ //for switching
 			error = efRow.error();
-			cout << hostname << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
+			cout << hostname << ": " << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
 
 		ndx++;
