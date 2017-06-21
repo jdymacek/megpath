@@ -36,7 +36,10 @@ double FuncThrow::monteCarlo(){
 			buffer[0] = error;
 			state->patterns.write(&buffer[1]);	
 			int randProcess = (rand()%(size-1))+1;
-			MPI_Isend(buffer,bufferSize,MPI_DOUBLE,randProcess,tag,MPI_COMM_WORLD,&req);
+			//MPI_Test
+			//check if flag is set
+				MPI_Isend(buffer,bufferSize,MPI_DOUBLE,randProcess,tag,MPI_COMM_WORLD,&req);
+			//close if
 			MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&status);
 			if(flag == 1){
 				int source = status.MPI_SOURCE;
@@ -54,6 +57,10 @@ double FuncThrow::monteCarlo(){
 			cout << hostname << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 		}
 	}
+
+	//Barrier
+	//test for outstanding send
+		//if so cancel it and free it
 
 	cout << hostname << "\tFinal Error: " << efRow.error() << endl;
 	cout << hostname << "\tError Histogram: " << efRow.errorDistribution(10) << endl;
