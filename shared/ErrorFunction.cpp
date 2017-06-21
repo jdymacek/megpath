@@ -21,7 +21,11 @@ string ErrorFunction::errorDistribution(int b){
     for(int y = 0; y < state->expression.rows(); ++y){
         for(int x = 0; x < state->expression.cols(); ++x){
             double e = abs(state->expression(y,x)-newExpression(y,x));
-            bins[(int)(e*bins.size())] += 1;
+			if(e > 1){
+				cout << "too big" << endl;
+			}
+			int ndx = (int)min(bins.size()-1,e*bins.size());
+            bins[ndx] += 1;
         }
     }
     stringstream ss;
