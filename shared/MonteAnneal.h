@@ -6,6 +6,7 @@
 #include <cmath>
 #include <vector>
 #include <ctime>
+#include <cstdio>
 #include "Analysis.h"
 #include "NMFMatrix.h"
 #include "Stopwatch.h"
