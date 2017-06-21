@@ -4,6 +4,7 @@
 #include "State.h"
 #include <sstream>
 #include <iostream>
+#include <algorithm>
 using namespace std;
 
 class ErrorFunction{
