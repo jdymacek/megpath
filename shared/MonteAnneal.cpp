@@ -180,12 +180,13 @@ void MonteAnneal::output(){
 	outputDir = outputDir + "/";
 	string outputFile = FileUtil::uniqueFile(outputDir + "output.txt");
 
+	cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << outputFile << endl;
+
 	ErrorFunctionRow efRow(state);
 
 	//args and information
-	ofstream out;
-	out.open(outputDir + outputFile);
-	out << "Date : " << curTime << endl;
+	ofstream out; 
+	out.open(outputFile);
 	out << "File : " << state->filename << endl;
 	out << "Number_of_genes : " << state->coefficients.rows << endl;
 	out << "Program : " << program << endl;
@@ -196,6 +197,7 @@ void MonteAnneal::output(){
 	ofstream fout;
 
 	outputDir = outputFile.substr(0,outputFile.size()-4) + "_";
+	cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << outputDir << endl;
 	
 	//ouput coefficients
 	double max = 0;
