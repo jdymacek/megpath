@@ -168,7 +168,7 @@ void MonteAnneal::output(){
 		exit(-1);
 	}
 
-	int timef = strftime(curTime, sizeof(curTime), "%T_%m-%d-%Y" ,tmp);
+	int timef = strftime(curTime, sizeof(curTime), "%T %m-%d-%Y" ,tmp);
 	if(timef == 0){
 		fprintf(stderr,"strftime returned 0\n");
 		exit(-1);
@@ -184,6 +184,7 @@ void MonteAnneal::output(){
 	//args and information
 	ofstream out; 
 	out.open(outputFile);
+	out << "Time : " << curTime << endl;
 	out << "File : " << state->filename << endl;
 	out << "Number_of_genes : " << state->coefficients.rows << endl;
 	out << "Program : " << program << endl;
