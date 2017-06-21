@@ -104,7 +104,7 @@ double MonteAnneal::monteCarlo(){
 		}
 	}
 	cout << "Final Error: " << efRow.error() << endl;
-	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;	
+	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
 	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
 	return efRow.error();
 }
@@ -147,14 +147,13 @@ void MonteAnneal::run(){
 }
 
 void MonteAnneal::stop(){
-	/*state->patterns.write(state->analysis + "patterns.csv");
+	state->patterns.write(state->analysis + "patterns.csv");
 	state->coefficients.write(state->analysis + "coefficients.csv");
 
 	ofstream fout;
 	fout.open(state->analysis + "expression.txt");
 	fout << state->coefficients.matrix*state->patterns.matrix;
 	fout.close();
-	*/
 }
 
 void MonteAnneal::output(){
@@ -180,8 +179,6 @@ void MonteAnneal::output(){
 	outputDir = outputDir + "/";
 	string outputFile = FileUtil::uniqueFile(outputDir + "output.txt");
 
-	cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << outputFile << endl;
-
 	ErrorFunctionRow efRow(state);
 
 	//args and information
@@ -197,7 +194,6 @@ void MonteAnneal::output(){
 	ofstream fout;
 
 	outputDir = outputFile.substr(0,outputFile.size()-4) + "_";
-	cout << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" << outputDir << endl;
 	
 	//ouput coefficients
 	double max = 0;
