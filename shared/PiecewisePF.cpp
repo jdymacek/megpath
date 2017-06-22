@@ -7,7 +7,7 @@
 #include "PiecewisePF.h"
 
 PiecewisePF::PiecewisePF(){
-	SIZE = 41;
+	SIZE = 8;
 	total = SIZE;
 	weights = new double[SIZE];
 	for(int i =0; i < SIZE; ++i){
@@ -36,7 +36,7 @@ double PiecewisePF::random(){
 		cout << SIZE-1 << endl;
 	}*/
 
-	double space = 1.0/((double)(SIZE-1)); 
+	double space = 1.0/((double)(SIZE)); 
 	double center = bin*space + space/2;
 	
 	double px = uniform->random()*space+bin*space;
@@ -98,16 +98,18 @@ double PiecewisePF::random(){
 }
 void PiecewisePF::addObservation(double v){
 	total += 1;
-	double width = 1.0/((double)(SIZE-1));
-	int bin = v*(SIZE-1);
-	double center = (double)bin/((double)(SIZE-1)) + width/2;
-	double alpha = abs(v-center)/width;
+	v = max(0.0,min(v,0.9999));
+	double space = 1.0/((double)(SIZE));
+	int bin = (int)(v*SIZE);
+
+	double center = bin*space + space/2;
+	double alpha = abs(v-center)/space;
+
 	weights[bin] += 1-alpha;
 	if(v > center){
-		if(bin+1 < SIZE)
-			weights[bin+1] += alpha;
-	}else if(bin > 0){
-		weights[bin-1] += alpha;
+		weights[min(SIZE-1,bin+1)] += alpha;
+	}else{
+		weights[max(0,bin-1)] += alpha;
 	}
 
 /*	double space = 1.0/((double)(SIZE-1));
