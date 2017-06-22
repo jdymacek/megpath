@@ -3,11 +3,12 @@
 //Created on 6/22/2017
 //Last Modified: 6/22/2017
 
-#ifndef FUNCTHROW__H
-#define FUNCTHROW__H
+#ifndef PARALLELFUNCTHROW__H
+#define PARALLELFUNCTHROW__H
 
-#include "ParalellPatterns.h"
+#include "ParallelPatterns.h"
 #include "FuncThrow.h"
+#include "Distributed.h"
 
 using namespace std;
 
