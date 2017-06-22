@@ -120,7 +120,7 @@ double MonteAnneal::anneal(){
 
 	double formerError = 2*state->expression.rows()*state->expression.cols();
 	bool running = true;
-	while(running && ndx < state->MAX_RUNS){
+	while(running && ndx < 2*state->MAX_RUNS){
 		annealStep(state->coefficients,t,&efRow);
 		annealStep(state->patterns,t,&efCol);
 		if(ndx % state->printRuns == 0){
