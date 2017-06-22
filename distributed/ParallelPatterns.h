@@ -13,7 +13,7 @@
 
 using namespace std;
 
-class ParallelPatterns: public Distributed{
+class ParallelPatterns: virtual public Distributed{
 	public:
 		ParallelPatterns();	
 		virtual double monteCarlo();

@@ -7,7 +7,7 @@
 
 using namespace std;
 
-class FuncThrow: public Distributed{
+class FuncThrow: virtual public Distributed{
 	public:
 		FuncThrow();	
 		virtual double monteCarlo();

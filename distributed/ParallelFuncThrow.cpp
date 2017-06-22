@@ -9,6 +9,10 @@ ParallelFuncThrow::ParallelFuncThrow(): Distributed(){
 	program = "ParallelFuncThrow";
 }
 
+double ParallelFuncThrow::monteCarlo(){
+	FuncThrow::monteCarlo();
+}
+
 void ParallelFuncThrow::start(string filename){
 	ParallelPatterns::start(filename);
 	bufferSize = state->patterns.size()+1;
@@ -19,7 +23,7 @@ void ParallelFuncThrow::start(string filename){
 
 void ParallelFuncThrow::run(){
 	double error = 0;
-	FuncThrow::monteCarlo();
+	monteCarlo();
 	error = FuncThrow::anneal();
 	ParallelPatterns::gatherCoefficients();
 }
