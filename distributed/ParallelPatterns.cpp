@@ -206,7 +206,7 @@ void ParallelPatterns::gatherCoefficients(){
         state->coefficients.columns = state->coefficients.matrix.cols();
         state->expression = oexpression;
         ErrorFunctionRow efRow(state);
-        error = efRow.error();
+        double error = efRow.error();
 
         cout << "Final Error: " << error << endl;
         cout << "Patterns: " << endl;
