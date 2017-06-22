@@ -16,6 +16,7 @@ void FuncThrow::start(string filename){
 double FuncThrow::monteCarlo(){
 	int tag = 0;
 	int flag = 0;
+	int testFlag = 0;
 	MPI_Status status;
 	MPI_Request req;
 
@@ -35,19 +36,21 @@ double FuncThrow::monteCarlo(){
 			error = efRow.error();
 			buffer[0] = error;
 			state->patterns.write(&buffer[1]);	
-			int randProcess = (rand()%(size-1))+1;
-			//MPI_Test
-			//check if flag is set
+			
+			MPI_Test(&req,&testFlag,MPI_STATUS_IGNORE);
+			if(testFlag == 1){
+				testFlag = 0;
+				int randProcess = (rand()%(size-1))+1;
 				MPI_Isend(buffer,bufferSize,MPI_DOUBLE,randProcess,tag,MPI_COMM_WORLD,&req);
-			//close if
+			}
 			MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&status);
 			if(flag == 1){
+				flag = 0;
 				int source = status.MPI_SOURCE;
 				MPI_Recv(recvBuffer,bufferSize,MPI_DOUBLE,source,tag,MPI_COMM_WORLD,&status);
 				if(recvBuffer[0] < error){
 					state->patterns.read(&recvBuffer[1]);
 				}
-			//	cout << hostname << " switched patterns -- old error: " << error << endl;
 				error = efRow.error();
 			}
 		}
@@ -58,9 +61,11 @@ double FuncThrow::monteCarlo(){
 		}
 	}
 
-	//Barrier
-	//test for outstanding send
-		//if so cancel it and free it
+	MPI_Barrier(MPI_COMM_WORLD);
+	MPI_Test(&req,&testFlag,MPI_STATUS_IGNORE);
+	if(testFlag == 1){
+		MPI_Cancel(&req);
+	}
 
 	cout << hostname << "\tFinal Error: " << efRow.error() << endl;
 	cout << hostname << "\tError Histogram: " << efRow.errorDistribution(10) << endl;
