@@ -4,9 +4,10 @@
 //Created on 5/25/2017
 //Last modified: 6/9/2017
 
-#include "ParallelPatterns.h"
-#include "FuncThrow.h"
 #include "DistNaive.h"
+#include "FuncThrow.h"
+#include "ParallelPatterns.h"
+#include "ParallelFuncThrow.h"
 #include "Stopwatch.h"
 
 using namespace std;
@@ -17,9 +18,10 @@ int main(int argc, char** argv){
 		return 0;
 	}
 	string argFile = argv[1];
-//	Analysis* a = new FuncThrow();
-	Analysis* a = new ParallelPatterns();
 //	Analysis* a = new DistNaive();
+//	Analysis* a = new FuncThrow();
+//	Analysis* a = new ParallelPatterns();
+	Analysis* a = new ParallelFuncThrow();
 	a->start(argFile);
 	Stopwatch watch;
 	watch.start();	

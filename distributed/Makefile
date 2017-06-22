@@ -3,7 +3,7 @@ CFLAGS=-O3 -c -Wfatal-errors -std=c++11 -I../shared/
 LDFLAGS=-L../shared/ 
 LIBS=
 VPATH = src:../shared
-SOURCES=FileUtil.cpp Distributed.cpp main.cpp PiecewisePF.cpp ParallelPatterns.cpp FuncThrow.cpp DistNaive.cpp State.cpp ErrorFunction.cpp ErrorFunctionRow.cpp ErrorFunctionCol.cpp Analysis.cpp MonteAnneal.cpp ShiftPF.cpp Stopwatch.cpp ProbFunc.cpp UniformPF.cpp ArgFile.cpp CSVFile.cpp Value.cpp NMFMatrix.cpp 
+SOURCES=FileUtil.cpp Distributed.cpp main.cpp PiecewisePF.cpp ParallelPatterns.cpp FuncThrow.cpp DistNaive.cpp State.cpp ErrorFunction.cpp ErrorFunctionRow.cpp ErrorFunctionCol.cpp Analysis.cpp MonteAnneal.cpp ShiftPF.cpp Stopwatch.cpp ProbFunc.cpp UniformPF.cpp ArgFile.cpp CSVFile.cpp Value.cpp NMFMatrix.cpp ParallelFuncThrow.cpp 
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=distnmf
 
