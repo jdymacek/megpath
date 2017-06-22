@@ -18,7 +18,7 @@ double FuncThrow::monteCarlo(){
 	int flag = 0;
 	int testFlag = 0;
 	MPI_Status status;
-	MPI_Request req;
+	MPI_Request req = MPI_REQUEST_NULL;
 
 	double error = 0;
 	Stopwatch watch;
