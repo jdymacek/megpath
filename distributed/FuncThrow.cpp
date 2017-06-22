@@ -63,7 +63,7 @@ double FuncThrow::monteCarlo(){
 
 	MPI_Barrier(MPI_COMM_WORLD);
 	MPI_Test(&req,&testFlag,MPI_STATUS_IGNORE);
-	if(testFlag == 1){
+	if(testFlag == 0){
 		MPI_Cancel(&req);
 		MPI_Request_free(&req);
 	}
