@@ -120,7 +120,7 @@ double ParallelPatterns::anneal(bool both){
 
 	double formerError = 2*state->expression.rows()*state->expression.cols();
 	bool running = true;
-	while(running && ndx < state->MAX_RUNS){
+	while(running && ndx < 2*state->MAX_RUNS){
 		if(both == true){
 			annealStep(state->coefficients,t,&efRow);
 			annealStep(state->patterns,t,&efCol);
@@ -168,71 +168,62 @@ double ParallelPatterns::anneal(bool both){
 	return efRow.error();
 }
 
+void ParallelPatterns::gatherCoefficients(){
+	double* buffer = NULL;
+    int  allCounts[size];
+    int  allDispls[size];
+    double* sendBuf = new double[state->coefficients.matrix.cols()*state->coefficients.matrix.rows()];
+
+	if(rank == 0){
+        buffer = new double[oexpression.rows()*state->coefficients.matrix.cols()];
+    }
+
+	int send = state->coefficients.matrix.size();
+    MPI_Gather(&send,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
+
+    send = state->coefficients.matrix.cols()*startPoint;
+    MPI_Gather(&send,1,MPI_INT,&allDispls[0],1,MPI_INT, 0, MPI_COMM_WORLD);
+
+    MatrixXd ct = state->coefficients.matrix.transpose();
+
+    copy(ct.data(),ct.data()+ct.size(), sendBuf);
+
+    MPI_Gatherv(sendBuf,ct.size(),MPI_DOUBLE,
+            buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+    if(rank == 0){
+        double* nb = buffer;
+        MatrixXd temp = MatrixXd::Zero(oexpression.rows(),state->coefficients.matrix.cols());
+        for(int i =0; i < temp.rows(); ++i){
+            for(int j=0; j < temp.cols(); ++j){
+                temp(i,j) = *buffer;
+                buffer += 1;
+            }
+        }
+
+        state->coefficients.matrix = temp;
+        state->coefficients.rows = state->coefficients.matrix.rows();
+        state->coefficients.columns = state->coefficients.matrix.cols();
+        state->expression = oexpression;
+        ErrorFunctionRow efRow(state);
+        error = efRow.error();
+
+        cout << "Final Error: " << error << endl;
+        cout << "Patterns: " << endl;
+        cout << state->patterns.matrix << endl;;
+        delete[] nb;
+    }
+	delete[] sendBuf;
+}
+
 void ParallelPatterns::run(){
 	double error = 0;
-	int  allCounts[size];
-	int  allDispls[size];
-
-	//MPI variables
-	int tag  = 0;
-	double* buffer = NULL;
-	double* sendBuf = new double[state->coefficients.matrix.cols()*state->coefficients.matrix.rows()];
-	MPI_Status status;
-	if(rank == 0){
-		buffer = new double[oexpression.rows()*state->coefficients.matrix.cols()];
-	}
 
 	monteCarlo();
 	error = anneal(true);
-	anneal(false);
+	error = anneal(false);
 
-	int send = state->coefficients.matrix.size();
-	MPI_Gather(&send,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
-
-	send = state->coefficients.matrix.cols()*startPoint;
-	MPI_Gather(&send,1,MPI_INT,&allDispls[0],1,MPI_INT, 0, MPI_COMM_WORLD);
-
-	if(rank == 0){
-		for(int i = 0; i < size; ++i){
-			cout << i << "\t" <<  allCounts[i] << "\t" << allDispls[i] << endl;
-		}
-		cout << oexpression.rows()*state->coefficients.matrix.cols() << endl;
-	}	
-
-	MatrixXd ct = state->coefficients.matrix.transpose();
-
-	copy(ct.data(),ct.data()+ct.size(), sendBuf);
-
-	MPI_Gatherv(sendBuf,ct.size(),MPI_DOUBLE,
-			buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
-
-	cout << hostname << " entering rank 0 area" << endl;
-
-	if(rank == 0){
-		double* nb = buffer;
-		MatrixXd temp = MatrixXd::Zero(oexpression.rows(),state->coefficients.matrix.cols());
-		for(int i =0; i < temp.rows(); ++i){
-			for(int j=0; j < temp.cols(); ++j){
-				temp(i,j) = *buffer;
-				buffer += 1;
-			}
-		}
-
-		state->coefficients.matrix = temp;
-		state->coefficients.rows = state->coefficients.matrix.rows();
-		state->coefficients.columns = state->coefficients.matrix.cols();
-		state->expression = oexpression;
-		ErrorFunctionRow efRow(state);
-		error = efRow.error();
-
-		cout << "Final Error: " << error << endl;
-		cout << "Patterns: " << endl;
-		cout << state->patterns.matrix << endl;;
-		delete[] nb;
-	}
-
-	delete[] sendBuf;
-
+	gatherCoefficients();
 }
 
 void ParallelPatterns::stop(){

@@ -21,9 +21,9 @@ class ParallelPatterns: public Distributed{
 		virtual void start(string filename);
 		virtual void run();
 		virtual void stop();
+		virtual void gatherCoefficients();
 		int findStart(int myRank, int curSize, int numRows);
 		int findRows(int myRank, int curSize, int numRows);
-		double annealAgain();
 	protected:
 		MatrixXd oexpression;
 		int startPoint;
