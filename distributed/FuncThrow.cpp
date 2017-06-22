@@ -65,6 +65,7 @@ double FuncThrow::monteCarlo(){
 	MPI_Test(&req,&testFlag,MPI_STATUS_IGNORE);
 	if(testFlag == 1){
 		MPI_Cancel(&req);
+		MPI_Request_free(&req);
 	}
 
 	cout << hostname << "\tFinal Error: " << efRow.error() << endl;
