@@ -32,5 +32,8 @@ void Distributed::run(){
 }
 
 void Distributed::stop(){
+	if(rank == 0){
+		MonteAnneal::output();
+	}
 	MPI_Finalize();
 }
