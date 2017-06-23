@@ -28,13 +28,11 @@ class NMFMatrix{
 		void write(string filename);
 		int size();
 		void resize(int newRows, int newCols);
-		ProbFunc* function(int y,int x);
 
-		MatrixXd matrix;
 
 		int rows;
 		int columns;
-		ProbFunc*** probfunctions;
+		MatrixXd matrix;
 		MatrixXp functions;
 };
 

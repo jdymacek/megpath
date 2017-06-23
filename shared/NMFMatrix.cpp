@@ -6,26 +6,14 @@
 #include "NMFMatrix.h"
 
 NMFMatrix::NMFMatrix(){
-//	functions = NULL;
 }
 
 NMFMatrix::~NMFMatrix(){
-//	if(functions == NULL){
-//		return;
-//	}else{
-
-		for(int i =0; i < rows; ++i){
-			for(int j =0; j < columns; ++j){
-				delete functions(i,j);
-			}
+	for(int i =0; i < rows; ++i){
+		for(int j =0; j < columns; ++j){
+			delete functions(i,j);
 		}
-
-//		for(int i = 0; i < rows; ++i){
-//			delete functions[i];
-//		}
-//		delete functions;
-//	}
-
+	}
 }
 
 NMFMatrix::NMFMatrix(int rowss, int cols){
@@ -34,19 +22,12 @@ NMFMatrix::NMFMatrix(int rowss, int cols){
 	matrix = MatrixXd::Zero(rows,columns);
 	functions = MatrixXp(rows,columns);
 
-	//functions = new ProbFunc**[rows];
 	for(int i =0; i < rows; ++i){
-	//	functions[i] = new ProbFunc*[columns];
 		for(int j =0; j < columns; ++j){
 			functions(i,j) = new PiecewisePF();
 		}
 	}	
 }
-
-ProbFunc* NMFMatrix::function(int y,int x){
-	return functions(y,x);
-}
-
 
 //Size in terms of doubles
 //this could be cached
@@ -77,7 +58,7 @@ void NMFMatrix::read(double* data){
 void NMFMatrix::write(double* data){
 	memcpy(data,matrix.data(),(matrix.size()*sizeof(double)));
 	data += matrix.size();
- 
+
 
 	for(int y = 0; y < matrix.rows(); ++y){
 		for(int x = 0; x < matrix.cols(); ++x){
@@ -104,30 +85,18 @@ void NMFMatrix::write(string filename){
 
 
 void NMFMatrix::resize(int newRows, int newCols){
-	//if(functions != NULL){
-
-		for(int i =0; i < rows; ++i){
-			for(int j =0; j < columns; ++j){
-				delete functions(i,j);
-			}
+	for(int i =0; i < rows; ++i){
+		for(int j =0; j < columns; ++j){
+			delete functions(i,j);
 		}
-
-/*		for(int i = 0; i < rows; ++i){
-			delete functions[i];
-		}
-
-		delete functions;
 	}
-*/
 	matrix = MatrixXd::Zero(newRows,newCols);
 
 	rows = newRows;
 	columns = newCols;
 
 	functions = MatrixXp(newRows,newCols);
-//	functions = new ProbFunc**[rows];
 	for(int i =0; i < rows; ++i){
-		//functions[i] = new ProbFunc*[columns];
 		for(int j =0; j < columns; ++j){
 			functions(i,j) = new PiecewisePF();
 		}
