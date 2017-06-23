@@ -12,19 +12,49 @@ int main(int argc, char** argv){
     cout << expression << endl;
 */
 	MatrixXd testing(3,4);
-	testing << 0,1,2,3,0,1,2,3,0,1,2,3;
+	testing << 10,11,12,13,20,21,22,23,30,31,32,33;
 	cout << testing << endl;
 
-	PermutationMatrix<Dynamic> perm(testing.cols());
+	PermutationMatrix<Dynamic> perm(testing.rows());
 	perm.setIdentity();
 
-	for(int i =0; i < testing.cols(); ++i){
-		perm.indices().data()[i] = testing.cols()-i-1;
+	for(int i =0; i < testing.rows(); ++i){
+		perm.indices().data()[i] = testing.rows()-i-1;
 	}
 
 	cout << perm.indices() << endl;
-	testing = testing*perm;
+	testing = perm*testing;
 	cout << testing << endl;
+
+	for(int i =0; i < blah.rows(); ++i){
+		MatrixXd p = blah.row(i);
+		//normalize pattern
+		double min = p.minCoeff();
+		p = p.array() - min;
+		double max = p.maxCoeff();
+		p = p/max;
+
+		//get row
+		for(int j =0; j < testing.rows(); ++j){
+			//Get Pattern
+			MatrixXd q = testing.row(j);
+			//Normalize Pattern
+			min = q.minCoeff();
+			q = q.array() - min;
+			max = q.maxCoeff();
+			q = q/max;
+	
+			//Compare to p
+			q = q-p;
+			double e = q.cwiseAbs().sum();		
+			if(e < minError){
+				minIndex = j;
+				minError = e;
+				//swap instead?
+			}
+		}
+
+	}
 
     return 0;
 }
