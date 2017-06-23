@@ -141,6 +141,36 @@ bool State::load(string argFileName){
 	return true;
 }
 
+void State::patternMatch(MatrixXd& other){
+	//generate match
+	//indices [0 1 2]
+	//int index = 0;
+	/*
+	int minIndex
+	double min
+	for(int j =0; j < ; ++j){
+		get pattern j
+		min error from indices[index] to j
+		minIndex = index
+
+		for(int i =index; i < ; ++i){
+			get indices[i] pattern
+			if(error from indices[i] to j){
+				
+			} 
+		}
+		
+		swap(indices[index],indices[minIndex])
+		index += 1;
+	}
+	*/
+
+	
+	//generate permutation
+
+}
+
+
 void State::normalize(){
 	double max = expression.maxCoeff();
 	double min = expression.minCoeff();

@@ -30,6 +30,8 @@ class State{
 		vector<string> patternNames;
 		int printRuns;
 		bool load(string argFileName);
+		void patternMatch(MatrixXd& other);
+
 	protected:
 		void normalize();
 
