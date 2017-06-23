@@ -10,6 +10,10 @@ int main(int argc, char** argv){
 	string filename = string(argv[1]);
 		
 	state->load(filename);
+	
+	state->patterns.matrix << 0.1,0.35,0.5,0.65,0.8,
+									  0.7,0.5,0.3,0.1,0,
+									  0.1,0.25,0.5,0.25,0.1;
 
 	cout << "original patterns: \n" << state->patterns.matrix << endl;
 
@@ -25,7 +29,6 @@ int main(int argc, char** argv){
 	cout << "after matching patterns: \n" << state->patterns.matrix << endl;
 
 	toMatch = toMatch * 0.5;
-	toMatch = toMatch + 0.3;
 
 	cout << "new patterns to match: \n" << toMatch << endl;
 
