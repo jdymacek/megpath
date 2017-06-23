@@ -42,6 +42,11 @@ NMFMatrix::NMFMatrix(int rowss, int cols){
 	}	
 }
 
+ProbFunc* NMFMatrix::function(int y,int x){
+	return functions[y][x];
+}
+
+
 //Size in terms of doubles
 int NMFMatrix::size(){
 	int rv = 0;

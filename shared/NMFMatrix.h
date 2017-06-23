@@ -11,9 +11,12 @@
 #include "../../Eigen/Core"
 #include "ProbFunc.h"
 #include "PiecewisePF.h"
+#include "PointerSupport.h"
 
 using namespace std;
 using namespace Eigen;
+
+typedef Matrix<ProbFunc*, Dynamic, Dynamic> MatrixXp;
 
 class NMFMatrix{
 	public:
@@ -25,11 +28,14 @@ class NMFMatrix{
 		void write(string filename);
 		int size();
 		void resize(int newRows, int newCols);
+		ProbFunc* function(int y,int x);
 
 		MatrixXd matrix;
-		ProbFunc*** functions;
+
 		int rows;
-		int columns;	
+		int columns;
+		ProbFunc*** functions;
+		MatrixXp probFunctions;
 };
 
 #endif
