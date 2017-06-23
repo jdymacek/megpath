@@ -190,6 +190,7 @@ void MonteAnneal::output(){
 	out << "Program : " << program << endl;
 	out << "MAX_RUNS : " << state->MAX_RUNS << endl; 
 	out << "Total_error : " << efRow.error() << endl;
+	out << "Total_running_time : " << state->time << endl;
 	out.close();
 
 	ofstream fout;

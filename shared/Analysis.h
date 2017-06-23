@@ -12,8 +12,8 @@ class Analysis{
 		virtual void run();
 		virtual void stop();
 		virtual void output();
-	protected:
 		State* state;
+	protected:
 		string program;
 };
 
