@@ -6,53 +6,55 @@
 #include "NMFMatrix.h"
 
 NMFMatrix::NMFMatrix(){
-	functions = NULL;
+//	functions = NULL;
 }
 
 NMFMatrix::~NMFMatrix(){
-	if(functions == NULL){
-		return;
-	}else{
+//	if(functions == NULL){
+//		return;
+//	}else{
 
 		for(int i =0; i < rows; ++i){
 			for(int j =0; j < columns; ++j){
-				delete functions[i][j];
+				delete functions(i,j);
 			}
 		}
 
-		for(int i = 0; i < rows; ++i){
-			delete functions[i];
-		}
+//		for(int i = 0; i < rows; ++i){
+//			delete functions[i];
+//		}
+//		delete functions;
+//	}
 
-		delete functions;
-
-	}
 }
 
 NMFMatrix::NMFMatrix(int rowss, int cols){
 	rows = rowss;
 	columns = cols;
 	matrix = MatrixXd::Zero(rows,columns);
-	functions = new ProbFunc**[rows];
+	functions = MatrixXp(rows,columns);
+
+	//functions = new ProbFunc**[rows];
 	for(int i =0; i < rows; ++i){
-		functions[i] = new ProbFunc*[columns];
+	//	functions[i] = new ProbFunc*[columns];
 		for(int j =0; j < columns; ++j){
-			functions[i][j] = new PiecewisePF();
+			functions(i,j) = new PiecewisePF();
 		}
 	}	
 }
 
 ProbFunc* NMFMatrix::function(int y,int x){
-	return functions[y][x];
+	return functions(y,x);
 }
 
 
 //Size in terms of doubles
+//this could be cached
 int NMFMatrix::size(){
 	int rv = 0;
 	for(int y =0; y < matrix.rows(); ++y){
 		for(int x = 0; x < matrix.cols(); ++x){
-			rv += functions[y][x]->dataSize();		
+			rv += functions(y,x)->dataSize();		
 		}
 	}
 	return matrix.size()+rv;
@@ -66,8 +68,8 @@ void NMFMatrix::read(double* data){
 
 	for(int y = 0; y < matrix.rows(); ++y){
 		for(int x = 0; x < matrix.cols(); ++x){
-			functions[y][x]->fromDoubles(data);
-			data += functions[y][x]->dataSize();
+			functions(y,x)->fromDoubles(data);
+			data += functions(y,x)->dataSize();
 		}
 	}
 }
@@ -79,8 +81,8 @@ void NMFMatrix::write(double* data){
 
 	for(int y = 0; y < matrix.rows(); ++y){
 		for(int x = 0; x < matrix.cols(); ++x){
-			functions[y][x]->toDoubles(data);
-			data += functions[y][x]->dataSize();
+			functions(y,x)->toDoubles(data);
+			data += functions(y,x)->dataSize();
 		}
 	}
 }
@@ -102,30 +104,32 @@ void NMFMatrix::write(string filename){
 
 
 void NMFMatrix::resize(int newRows, int newCols){
-	if(functions != NULL){
+	//if(functions != NULL){
 
 		for(int i =0; i < rows; ++i){
 			for(int j =0; j < columns; ++j){
-				delete functions[i][j];
+				delete functions(i,j);
 			}
 		}
 
-		for(int i = 0; i < rows; ++i){
+/*		for(int i = 0; i < rows; ++i){
 			delete functions[i];
 		}
 
 		delete functions;
 	}
+*/
 	matrix = MatrixXd::Zero(newRows,newCols);
 
 	rows = newRows;
 	columns = newCols;
 
-	functions = new ProbFunc**[rows];
+	functions = MatrixXp(newRows,newCols);
+//	functions = new ProbFunc**[rows];
 	for(int i =0; i < rows; ++i){
-		functions[i] = new ProbFunc*[columns];
+		//functions[i] = new ProbFunc*[columns];
 		for(int j =0; j < columns; ++j){
-			functions[i][j] = new PiecewisePF();
+			functions(i,j) = new PiecewisePF();
 		}
 	}
 

@@ -21,7 +21,7 @@ void MonteAnneal::monteCarloStep(NMFMatrix& m,ErrorFunction* ef){
 	double error = 0; 
 	for(int y =0; y < m.rows; ++y){
 		for(int x =0; x < m.columns; ++x){
-			ProbFunc* function = m.functions[y][x];
+			ProbFunc* function = m.functions(y,x);
 			double r = function->random();
 			if(isnan(r)){
 				cout << "nan error" << endl;
@@ -55,7 +55,7 @@ void MonteAnneal::annealStep(NMFMatrix& m, double t,ErrorFunction* ef){
 	for(int y =0; y < m.rows; y++){
 		for(int x =0; x < m.columns; x++){
 
-			ProbFunc* function = m.functions[y][x];
+			ProbFunc* function = m.functions(y,x);
 			double r = function->random();
 			if(function->size() == 1){
 				olderror = ef->fastError(y,x);

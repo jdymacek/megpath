@@ -14,6 +14,8 @@ int main(int argc, char** argv){
 	state->patterns.matrix << 0.1,0.35,0.5,0.65,0.8,
 									  0.7,0.5,0.3,0.1,0,
 									  0.1,0.25,0.5,0.25,0.1;
+	state->coefficients.resize(3,3);
+	state->coefficients.matrix << 10,11,12,20,21,22,30,31,32;
 
 	cout << "original patterns: \n" << state->patterns.matrix << endl;
 
@@ -35,7 +37,8 @@ int main(int argc, char** argv){
 	state->patternMatch(toMatch);
 
 	cout << "after matching patterns again: \n" << state->patterns.matrix << endl;
-	
+	cout << "after matching patterns coe: \n" << state->coefficients.matrix << endl;	
+
 /*	
 	state->coefficients.resize(5,state->coefficients.columns);
 	MatrixXd expression = state->coefficients.matrix * state->patterns.matrix;

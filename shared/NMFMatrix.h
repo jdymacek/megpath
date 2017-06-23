@@ -34,8 +34,8 @@ class NMFMatrix{
 
 		int rows;
 		int columns;
-		ProbFunc*** functions;
-		MatrixXp probFunctions;
+		ProbFunc*** probfunctions;
+		MatrixXp functions;
 };
 
 #endif

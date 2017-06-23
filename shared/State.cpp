@@ -130,7 +130,7 @@ bool State::load(string argFileName){
 			vector<Entry> constraints(intoMatrix.size(),{0,0,0});
 			for(int j = 0; j < intoMatrix.size(); ++j){
 				patterns.matrix(i,j) = intoMatrix[j].asDouble();
-				patterns.functions[i][j] = shared;	
+				patterns.functions(i,j) = shared;	
 				constraints[j].x = j;
 				constraints[j].y = i;
 				constraints[j].val = patterns.matrix(i,j);	
@@ -188,6 +188,9 @@ void State::patternMatch(MatrixXd& other){
 
 	patterns.matrix = perm*patterns.matrix;
 	coefficients.matrix = coefficients.matrix*perm;
+
+	patterns.functions = perm*patterns.functions;
+	coefficients.functions = coefficients.functions*perm;
 
 	/*still need to swap around functions*/
 
