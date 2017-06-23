@@ -141,32 +141,55 @@ bool State::load(string argFileName){
 	return true;
 }
 
+void State::normalizeMatrix(MatrixXd& mat){
+    double min = mat.minCoeff();
+    mat = mat.array() - min;
+    double max = mat.maxCoeff();
+    mat = mat/max;
+}
+
 void State::patternMatch(MatrixXd& other){
-	//generate match
-	//indices [0 1 2]
-	//int index = 0;
-	/*
-	int minIndex
-	double min
-	for(int j =0; j < ; ++j){
-		get pattern j
-		min error from indices[index] to j
-		minIndex = index
 
-		for(int i =index; i < ; ++i){
-			get indices[i] pattern
-			if(error from indices[i] to j){
-				
-			} 
-		}
-		
-		swap(indices[index],indices[minIndex])
-		index += 1;
-	}
-	*/
+    PermutationMatrix<Dynamic> perm(patterns.matrix.rows());
+    perm.setIdentity();
 
-	
-	//generate permutation
+    int rows = patterns.matrix.rows();
+    for(int i =0; i < rows; ++i){
+        perm.indices().data()[i] = i;
+    }
+
+    int index = 0;
+    double minError = -1;
+    for(int i =0; i < rows; ++i){
+        MatrixXd p = patterns.matrix.row(i);
+        normalizeMatrix(p);
+        minError = -1;
+        for(int j =index; j < rows; ++j){
+            //Get Pattern
+            MatrixXd q = other.row(perm.indices().data()[j]);
+            normalizeMatrix(q);
+
+            //Compare to p
+            q = q-p;
+            double e = q.cwiseAbs().sum();
+            if(e < minError || minError == -1){
+                minError = e;
+                cout << "index: " << index << " j:" << perm.indices().data()[j] << endl;
+                cout << "error: " << minError << endl;
+                if(j != index){
+                    swap(perm.indices().data()[index],perm.indices().data()[j]);
+                }
+                cout << perm.indices() << endl;
+            }
+        }
+        //move past the last mapping
+        index += 1;
+    }
+
+	patterns.matrix = perm*patterns.matrix;
+	coefficients.matrix = coefficients.matrix*perm;
+
+	/*still need to swap around functions*/
 
 }
 

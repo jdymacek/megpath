@@ -1,9 +1,9 @@
 CC=g++
 CFLAGS= -c -std=c++11 -I../../shared/
-LDFLAGS=-L../shared/ 
+LDFLAGS=-L../../shared/ 
 LIBS=
 VPATH = src:../../shared
-SOURCES=CSVFile.cpp ProbFunc.cpp HistoPF.cpp ShiftPF.cpp NMFMatrix.cpp Value.cpp ArgFile.cpp State.cpp driver.cpp
+SOURCES=UniformPF.cpp PiecewisePF.cpp CSVFile.cpp ProbFunc.cpp HistoPF.cpp ShiftPF.cpp NMFMatrix.cpp Value.cpp ArgFile.cpp State.cpp driver.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=test_state
 

@@ -31,10 +31,9 @@ class State{
 		int printRuns;
 		bool load(string argFileName);
 		void patternMatch(MatrixXd& other);
-
 	protected:
 		void normalize();
-
+		void normalizeMatrix(MatrixXd& mat);
 
 };
 
