@@ -17,6 +17,7 @@ int main(int argc, char** argv){
 		cerr << "Needs an argument file and analysis to run!";
 		return 0;
 	}
+	Stopwatch watch;
 	string argFile = argv[1];
 	string analysis = argv[2];
 	
@@ -33,10 +34,12 @@ int main(int argc, char** argv){
 	}
 
 	a->start(argFile);
-	Stopwatch watch;
+
 	watch.start();	
 	a->run();
-	cout << "Total program running time: " << watch.formatTime(watch.stop()) << endl;
+	a->state->time = watch.formatTime(watch.stop());
+	cout << "Total program running time: " << a->state->time << endl;
+
 	a->stop();
 
 	return 0;

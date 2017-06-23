@@ -26,7 +26,6 @@ void Distributed::recvMatrix(MatrixXd& matrix,int src){
 	MPI_Recv(matrix.data(),matrix.rows()*matrix.cols(),MPI_DOUBLE,src,tag,MPI_COMM_WORLD,&status);
 }
 
-
 void Distributed::run(){
 
 }
