@@ -13,15 +13,25 @@
 using namespace std;
 
 int main(int argc, char** argv){
-	if(argc < 2){
-		cerr << "Need an argument file!";
+	if(argc < 3){
+		cerr << "Needs an argument file and analysis to run!";
 		return 0;
 	}
 	string argFile = argv[1];
-//	Analysis* a = new DistNaive();
-//	Analysis* a = new FuncThrow();
-//	Analysis* a = new ParallelPatterns();
-	Analysis* a = new ParallelFuncThrow();
+	string analysis = argv[2];
+	
+	Analysis* a;
+
+	if(analysis == "DistNaive" || analysis == "DN" || analysis == "dn"){
+		a = new DistNaive();
+	}else if(analysis == "FuncThrow" || analysis == "FT" || analysis == "ft"){
+		a = new FuncThrow();
+	}else if(analysis == "ParallelPatterns" || analysis == "ParPat" || analysis == "PP" || analysis == "pp"){
+		a = new ParallelPatterns();
+	}else if(analysis == "ParallelFuncThrow" || analysis == "ParFuncThrow" || analysis == "PFT" || analysis == "pft"){
+		a = new ParallelFuncThrow();
+	}
+
 	a->start(argFile);
 	Stopwatch watch;
 	watch.start();	
