@@ -11,18 +11,27 @@ int main(int argc, char** argv){
 		
 	state->load(filename);
 
-	cout << "original patterns: \n" << state->patterns.matrix;
+	cout << "original patterns: \n" << state->patterns.matrix << endl;
 
 	MatrixXd toMatch(3,5);
 	toMatch <<  0.6,0.4,0.2,0.1,0,
 					0.1,0.35,0.5,0.65,0.8,
 					0,0.15,0.4,0.15,0;
 
-	cout << "patterns to match: \n" << toMatch;
+	cout << "patterns to match: \n" << toMatch << endl;
 
 	state->patternMatch(toMatch);
 
-	cout << "after matching patterns: \n" << state->patterns.matrix;
+	cout << "after matching patterns: \n" << state->patterns.matrix << endl;
+
+	toMatch = toMatch * 0.5;
+	toMatch = toMatch + 0.3;
+
+	cout << "new patterns to match: \n" << toMatch << endl;
+
+	state->patternMatch(toMatch);
+
+	cout << "after matching patterns again: \n" << state->patterns.matrix << endl;
 	
 /*	
 	state->coefficients.resize(5,state->coefficients.columns);
