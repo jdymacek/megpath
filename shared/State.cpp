@@ -4,6 +4,7 @@ State::State(){
 	analysis = "";
 	directory = "";
 	filename = "";
+	time = "";
 	printRuns = 1000;
 }
 

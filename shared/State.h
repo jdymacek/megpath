@@ -27,6 +27,7 @@ class State{
 		string directory;
 		string analysis;
 		string filename;
+		string time;
 		vector<string> patternNames;
 		int printRuns;
 		bool load(string argFileName);
