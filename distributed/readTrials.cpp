@@ -3,9 +3,10 @@
 
 #include <iostream>
 #include <fstream>
-#include <Value.h>
-#include <ArgFile.h>
-#include <FileUtil.h>
+#include <vector>
+#include "../shared/Value.h"
+#include "../shared/ArgFile.h"
+#include "../shared/FileUtil.h"
 
 using namespace std;
 
@@ -13,14 +14,41 @@ void writeTrials(vector<double> errors, vector<string> times, string filename){
 	ofstream outFile;
 	outFile.open(filename);
 	for(int i = 0; i < errors.size(); ++i){
-		outFile << errors[i] << "\t" << times[i] << "\n";
+		outFile << errors[i] << "," << times[i] << "\n";
 	}
 	outFile.close();
 }
 
+Value getVal(string file, string item){
+	string line;
+	string key;
+	string equals;
+	string value;
+	Value val = Value();
+
+	ifstream inFile;
+	inFile.open(file);
+	
+	while(getline(inFile,line)){
+		stringstream ss;
+		ss << line;
+		ss >> key;
+		if(key == item){
+			ss >> equals;
+			ss >> value;
+			if(item == "Total_running_time" || item == "Program"){
+				value = "\"" + value + "\"";
+			}
+			val = Value(value);
+		}
+	}
+	return val;
+}
+
 int main(){
 	ArgFile args;
-	string filename = "output.txt"	
+	string filename = "results/output.txt";
+	string baseFile = filename;
 
 	vector<double> ppErrors, ftErrors, dnErrors;
 	vector<string> ppTimes, ftTimes, dnTimes;
@@ -31,20 +59,20 @@ int main(){
 	Value val;
 	int i = 1;
 	while(true){
-		if(FileUtil::isFile(filename){
+		if(FileUtil::isFile(filename)){
 			args.load(filename); //load the file
 
 			//grab the information needed
 			if(args.isArgument("Program")){
-				val = args.getArgument("Program");
+				val = getVal(filename,"Program");
 				prog = val.asString();
 			}
 			if(args.isArgument("Total_running_time")){
-				val = args.getArgument("Total_running_time");
+				val = getVal(filename,"Total_running_time");
 				time = val.asString();
 			}
 			if(args.isArgument("Total_error")){
-				val = args.getArgument("Total_error");
+				val = getVal(filename,"Total_error");
 				error = val.asDouble();
 			}
 		
@@ -63,7 +91,8 @@ int main(){
 			//jump to next file
 			stringstream ss;
 			ss << i;
-			filename = filename.substr(0,filename.size()-4) + "_" + ss.str() + ".txt";
+			filename = baseFile.substr(0,baseFile.size()-4) + "_" + ss.str() + ".txt";
+
 		}else{
 			break;
 		}

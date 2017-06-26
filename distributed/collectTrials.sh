@@ -7,6 +7,7 @@ i=1
 while [ $i -le $1 ]
 do
 	./getData.sh
+	cp ../testing/testnmf/test_multiplied.csv results/dataSet_"$i".txt
 	j=1
 
 	#how many needed to average
