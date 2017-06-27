@@ -3,7 +3,7 @@ CFLAGS=-O3 -c -std=c++11 -I../shared/
 LDFLAGS=-L../shared/ 
 LIBS=
 VPATH = src:../shared
-SOURCES=gsea.cpp ArgFile.cpp CSVFile.cpp Value.cpp
+SOURCES=gsea.cpp ArgFile.cpp CSVFile.cpp Value.cpp Pathway.cpp Gene.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=gsea
 
