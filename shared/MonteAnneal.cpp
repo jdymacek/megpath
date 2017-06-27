@@ -199,19 +199,40 @@ void MonteAnneal::output(){
 	
 	//ouput coefficients
 	double max = 0;
+	double rowError = 0;
 	fout.open(outputDir + state->analysis + "coefficients.csv");
 	for(int i = 0; i < state->coefficients.rows; ++i){
+		fout << "#Time : " << curTime << endl;
+		fout << "#File : " << state->filename << endl;
+		fout << "#Number_of_genes : " << state->coefficients.rows << endl;
+		fout << "#Program : " << program << endl;
+		fout << "#MAX_RUNS : " << state->MAX_RUNS << endl; 
+		fout << "#Total_error : " << efRow.error() << endl;
+		fout << "#Total_running_time : " << state->time << endl;
+
+		MatrixXd errorMatrix;
+    	errorMatrix.noalias() = state->expression.row(i);
+    	errorMatrix.noalias() -= (state->coefficients.matrix.row(i) * state->patterns.matrix);
+		rowError = errorMatrix.cwiseAbs().sum();
+
 		MatrixXd temp = state->coefficients.matrix.row(i);
 		max = temp.sum();
 		temp = temp/(max);
-		fout << "id_" << i << "\t" << temp << endl;
+		fout << temp << "," << rowError  << endl;
 	}
 	fout.close();
 
 	//output patterns
 	fout.open(outputDir + state->analysis + "patterns.csv");
 	for(int i = 0; i < state->patterns.rows; ++i){
-		fout << state->patternNames[i] << "\t" << state->patterns.matrix.row(i) << endl; 
+		fout << "#Time : " << curTime << endl;
+		fout << "#File : " << state->filename << endl;
+		fout << "#Number_of_genes : " << state->coefficients.rows << endl;
+		fout << "#Program : " << program << endl;
+		fout << "#MAX_RUNS : " << state->MAX_RUNS << endl; 
+		fout << "#Total_error : " << efRow.error() << endl;
+		fout << "#Total_running_time : " << state->time << endl;
+		fout << state->patternNames[i] << "," << state->patterns.matrix.row(i) << endl; 
 	}
 	fout.close();
 

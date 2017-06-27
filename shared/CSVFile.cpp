@@ -18,6 +18,9 @@ vector<vector<Value> > CSVFile::readCSV(string filename, bool tab){
 	}
 
 	while(getline(inFile,line)){
+		if(line[0] == '#'){
+			continue;
+		}
 		if(tab == false){
 			line = "[" + line;
 			line = line + "]";
