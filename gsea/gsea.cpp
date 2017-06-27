@@ -60,12 +60,10 @@ int main(int argc, char*argv[]){
 	vector<vector<Value> > coeffCSV = csv.readCSV(coeffFile);
 	vector<vector<Value> > ogCSV = csv.readCSV(ogFile);
 
-	cout << "After reading csv files\n"; //XXX
-
 	//get pathways
 	vector<Pathway> pathways;
-	Pathway path;
 	for(int i = 0; i < geneCSV.size(); ++i){
+		Pathway path;
 		string theName = geneCSV[i][0].asString();
 		path.name = theName;
 		for(int j = 2; j < geneCSV[i].size(); ++j){
@@ -74,36 +72,44 @@ int main(int argc, char*argv[]){
 		pathways.push_back(path);
 	}
 	
-	cout << "After pathways\n"; //XXX
-
 	//get genes
 	vector<Gene> genes;
-	Gene g;
 	for(int i = 0; i < ogCSV.size(); ++i){
-		g.name = pathways[i].name;
-		for(int j = 0; j < ogCSV[i].size(); ++j){
-			if(j == ogCSV[i].size()){
-				g.error = coeffCSV[i][j].asDouble();
-			}else{
-				g.coefficients.push_back(coeffCSV[i][j].asDouble());
-			}
+		Gene g;
+		g.name = ogCSV[i][0].asString();
+		g.error = coeffCSV[i][coeffCSV[i].size()-1].asDouble();
+		for(int j = 0; j < coeffCSV[i].size()-1; ++j){
+			g.coefficients.push_back(coeffCSV[i][j].asDouble());
 		}
 		genes.push_back(g);
 	}
 
-	cout << "After genes\n"; //XXX
-
 	//check genes and pathways
+	cout << "Genes: \n";
 	for(int i = 0; i < genes.size(); ++i){
 		cout << genes[i].name << "\t";
 		for(int j = 0; j < genes[i].coefficients.size(); ++j){
-			if(j == genes[i].coefficients.size()){
+			if(j == genes[i].coefficients.size()-1){
 				cout << genes[i].coefficients[j] << "\t";	
 			}else{
 				cout << genes[i].coefficients[j] << ",";
 			}
 		}
 		cout << genes[i].error << endl;
+	}
+	cout << endl;
+
+	cout << "Pathways: \n";
+	for(int i = 0; i < pathways.size(); ++i){
+		cout << pathways[i].name << "\t";
+		for(int j = 0; j < pathways[i].geneNames.size(); ++j){
+			if(j == pathways[i].geneNames.size()-1){
+				cout << pathways[i].geneNames[j];	
+			}else{
+				cout << pathways[i].geneNames[j] << ",";	
+			}
+		}
+		cout << endl;
 	}
 
 	return 0;
