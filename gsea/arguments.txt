@@ -1,1 +1,4 @@
 #Test argument file for GSEA
+original_file = "og.csv"
+coefficient_file = "coeffs.csv"
+genome_file = "genes.csv"
