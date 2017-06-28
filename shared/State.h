@@ -29,6 +29,7 @@ class State{
 		string filename;
 		string time;
 		vector<string> patternNames;
+		vector<string> ids;
 		int printRuns;
 		bool load(string argFileName);
 		void patternMatch(MatrixXd& other);

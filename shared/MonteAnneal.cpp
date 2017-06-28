@@ -209,6 +209,9 @@ void MonteAnneal::output(){
 		MatrixXd temp = state->coefficients.matrix.row(i);
 		max = temp.sum();
 		temp = temp/(max);
+		if(state->ids.size() > 0){
+			fout << state->ids[i] << ",";
+		}
 		for(int i =0; i < temp.cols(); ++i){
 			fout << temp(0,i) << ",";
 		}
