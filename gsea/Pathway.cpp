@@ -16,6 +16,10 @@ void Pathway::load(ifstream& inFile){
 
 	getline(inFile,line);
 
+	if(line == ""){
+		return;
+	}
+
 	stringstream ss;
 	ss << line;
 	ss >> name;
