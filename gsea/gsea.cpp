@@ -81,7 +81,7 @@ int main(int argc, char*argv[]){
 		genes.push_back(g);
 	}
 
-	//check genes and pathways
+	//output genes
 	cout << "Genes: \n";
 	for(int i = 0; i < genes.size(); ++i){
 		cout << genes[i].id << "\t" << genes[i].name  << "\t";
@@ -97,6 +97,7 @@ int main(int argc, char*argv[]){
 	cout << endl;
 
 	cout << "now sorted by error: \n";
+	Gene::sortBy = -1;
 	sort(genes.begin(),genes.end());
 	for(int i = 0; i < genes.size(); ++i){
 		cout << genes[i].id << "\t" << genes[i].name  << "\t";
@@ -111,15 +112,6 @@ int main(int argc, char*argv[]){
 	}
 	cout << endl;
 
-	cout << "Pathways: \n";
-	for(int i = 0; i < pathways.size(); ++i){
-		cout << pathways[i].name << "\t";
-		for(auto j : pathways[i].geneNames){
-			cout << j << " ";
-		}
-		cout << endl;
-	}
-
 	//pull out the desired pattern
 	for(int i = 0; i < genes.size(); ++i){
 		string curName = genes[i].name;
@@ -130,6 +122,34 @@ int main(int argc, char*argv[]){
 		}
 	}
 
+	cout << "now sorted by coefficients and reduced: \n";
+	Gene::sortBy = 0;
+	sort(genes.begin(),genes.end());
+	for(int i = 0; i < genes.size(); ++i){
+		cout << genes[i].id << "\t" << genes[i].name  << "\t";
+		for(int j = 0; j < genes[i].coefficients.size(); ++j){
+			if(j == genes[i].coefficients.size()-1){
+				cout << genes[i].coefficients[j] << "\t";	
+			}else{
+				cout << genes[i].coefficients[j] << ",";
+			}
+		}
+		cout << genes[i].error << endl;
+	}
+	cout << endl;
+
+	//output pathways
+	cout << "Pathways: \n";
+	for(int i = 0; i < pathways.size(); ++i){
+		cout << pathways[i].name << "\t";
+		for(auto j : pathways[i].geneNames){
+			cout << j << " ";
+		}
+		cout << endl;
+	}
+
+
+/*
 	map<string,double> patternGenes;
 	map<string,double>::iterator it; 
 	for(int i = 0; i < genes.size(); ++i){
@@ -138,9 +158,10 @@ int main(int argc, char*argv[]){
 	
 	cout << "pattern genes: \n";
 	for(it = patternGenes.begin(); it != patternGenes.end(); ++it ){
-		cout << it->first << "->" << it->second << " ";
+		cout << it->first << "=>" << it->second << " ";
 	}
 	cout << endl;
+*/
 
 	return 0;
 }

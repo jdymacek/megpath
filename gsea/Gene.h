@@ -19,6 +19,8 @@ class Gene{
 		string name;
 		vector<double> coefficients;
 		double error;
+
+		static int sortBy;
 };
 
 #endif
