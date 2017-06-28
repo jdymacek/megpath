@@ -42,14 +42,8 @@ int main(int argc, char*argv[]){
 	//grab arguments
 	args.load(argFileName);
 
-	string ogFile = "";
 	string coeffFile = "";
 	string geneFile = "";
-
-	if(args.isArgument("original_file")){
-		Value val = args.getArgument("original_file");
-		ogFile = val.asString();
-	}
 
 	if(args.isArgument("coefficient_file")){
 		Value val = args.getArgument("coefficient_file");
@@ -63,19 +57,18 @@ int main(int argc, char*argv[]){
 
 	//read all csv files
 	vector<vector<Value> > coeffCSV = csv.readCSV(coeffFile);
-	vector<vector<Value> > ogCSV = csv.readCSV(ogFile);
 
 	//read the pathway file
 	vector<Pathway> pathways = loadPathways(geneFile);
 	
 	//get genes
 	vector<Gene> genes;
-	for(int i = 0; i < ogCSV.size(); ++i){
+	for(int i = 0; i < coeffCSV.size(); ++i){
 		Gene g;
-		g.id = ogCSV[i][0].asString();
-		g.name = ogCSV[i][1].asString();
+		g.id = coeffCSV[i][0].toString();
+		g.name = coeffCSV[i][1].toString();
 		g.error = coeffCSV[i][coeffCSV[i].size()-1].asDouble();
-		for(int j = 0; j < coeffCSV[i].size()-1; ++j){
+		for(int j = 2; j < coeffCSV[i].size()-1; ++j){
 			g.coefficients.push_back(coeffCSV[i][j].asDouble());
 		}
 		genes.push_back(g);
