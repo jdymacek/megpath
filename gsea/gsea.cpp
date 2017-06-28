@@ -15,30 +15,52 @@
 
 using namespace std;
 
+//declaring globals
+vector<Gene> genes;
+vector<Pathway> pathways;
+map<string,Gene> geneMap;
+
 vector<Pathway> loadPathways(string filename){
 	vector<Pathway> rv;
 	ifstream inFile;
 	inFile.open(filename);
-	while(inFile){		
-		Pathway p;	
-		p.load(inFile);
-		rv.push_back(p);
+	while(inFile){
+		if(inFile){	
+			Pathway p;	
+			p.load(inFile);
+			rv.push_back(p);
+		}
 	}
 	inFile.close();
 	return rv;
 }
 
+void calculateScore(){
+	for(int i = 0; i < pathways.size(); ++i){
+		double total = 0;
+		unordered_set<string>::iterator itSet;
+		map<string,Gene>::iterator itMap;
+		for(itSet = pathways[i].geneNames.begin(); itSet != pathways[i].geneNames.end(); ++itSet){
+			itMap = geneMap.find(*itSet);
+			if(itMap != geneMap.end()){
+				total += itMap->second.coefficients[0];
+			}
+		}
+		cout << "total " << i << " : " << total << endl;
+	}
+}
+
 int main(int argc, char*argv[]){
 	ArgFile args;
 	CSVFile csv;
-	
+
 	if(argc < 2){
 		cout << "Missing argument file!\n";
 		exit(-1);
 	}
 
 	string argFileName = argv[1];
-		
+
 	//grab arguments
 	args.load(argFileName);
 
@@ -59,10 +81,9 @@ int main(int argc, char*argv[]){
 	vector<vector<Value> > coeffCSV = csv.readCSV(coeffFile);
 
 	//read the pathway file
-	vector<Pathway> pathways = loadPathways(geneFile);
-	
+	pathways = loadPathways(geneFile);
+
 	//get genes
-	vector<Gene> genes;
 	for(int i = 0; i < coeffCSV.size(); ++i){
 		Gene g;
 		g.id = coeffCSV[i][0].toString();
@@ -90,7 +111,6 @@ int main(int argc, char*argv[]){
 	cout << endl;
 
 	//pull out the desired genes into a map
-	map<string,Gene> geneMap;
 	map<string,Gene>::iterator it; 
 	for(int i = 0; i < genes.size(); ++i){
 		it = geneMap.find(genes[i].name);
@@ -124,8 +144,9 @@ int main(int argc, char*argv[]){
 	}
 	cout << endl;
 
-	//genes after sort
 	sort(genes.begin(),genes.end());
+
+	//genes after sort
 	cout << "after sort: \n";
 	for(int i = 0; i < genes.size(); ++i){
 		cout << genes[i].id << "\t" << genes[i].name  << "\t";
@@ -155,7 +176,10 @@ int main(int argc, char*argv[]){
 	for(it = geneMap.begin(); it != geneMap.end(); ++it ){
 		cout << it->first << "=>" << it->second.coefficients[0] << " ";
 	}
-	cout << endl;
+	cout << endl << endl;
+
+
+	calculateScore();
 
 
 	return 0;
