@@ -26,5 +26,6 @@ Running the Program
 	* ./run.sh	"*argument file*"	"*version to run*"	"*number of hosts*"
 	
 - Versions
-	ParallelPatterns	FuncThrow	DistNaive
-	pp	ft	dn
+	* ParallelPatterns	(**pp**)	
+	* FuncThrow	(**ft**)
+	* DistNaive	(**dn**)
