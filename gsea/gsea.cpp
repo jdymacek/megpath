@@ -120,13 +120,12 @@ int main(int argc, char*argv[]){
 		cout << endl;
 	}
 
-	
 	//pull out the desired pattern
 	for(int i = 0; i < genes.size(); ++i){
 		string curName = genes[i].name;
 		for(int j = i-1; j > 0; --j){
 			if(genes[j].name == curName){
-				genes.erase(genes.begin()+(i-1));
+				genes.erase(genes.begin()+(i));
 			}
 		}
 	}
@@ -136,7 +135,6 @@ int main(int argc, char*argv[]){
 	for(int i = 0; i < genes.size(); ++i){
 		patternGenes.insert( pair<string,double>(genes[i].name,genes[i].coefficients[0]) );
 	}
-
 	
 	cout << "pattern genes: \n";
 	for(it = patternGenes.begin(); it != patternGenes.end(); ++it ){
@@ -145,5 +143,4 @@ int main(int argc, char*argv[]){
 	cout << endl;
 
 	return 0;
-
 }
