@@ -1,10 +1,12 @@
 //Gene Set Enrichment Analysis -- Main File
 //Matthew Dyer
 //Created on 6/27/2017
-//Last Modifed 6/27/2017
+//Last Modifed 6/28/2017
 
 #include <iostream>
 #include <vector>
+#include <map>
+#include <algorithm>
 #include "Value.h"
 #include "ArgFile.h"
 #include "CSVFile.h"
@@ -94,6 +96,21 @@ int main(int argc, char*argv[]){
 	}
 	cout << endl;
 
+	cout << "now sorted by error: \n";
+	sort(genes.begin(),genes.end());
+	for(int i = 0; i < genes.size(); ++i){
+		cout << genes[i].id << "\t" << genes[i].name  << "\t";
+		for(int j = 0; j < genes[i].coefficients.size(); ++j){
+			if(j == genes[i].coefficients.size()-1){
+				cout << genes[i].coefficients[j] << "\t";	
+			}else{
+				cout << genes[i].coefficients[j] << ",";
+			}
+		}
+		cout << genes[i].error << endl;
+	}
+	cout << endl;
+
 	cout << "Pathways: \n";
 	for(int i = 0; i < pathways.size(); ++i){
 		cout << pathways[i].name << "\t";
@@ -102,6 +119,30 @@ int main(int argc, char*argv[]){
 		}
 		cout << endl;
 	}
+
+	
+	//pull out the desired pattern
+	for(int i = 0; i < genes.size(); ++i){
+		string curName = genes[i].name;
+		for(int j = i-1; j > 0; --j){
+			if(genes[j].name == curName){
+				genes.erase(genes.begin()+(i-1));
+			}
+		}
+	}
+
+	map<string,double> patternGenes;
+	map<string,double>::iterator it; 
+	for(int i = 0; i < genes.size(); ++i){
+		patternGenes.insert( pair<string,double>(genes[i].name,genes[i].coefficients[0]) );
+	}
+
+	
+	cout << "pattern genes: \n";
+	for(it = patternGenes.begin(); it != patternGenes.end(); ++it ){
+		cout << it->first << "->" << it->second << " ";
+	}
+	cout << endl;
 
 	return 0;
 
