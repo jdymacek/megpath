@@ -1,4 +1,4 @@
-PATH_1	http://some.random.url/that-does-not-matter.html	abc-0	abc-1	abc-2
+PATH_1	http://some.random.url/that-does-not-matter.html	abc-0	abc-1	abc-2	def-0
 PATH_2	http://some.random.url/that-does-not-matter.html	GENE_D	GENE_E	GENE_F
 PATH_3	http://some.random.url/that-does-not-matter.html	GENE_G	GENE_H	GENE_I
 PATH_4	http://some.random.url/that-does-not-matter.html	GENE_J	GENE_K	GENE_L	GENE_M	GENE_N
