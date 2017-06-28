@@ -9,16 +9,9 @@ Pathway::Pathway(){
 	name = "";
 }
 
-void Pathway::load(ifstream& inFile){
-	string line = "";
+void Pathway::load(string line){
 	string geneName = "";
 	string junk;
-
-	getline(inFile,line);
-
-	if(line == ""){
-		return;
-	}
 
 	stringstream ss;
 	ss << line;

@@ -17,7 +17,7 @@ using namespace std;
 class Pathway{
 	public:
 		Pathway();
-		void load(ifstream& inFile);
+		void load(string line);
 
 		string name;
 		unordered_set<string> geneNames;

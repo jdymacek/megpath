@@ -22,12 +22,14 @@ map<string,Gene> geneMap;
 
 vector<Pathway> loadPathways(string filename){
 	vector<Pathway> rv;
+	string line = "";
 	ifstream inFile;
 	inFile.open(filename);
 	while(inFile){
-		if(inFile){	
+		getline(inFile,line);
+		if(line != ""){	
 			Pathway p;	
-			p.load(inFile);
+			p.load(line);
 			rv.push_back(p);
 		}
 	}
