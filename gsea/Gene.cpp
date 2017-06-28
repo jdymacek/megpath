@@ -5,8 +5,6 @@
 
 #include "Gene.h"
 
-int Gene::sortBy;
-
 Gene::Gene(){
 	id = "";
 	name = "";
@@ -14,9 +12,5 @@ Gene::Gene(){
 }
 
 bool Gene::operator<(const Gene& g){
-	if(sortBy == -1){
-		return error < g.error;
-	}else{
-		return g.coefficients[sortBy] < coefficients[sortBy];
-	}
+	return g.coefficients[0] < coefficients[0];
 }

@@ -89,9 +89,28 @@ int main(int argc, char*argv[]){
 	}
 	cout << endl;
 
-	cout << "now sorted by error: \n";
-	Gene::sortBy = -1;
-	sort(genes.begin(),genes.end());
+	//pull out the desired genes into a map
+	map<string,Gene> geneMap;
+	map<string,Gene>::iterator it; 
+	for(int i = 0; i < genes.size(); ++i){
+		it = geneMap.find(genes[i].name);
+		if(it != geneMap.end()){
+			if(genes[i].error < it->second.error){
+				it->second = genes[i];
+			}
+		}else{
+			geneMap.insert( pair<string,Gene>(genes[i].name,genes[i]) );
+		}
+	}
+
+	//refill the vector
+	genes.clear();
+	for(it = geneMap.begin(); it != geneMap.end(); ++it){
+		genes.push_back(it->second);
+	}
+
+	//genes after reduction
+	cout << "after reduction: \n";
 	for(int i = 0; i < genes.size(); ++i){
 		cout << genes[i].id << "\t" << genes[i].name  << "\t";
 		for(int j = 0; j < genes[i].coefficients.size(); ++j){
@@ -105,19 +124,9 @@ int main(int argc, char*argv[]){
 	}
 	cout << endl;
 
-	//pull out the desired pattern
-	for(int i = 0; i < genes.size(); ++i){
-		string curName = genes[i].name;
-		for(int j = i-1; j > 0; --j){
-			if(genes[j].name == curName){
-				genes.erase(genes.begin()+(i));
-			}
-		}
-	}
-
-	cout << "now sorted by coefficients and reduced: \n";
-	Gene::sortBy = 0;
+	//genes after sort
 	sort(genes.begin(),genes.end());
+	cout << "after sort: \n";
 	for(int i = 0; i < genes.size(); ++i){
 		cout << genes[i].id << "\t" << genes[i].name  << "\t";
 		for(int j = 0; j < genes[i].coefficients.size(); ++j){
@@ -141,20 +150,13 @@ int main(int argc, char*argv[]){
 		cout << endl;
 	}
 
-
-/*
-	map<string,double> patternGenes;
-	map<string,double>::iterator it; 
-	for(int i = 0; i < genes.size(); ++i){
-		patternGenes.insert( pair<string,double>(genes[i].name,genes[i].coefficients[0]) );
-	}
-	
-	cout << "pattern genes: \n";
-	for(it = patternGenes.begin(); it != patternGenes.end(); ++it ){
-		cout << it->first << "=>" << it->second << " ";
+	//ouput gene map
+	cout << "gene map: \n";
+	for(it = geneMap.begin(); it != geneMap.end(); ++it ){
+		cout << it->first << "=>" << it->second.coefficients[0] << " ";
 	}
 	cout << endl;
-*/
+
 
 	return 0;
 }
