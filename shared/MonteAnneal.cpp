@@ -87,8 +87,12 @@ void MonteAnneal::annealStep(NMFMatrix& m, double t,ErrorFunction* ef){
 	}
 }
 
-/*Run a monte carlo markov chain*/
 double MonteAnneal::monteCarlo(){
+	return monteCarlo(true);
+}
+
+/*Run a monte carlo markov chain*/
+double MonteAnneal::monteCarlo(bool both){
 	Stopwatch watch;
 	watch.start();
 	ErrorFunctionRow efRow(state);
@@ -96,7 +100,9 @@ double MonteAnneal::monteCarlo(){
 
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < state->MAX_RUNS; i++){
-		monteCarloStep(state->patterns,&efCol);
+		if(both){
+			monteCarloStep(state->patterns,&efCol);
+		}
 		monteCarloStep(state->coefficients,&efRow);
 		if(i % state->printRuns == 0){
 			double error = efRow.error();
@@ -110,6 +116,10 @@ double MonteAnneal::monteCarlo(){
 }
 
 double MonteAnneal::anneal(){
+	return anneal(true);
+}
+
+double MonteAnneal::anneal(bool both){
 	Stopwatch watch;
 	int ndx = 0;
 	double t = 0.5;
@@ -122,7 +132,9 @@ double MonteAnneal::anneal(){
 	bool running = true;
 	while(running && ndx < 2*state->MAX_RUNS){
 		annealStep(state->coefficients,t,&efRow);
-		annealStep(state->patterns,t,&efCol);
+		if(both){
+			annealStep(state->patterns,t,&efCol);
+		}
 		if(ndx % state->printRuns == 0){
 			double error = efRow.error();
 			cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
