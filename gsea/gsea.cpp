@@ -39,80 +39,41 @@ vector<Pathway> loadPathways(string filename){
 	return rv;
 }
 
-void calculateScore(){	
+double calculateScore(Pathway path){	
 
-	//for each pathway
-	for(int i = 0; i < pathways.size(); ++i){
-
-		//calculate total and N
-		double total = 0;
-		unordered_set<string>::iterator itSet;
-		map<string,Gene>::iterator itMap;
-		for(itSet = pathways[i].geneNames.begin(); itSet != pathways[i].geneNames.end();){
-			unordered_set<string>::iterator curIt;
-			curIt = itSet++;
-			itMap = geneMap.find(*curIt);
-			if(itMap != geneMap.end()){
-				total += itMap->second.coefficients[0];
-			}else{
-				pathways[i].geneNames.erase(curIt);
-			}
+	//calculate total and N
+	double total = 0;
+	unordered_set<string>::iterator itSet;
+	map<string,Gene>::iterator itMap;
+	for(itSet = path.geneNames.begin(); itSet != path.geneNames.end();){
+		unordered_set<string>::iterator curIt;
+		curIt = itSet++;
+		itMap = geneMap.find(*curIt);
+		if(itMap != geneMap.end()){
+			total += itMap->second.coefficients[0];
+		}else{
+			path.geneNames.erase(curIt);
 		}
-		double N = genes.size()	- pathways[i].geneNames.size();
-	
-		
-		//calculate sum and score of current pathway
-		double sum = 0;
-		double score = 0;
-		itSet = pathways[i].geneNames.begin();
-		for(int j = 0; j < genes.size(); ++j){
-			itSet = pathways[i].geneNames.find(genes[j].name);
-			if(itSet != pathways[i].geneNames.end()){
-				sum += genes[j].coefficients[0]/total;
-			}else{
-				sum -= 1/N;
-			}
-			if(sum > score){
-				score = sum;
-			}
-		}
-
-		//compare against randomly generated pathways
-		vector<Gene> shuffledGenes = genes;
-		Pathway testPath;
-		double compScore = 0;
-		for(int k = 0; k < 1000; ++k){
-			double testSum = 0;
-			double testScore = 0;
-
-			//shuffle up my genes
-			unsigned seed = chrono::system_clock::now().time_since_epoch().count();
-			shuffle(shuffledGenes.begin(), shuffledGenes.end(),default_random_engine(seed));
-			testPath.name = pathways[i].name;
-			for(int m = 0; m < pathways[i].geneNames.size(); ++m){
-				testPath.geneNames.insert(shuffledGenes[m].name);
-			}
-
-			itSet = testPath.geneNames.begin();
-			for(int n = 0; n < genes.size(); ++n){
-				itSet = testPath.geneNames.find(genes[n].name);
-				if(itSet != testPath.geneNames.end()){
-					testSum += genes[n].coefficients[0]/total;
-				}else{
-					testSum -= 1/N;
-				}
-				if(testSum > testScore){
-					testScore = testSum;
-				}
-			}
-		
-			if(testScore > score){
-				++compScore;
-			}
-		}
-
-		cout << i << ".) \tN=" << N << " \ttotal=" << total << " \tsum=" << sum << " \tscore=" << score << "\tcompScore=" << compScore << endl;
 	}
+	double N = genes.size()	- path.geneNames.size();
+
+	//calculate sum and score of current pathway
+	double sum = 0;
+	double score = 0;
+	itSet = path.geneNames.begin();
+	for(int j = 0; j < genes.size(); ++j){
+		itSet = path.geneNames.find(genes[j].name);
+		if(itSet != path.geneNames.end()){
+			sum += genes[j].coefficients[0]/total;
+		}else{
+			sum -= 1/N;
+		}
+		if(sum > score){
+			score = sum;
+		}
+	}
+	cout << "N=" << N << " \ttotal=" << total << " \tsum=" << sum << " \tscore=" << score << endl;
+	return score;
 }
 
 int main(int argc, char*argv[]){
@@ -245,7 +206,26 @@ int main(int argc, char*argv[]){
 	cout << endl << endl;
 
 
-	calculateScore();
+	//for each pathway
+	vector<double> scores;
+	for(int i = 0; i < pathways.size(); ++i){
+		scores.push_back(calculateScore(pathways[i]));
+	}
+
+	//compare against randomly generated pathways
+	vector<Gene> shuffledGenes = genes;
+	Pathway testPath;
+
+	double randScore = 0;
+	for(int i = 0; i < 10; ++i){
+		unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+		shuffle(shuffledGenes.begin(), shuffledGenes.end(),default_random_engine(seed));
+		testPath.name = pathways[i].name;
+		for(int m = 0; m < pathways[i].geneNames.size(); ++m){
+			testPath.geneNames.insert(shuffledGenes[m].name);
+		}
+		randScore += calculateScore(testPath);
+	}
 
 
 	return 0;
