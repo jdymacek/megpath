@@ -72,7 +72,6 @@ double calculateScore(Pathway path){
 			score = sum;
 		}
 	}
-	cout << "N=" << N << " \ttotal=" << total << " \tsum=" << sum << " \tscore=" << score << endl;
 	return score;
 }
 
@@ -205,28 +204,33 @@ int main(int argc, char*argv[]){
 	}
 	cout << endl << endl;
 
-
 	//for each pathway
-	vector<double> scores;
-	for(int i = 0; i < pathways.size(); ++i){
-		scores.push_back(calculateScore(pathways[i]));
-	}
-
-	//compare against randomly generated pathways
+	vector<int> scores(pathways.size(),0);
 	vector<Gene> shuffledGenes = genes;
 	Pathway testPath;
+	for(int i = 0; i < pathways.size(); ++i){
+		double pathScore = 0;
+		pathScore = calculateScore(pathways[i]);
 
-	double randScore = 0;
-	for(int i = 0; i < 10; ++i){
-		unsigned seed = chrono::system_clock::now().time_since_epoch().count();
-		shuffle(shuffledGenes.begin(), shuffledGenes.end(),default_random_engine(seed));
-		testPath.name = pathways[i].name;
-		for(int m = 0; m < pathways[i].geneNames.size(); ++m){
-			testPath.geneNames.insert(shuffledGenes[m].name);
+		//compare against randomly generated pathways
+		double randScore = 0;
+		for(int j = 0; j < 5; ++j){
+			unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+			shuffle(shuffledGenes.begin(), shuffledGenes.end(),default_random_engine(seed));
+			testPath.name = pathways[i].name;
+			for(int k = 0; k < pathways[i].geneNames.size(); ++k){
+				testPath.geneNames.insert(shuffledGenes[k].name);
+			}
+			randScore = calculateScore(testPath);
+			if(randScore > pathScore){
+				scores[i] = scores[i] + 1;
+			}
 		}
-		randScore += calculateScore(testPath);
 	}
 
+	for(int i = 0; i < scores.size(); ++i){
+		cout << "Score " << i << ": " << endl;
+	}
 
 	return 0;
 }
