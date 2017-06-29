@@ -9,16 +9,25 @@ ArgFile::ArgFile(){
 }
 
 void ArgFile::load(string filename){
+	ifstream inFile;
+	inFile.open(filename);
+	fromStream(inFile);
+	inFile.close();
+}
+
+void ArgFile::fromString(string str){
+	istringstream ss(str);
+	fromStream(ss);
+}
+
+void ArgFile::fromStream(istream& stream){
 	string line = "";
 	string key = "";
 	string equals = "";
 	string value = "";
 	Value val = Value();
 
-	ifstream inFile;
-	inFile.open(filename);
-
-	while(getline(inFile,line)){
+	while(getline(stream,line)){
 		if(line[0] == '#'){
 			continue;
 		}else{
@@ -33,8 +42,6 @@ void ArgFile::load(string filename){
 
 		args.insert(pair<string,Value>(key,val));
 	}
-
-	inFile.close();
 }
 
 string ArgFile::toString(){

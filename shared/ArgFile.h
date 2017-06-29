@@ -19,6 +19,8 @@ class ArgFile{
 	public:
 		ArgFile();
 		void load(string filename);
+		void fromString(string str);
+		void fromStream(istream& stream);
 		string toString();
 		Value getArgument(string key);
 		bool isArgument(string key);
