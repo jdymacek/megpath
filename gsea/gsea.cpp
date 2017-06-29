@@ -52,7 +52,6 @@ void calculateScore(){
 				pathways[i].geneNames.erase(curIt);
 			}
 		}
-		cout <<  genes.size() << "-" << pathways[i].geneNames.size() << endl;
 		double N = genes.size()	- pathways[i].geneNames.size();
 		cout << i << ".) N=" << N << " total=" << total << endl;
 	}
