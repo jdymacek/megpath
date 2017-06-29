@@ -52,6 +52,9 @@ bool State::load(string argFileName){
 		while(i < PATTERNS){
 			patternNames.push_back(patternArgs[i].toString());
 			++i;
+			if(patternArgs[i].asString() == ""){
+				both = false;
+			}
 		}
 	}
 
@@ -138,10 +141,12 @@ bool State::load(string argFileName){
 	//should be ROWS and PATTERNS
 	coefficients.resize(ROWS,PATTERNS);	
 
+	int numPatterns = 0;
 	for(int i = 0; i < patternArgs.size(); ++i){
 		vector<Value> intoMatrix;
 		string findPattern = patternArgs[i].asString();
 		if(args.isArgument(findPattern)){
+			++numPatterns;
 			Value newVal = args.getArgument(findPattern);
 			intoMatrix = newVal.asVector();
 
@@ -157,6 +162,11 @@ bool State::load(string argFileName){
 			shared->setEntries(constraints);
 		}
 	}
+	
+	if(numPatterns == patternArgs.size()){
+		both = false;
+	}
+
 	return true;
 }
 
