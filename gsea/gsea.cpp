@@ -1,7 +1,7 @@
 //Gene Set Enrichment Analysis -- Main File
 //Matthew Dyer
 //Created on 6/27/2017
-//Last Modifed 6/28/2017
+//Last Modifed 6/29/2017
 
 #include <iostream>
 #include <vector>
@@ -40,6 +40,7 @@ vector<Pathway> loadPathways(string filename){
 void calculateScore(){
 	for(int i = 0; i < pathways.size(); ++i){
 		double total = 0;
+
 		unordered_set<string>::iterator itSet;
 		map<string,Gene>::iterator itMap;
 		for(itSet = pathways[i].geneNames.begin(); itSet != pathways[i].geneNames.end();){
@@ -53,7 +54,24 @@ void calculateScore(){
 			}
 		}
 		double N = genes.size()	- pathways[i].geneNames.size();
-		cout << i << ".) N=" << N << " total=" << total << endl;
+	
+		double sum = 0;
+		double score = 0;
+		itSet = pathways[i].geneNames.begin();
+		for(itMap = geneMap.begin(); itMap != geneMap.end(); ++itMap){
+			itSet = pathways[i].geneNames.find(itMap->first);
+			if(itSet != pathways[i].geneNames.end()){
+				sum += itMap->second.coefficients[0]/total;
+			}else{
+				sum -= 1/N;
+			}
+			if(sum > score){
+				score = sum;
+			}
+		}
+
+		cout << i << ".) \tN=" << N << " \ttotal=" << total << " \tsum=" << sum << " \tscore=" << score << endl;
+
 	}
 }
 
