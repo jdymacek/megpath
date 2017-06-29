@@ -106,12 +106,12 @@ void calculateScore(){
 				}
 			}
 		
-			compScore += testScore;
+			if(testScore > score){
+				++compScore;
+			}
 		}
-		compScore = compScore/1000;
 
-		cout << i << ".) \tN=" << N << " \ttotal=" << total << " \tsum=" << sum << " \tscore=" << score << endl;
-		cout << "\t\t\t\t\tcompScore=" << compScore << endl;
+		cout << i << ".) \tN=" << N << " \ttotal=" << total << " \tsum=" << sum << " \tscore=" << score << "\tcompScore=" << compScore << endl;
 	}
 }
 
