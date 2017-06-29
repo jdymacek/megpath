@@ -211,7 +211,6 @@ int main(int argc, char*argv[]){
 	for(int i = 0; i < pathways.size(); ++i){
 		double pathScore = 0;
 		pathScore = calculateScore(pathways[i]);
-		cout << "inner path score " << i << endl;
 		testPath.geneNames.clear();
 
 		//compare against randomly generated pathways
@@ -220,18 +219,14 @@ int main(int argc, char*argv[]){
 			unsigned seed = chrono::system_clock::now().time_since_epoch().count();
 			shuffle(shuffledGenes.begin(), shuffledGenes.end(),default_random_engine(seed));
 			testPath.name = pathways[i].name;
-			cout << "before inner calculate score " << j << " " << pathways[i].geneNames.size() << endl;
 			for(int k = 0; k < pathways[i].geneNames.size(); ++k){
-				cout << shuffledGenes[k].name << endl;
 				testPath.geneNames.insert(shuffledGenes[k].name);
 			}
-			cout << "inner calculate score" << "\t" << j << endl;
 			randScore = calculateScore(testPath);
-			if(randScore > pathScore){
+			if(randScore >= pathScore){
 				scores[i] = scores[i] + 1;
 			}
 		}
-		cout << "outer loop " << i << endl;
 	}
 
 	for(int i = 0; i < scores.size(); ++i){
