@@ -120,21 +120,6 @@ int main(int argc, char*argv[]){
 		genes.push_back(g);
 	}
 
-	//output genes
-	cout << "Genes: \n";
-	for(int i = 0; i < genes.size(); ++i){
-		cout << genes[i].id << "\t" << genes[i].name  << "\t";
-		for(int j = 0; j < genes[i].coefficients.size(); ++j){
-			if(j == genes[i].coefficients.size()-1){
-				cout << genes[i].coefficients[j] << "\t";	
-			}else{
-				cout << genes[i].coefficients[j] << ",";
-			}
-		}
-		cout << genes[i].error << endl;
-	}
-	cout << endl;
-
 	//pull out the desired genes into a map
 	map<string,Gene>::iterator it; 
 	for(int i = 0; i < genes.size(); ++i){
@@ -154,55 +139,7 @@ int main(int argc, char*argv[]){
 		genes.push_back(it->second);
 	}
 
-	//genes after reduction
-	cout << "after reduction: \n";
-	for(int i = 0; i < genes.size(); ++i){
-		cout << genes[i].id << "\t" << genes[i].name  << "\t";
-		for(int j = 0; j < genes[i].coefficients.size(); ++j){
-			if(j == genes[i].coefficients.size()-1){
-				cout << genes[i].coefficients[j] << "\t";	
-			}else{
-				cout << genes[i].coefficients[j] << ",";
-			}
-		}
-		cout << genes[i].error << endl;
-	}
-	cout << endl;
-
 	sort(genes.begin(),genes.end());
-
-	//genes after sort
-	cout << "after sort: \n";
-	for(int i = 0; i < genes.size(); ++i){
-		cout << genes[i].id << "\t" << genes[i].name  << "\t";
-		for(int j = 0; j < genes[i].coefficients.size(); ++j){
-			if(j == genes[i].coefficients.size()-1){
-				cout << genes[i].coefficients[j] << "\t";	
-			}else{
-				cout << genes[i].coefficients[j] << ",";
-			}
-		}
-		cout << genes[i].error << endl;
-	}
-	cout << endl;
-
-	//output pathways
-	cout << "Pathways: \n";
-	for(int i = 0; i < pathways.size(); ++i){
-		cout << pathways[i].name << "\t";
-		for(auto j : pathways[i].geneNames){
-			cout << j << " ";
-		}
-		cout << endl;
-	}
-	cout << endl;
-
-	//ouput gene map
-	cout << "gene map: \n";
-	for(it = geneMap.begin(); it != geneMap.end(); ++it ){
-		cout << it->first << "=>" << it->second.coefficients[0] << " ";
-	}
-	cout << endl << endl;
 
 	//for each pathway
 	vector<int> scores(pathways.size(),0);
@@ -211,21 +148,24 @@ int main(int argc, char*argv[]){
 	for(int i = 0; i < pathways.size(); ++i){
 		double pathScore = 0;
 		pathScore = calculateScore(pathways[i]);
-		testPath.geneNames.clear();
 
 		//compare against randomly generated pathways
 		double randScore = 0;
-		for(int j = 0; j < 5; ++j){
+		for(int j = 0; j < 1000; ++j){
+			testPath.geneNames.clear();
+
 			unsigned seed = chrono::system_clock::now().time_since_epoch().count();
 			shuffle(shuffledGenes.begin(), shuffledGenes.end(),default_random_engine(seed));
 			testPath.name = pathways[i].name;
 			for(int k = 0; k < pathways[i].geneNames.size(); ++k){
 				testPath.geneNames.insert(shuffledGenes[k].name);
 			}
+
 			randScore = calculateScore(testPath);
-			if(randScore >= pathScore){
+			if(randScore > pathScore || abs(randScore-pathScore) < 0.000005){
 				scores[i] = scores[i] + 1;
 			}
+
 		}
 	}
 
