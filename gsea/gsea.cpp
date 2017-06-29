@@ -7,6 +7,8 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <random>
+#include <chrono>
 #include "Value.h"
 #include "ArgFile.h"
 #include "CSVFile.h"
@@ -37,10 +39,13 @@ vector<Pathway> loadPathways(string filename){
 	return rv;
 }
 
-void calculateScore(){
-	for(int i = 0; i < pathways.size(); ++i){
-		double total = 0;
+void calculateScore(){	
 
+	//for each pathway
+	for(int i = 0; i < pathways.size(); ++i){
+
+		//calculate total and N
+		double total = 0;
 		unordered_set<string>::iterator itSet;
 		map<string,Gene>::iterator itMap;
 		for(itSet = pathways[i].geneNames.begin(); itSet != pathways[i].geneNames.end();){
@@ -55,6 +60,8 @@ void calculateScore(){
 		}
 		double N = genes.size()	- pathways[i].geneNames.size();
 	
+		
+		//calculate sum and score of current pathway
 		double sum = 0;
 		double score = 0;
 		itSet = pathways[i].geneNames.begin();
@@ -70,8 +77,38 @@ void calculateScore(){
 			}
 		}
 
-		cout << i << ".) \tN=" << N << " \ttotal=" << total << " \tsum=" << sum << " \tscore=" << score << endl;
+		//compare against randomly generated pathways
+		vector<Gene> shuffledGenes = genes;
+		Pathway testPath;
+		double testSum = 0;
+		double testScore = 0;
+		for(int k = 0; k < 1000; ++k){
 
+			//shuffle up my genes
+			unsigned seed = chrono::system_clock::now().time_since_epoch().count();
+			shuffle(shuffledGenes.begin(), shuffledGenes.end(),default_random_engine(seed));
+			testPath.name = pathways[i].name;
+			for(int m = 0; m < pathways[i].geneNames.size(); ++m){
+				testPath.geneNames.insert(shuffledGenes[m].name);
+			}
+
+			itSet = pathways[i].geneNames.begin();
+			for(int n = 0; n < shuffledGenes.size(); ++n){
+				itSet = pathways[i].geneNames.find(shuffledGenes[n].name);
+				if(itSet != pathways[i].geneNames.end()){
+					testSum += shuffledGenes[n].coefficients[0]/total;
+				}else{
+					testSum -= 1/N;
+				}
+				if(testSum > testScore){
+					testScore = testSum;
+				}
+			}
+
+		}
+
+		cout << i << ".) \tN=" << N << " \ttotal=" << total << " \tsum=" << sum << " \tscore=" << score << endl;
+		cout << "\t\t\t\ttestSum=" << testSum << "\ttest Score=" << testScore << endl;
 	}
 }
 
