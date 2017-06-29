@@ -80,9 +80,10 @@ void calculateScore(){
 		//compare against randomly generated pathways
 		vector<Gene> shuffledGenes = genes;
 		Pathway testPath;
-		double testSum = 0;
-		double testScore = 0;
+		double compScore = 0;
 		for(int k = 0; k < 1000; ++k){
+			double testSum = 0;
+			double testScore = 0;
 
 			//shuffle up my genes
 			unsigned seed = chrono::system_clock::now().time_since_epoch().count();
@@ -94,9 +95,9 @@ void calculateScore(){
 
 			itSet = testPath.geneNames.begin();
 			for(int n = 0; n < shuffledGenes.size(); ++n){
-				itSet = testPath.geneNames.find(shuffledGenes[n].name);
+				itSet = testPath.geneNames.find(genes[n].name);
 				if(itSet != testPath.geneNames.end()){
-					testSum += shuffledGenes[n].coefficients[0]/total;
+					testSum += genes[n].coefficients[0]/total;
 				}else{
 					testSum -= 1/N;
 				}
@@ -104,11 +105,13 @@ void calculateScore(){
 					testScore = testSum;
 				}
 			}
-
+		
+			compScore += testScore;
 		}
+		compScore = compScore/1000;
 
 		cout << i << ".) \tN=" << N << " \ttotal=" << total << " \tsum=" << sum << " \tscore=" << score << endl;
-		cout << "\t\t\t\ttestSum=" << testSum << "\ttest Score=" << testScore << endl;
+		cout << "\t\t\t\t\tcompScore=" << compScore << endl;
 	}
 }
 
