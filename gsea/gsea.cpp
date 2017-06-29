@@ -42,13 +42,19 @@ void calculateScore(){
 		double total = 0;
 		unordered_set<string>::iterator itSet;
 		map<string,Gene>::iterator itMap;
-		for(itSet = pathways[i].geneNames.begin(); itSet != pathways[i].geneNames.end(); ++itSet){
-			itMap = geneMap.find(*itSet);
+		for(itSet = pathways[i].geneNames.begin(); itSet != pathways[i].geneNames.end();){
+			unordered_set<string>::iterator curIt;
+			curIt = itSet++;
+			itMap = geneMap.find(*curIt);
 			if(itMap != geneMap.end()){
 				total += itMap->second.coefficients[0];
+			}else{
+				pathways[i].geneNames.erase(curIt);
 			}
 		}
-		cout << "total " << i << " : " << total << endl;
+		cout <<  genes.size() << "-" << pathways[i].geneNames.size() << endl;
+		double N = genes.size()	- pathways[i].geneNames.size();
+		cout << i << ".) N=" << N << " total=" << total << endl;
 	}
 }
 
@@ -172,6 +178,7 @@ int main(int argc, char*argv[]){
 		}
 		cout << endl;
 	}
+	cout << endl;
 
 	//ouput gene map
 	cout << "gene map: \n";
