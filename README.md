@@ -23,4 +23,9 @@ Running the Program
 	* ./connmf	"*argument file*"
 
 - Distributed
-	* ./run.sh 	distnmf		"*argument file*"	"*number of hosts*"
+	* ./run.sh	"*argument file*"	"*version to run*"	"*number of hosts*"
+	
+- Versions
+	* ParallelPatterns	(**pp**)	
+	* FuncThrow	(**ft**)
+	* DistNaive	(**dn**)

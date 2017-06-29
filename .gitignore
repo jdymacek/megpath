@@ -2,6 +2,7 @@
 test_*
 connmf
 distnmf
+gsea
 *.aux
 *.log
 *.pdf

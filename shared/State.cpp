@@ -12,15 +12,16 @@ bool State::load(string argFileName){
 	int ROWS = 0;
 	int COLUMNS = 0;
 	int PATTERNS = 0;
-	
+
 	ArgFile args;
 	CSVFile file;
-	
+
 	vector<Value> origin;
 	vector<Value> controls;
 	vector<Value> columns;
 	vector<Value> patternArgs;
-		
+	vector<Value> idArgs;		
+
 	//grab arguments
 	args.load(argFileName);
 
@@ -77,6 +78,11 @@ bool State::load(string argFileName){
 		printRuns = val.asInt();
 	}
 
+	if(args.isArgument(analysis+"ids")){
+		Value val = args.getArgument(analysis + "ids");
+		idArgs = val.asVector();
+	}
+
 	vector<vector<Value> > csv = file.readCSV(filename);
 
 	//expression matrix
@@ -97,7 +103,7 @@ bool State::load(string argFileName){
 
 	expression = MatrixXd(ROWS,COLUMNS);
 	expression = MatrixXd::Zero(ROWS,COLUMNS);
-	
+
 	if(columns.size() != controls.size() && args.isArgument(analysis + "controls")){
 		cout << "Columns and controls must be the same size.";
 		return false;
@@ -110,6 +116,17 @@ bool State::load(string argFileName){
 			}else{
 				expression(i,j) = csv[i+origin[1].asInt()][columns[j].asInt()+origin[0].asInt()].asDouble();
 			}
+		}
+		//read columns to make an id
+		if(idArgs.size() > 0){
+			string id = "";
+			for(int k =0; k < idArgs.size(); ++k){
+				id += (csv[i+origin[1].asInt()][idArgs[k].asInt()]).toString();
+				if(k != idArgs.size()-1){
+					id += ",";
+				}
+			}
+			ids.push_back(id);
 		}
 	}
 
@@ -143,49 +160,49 @@ bool State::load(string argFileName){
 }
 
 void State::normalizeMatrix(MatrixXd& mat){
-    double min = mat.minCoeff();
-    mat = mat.array() - min;
-    double max = mat.maxCoeff();
-    mat = mat/max;
+	double min = mat.minCoeff();
+	mat = mat.array() - min;
+	double max = mat.maxCoeff();
+	mat = mat/max;
 }
 
 void State::patternMatch(MatrixXd& other){
 
-    PermutationMatrix<Dynamic> perm(patterns.matrix.rows());
-    perm.setIdentity();
+	PermutationMatrix<Dynamic> perm(patterns.matrix.rows());
+	perm.setIdentity();
 
-    int rows = patterns.matrix.rows();
-    for(int i =0; i < rows; ++i){
-        perm.indices().data()[i] = i;
-    }
+	int rows = patterns.matrix.rows();
+	for(int i =0; i < rows; ++i){
+		perm.indices().data()[i] = i;
+	}
 
-    int index = 0;
-    double minError = -1;
-    for(int i =0; i < rows; ++i){
-        MatrixXd p = patterns.matrix.row(i);
-        normalizeMatrix(p);
-        minError = -1;
-        for(int j =index; j < rows; ++j){
-            //Get Pattern
-            MatrixXd q = other.row(perm.indices().data()[j]);
-            normalizeMatrix(q);
+	int index = 0;
+	double minError = -1;
+	for(int i =0; i < rows; ++i){
+		MatrixXd p = patterns.matrix.row(i);
+		normalizeMatrix(p);
+		minError = -1;
+		for(int j =index; j < rows; ++j){
+			//Get Pattern
+			MatrixXd q = other.row(perm.indices().data()[j]);
+			normalizeMatrix(q);
 
-            //Compare to p
-            q = q-p;
-            double e = q.cwiseAbs().sum();
-            if(e < minError || minError == -1){
-                minError = e;
-                cout << "index: " << index << " j:" << perm.indices().data()[j] << endl;
-                cout << "error: " << minError << endl;
-                if(j != index){
-                    swap(perm.indices().data()[index],perm.indices().data()[j]);
-                }
-                cout << perm.indices() << endl;
-            }
-        }
-        //move past the last mapping
-        index += 1;
-    }
+			//Compare to p
+			q = q-p;
+			double e = q.cwiseAbs().sum();
+			if(e < minError || minError == -1){
+				minError = e;
+				cout << "index: " << index << " j:" << perm.indices().data()[j] << endl;
+				cout << "error: " << minError << endl;
+				if(j != index){
+					swap(perm.indices().data()[index],perm.indices().data()[j]);
+				}
+				cout << perm.indices() << endl;
+			}
+		}
+		//move past the last mapping
+		index += 1;
+	}
 
 	patterns.matrix = perm*patterns.matrix;
 	coefficients.matrix = coefficients.matrix*perm;

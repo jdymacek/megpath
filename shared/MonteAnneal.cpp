@@ -177,39 +177,30 @@ void MonteAnneal::output(){
 	string outputDir = state->directory;
 	FileUtil::mkPath(outputDir);
 	outputDir = outputDir + "/";
-	string outputFile = FileUtil::uniqueFile(outputDir + "output.txt");
 
 	ErrorFunctionRow efRow(state);
 
-	//args and information
-	ofstream out; 
-	out.open(outputFile);
-	out << "Time : " << curTime << endl;
-	out << "File : " << state->filename << endl;
-	out << "Number_of_genes : " << state->coefficients.rows << endl;
-	out << "Program : " << program << endl;
-	out << "MAX_RUNS : " << state->MAX_RUNS << endl; 
-	out << "Total_error : " << efRow.error() << endl;
-	out << "Total_running_time : " << state->time << endl;
-	out.close();
 
 	ofstream fout;
+	string outputFile = FileUtil::uniqueFile(outputDir + state->analysis + "results.csv");
 
-	outputDir = outputFile.substr(0,outputFile.size()-4) + "_";
-	
 	//ouput coefficients
 	double max = 0;
 	double rowError = 0;
-	fout.open(outputDir + state->analysis + "coefficients.csv");
-	for(int i = 0; i < state->coefficients.rows; ++i){
-		fout << "#Time : " << curTime << endl;
-		fout << "#File : " << state->filename << endl;
-		fout << "#Number_of_genes : " << state->coefficients.rows << endl;
-		fout << "#Program : " << program << endl;
-		fout << "#MAX_RUNS : " << state->MAX_RUNS << endl; 
-		fout << "#Total_error : " << efRow.error() << endl;
-		fout << "#Total_running_time : " << state->time << endl;
+	fout.open(outputFile);
 
+	fout << "#Time : " << curTime << endl;
+    fout << "#File : " << state->filename << endl;
+	fout << "#Number_of_genes : " << state->coefficients.rows << endl;
+    fout << "#Program : " << program << endl;
+    fout << "#MAX_RUNS : " << state->MAX_RUNS << endl;
+    fout << "#Total_error : " << efRow.error() << endl;
+    fout << "#Total_running_time : " << state->time << endl;
+	for(int i =0; i < state->patterns.rows; ++i){
+		fout << "#" << state->patternNames[i] << "," << state->patterns.matrix.row(i) << endl;
+	}
+
+	for(int i = 0; i < state->coefficients.rows; ++i){
 		MatrixXd errorMatrix;
     	errorMatrix.noalias() = state->expression.row(i);
     	errorMatrix.noalias() -= (state->coefficients.matrix.row(i) * state->patterns.matrix);
@@ -218,26 +209,13 @@ void MonteAnneal::output(){
 		MatrixXd temp = state->coefficients.matrix.row(i);
 		max = temp.sum();
 		temp = temp/(max);
-		fout << temp << "," << rowError  << endl;
+		if(state->ids.size() > 0){
+			fout << state->ids[i] << ",";
+		}
+		for(int i =0; i < temp.cols(); ++i){
+			fout << temp(0,i) << ",";
+		}
+		fout << rowError  << endl;
 	}
-	fout.close();
-
-	//output patterns
-	fout.open(outputDir + state->analysis + "patterns.csv");
-	for(int i = 0; i < state->patterns.rows; ++i){
-		fout << "#Time : " << curTime << endl;
-		fout << "#File : " << state->filename << endl;
-		fout << "#Number_of_genes : " << state->coefficients.rows << endl;
-		fout << "#Program : " << program << endl;
-		fout << "#MAX_RUNS : " << state->MAX_RUNS << endl; 
-		fout << "#Total_error : " << efRow.error() << endl;
-		fout << "#Total_running_time : " << state->time << endl;
-		fout << state->patternNames[i] << "," << state->patterns.matrix.row(i) << endl; 
-	}
-	fout.close();
-
-	//output expression
-	fout.open(outputDir + state->analysis + "expression.txt");
-	fout << state->coefficients.matrix*state->patterns.matrix;
 	fout.close();
 }
