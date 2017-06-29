@@ -92,10 +92,10 @@ void calculateScore(){
 				testPath.geneNames.insert(shuffledGenes[m].name);
 			}
 
-			itSet = pathways[i].geneNames.begin();
+			itSet = testPath.geneNames.begin();
 			for(int n = 0; n < shuffledGenes.size(); ++n){
-				itSet = pathways[i].geneNames.find(shuffledGenes[n].name);
-				if(itSet != pathways[i].geneNames.end()){
+				itSet = testPath.geneNames.find(shuffledGenes[n].name);
+				if(itSet != testPath.geneNames.end()){
 					testSum += shuffledGenes[n].coefficients[0]/total;
 				}else{
 					testSum -= 1/N;
