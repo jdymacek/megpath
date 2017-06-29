@@ -22,3 +22,14 @@ void Pathway::load(string line){
 		geneNames.insert(geneName);
 	}
 }
+string Pathway::toString(){
+	stringstream ss;
+	unordered_set<string>::iterator it;
+	ss << name << " => ";
+	ss << "[ ";
+	for(it = geneNames.begin(); it != geneNames.end(); ++it){
+		ss << *it << " ";
+	}
+	ss << "]";
+	return ss.str();
+}

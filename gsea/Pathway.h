@@ -18,6 +18,7 @@ class Pathway{
 	public:
 		Pathway();
 		void load(string line);
+		string toString();
 
 		string name;
 		unordered_set<string> geneNames;
