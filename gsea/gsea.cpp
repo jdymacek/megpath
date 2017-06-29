@@ -58,10 +58,10 @@ void calculateScore(){
 		double sum = 0;
 		double score = 0;
 		itSet = pathways[i].geneNames.begin();
-		for(itMap = geneMap.begin(); itMap != geneMap.end(); ++itMap){
-			itSet = pathways[i].geneNames.find(itMap->first);
+		for(int j = 0; j < genes.size(); ++j){
+			itSet = pathways[i].geneNames.find(genes[j].name);
 			if(itSet != pathways[i].geneNames.end()){
-				sum += itMap->second.coefficients[0]/total;
+				sum += genes[j].coefficients[0]/total;
 			}else{
 				sum -= 1/N;
 			}
