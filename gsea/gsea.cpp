@@ -94,7 +94,7 @@ void calculateScore(){
 			}
 
 			itSet = testPath.geneNames.begin();
-			for(int n = 0; n < shuffledGenes.size(); ++n){
+			for(int n = 0; n < genes.size(); ++n){
 				itSet = testPath.geneNames.find(genes[n].name);
 				if(itSet != testPath.geneNames.end()){
 					testSum += genes[n].coefficients[0]/total;
