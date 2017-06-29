@@ -147,13 +147,13 @@ void MonteAnneal::run(){
 }
 
 void MonteAnneal::stop(){
-	state->patterns.write(state->analysis + "patterns.csv");
-	state->coefficients.write(state->analysis + "coefficients.csv");
+	//state->patterns.write(state->analysis + "patterns.csv");
+	//state->coefficients.write(state->analysis + "coefficients.csv");
 
-	ofstream fout;
-	fout.open(state->analysis + "expression.txt");
-	fout << state->coefficients.matrix*state->patterns.matrix;
-	fout.close();
+	//ofstream fout;
+	//fout.open(state->analysis + "expression.txt");
+	//fout << state->coefficients.matrix*state->patterns.matrix;
+	//fout.close();
 }
 
 void MonteAnneal::output(){
