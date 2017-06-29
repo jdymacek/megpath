@@ -1,6 +1,7 @@
 #include "State.h"
 
 State::State(){
+	both = true;
 	analysis = "";
 	directory = "";
 	filename = "";

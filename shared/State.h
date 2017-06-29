@@ -28,6 +28,7 @@ class State{
 		string analysis;
 		string filename;
 		string time;
+		bool both;
 		vector<string> patternNames;
 		vector<string> ids;
 		int printRuns;
