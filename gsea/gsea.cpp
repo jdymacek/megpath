@@ -172,8 +172,9 @@ int main(int argc, char*argv[]){
 			if(randScore > pathScore || abs(randScore-pathScore) < 0.000005){
 				scores[i] = scores[i] + 1;
 			}
-
 		}
+
+		cout << i << ".)\t"  << pathways[i].name  << " pathway completed!\n";
 	}
 
 	for(int i = 0; i < scores.size(); ++i){
