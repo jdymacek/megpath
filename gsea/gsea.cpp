@@ -1,7 +1,7 @@
 //Gene Set Enrichment Analysis -- Main File
 //Matthew Dyer
 //Created on 6/27/2017
-//Last Modifed 6/29/2017
+//Last Modifed 7/3/2017
 
 #include <iostream>
 #include <vector>
@@ -39,7 +39,8 @@ vector<Pathway> loadPathways(string filename){
 	return rv;
 }
 
-double calculateScore(Pathway& path){	
+double calculateScore(Pathway& path){
+	stack<string> leadStack;
 
 	//calculate total and N
 	double total = 0;
@@ -65,11 +66,16 @@ double calculateScore(Pathway& path){
 		itSet = path.geneNames.find(genes[j].name);
 		if(itSet != path.geneNames.end()){
 			sum += genes[j].coefficients[0]/total;
+			leadStack.push(genes[j].name);
 		}else{
 			sum -= 1/N;
 		}
 		if(sum > score){
 			score = sum;
+			while(!leadStack.empty()){
+				path.leadingSet.push_back(leadStack.top());
+				leadStack.pop();
+			}
 		}
 	}
 	return score;
