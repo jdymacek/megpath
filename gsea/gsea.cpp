@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <random>
 #include <chrono>
+#include <stack>
 #include "Value.h"
 #include "ArgFile.h"
 #include "CSVFile.h"
