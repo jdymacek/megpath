@@ -49,11 +49,12 @@ bool State::load(string argFileName){
 		patternArgs = val.asVector();
 		PATTERNS = patternArgs.size();
 		int i = 0;
+		both = false;
 		while(i < PATTERNS){
 			patternNames.push_back(patternArgs[i].toString());
 			++i;
 			if(patternArgs[i].asString() == ""){
-				both = false;
+				both = true;
 			}
 		}
 	}
