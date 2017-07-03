@@ -22,6 +22,7 @@ class Pathway{
 
 		string name;
 		unordered_set<string> geneNames;
+		vector<string> leadingSet;
 };
 
 #endif
