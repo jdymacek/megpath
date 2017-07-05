@@ -174,11 +174,7 @@ int main(int argc, char*argv[]){
 			}
 		}
 
-		cout << i << " of " << pathways.size() << "\t" << pathways[i].name  << " pathway completed!\n";
-	}
-
-	for(int i = 0; i < scores.size(); ++i){
-		cout << "Score " << i << ": " << scores[i] <<endl;
+		cout << i << " of " << pathways.size() << "\t" << pathways[i].name  << "\t" << scores[i];
 	}
 
 	return 0;
