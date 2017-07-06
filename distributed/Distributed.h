@@ -1,7 +1,9 @@
 #ifndef DISTRIBUTED__H
 #define DISTRIBUTED__H
+
 #include <mpi.h>
 #include <unistd.h>
+#include <string>
 #include "MonteAnneal.h"
 
 using namespace std;

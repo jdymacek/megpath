@@ -5,13 +5,14 @@ Distributed::Distributed():MonteAnneal(){
 }
 
 void Distributed::start(string filename){
-    MonteAnneal::start(filename);
-    MPI_Init(NULL,NULL);
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    MPI_Comm_size(MPI_COMM_WORLD, &size);
-    char hostbuff[100];
-    gethostname(hostbuff,99);
-    hostname = string(hostbuff);
+	MonteAnneal::start(filename);
+	MPI_Init(NULL,NULL);
+	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+	MPI_Comm_size(MPI_COMM_WORLD, &size);
+	char hostbuff[100];
+	gethostname(hostbuff,99);
+	hostname = string(hostbuff);
+	program = program + "_" + to_string(size);
 }
 
 void Distributed::sendMatrix(MatrixXd& matrix,int dest){
