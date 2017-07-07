@@ -14,7 +14,7 @@
 
 using namespace std;
 
-class PatternMatching: virtual public Distributed{
+class PatternMatching: virtual public Distributed, public ParallelPatterns{
 	public:
 		PatternMatching();	
 		virtual double monteCarlo();
@@ -23,6 +23,11 @@ class PatternMatching: virtual public Distributed{
 		virtual void run();
 		virtual void stop();
 		virtual void gatherCoefficients();
+		int findStart(int myRank, int curSize, int numRows);
+		int findRows(int myRank, int curSize, int numRows);
+	protected:
+		MatrixXd oexpression;
+		int startPoint;
 };
 
 

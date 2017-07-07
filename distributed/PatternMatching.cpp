@@ -9,8 +9,43 @@ PatternMatching::PatternMatching(): Distributed(){
 	program = "PatternMatching";
 }
 
+int PatternMatching::findStart(int myRank, int curSize, int numRows){
+	int startRow = 0;
+	int split = numRows/curSize;
+	int leftover = numRows%curSize;
+	if(myRank < leftover){
+		split = split + 1;
+		startRow = myRank*split;
+	}else{
+		startRow = numRows - (curSize - myRank) * split;
+	}
+	return startRow;
+}
+
+int PatternMatching::findRows(int myRank, int curSize, int numRows){
+	int split = numRows/curSize;
+	int leftover = numRows%curSize;
+	if(myRank < leftover){
+		split = split + 1;
+	}
+	return split;
+}
+
 void PatternMatching::start(string filename){
-	ParallelPatterns::start();
+	Distributed::start(filename);
+	if(rank == 0){
+		oexpression = state->expression;
+	}
+
+	//split the coefficients
+	int myRows = findRows(rank, size, state->coefficients.rows);
+	state->coefficients.resize(myRows, state->coefficients.columns);
+
+	//split the expression	
+	startPoint = findStart(rank, size, state->expression.rows());
+	myRows = findRows(rank, size, state->expression.rows());
+	MatrixXd temp = state->expression.block(startPoint, 0, myRows, state->expression.cols());
+	state->expression = temp;
 }
 
 double PatternMatching::monteCarlo(){	
