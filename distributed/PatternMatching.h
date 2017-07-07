@@ -14,7 +14,7 @@
 
 using namespace std;
 
-class ParallelMatching: virtual public Distributed{
+class PatternMatching: virtual public Distributed{
 	public:
 		PatternMatching();	
 		virtual double monteCarlo();
