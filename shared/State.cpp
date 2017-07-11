@@ -204,12 +204,12 @@ void State::patternMatch(MatrixXd& other){
 			double e = q.cwiseAbs().sum();
 			if(e < minError || minError == -1){
 				minError = e;
-				cout << "index: " << index << " j:" << perm.indices().data()[j] << endl;
-				cout << "error: " << minError << endl;
+				//cout << "index: " << index << " j:" << perm.indices().data()[j] << endl;
+				//cout << "error: " << minError << endl;
 				if(j != index){
 					swap(perm.indices().data()[index],perm.indices().data()[j]);
 				}
-				cout << perm.indices() << endl;
+				//cout << perm.indices() << endl;
 			}
 		}
 		//move past the last mapping

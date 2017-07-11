@@ -2,12 +2,13 @@
 //Matthew Dyer
 //Julian Dymacek
 //Created on 5/25/2017
-//Last modified: 6/9/2017
+//Last modified: 7/7/2017
 
 #include "DistNaive.h"
 #include "FuncThrow.h"
 #include "ParallelPatterns.h"
 #include "ParallelFuncThrow.h"
+#include "PatternMatching.h"
 #include "Stopwatch.h"
 
 using namespace std;
@@ -31,6 +32,8 @@ int main(int argc, char** argv){
 		a = new ParallelPatterns();
 	}else if(analysis == "ParallelFuncThrow" || analysis == "ParFuncThrow" || analysis == "PFT" || analysis == "pft"){
 		a = new ParallelFuncThrow();
+	}else if(analysis == "PatternMatching" || analysis == "PatMatch" || analysis == "PM" || analysis == "pm"){
+		a = new PatternMatching();
 	}
 
 	a->start(argFile);
