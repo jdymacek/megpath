@@ -52,10 +52,10 @@ bool State::load(string argFileName){
 		both = false;
 		while(i < PATTERNS){
 			patternNames.push_back(patternArgs[i].toString());
-			++i;
 			if(patternArgs[i].asString() == ""){
 				both = true;
 			}
+			++i;
 		}
 	}
 
@@ -142,6 +142,8 @@ bool State::load(string argFileName){
 	//should be ROWS and PATTERNS
 	coefficients.resize(ROWS,PATTERNS);	
 
+cout << patterns.matrix << endl;
+
 	int numPatterns = 0;
 	for(int i = 0; i < patternArgs.size(); ++i){
 		vector<Value> intoMatrix;
@@ -167,6 +169,8 @@ bool State::load(string argFileName){
 	if(numPatterns == patternArgs.size()){
 		both = false;
 	}
+
+	cout << patterns.matrix << endl;
 
 	return true;
 }
