@@ -19,7 +19,8 @@ int main(int argc, char** argv){
 	Stopwatch watch;
 	watch.start();	
 	a->run();
-	cout << "Total program running time: " << watch.formatTime(watch.stop()) << endl;
+	a->state->time = watch.formatTime(watch.stop());
+	cout << "Total program running time: " << state->time << endl;
 	a->output();
 
 	char bell = 7;
