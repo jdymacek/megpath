@@ -29,6 +29,7 @@ class Pathway{
 		string toString();
 		void random(const Genome& genome,int n);
 		double calculateScore(Genome& genome);
+		double simulate(Genome& genome,int n);
 
 		double p;
 		string name;

@@ -94,7 +94,17 @@ double Pathway::calculateScore(Genome& genome){
     return score;
 }
 
-
+double Pathway::simulate(Genome& genome,int n){
+    double pathScore = calculateScore(genome);
+    for(int j =0; j < n; ++j){
+        Pathway testPath(genome,geneNames.size());
+        double randScore = testPath.calculateScore(genome);
+        if(randScore > pathScore || abs(randScore-pathScore) < 0.000005){
+              p += 1;
+        }   
+    }   
+	return p;
+}
 
 
 
