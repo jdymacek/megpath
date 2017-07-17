@@ -9,44 +9,20 @@ PatternMatching::PatternMatching(): Distributed(){
 	program = "PatternMatching";
 }
 
-int PatternMatching::findStart(int myRank, int curSize, int numRows){
-	int startRow = 0;
-	int split = numRows/curSize;
-	int leftover = numRows%curSize;
-	if(myRank < leftover){
-		split = split + 1;
-		startRow = myRank*split;
-	}else{
-		startRow = numRows - (curSize - myRank) * split;
-	}
-	return startRow;
-}
-
-int PatternMatching::findRows(int myRank, int curSize, int numRows){
-	int split = numRows/curSize;
-	int leftover = numRows%curSize;
-	if(myRank < leftover){
-		split = split + 1;
-	}
-	return split;
-}
-
 void PatternMatching::start(string filename){
-	Distributed::start(filename);
-	if(rank == 0){
-		oexpression = state->expression;
-	}
-
-	//split the coefficients
-	int myRows = findRows(rank, size, state->coefficients.rows);
-	state->coefficients.resize(myRows, state->coefficients.columns);
-
-	//split the expression	
-	startPoint = findStart(rank, size, state->expression.rows());
-	myRows = findRows(rank, size, state->expression.rows());
-	MatrixXd temp = state->expression.block(startPoint, 0, myRows, state->expression.cols());
-	state->expression = temp;
+	ParallelPatterns::start(filename);
 }
+
+
+void PatternMatching::readMatrix(double* data,MatrixXd& matrix){
+	Map<MatrixXd> mapper(data,matrix.rows(),matrix.cols());
+	matrix = mapper;
+}
+
+void PatternMatching::writeMatrix(double* data,MatrixXd& matrix){
+	memcpy(data,matrix.data(),(matrix.size()*sizeof(double)));
+}
+
 
 double PatternMatching::monteCarlo(){	
 	int bufferSize = state->patterns.size()+1;
@@ -74,15 +50,18 @@ double PatternMatching::monteCarlo(){
 				cout << state->patterns.matrix << endl;
 			}
 
+			MatrixXd myPatterns = state->patterns.matrix;
 			sendBuffer[0] = error;
-			state->patterns.write(&sendBuffer[1]);
+
+			if(rank == 0)
+				writeMatrix(&sendBuffer[1],myPatterns);
 
 			MPI_Bcast(sendBuffer,bufferSize,MPI_DOUBLE,0,MPI_COMM_WORLD);
 
-			MatrixXd myPatterns = state->patterns.matrix;
-			state->patterns.read(&sendBuffer[1]);
-			state->patternMatch(myPatterns);
-
+			if(rank != 0){
+				readMatrix(&sendBuffer[1],myPatterns);
+				state->patternMatch(myPatterns);
+			}
 			state->patterns.write(&sendBuffer[1]);
 
 			MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
@@ -113,7 +92,7 @@ double PatternMatching::monteCarlo(){
 	return efRow.error();
 }
 
-double PatternMatching::anneal(bool both){
+double PatternMatching::anneal(){
 	int bufferSize = state->patterns.size()+1;
 	double* sendBuffer = new double[bufferSize];
 	double* recvBuffer = new double[bufferSize];
@@ -130,7 +109,7 @@ double PatternMatching::anneal(bool both){
 	double formerError = 2*state->expression.rows()*state->expression.cols();
 	bool running = true;
 	while(running && ndx < 2*state->MAX_RUNS){
-		if(both == true){
+		if(state->both){
 			annealStep(state->coefficients,t,&efRow);
 			annealStep(state->patterns,t,&efCol);
 		}else{
@@ -139,16 +118,21 @@ double PatternMatching::anneal(bool both){
 
 		if(ndx % 1000 == 0){
 			error = efRow.error();
-			if(both == true){
+			if(state->both == true){
 				sendBuffer[0] = error;
-				state->patterns.write(&sendBuffer[1]);
+
+				MatrixXd myPatterns = state->patterns.matrix;
+				sendBuffer[0] = error;
+
+				if(rank == 0)
+					writeMatrix(&sendBuffer[1],myPatterns);
 
 				MPI_Bcast(sendBuffer,bufferSize,MPI_DOUBLE,0,MPI_COMM_WORLD);
 
-				MatrixXd myPatterns = state->patterns.matrix;
-				state->patterns.read(&sendBuffer[1]);
-				state->patternMatch(myPatterns);
-
+				if(rank != 0){
+					readMatrix(&sendBuffer[1],myPatterns);
+					state->patternMatch(myPatterns);
+				}
 				state->patterns.write(&sendBuffer[1]);
 
 				MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
@@ -167,11 +151,12 @@ double PatternMatching::anneal(bool both){
 		t *= 0.99975;
 	}
 
-	if(both == true){
+	if(state->both == true){
 		//final reduction
 		state->patterns.write(&sendBuffer[1]);
 		MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 		state->patterns.read(&recvBuffer[1]);
+		state->patterns.matrix /= size;
 	}
 
 	cout << hostname << " Anneal Final Error: " << efRow.error() << endl;

@@ -24,6 +24,7 @@ using namespace std;
 class Pathway{
 	public:
 		Pathway();
+		bool operator< (const Pathway& other);
 		Pathway(const Genome& genome,int n);
 		void load(string line);
 		string toString();

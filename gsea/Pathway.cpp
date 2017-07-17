@@ -10,6 +10,11 @@ Pathway::Pathway(){
 	name = "";
 }
 
+bool Pathway::operator< (const Pathway& other){
+	return p < other.p;
+}
+
+
 void Pathway::load(string line){
 	string geneName = "";
 	string junk;
@@ -43,7 +48,7 @@ Pathway::Pathway(const Genome& genome,int n){
 void Pathway::random(const Genome& genome,int n){
     unsigned seed = chrono::system_clock::now().time_since_epoch().count();
     mt19937 gen(seed); //Standard mersenne_twister_engine seeded with rd()
-    uniform_int_distribution<int> dis(0, genome.genes.size());
+    uniform_int_distribution<int> dis(0, genome.genes.size()-1);
 
 	while(geneNames.size() < n){
 		int r = dis(gen);
@@ -99,7 +104,7 @@ double Pathway::simulate(Genome& genome,int n){
     for(int j =0; j < n; ++j){
         Pathway testPath(genome,geneNames.size());
         double randScore = testPath.calculateScore(genome);
-        if(randScore > pathScore || abs(randScore-pathScore) < 0.000005){
+		if(randScore > pathScore || abs(randScore-pathScore) < 0.005){
               p += 1;
         }   
     }   
