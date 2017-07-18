@@ -20,7 +20,7 @@ int main(int argc, char** argv){
 	watch.start();	
 	a->run();
 	a->state->time = watch.formatTime(watch.stop());
-	cout << "Total program running time: " << state->time << endl;
+	cout << "Total program running time: " << a->state->time << endl;
 	a->output();
 
 	char bell = 7;

@@ -142,7 +142,6 @@ bool State::load(string argFileName){
 	//should be ROWS and PATTERNS
 	coefficients.resize(ROWS,PATTERNS);	
 
-cout << patterns.matrix << endl;
 
 	int numPatterns = 0;
 	for(int i = 0; i < patternArgs.size(); ++i){
@@ -154,24 +153,30 @@ cout << patterns.matrix << endl;
 			intoMatrix = newVal.asVector();
 
 			ShiftPF* shared = new ShiftPF();			
-			vector<Entry> constraints(intoMatrix.size(),{0,0,0});
+			vector<Entry> constraints;
 			for(int j = 0; j < intoMatrix.size(); ++j){
-				patterns.matrix(i,j) = intoMatrix[j].asDouble();
-				patterns.functions(i,j) = shared;	
-				constraints[j].x = j;
-				constraints[j].y = i;
-				constraints[j].val = patterns.matrix(i,j);	
+				string str = intoMatrix[j].asString();
+				cout << str << endl;
+				if(str != "?"){
+					cout << "adding to constraint" << endl;
+					Entry e;
+					patterns.matrix(i,j) = intoMatrix[j].asDouble();
+					patterns.functions(i,j) = shared;	
+					e.x = j;
+					e.y = i;
+					e.val = patterns.matrix(i,j);	
+					constraints.push_back(e);
+				}
 			}
 			shared->setEntries(constraints);
 		}
 	}
 	
+	cout << patterns.matrix << endl;
+
 	if(numPatterns == patternArgs.size()){
 		both = false;
 	}
-
-	cout << patterns.matrix << endl;
-
 	return true;
 }
 
