@@ -200,7 +200,7 @@ void State::patternMatch(MatrixXd& other){
 	int index = 0;
 	double minError = -1;
 	for(int i =0; i < rows; ++i){
-		if(patterns.isConstrained(i)){
+		if(!patterns.isConstrained(i)){
 			MatrixXd p = patterns.matrix.row(i);
 			normalizeMatrix(p);
 			minError = -1;
