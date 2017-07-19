@@ -171,7 +171,7 @@ bool State::load(string argFileName){
 			shared->setEntries(constraints);
 		}
 	}
-	
+
 	cout << patterns.matrix << endl;
 
 	if(numPatterns == patternArgs.size()){
@@ -200,25 +200,27 @@ void State::patternMatch(MatrixXd& other){
 	int index = 0;
 	double minError = -1;
 	for(int i =0; i < rows; ++i){
-		MatrixXd p = patterns.matrix.row(i);
-		normalizeMatrix(p);
-		minError = -1;
-		for(int j =index; j < rows; ++j){
-			//Get Pattern
-			MatrixXd q = other.row(perm.indices().data()[j]);
-			normalizeMatrix(q);
+		if(patterns.isConstrained(i)){
+			MatrixXd p = patterns.matrix.row(i);
+			normalizeMatrix(p);
+			minError = -1;
+			for(int j =index; j < rows; ++j){
+				//Get Pattern
+				MatrixXd q = other.row(perm.indices().data()[j]);
+				normalizeMatrix(q);
 
-			//Compare to p
-			q = q-p;
-			double e = q.cwiseAbs().sum();
-			if(e < minError || minError == -1){
-				minError = e;
-				//cout << "index: " << index << " j:" << perm.indices().data()[j] << endl;
-				//cout << "error: " << minError << endl;
-				if(j != index){
-					swap(perm.indices().data()[index],perm.indices().data()[j]);
+				//Compare to p
+				q = q-p;
+				double e = q.cwiseAbs().sum();
+				if(e < minError || minError == -1){
+					minError = e;
+					//cout << "index: " << index << " j:" << perm.indices().data()[j] << endl;
+					//cout << "error: " << minError << endl;
+					if(j != index){
+						swap(perm.indices().data()[index],perm.indices().data()[j]);
+					}
+					//cout << perm.indices() << endl;
 				}
-				//cout << perm.indices() << endl;
 			}
 		}
 		//move past the last mapping

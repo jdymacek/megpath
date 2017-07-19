@@ -55,6 +55,14 @@ void NMFMatrix::read(double* data){
 	}
 }
 
+bool NMFMatrix::isConstrained(int row){
+	for(int x = 0; x < matrix.cols(); ++x){
+		if(functions(row,x)->size() > 1)
+			return true;
+	}
+	return false;
+}
+
 void NMFMatrix::write(double* data){
 	memcpy(data,matrix.data(),(matrix.size()*sizeof(double)));
 	data += matrix.size();

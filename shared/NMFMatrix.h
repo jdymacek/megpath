@@ -29,7 +29,8 @@ class NMFMatrix{
 		int size();
 		void resize(int newRows, int newCols);
 
-
+		bool isConstrained(int row);
+		
 		int rows;
 		int columns;
 		MatrixXd matrix;
