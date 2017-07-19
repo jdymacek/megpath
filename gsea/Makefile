@@ -3,9 +3,9 @@ CFLAGS=-O3 -c -std=c++11 -I../shared/
 LDFLAGS=-L../shared/ 
 LIBS=
 VPATH = src:../shared
-SOURCES=main.cpp DistributedGSEA.cpp GSEA.cpp Genome.cpp ArgFile.cpp CSVFile.cpp Value.cpp Pathway.cpp Gene.cpp
+SOURCES=FileUtil.cpp main.cpp DistributedGSEA.cpp GSEA.cpp Genome.cpp ArgFile.cpp CSVFile.cpp Value.cpp Pathway.cpp Gene.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=gsea
+EXECUTABLE=pathapp
 
 all: $(SOURCES) $(EXECUTABLE) 
 

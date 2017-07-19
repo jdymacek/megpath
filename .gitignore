@@ -2,7 +2,7 @@
 test_*
 connmf
 distnmf
-gsea
+pathapp
 *.aux
 *.log
 *.pdf
