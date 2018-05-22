@@ -1,8 +1,9 @@
 //Standard Analysis functions
 //Matthew Dyer
 //Julian Dymacek
+//Dakota Martin
 //Created on 6/6/2017
-//Last Modified: 6/20/2017
+//Last Modified: 5/22/2018
 
 #include "MonteAnneal.h"
 
