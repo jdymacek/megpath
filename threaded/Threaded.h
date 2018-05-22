@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <string>
 #include "MonteAnneal.h"
-
+#include "Barrier.h"
 
 
 using namespace std;
@@ -19,6 +19,8 @@ class Threaded:public MonteAnneal{
 		virtual void run();
 		virtual void stop();
 	protected:
+		Barrier* barrier;
+
 };
 
 #endif
