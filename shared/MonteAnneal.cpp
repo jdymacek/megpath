@@ -50,8 +50,8 @@ void MonteAnneal::monteCarloStep(NMFMatrix& m,ErrorFunction* ef, int xStart, int
 	}
 }
 
-void MonteAnneal::annealStep(MNFMatrix& m, double t,ErrorFunction* ef){
-	annealStep(m,t,ef,0,m.columns,0,m.rows)
+void MonteAnneal::annealStep(NMFMatrix& m, double t,ErrorFunction* ef){
+	annealStep(m,t,ef,0,m.columns,0,m.rows);
 }
 
 void MonteAnneal::annealStep(NMFMatrix& m, double t,ErrorFunction* ef, int xStart, int xStop, int yStart, int yStop){
