@@ -37,18 +37,18 @@ double Threaded::monteCarlo(){
     watch.start();
 	vector<thread> threads;
 
-	int rowSize = state->rows/numThreads;
-	int colSize = state->cols/numThreads;
+	int rowSize = state->coefficients.rows/numThreads;
+	int colSize = state->patterns.columns/numThreads;
 	int rowStart = 0;
 	int colStart = 0;
 	for(int i =0; i < numThreads; ++i){
 		int rowEnd = rowStart + rowSize;
 		int colEnd = colStart + colSize;
-		if(i < state->rows%numThreads)
+		if(i < state->coefficients.rows%numThreads)
 			rowEnd += 1;
-		if(i < state->cols%numThreads)
+		if(i < state->patterns.columns%numThreads)
 			colEnd += 1;
-		threads.push_back(thread(Threaded::monteCarloThead,this,colStart,colEnd,rowStart,rowEnd));
+		threads.push_back(thread(&Threaded::monteCarloThread,this,colStart,colEnd,rowStart,rowEnd));
 		rowStart = rowEnd;
 		colStart = colEnd;
 	}
