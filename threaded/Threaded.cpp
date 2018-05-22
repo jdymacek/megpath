@@ -21,10 +21,10 @@ void Threaded::monteCarloThread(int xStart, int xEnd,int yStart,int yEnd){
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < state->MAX_RUNS; i++){
 		if(state->both){
-			monteCarloStep(state->patterns,&efCol,0,state->patterns.columns,yStart,yEnd);
+			monteCarloStep(state->patterns,&efCol,xStart,xEnd,0,state->patterns.rows);
 			barrier->Wait();
 		}
-		monteCarloStep(state->coefficients,&efRow,xStart,xEnd,0,state->coefficients.rows);
+		monteCarloStep(state->coefficients,&efRow,0,state->coefficients.columns,yStart,yEnd);
 		if(state->both){
 			barrier->Wait();
 		}
@@ -73,10 +73,10 @@ void Threaded::annealThread(int xStart, int xEnd,int yStart,int yEnd){
 
     //For each spot take a gamble and record outcome
     for(int i =0; i < 2*state->MAX_RUNS; i++){
-        annealStep(state->coefficients,t,&efRow,xStart,xEnd,0,state->coefficients.rows);
+        annealStep(state->coefficients,t,&efRow,0,state->coefficients.columns,yStart,yEnd);
         if(state->both){
             barrier->Wait();
-			annealStep(state->patterns,t,&efCol,0,state->patterns.columns,yStart,yEnd);
+			annealStep(state->patterns,t,&efCol,xStart,xEnd,0,state->patterns.rows);
             barrier->Wait(); 
 		}
 		t *= 0.99975;
