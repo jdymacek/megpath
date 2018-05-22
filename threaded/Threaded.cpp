@@ -3,7 +3,7 @@
 //Julian Dymacek
 //Created on 5/22/2018
 
-#include "threaded.h"
+#include "Threaded.h"
 
 Threaded::Threaded(){
 	ProbFunc::generator.seed(time(0));
