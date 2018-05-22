@@ -5,7 +5,7 @@ LIBS=
 VPATH = src:../shared
 SOURCES=FileUtil.cpp PiecewisePF.cpp MonteAnneal.cpp State.cpp main.cpp ShiftPF.cpp Stopwatch.cpp ProbFunc.cpp UniformPF.cpp HistoPF.cpp ArgFile.cpp CSVFile.cpp Value.cpp NMFMatrix.cpp Analysis.cpp ErrorFunction.cpp ErrorFunctionRow.cpp ErrorFunctionCol.cpp Threaded.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=connmf
+EXECUTABLE=threadedmf
 
 all: $(SOURCES) $(EXECUTABLE) 
 

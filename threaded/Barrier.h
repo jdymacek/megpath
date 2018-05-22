@@ -1,4 +1,7 @@
 //https://stackoverflow.com/questions/24465533/implementing-boostbarrier-in-c11
+#ifndef BARRIER_H
+#define BARRIER_H
+
 #include <mutex>
 #include <condition_variable>
 
@@ -31,3 +34,4 @@ private:
     size_t mCount;
     size_t mGeneration;
 };
+#endif

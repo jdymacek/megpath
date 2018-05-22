@@ -22,11 +22,11 @@ void Threaded::monteCarloThread(int xStart, int xEnd,int yStart,int yEnd){
 	for(int i =0; i < state->MAX_RUNS; i++){
 		if(state->both){
 			monteCarloStep(state->patterns,&efCol,xStart,xEnd,yStart,yEnd);
-			barrier->wait();
+			barrier->Wait();
 		}
 		monteCarloStep(state->coefficients,&efRow,xStart,xEnd,yStart,yEnd);
 		if(state->both){
-			barrier->wait();
+			barrier->Wait();
 		}
 	}
 }

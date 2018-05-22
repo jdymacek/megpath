@@ -3,6 +3,8 @@
 
 #include <unistd.h>
 #include <string>
+#include <thread>
+#include <vector>
 #include "MonteAnneal.h"
 #include "Barrier.h"
 
@@ -13,13 +15,15 @@ using namespace std;
 
 class Threaded:public MonteAnneal{
 	public:
-		MonteAnneal();
+		Threaded(int nt);
+		void monteCarloThread(int xStart, int xEnd, int yStart, int yEnd);
 		virtual double monteCarlo();
 		virtual double anneal();
 		virtual void run();
 		virtual void stop();
 	protected:
 		Barrier* barrier;
+		int numThreads;
 
 };
 

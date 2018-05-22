@@ -21,7 +21,7 @@ int main(int argc, char** argv){
 	Analysis* a;
 
 	if(analysis == "Threaded" || analysis == "T" || analysis == "t"){
-		a = new Threaded();
+		a = new Threaded(5);
 	}
 
 	a->start(argFile);
