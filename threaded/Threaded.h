@@ -17,6 +17,8 @@ class Threaded:public MonteAnneal{
 	public:
 		Threaded(int nt);
 		void monteCarloThread(int xStart, int xEnd, int yStart, int yEnd);
+		void annealThread(int xStart, int xEnd,int yStart,int yEnd);
+
 		virtual double monteCarlo();
 		virtual double anneal();
 		virtual void run();

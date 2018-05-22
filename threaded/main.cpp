@@ -30,7 +30,7 @@ int main(int argc, char** argv){
 	a->run();
 	a->state->time = watch.formatTime(watch.stop());
 	cout << "Total program running time: " << a->state->time << endl;
-
+	a->output();
 	a->stop();
 
 	return 0;

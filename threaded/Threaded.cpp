@@ -65,33 +65,53 @@ double Threaded::monteCarlo(){
 }
 
 
+void Threaded::annealThread(int xStart, int xEnd,int yStart,int yEnd){
+    ErrorFunctionRow efRow(state);
+    ErrorFunctionCol efCol(state);
+	double t = 0.5;
+
+    //For each spot take a gamble and record outcome
+    for(int i =0; i < 2*state->MAX_RUNS; i++){
+        annealStep(state->coefficients,t,&efRow,xStart,xEnd,yStart,yEnd);
+        if(state->both){
+            barrier->Wait();
+			annealStep(state->patterns,t,&efCol,xStart,xEnd,yStart,yEnd);
+            barrier->Wait(); 
+		}
+		t *= 0.99975;
+    }
+}
+
 double Threaded::anneal(){
 	Stopwatch watch;
-	int ndx = 0;
-	double t = 0.5;
 	watch.start();
 
+
+    vector<thread> threads;
+
+    int rowSize = state->coefficients.rows/numThreads;
+    int colSize = state->patterns.columns/numThreads;
+    int rowStart = 0;
+    int colStart = 0;
+    for(int i =0; i < numThreads; ++i){
+        int rowEnd = rowStart + rowSize;
+        int colEnd = colStart + colSize;
+        if(i < state->coefficients.rows%numThreads)
+            rowEnd += 1;
+        if(i < state->patterns.columns%numThreads)
+            colEnd += 1;
+        threads.push_back(thread(&Threaded::annealThread,this,colStart,colEnd,rowStart,rowEnd));
+        rowStart = rowEnd;
+        colStart = colEnd;
+    }
+
+    for(int i =0; i < threads.size();++i){
+        threads[i].join();
+    }
+
+
+
 	ErrorFunctionRow efRow(state);
-	ErrorFunctionCol efCol(state);
-
-
-	double formerError = 2*state->expression.rows()*state->expression.cols();
-	bool running = true;
-	while(running && ndx < 2*state->MAX_RUNS){
-		annealStep(state->coefficients,t,&efRow);
-		if(state->both){
-			annealStep(state->patterns,t,&efCol);
-		}
-		if(ndx % state->printRuns == 0){
-			double error = efRow.error();
-			cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
-			if(abs(formerError - error) < 0.005 && error < formerError)
-				running = false;
-			formerError = error;
-		}
-		ndx++;
-		t *= 0.99975;
-	}
 	cout << "Final Error: " << efRow.error() << endl;
 	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
 	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
@@ -102,7 +122,7 @@ void Threaded::run(){
 	//Could put stop watch in here
 	ProbFunc::generator.seed(time(0));
 	monteCarlo();
-//	anneal();		
+	anneal();		
 }
 
 void Threaded::stop(){
