@@ -2,9 +2,9 @@
 //Matthew Dyer
 //Julian Dymacek
 //Created on 5/25/2017
-//Last modified: 6/19/2017
+//Last modified: 5/23/2018
 
-#include "MonteAnneal.h"
+#include "Standard.h"
 
 using namespace std;
 
@@ -14,14 +14,14 @@ int main(int argc, char** argv){
 		return 0;
 	}
 	string argFile = argv[1];
-	Analysis* a = new MonteAnneal();
+	Analysis* a = new Standard();
 	a->start(argFile);
 	Stopwatch watch;
 	watch.start();	
 	a->run();
 	a->state->time = watch.formatTime(watch.stop());
 	cout << "Total program running time: " << a->state->time << endl;
-	a->output();
+	//a->output();
 
 	char bell = 7;
 	cout << bell;

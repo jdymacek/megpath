@@ -3,14 +3,14 @@
 //Julian Dymacek
 //Dakota Martin
 //Created on 6/6/2017
-//Last Modified: 5/22/2018
+//Last Modified: 5/23/2018
 
 #include "MonteAnneal.h"
 
-MonteAnneal::MonteAnneal(){
+MonteAnneal::MonteAnneal(State* st){
 	ProbFunc::generator.seed(time(0));
 	uniform = new UniformPF();
-	program = "MonteAnneal";
+	state = st;
 }
 
 bool MonteAnneal::accept(double de,double t){
@@ -153,83 +153,3 @@ double MonteAnneal::anneal(){
 	return efRow.error();
 }
 
-void MonteAnneal::run(){
-	//Could put stop watch in here
-	ProbFunc::generator.seed(time(0));
-	monteCarlo();
-	anneal();		
-}
-
-void MonteAnneal::stop(){
-	//state->patterns.write(state->analysis + "patterns.csv");
-	//state->coefficients.write(state->analysis + "coefficients.csv");
-
-	//ofstream fout;
-	//fout.open(state->analysis + "expression.txt");
-	//fout << state->coefficients.matrix*state->patterns.matrix;
-	//fout.close();
-}
-
-void MonteAnneal::output(){
-	char curTime[20];
-	time_t t;
-	struct tm *tmp;
-	
-	t = time(NULL);
-	tmp = localtime(&t);
-	if(tmp == NULL){
-		fprintf(stderr,"%s",strerror(errno));
-		exit(-1);
-	}
-
-	int timef = strftime(curTime, sizeof(curTime), "%T %m-%d-%Y" ,tmp);
-	if(timef == 0){
-		fprintf(stderr,"strftime returned 0\n");
-		exit(-1);
-	}
-
-	string outputDir = state->directory;
-	FileUtil::mkPath(outputDir);
-	outputDir = outputDir + "/";
-
-	ErrorFunctionRow efRow(state);
-
-
-	ofstream fout;
-	string outputFile = FileUtil::uniqueFile(outputDir + state->analysis + "results.csv");
-
-	//ouput coefficients
-	double max = 0;
-	double rowError = 0;
-	fout.open(outputFile);
-
-	fout << "#Time : " << curTime << endl;
-    fout << "#File : " << state->filename << endl;
-	fout << "#Number_of_genes : " << state->coefficients.rows << endl;
-    fout << "#Program : " << program << endl;
-    fout << "#MAX_RUNS : " << state->MAX_RUNS << endl;
-    fout << "#Total_error : " << efRow.error() << endl;
-    fout << "#Total_running_time : " << state->time << endl;
-	for(int i =0; i < state->patterns.rows; ++i){
-		fout << "#" << state->patternNames[i] << "," << state->patterns.matrix.row(i) << endl;
-	}
-
-	for(int i = 0; i < state->coefficients.rows; ++i){
-		MatrixXd errorMatrix;
-    	errorMatrix.noalias() = state->expression.row(i);
-    	errorMatrix.noalias() -= (state->coefficients.matrix.row(i) * state->patterns.matrix);
-		rowError = errorMatrix.cwiseAbs().sum();
-
-		MatrixXd temp = state->coefficients.matrix.row(i);
-		max = temp.sum();
-		temp = temp/(max);
-		if(state->ids.size() > 0){
-			fout << state->ids[i] << ",";
-		}
-		for(int i =0; i < temp.cols(); ++i){
-			fout << temp(0,i) << ",";
-		}
-		fout << rowError  << endl;
-	}
-	fout.close();
-}

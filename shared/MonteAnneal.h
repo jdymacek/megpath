@@ -7,8 +7,7 @@
 #include <vector>
 #include <ctime>
 #include <cstdio>
-#include "Analysis.h"
-#include "NMFMatrix.h"
+#include "State.h"
 #include "Stopwatch.h"
 #include "ProbFunc.h"
 #include "UniformPF.h"
@@ -19,9 +18,9 @@
 #include "../../Eigen/Core"
 
 using namespace std;
-class MonteAnneal:public Analysis{
+class MonteAnneal{
 	public:
-		MonteAnneal();
+		MonteAnneal(State* st);
 		virtual bool accept(double de,double t);
 		virtual void monteCarloStep(NMFMatrix& m,ErrorFunction* ef);
 		virtual void monteCarloStep(NMFMatrix& m,ErrorFunction* ef, int xStart, int xStop, int yStart, int yStop);
@@ -29,10 +28,9 @@ class MonteAnneal:public Analysis{
 		virtual void annealStep(NMFMatrix& m,double t, ErrorFunction* ef, int xStart, int xStop, int yStart, int yStop);	
 		virtual double monteCarlo();
 		virtual double anneal();
-		virtual void run();
-		virtual void stop();
 		void output();
 	protected:
+		State* state;
 		UniformPF* uniform;
 };
 
