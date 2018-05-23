@@ -1,11 +1,11 @@
 #include "Distributed.h"
 
-Distributed::Distributed():MonteAnneal(){
+Distributed::Distributed():Analysis(){
 	program = "Dist_MonteAnneal";
 }
 
 void Distributed::start(string filename){
-	MonteAnneal::start(filename);
+	Analysis::start(filename);
 	MPI_Init(NULL,NULL);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
@@ -33,7 +33,7 @@ void Distributed::run(){
 
 void Distributed::stop(){
 	if(rank == 0){
-		MonteAnneal::output();
+		Analysis::output();
 	}
 	MPI_Finalize();
 }

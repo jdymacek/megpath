@@ -3,7 +3,6 @@
 
 #include "Distributed.h"
 #include <mpi.h>
-#include <unistd.h>
 
 using namespace std;
 

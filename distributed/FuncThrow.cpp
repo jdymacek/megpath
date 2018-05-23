@@ -10,56 +10,52 @@ void FuncThrow::start(string filename){
 	bufferSize = state->patterns.size()+1;
 	buffer = new double[bufferSize];
 	recvBuffer = new double[bufferSize];
+	//needs to be changed
 	srand(time(0));
 }
 
-double FuncThrow::monteCarlo(){
-	int tag = 0;
-	int flag = 0;
+
+void FuncThrow::throwFunctions(){
 	int testFlag = 0;
+	int flag = 0;
+	int tag =0;
 	MPI_Status status;
 	MPI_Request req = MPI_REQUEST_NULL;
-
-	double error = 0;
-	Stopwatch watch;
-	watch.start();
-
 	ErrorFunctionRow efRow(state);
-	ErrorFunctionCol efCol(state);
+	double error = 0;
 
-	//For each spot take a gamble and record outcome
-	for(int i =0; i < state->MAX_RUNS; i++){
-		monteCarloStep(state->patterns,&efCol);
-		monteCarloStep(state->coefficients,&efRow);
-
-		if(i%1000 == 0){ //for switching
-			error = efRow.error();
-			buffer[0] = error;
-			state->patterns.write(&buffer[1]);	
+	error = efRow.error();
+	buffer[0] = error;
+	state->patterns.write(&buffer[1]);	
 			
-			MPI_Test(&req,&testFlag,MPI_STATUS_IGNORE);
-			if(testFlag == 1){
-				testFlag = 0;
-				int randProcess = (rand()%(size-1))+1;
-				MPI_Isend(buffer,bufferSize,MPI_DOUBLE,randProcess,tag,MPI_COMM_WORLD,&req);
-			}
-			MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&status);
-			if(flag == 1){
-				flag = 0;
-				int source = status.MPI_SOURCE;
-				MPI_Recv(recvBuffer,bufferSize,MPI_DOUBLE,source,tag,MPI_COMM_WORLD,&status);
-				if(recvBuffer[0] < error){
-					state->patterns.read(&recvBuffer[1]);
-				}
-				error = efRow.error();
+	MPI_Test(&req,&testFlag,MPI_STATUS_IGNORE);
+		if(testFlag == 1){
+			testFlag = 0;
+			int randProcess = (rand()%(size-1))+1;
+			MPI_Isend(buffer,bufferSize,MPI_DOUBLE,randProcess,tag,MPI_COMM_WORLD,&req);
+		}
+	MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&status);
+		if(flag == 1){
+			flag = 0;
+			int source = status.MPI_SOURCE;
+			MPI_Recv(recvBuffer,bufferSize,MPI_DOUBLE,source,tag,MPI_COMM_WORLD,&status);
+			if(recvBuffer[0] < error){
+				state->patterns.read(&recvBuffer[1]);
 			}
 		}
 
-		if(i % state->printRuns == 0){ //for printing
+		/*if(i % state->printRuns == 0){ //for printing
 			error = efRow.error();
 			cout << hostname << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
-		}
-	}
+		}*/
+
+}
+
+void FuncThrow::finished(){
+    int testFlag = 0;
+    int tag =0;
+    MPI_Status status;
+    MPI_Request req = MPI_REQUEST_NULL;	
 
 	MPI_Barrier(MPI_COMM_WORLD);
 	MPI_Test(&req,&testFlag,MPI_STATUS_IGNORE);
@@ -68,11 +64,11 @@ double FuncThrow::monteCarlo(){
 		MPI_Request_free(&req);
 	}
 
-	cout << hostname << "\tFinal Error: " << efRow.error() << endl;
+	/*cout << hostname << "\tFinal Error: " << efRow.error() << endl;
 	cout << hostname << "\tError Histogram: " << efRow.errorDistribution(10) << endl;
 	cout << hostname << "\tTotal time: " << watch.formatTime(watch.stop()) << endl;
-
-	return error;
+*/
+	//return error;
 }
 
 void FuncThrow::run(){
@@ -86,9 +82,14 @@ void FuncThrow::run(){
 	if(rank == 0){
 		cout << "Rank 0 is " << hostname << endl;
 	}
+	//set callback
 
-	monteCarlo();
-	double formerError = anneal();
+	algorithm->monteCarlo();
+	finished();
+
+
+
+	double formerError = algorithm->anneal();
 
 	double* getBuffer = new double[size];
 

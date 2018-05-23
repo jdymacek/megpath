@@ -2,13 +2,11 @@
 #define DISTRIBUTED__H
 
 #include <mpi.h>
-#include <unistd.h>
-#include <string>
-#include "MonteAnneal.h"
+#include "Analysis.h"
 
 using namespace std;
 
-class Distributed: public MonteAnneal{
+class Distributed: public Analysis{
 	public:
 		Distributed();
 		virtual void start(string filename);

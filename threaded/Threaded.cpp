@@ -10,6 +10,16 @@ Threaded::Threaded(int nt){
 	program = "Threaded";
 }
 
+void Threaded::monteCallback(double error){
+	ErrorFunctionRow e(state);
+	cout << iterations << "\t" << e.error() << endl;
+}
+
+void Threaded::annealCallback(double error){
+	ErrorFunctionRow e(state);
+    cout << iterations << "\t" << e.error() << endl;
+}
+
 void Threaded::start(string filename){
 	Analysis::start(filename);
 	algorithm = new ThreadedMonteAnneal(state,numThreads);
@@ -18,6 +28,7 @@ void Threaded::start(string filename){
 void Threaded::run(){
 	//Could put stop watch in here
 	ProbFunc::generator.seed(time(0));
+	algorithm->setObserver(this);
 	algorithm->monteCarlo();
 	algorithm->anneal();		
 }

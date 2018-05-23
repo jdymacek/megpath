@@ -62,13 +62,15 @@ double PatternMatching::monteCarlo(){
 				readMatrix(&sendBuffer[1],myPatterns);
 				state->patternMatch(myPatterns);
 			}
-			state->patterns.write(&sendBuffer[1]);
+			allAverage();
+/*			state->patterns.write(&sendBuffer[1]);
 
 			MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 			for(int q = 0; q < bufferSize; q++){
 				recvBuffer[q] /= size;
 			}
 			state->patterns.read(&recvBuffer[1]);
+*/
 		}
 
 		if(i % state->printRuns == 0){ //for printing
@@ -77,11 +79,12 @@ double PatternMatching::monteCarlo(){
 		}
 	}
 	//final reduction
-	state->patterns.write(&sendBuffer[1]);
+	allAnnealAverage();
+/*	state->patterns.write(&sendBuffer[1]);
 	MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 	state->patterns.read(&recvBuffer[1]);
 	state->patterns.matrix /= size;
-
+*/
 	cout << hostname << "\tFinal Error: " << efRow.error() << endl;
 	cout << hostname << "\tError Histogram: " << efRow.errorDistribution(10) << endl;
 	cout << hostname << "\tTotal time: " << watch.formatTime(watch.stop()) << endl;
@@ -133,11 +136,12 @@ double PatternMatching::anneal(){
 					readMatrix(&sendBuffer[1],myPatterns);
 					state->patternMatch(myPatterns);
 				}
-				state->patterns.write(&sendBuffer[1]);
-
+				allAnnealAverage();
+				/*state->patterns.write(&sendBuffer[1]);
 				MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 				state->patterns.read(&recvBuffer[1]);
 				state->patterns.matrix /= size;
+				*/
 			}
 			formerError = error;
 		}
@@ -152,11 +156,13 @@ double PatternMatching::anneal(){
 	}
 
 	if(state->both == true){
+		allAnnealAverage();
 		//final reduction
-		state->patterns.write(&sendBuffer[1]);
+		/*state->patterns.write(&sendBuffer[1]);
 		MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 		state->patterns.read(&recvBuffer[1]);
 		state->patterns.matrix /= size;
+		*/
 	}
 
 	cout << hostname << " Anneal Final Error: " << efRow.error() << endl;

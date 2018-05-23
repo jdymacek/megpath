@@ -13,7 +13,7 @@
 
 using namespace std;
 
-class ParallelPatterns: virtual public Distributed{
+class ParallelPatterns: virtual public Distributed, public Observer{
 	public:
 		ParallelPatterns();	
 		virtual double monteCarlo();
@@ -25,6 +25,10 @@ class ParallelPatterns: virtual public Distributed{
 		int findStart(int myRank, int curSize, int numRows);
 		int findRows(int myRank, int curSize, int numRows);
 	protected:
+		int bufferSize = state->patterns.size();
+	    double* sendBuffer = new double[bufferSize];
+		double* recvBuffer = new double[bufferSize];
+
 		MatrixXd oexpression;
 		int startPoint;
 };

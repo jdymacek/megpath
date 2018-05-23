@@ -15,6 +15,7 @@
 #include "ErrorFunctionRow.h"
 #include "ErrorFunctionCol.h"
 #include "FileUtil.h"
+#include "Observer.h"
 #include "../../Eigen/Core"
 
 using namespace std;
@@ -28,10 +29,11 @@ class MonteAnneal{
 		virtual void annealStep(NMFMatrix& m,double t, ErrorFunction* ef, int xStart, int xStop, int yStart, int yStop);	
 		virtual double monteCarlo();
 		virtual double anneal();
-		void output();
+		virtual void setObserver(Observer* obs);
 	protected:
 		State* state;
 		UniformPF* uniform;
+		Observer* callback;
 };
 
 #endif

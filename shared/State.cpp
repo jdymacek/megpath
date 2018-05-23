@@ -7,6 +7,7 @@ State::State(){
 	filename = "";
 	time = "";
 	printRuns = 1000;
+	interuptRuns = 1000;
 }
 
 bool State::load(string argFileName){

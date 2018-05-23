@@ -11,6 +11,11 @@ MonteAnneal::MonteAnneal(State* st){
 	ProbFunc::generator.seed(time(0));
 	uniform = new UniformPF();
 	state = st;
+	callback = NULL;
+}
+
+void MonteAnneal::setObserver(Observer* obs){
+	callback = obs;
 }
 
 bool MonteAnneal::accept(double de,double t){
@@ -109,9 +114,11 @@ double MonteAnneal::monteCarlo(){
 			monteCarloStep(state->patterns,&efCol);
 		}
 		monteCarloStep(state->coefficients,&efRow);
-		if(i % state->printRuns == 0){
-			double error = efRow.error();
-			cout << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
+		if(i % state->interuptRuns == 0){
+			if(callback != NULL){
+				callback->iterations = i;
+				callback->monteCallback(efRow.error());
+			}
 		}
 	}
 	cout << "Final Error: " << efRow.error() << endl;
@@ -137,12 +144,17 @@ double MonteAnneal::anneal(){
 		if(state->both){
 			annealStep(state->patterns,t,&efCol);
 		}
-		if(ndx % state->printRuns == 0){
+		if(ndx % state->interuptRuns == 0){
+
 			double error = efRow.error();
-			cout << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
 			if(abs(formerError - error) < 0.005 && error < formerError)
 				running = false;
 			formerError = error;
+			if(callback != NULL){
+				callback->iterations = ndx;
+				callback->annealCallback(error);
+			}
+
 		}
 		ndx++;
 		t *= 0.99975;

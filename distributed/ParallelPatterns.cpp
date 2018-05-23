@@ -49,127 +49,47 @@ void ParallelPatterns::start(string filename){
 	state->expression = temp;
 }
 
-double ParallelPatterns::monteCarlo(){
-	int bufferSize = state->patterns.size()+1;
-	double* sendBuffer = new double[bufferSize];
-	double* recvBuffer = new double[bufferSize];
-	for(int i =0; i < bufferSize; ++i){
-		recvBuffer[i] = 0;
-	}
+void ParallelPatterns::allAnnealAverage(){
+    state->patterns.write(&sendBuffer[0]);
+    //all reduce
+    MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+    state->patterns.read(&recvBuffer[0]);
+    state->patterns.matrix /= size;
+}
 
-	double error = 0;
-	Stopwatch watch;
-	watch.start();
+void ParallelPatterns::allAverage(){
+    state->patterns.write(&sendBuffer[0]);
+    //all reduce
+    MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+	for(int q = 0; q < bufferSize; q++){
+		recvBuffer[q] /= size;
+    }
+    state->patterns.read(&recvBuffer[0]);
+}
 
-	ErrorFunctionRow efRow(state);
-	ErrorFunctionCol efCol(state);
 
-	//For each spot take a gamble and record outcome
-	for(int i =0; i < state->MAX_RUNS; i++){
-		if(state->both){
-			monteCarloStep(state->patterns,&efCol);
-		}
-		monteCarloStep(state->coefficients,&efRow);
-
-		if(i%1000 == 0){
-			error = efRow.error();
-			if(isnan(error)){
-				cout << state->patterns.matrix << endl;
-			}
-			sendBuffer[0] = error;
-			if(state->both){
-				state->patterns.write(&sendBuffer[1]);
-				MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-				for(int q = 0; q < bufferSize; q++){
-					recvBuffer[q] /= size;
-				}
-				state->patterns.read(&recvBuffer[1]);
-			}
-		}
-
-		if(i % state->printRuns == 0){ //for switching
-			error = efRow.error();
-			cout << hostname << ": " << i << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
-		}
-	}
-	//final reduction
+void ParallelPatterns::monteCallback(double error){
 	if(state->both){
-		state->patterns.write(&sendBuffer[1]);
-		MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-		state->patterns.read(&recvBuffer[1]);
-		state->patterns.matrix /= size;
+		allAverage();	
 	}
-	cout << hostname << "\tFinal Error: " << efRow.error() << endl;
+	if(iterations % state->printRuns == 0){ //for switching
+		cout << hostname << ": " << i << "\t Error = " << error << endl;
+	}
+
+	/*cout << hostname << "\tFinal Error: " << efRow.error() << endl;
 	cout << hostname << "\tError Histogram: " << efRow.errorDistribution(10) << endl;
 	cout << hostname << "\tTotal time: " << watch.formatTime(watch.stop()) << endl;
-
-	delete[] sendBuffer;
-	delete[] recvBuffer;
-
-	return error;
+	*/
 }
 
-double ParallelPatterns::anneal(){
-	int bufferSize = state->patterns.size()+1;
-	double* sendBuffer = new double[bufferSize];
-	double* recvBuffer = new double[bufferSize];
 
-	Stopwatch watch;
-	int ndx = 0;
-	double t = 0.5;
-	double error = 0;
-	watch.start();
-
-	ErrorFunctionRow efRow(state);
-	ErrorFunctionCol efCol(state);
-
-	double formerError = 2*state->expression.rows()*state->expression.cols();
-	bool running = true;
-	while(running && ndx < 2*state->MAX_RUNS){
-		if(state->both){
-			annealStep(state->patterns,t,&efCol);
-		}
-		annealStep(state->coefficients,t,&efRow);
-
-		if(ndx % 1000 == 0){
-			error = efRow.error();
-			if(state->both){
-				sendBuffer[0] = error;
-				state->patterns.write(&sendBuffer[1]);
-				//all reduce
-				MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-				state->patterns.read(&recvBuffer[1]);
-				state->patterns.matrix /= size;
-			}
-			formerError = error;
-		}
-
-		if(ndx % state->printRuns == 0){ //for switching
-			error = efRow.error();
-			cout << hostname << ": " << ndx << "\t Error = " << error << "\t Time = " << watch.formatTime(watch.lap()) << endl;
-		}
-
-		ndx++;
-		t *= 0.99975;
-	}
-
+void ParallelPatterns::annealCallback(double error){
 	if(state->both){
-		//final reduction
-		state->patterns.write(&sendBuffer[1]);
-		MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-		state->patterns.read(&recvBuffer[1]);
-		state->patterns.matrix /= size;
+		allAnnealAverage();
 	}
-
-	cout << hostname << " Anneal Final Error: " << efRow.error() << endl;
-	cout << "Anneal Error Histogram: " << efRow.errorDistribution(10) << endl;
-	cout << "Anneal Total time: " << watch.formatTime(watch.stop()) << endl;
-
-	delete[] sendBuffer;
-	delete[] recvBuffer;
-
-	return efRow.error();
+	cout << hostname << ": " << iterations << "\t Error = " << error << endl;
 }
+
 
 void ParallelPatterns::gatherCoefficients(){
 	double* buffer = NULL;
@@ -222,10 +142,23 @@ void ParallelPatterns::gatherCoefficients(){
 void ParallelPatterns::run(){
 	double error = 0;
 
-	monteCarlo();
-	error = anneal();
+    bufferSize = state->patterns.size();
+    sendBuffer = new double[bufferSize];
+	recvBuffer = new double[bufferSize];
+    for(int i =0; i < bufferSize; ++i){
+        recvBuffer[i] = 0;
+    }
+
+	algorithm->setObserver(this);
+	algorithm->monteCarlo();
+	allAnnealAverage();
+	error = algorithm->anneal();
+	allAnnealAverage();
 	state->both = false;
-	error = anneal();
+	error = algorithm->anneal();
+
+	delete[] sendBuffer;
+    delete[] recvBuffer;
 
 	gatherCoefficients();
 }

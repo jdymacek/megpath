@@ -32,6 +32,7 @@ class State{
 		vector<string> patternNames;
 		vector<string> ids;
 		int printRuns;
+		int interuptRuns;
 		bool load(string argFileName);
 		void patternMatch(MatrixXd& other);
 	protected:

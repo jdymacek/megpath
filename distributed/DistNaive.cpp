@@ -21,10 +21,8 @@ void DistNaive::run(){
 	int tag = 0;
 	MPI_Status status;
 
-	uniform = new UniformPF();
-
-	monteCarlo();
-	double formerError = anneal();
+	algorithm->monteCarlo();
+	double formerError = algorithm->anneal();
 
 	double* recvBuffer = new double[size];
 
