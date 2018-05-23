@@ -21,8 +21,7 @@ int main(int argc, char** argv){
 	Analysis* a;
 
 	if(analysis == "Threaded" || analysis == "T" || analysis == "t"){
-//		a = new Threaded(thread::hardware_concurrency());
-		a = new Threaded(5000);
+		a = new Threaded(thread::hardware_concurrency());
 	}
 
 	a->start(argFile);
