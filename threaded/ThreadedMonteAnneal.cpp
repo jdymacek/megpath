@@ -49,8 +49,17 @@ double ThreadedMonteAnneal::monteCarlo(){
 	int colSize = state->patterns.columns/numThreads;
 	int rowStart = 0;
 	int colStart = 0;
-	for(ProbFunc* func : state->patterns.functions)
-		func
+	
+	//check to see if the matrix is constrained
+	bool constrained = false;
+	for(int x = 0; x < state->patterns.columns; x++){
+		for(int y = 0; y < state->patterns.rows; y++){
+			if(state->patterns.functions(y,x)->size() > 1){
+				constrained = true;
+			}
+		}
+	}
+
 	for(int i =0; i < numThreads; ++i){
 		int rowEnd = rowStart + rowSize;
 		int colEnd = colStart + colSize;
@@ -59,6 +68,15 @@ double ThreadedMonteAnneal::monteCarlo(){
 		if(i < state->patterns.columns%numThreads)
 			colEnd += 1;
 		cout << "rs:" << rowStart << " re:" << rowEnd << endl << "cs:" << colStart << " ce:" << colEnd << endl << endl;
+		//give the first thread all of the columns if constrained
+		if(constrained == true && i == 0){
+			colStart = 0;
+			colEnd = state->patterns.rows;
+		}
+		else if(constrained == true){
+			colEnd = 0;
+		}
+			
 		threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this,colStart,colEnd,rowStart,rowEnd));
 		rootId = threads[0].get_id();
 		rowStart = rowEnd;
