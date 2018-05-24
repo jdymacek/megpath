@@ -136,6 +136,18 @@ double ThreadedMonteAnneal::anneal(){
     int colSize = state->patterns.columns/numThreads;
     int rowStart = 0;
     int colStart = 0;
+	
+    bool constrained = false;
+
+    //check to see if its constrained    
+    for(int x = 0; x < state->patterns.columns; x++){
+		for(int y = 0; y < state->patterns.rows; y++){
+			if(state->patterns.functions(y,x)->size() > 1){
+				constrained = true;
+			}
+		}
+    }
+
     for(int i =0; i < numThreads; ++i){
         int rowEnd = rowStart + rowSize;
         int colEnd = colStart + colSize;
@@ -143,6 +155,17 @@ double ThreadedMonteAnneal::anneal(){
             rowEnd += 1;
         if(i < state->patterns.columns%numThreads)
             colEnd += 1;
+		
+	//give the first thread all of the columns if constrained
+	if(constrained == true && i == 0){
+		colStart = 0;
+		colEnd = state->patterns.columns;
+	}
+	else if(constrained == true){
+		colStart = 0;
+		colEnd = 0;
+	}
+
         threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,colStart,colEnd,rowStart,rowEnd));
 		rootId = threads[0].get_id();
         rowStart = rowEnd;
