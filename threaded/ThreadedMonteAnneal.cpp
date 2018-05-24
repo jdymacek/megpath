@@ -49,6 +49,8 @@ double ThreadedMonteAnneal::monteCarlo(){
 	int colSize = state->patterns.columns/numThreads;
 	int rowStart = 0;
 	int colStart = 0;
+	for(ProbFunc* func : state->patterns.functions)
+		func
 	for(int i =0; i < numThreads; ++i){
 		int rowEnd = rowStart + rowSize;
 		int colEnd = colStart + colSize;
