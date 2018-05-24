@@ -67,16 +67,17 @@ double ThreadedMonteAnneal::monteCarlo(){
 			rowEnd += 1;
 		if(i < state->patterns.columns%numThreads)
 			colEnd += 1;
-		cout << "rs:" << rowStart << " re:" << rowEnd << endl << "cs:" << colStart << " ce:" << colEnd << endl << endl;
 		//give the first thread all of the columns if constrained
 		if(constrained == true && i == 0){
 			colStart = 0;
-			colEnd = state->patterns.rows;
+			colEnd = state->patterns.columns;
 		}
 		else if(constrained == true){
+			colStart = 0;
 			colEnd = 0;
 		}
 			
+		cout << "rs:" << rowStart << " re:" << rowEnd << endl << "cs:" << colStart << " ce:" << colEnd << endl << endl;
 		threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this,colStart,colEnd,rowStart,rowEnd));
 		rootId = threads[0].get_id();
 		rowStart = rowEnd;
