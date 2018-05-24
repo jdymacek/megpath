@@ -15,9 +15,9 @@ using namespace std;
 
 class ParallelPatterns: virtual public Distributed, public Observer{
 	public:
-		ParallelPatterns();	
-		virtual double monteCarlo();
-		virtual double anneal();
+		ParallelPatterns();
+		virtual void allAnnealAverage();
+		virtual void allAverage();	
 		virtual void start(string filename);
 		virtual void run();
 		virtual void stop();
@@ -25,9 +25,9 @@ class ParallelPatterns: virtual public Distributed, public Observer{
 		int findStart(int myRank, int curSize, int numRows);
 		int findRows(int myRank, int curSize, int numRows);
 	protected:
-		int bufferSize = state->patterns.size();
-	    double* sendBuffer = new double[bufferSize];
-		double* recvBuffer = new double[bufferSize];
+		int bufferSize;
+	        double* sendBuffer;
+		double* recvBuffer;
 
 		MatrixXd oexpression;
 		int startPoint;

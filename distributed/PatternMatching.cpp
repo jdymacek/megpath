@@ -5,7 +5,7 @@
 
 #include "PatternMatching.h"
 
-PatternMatching::PatternMatching(): Distributed(){
+PatternMatching::PatternMatching(): ParallelPatterns(){
 	program = "PatternMatching";
 }
 
@@ -41,8 +41,8 @@ double PatternMatching::monteCarlo(){
 
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < state->MAX_RUNS; i++){
-		monteCarloStep(state->patterns,&efCol);
-		monteCarloStep(state->coefficients,&efRow);
+		algorithm->monteCarloStep(state->patterns,&efCol);
+		algorithm->monteCarloStep(state->coefficients,&efRow);
 
 		if(i%1000 == 0){
 			error = efRow.error();
