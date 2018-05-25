@@ -1,2 +1,3 @@
 #!/bin/bash
-mpirun --tune params.conf  -np $1 -pernode --hostfile workingHosts testMpi
+
+mpirun --tune params.conf -n $1 -pernode -hostfile workingHosts testMpi

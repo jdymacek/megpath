@@ -171,12 +171,10 @@ void ParallelPatterns::run(){
 	allAnnealAverage();
 	error = algorithm->anneal();
 	allAnnealAverage();
-  //  cout << hostname << endl;
 
-/*	state->both = false;
+	state->both = false;
 	error = algorithm->anneal();
-	cout << hostname << endl;
-*/
+
 	gatherCoefficients();
 }
 
