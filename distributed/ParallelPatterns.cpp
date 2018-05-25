@@ -74,10 +74,11 @@ void ParallelPatterns::allAverage(){
 }
 
 
-void ParallelPatterns::monteCallback(double error){
+bool ParallelPatterns::monteCallback(int iter){
 	if(state->both){
 		allAverage();	
 	}
+	return true;
 
 	/*cout << hostname << "\tFinal Error: " << efRow.error() << endl;
 	cout << hostname << "\tError Histogram: " << efRow.errorDistribution(10) << endl;
@@ -96,10 +97,11 @@ void ParallelPatterns::annealPrintCallback(int iter){
   cout << "anneal " << hostname << " " << rank << ": " << iterations << "\t Error = " << ef.error() << endl;
 }
 
-void ParallelPatterns::annealCallback(double error){
+bool ParallelPatterns::annealCallback(int iter){
 	if(state->both){
 		allAnnealAverage();
 	}
+	return true;
 }
 
 
