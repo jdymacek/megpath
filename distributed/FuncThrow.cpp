@@ -15,14 +15,14 @@ void FuncThrow::start(string filename){
 }
 
 
-void FuncThrow::monteCallback(double error){
+bool FuncThrow::monteCallback(int iter){
 	int testFlag = 0;
 	int flag = 0;
 	int tag =0;
 	MPI_Status status;
 	MPI_Request req = MPI_REQUEST_NULL;
 	ErrorFunctionRow efRow(state);
-	//double error = 0;
+	double error = 0;
 
 	error = efRow.error();
 	buffer[0] = error;
@@ -43,6 +43,7 @@ void FuncThrow::monteCallback(double error){
 				state->patterns.read(&recvBuffer[1]);
 			}
 		}
+	return true;
 
 		/*if(i % state->printRuns == 0){ //for printing
 			error = efRow.error();
