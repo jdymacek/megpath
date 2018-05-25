@@ -37,16 +37,17 @@ void PatternMatching::matchPatterns(){
     }
 }
 
-void PatternMatching::monteCallback(double error){
+void PatternMatching::monteCallback(int iter){
 	matchPatterns();
 	allAverage();
 }
 
-void PatternMatching::annealCallback(double error){
+bool PatternMatching::annealCallback(int iter){
 	if(state->both == true){
 		matchPatterns();
 		allAnnealAverage();
 	}
+	return true;
 }
 
 //for printing

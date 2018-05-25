@@ -74,11 +74,10 @@ void ParallelPatterns::allAverage(){
 }
 
 
-bool ParallelPatterns::monteCallback(int iter){
+void ParallelPatterns::monteCallback(int iter){
 	if(state->both){
 		allAverage();	
 	}
-	return true;
 
 	/*cout << hostname << "\tFinal Error: " << efRow.error() << endl;
 	cout << hostname << "\tError Histogram: " << efRow.errorDistribution(10) << endl;

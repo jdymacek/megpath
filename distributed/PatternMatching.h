@@ -20,8 +20,8 @@ class PatternMatching:  public ParallelPatterns{
 		void matchPatterns();
 		void readMatrix(double* data, MatrixXd& matrix);
         void writeMatrix(double* data, MatrixXd& matrix);
-		virtual void annealCallback(double error);
-		virtual void monteCallback(double error);
+		virtual bool annealCallback(int iter);
+		virtual void monteCallback(int iter);
 };
 
 

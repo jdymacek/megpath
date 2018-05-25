@@ -24,7 +24,7 @@ class ParallelPatterns: virtual public Distributed, public Observer{
 		virtual void gatherCoefficients();
 		int findStart(int myRank, int curSize, int numRows);
 		int findRows(int myRank, int curSize, int numRows);
-		virtual bool monteCallback(int iter);	
+		virtual void monteCallback(int iter);	
 		virtual bool annealCallback(int iter);
 		virtual void montePrintCallback(int iter);
 		virtual void annealPrintCallback(int iter);
