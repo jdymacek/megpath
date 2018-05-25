@@ -87,39 +87,7 @@ void FuncThrow::run(){
 
 	algorithm->monteCarlo();
 	finished();
-
-
-
-	double formerError = algorithm->anneal();
-	//finished?
-
-	double* getBuffer = new double[size];
-
-	MPI_Allgather(&formerError,1, MPI_DOUBLE, getBuffer, 1, MPI_DOUBLE, MPI_COMM_WORLD);
-
-	//find the smallest
-	int smallest = -1;
-	double minError = state->coefficients.matrix.size()*2;
-	for(int i =0; i < size; ++i){
-		if(minError > getBuffer[i]){
-			minError = getBuffer[i];
-			smallest = i;
-		}
-	}
-
-	//if i have the smallest send
-	if(smallest == rank){
-		cout << hostname << " has the smallest error: " << formerError << endl;
-		sendMatrix(state->patterns.matrix,0);
-		sendMatrix(state->coefficients.matrix,0);
-	}
-
-	if(rank == 0){
-		//recieve info
-		recvMatrix(state->patterns.matrix,smallest);	
-		recvMatrix(state->coefficients.matrix,smallest);
-	}
-	delete[] getBuffer;
+	sendLeastError(0);
 }
 
 void FuncThrow::stop(){

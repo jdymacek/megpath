@@ -15,6 +15,53 @@ void Distributed::start(string filename){
 	program = program + "_" + to_string(size);
 }
 
+void Distributed::sendLeastError(int process)
+{
+	int tag = 0;
+	MPI_Status status;
+
+	algorithm->monteCarlo();
+	double formerError = algorithm->anneal();
+
+	double* recvBuffer = new double[size];
+
+	MPI_Allgather(&formerError,1, MPI_DOUBLE, recvBuffer, 1, MPI_DOUBLE, MPI_COMM_WORLD);
+
+	//find the smallest
+	int smallest = -1;
+	double minError = state->coefficients.matrix.size()*2;
+	for(int i =0; i < size; ++i){
+		if(minError > recvBuffer[i]){
+			minError = recvBuffer[i];
+			smallest = i;
+		}
+	}
+
+	//if i have the smallest send
+	if(smallest == rank){
+		cout << hostname << " has the smallest error: " << formerError << endl;
+		sendMatrix(state->patterns.matrix, process);
+		sendMatrix(state->coefficients.matrix, process);
+	}
+
+	if(rank == 0){
+		//recieve info
+		recvMatrix(state->patterns.matrix,smallest);	
+		recvMatrix(state->coefficients.matrix,smallest);
+	}
+	delete[] recvBuffer;
+}
+
+void Distributed::montePrintCallback(int iter){
+	cout << hostname << endl;
+	Analysis::montePrintCallback(iter);
+}
+
+void Distributed::annealPrintCallback(int iter){
+	cout << hostname << endl;
+	Analysis::annealPrintCallback(iter);
+}
+
 void Distributed::sendMatrix(MatrixXd& matrix,int dest){
 	int tag = 0;
 	MPI_Status status;
