@@ -47,6 +47,12 @@ void ParallelPatterns::start(string filename){
 	myRows = findRows(rank, size, state->expression.rows());
 	MatrixXd temp = state->expression.block(startPoint, 0, myRows, state->expression.cols());
 	state->expression = temp;
+
+    bufferSize = state->patterns.size();
+    sendBuffer = new double[bufferSize];
+    recvBuffer = new double[bufferSize];
+
+
 }
 
 void ParallelPatterns::allAnnealAverage(){
@@ -72,9 +78,6 @@ void ParallelPatterns::monteCallback(double error){
 	if(state->both){
 		allAverage();	
 	}
-	if(iterations % state->printRuns == 0){ //for switching
-		cout << hostname << ": " << i << "\t Error = " << error << endl;
-	}
 
 	/*cout << hostname << "\tFinal Error: " << efRow.error() << endl;
 	cout << hostname << "\tError Histogram: " << efRow.errorDistribution(10) << endl;
@@ -82,12 +85,21 @@ void ParallelPatterns::monteCallback(double error){
 	*/
 }
 
+void ParallelPatterns::montePrintCallback(int iter){
+	ErrorFunctionRow ef(state);
+	cout << "montecarlo " << hostname << ": " << iterations << "\t Error = " << ef.error() << endl;
+}
+
+void ParallelPatterns::annealPrintCallback(int iter){
+    ErrorFunctionRow ef(state);
+	
+  cout << "anneal " << hostname << " " << rank << ": " << iterations << "\t Error = " << ef.error() << endl;
+}
 
 void ParallelPatterns::annealCallback(double error){
 	if(state->both){
 		allAnnealAverage();
 	}
-	cout << hostname << ": " << iterations << "\t Error = " << error << endl;
 }
 
 
@@ -97,7 +109,10 @@ void ParallelPatterns::gatherCoefficients(){
     int  allDispls[size];
     double* sendBuf = new double[state->coefficients.matrix.cols()*state->coefficients.matrix.rows()];
 
+	cout << hostname << " entering gatherCoefficients" << endl;
+	
 	if(rank == 0){
+		cout << hostname << " creating stuff" << endl;
         buffer = new double[oexpression.rows()*state->coefficients.matrix.cols()];
     }
 
@@ -113,6 +128,8 @@ void ParallelPatterns::gatherCoefficients(){
 
     MPI_Gatherv(sendBuf,ct.size(),MPI_DOUBLE,
             buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+	cout << hostname << " all gathered" << endl;
 
     if(rank == 0){
         double* nb = buffer;
@@ -142,27 +159,29 @@ void ParallelPatterns::gatherCoefficients(){
 void ParallelPatterns::run(){
 	double error = 0;
 
-    bufferSize = state->patterns.size();
-    sendBuffer = new double[bufferSize];
-	recvBuffer = new double[bufferSize];
     for(int i =0; i < bufferSize; ++i){
         recvBuffer[i] = 0;
     }
 
+	//should we set observer in start?
 	algorithm->setObserver(this);
+	//end set observer
 	algorithm->monteCarlo();
 	allAnnealAverage();
 	error = algorithm->anneal();
 	allAnnealAverage();
-	state->both = false;
+  //  cout << hostname << endl;
+
+/*	state->both = false;
 	error = algorithm->anneal();
-
-	delete[] sendBuffer;
-    delete[] recvBuffer;
-
+	cout << hostname << endl;
+*/
 	gatherCoefficients();
 }
 
 void ParallelPatterns::stop(){
+	delete[] sendBuffer;
+    delete[] recvBuffer;
+
 	Distributed::stop();
 }

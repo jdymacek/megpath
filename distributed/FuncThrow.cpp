@@ -15,14 +15,14 @@ void FuncThrow::start(string filename){
 }
 
 
-void FuncThrow::throwFunctions(){
+void FuncThrow::monteCallback(double error){
 	int testFlag = 0;
 	int flag = 0;
 	int tag =0;
 	MPI_Status status;
 	MPI_Request req = MPI_REQUEST_NULL;
 	ErrorFunctionRow efRow(state);
-	double error = 0;
+	//double error = 0;
 
 	error = efRow.error();
 	buffer[0] = error;
@@ -83,6 +83,7 @@ void FuncThrow::run(){
 		cout << "Rank 0 is " << hostname << endl;
 	}
 	//set callback
+	algorithm->setObserver(this);
 
 	algorithm->monteCarlo();
 	finished();
@@ -90,6 +91,7 @@ void FuncThrow::run(){
 
 
 	double formerError = algorithm->anneal();
+	//finished?
 
 	double* getBuffer = new double[size];
 

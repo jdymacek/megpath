@@ -9,27 +9,24 @@ ParallelFuncThrow::ParallelFuncThrow(): Distributed(){
 	program = "ParallelFuncThrow";
 }
 
-double ParallelFuncThrow::monteCarlo(){
-	FuncThrow::monteCarlo();
+void ParallelFuncThrow::monteCallback(double error){
+	FuncThrow::monteCallback(error);
 }
 
 void ParallelFuncThrow::start(string filename){
 	ParallelPatterns::start(filename);
-	bufferSize = state->patterns.size()+1;
-	buffer = new double[bufferSize];
-	recvBuffer = new double[bufferSize];
+	buffer = new double[ParallelPatterns::bufferSize];
 	srand(time(0));
 }
 
 void ParallelFuncThrow::run(){
 	double error = 0;
-	monteCarlo();
-	error = FuncThrow::anneal();
+	algorithm->monteCarlo();
+	error = algorithm->anneal();
 	ParallelPatterns::gatherCoefficients();
 }
 
 void ParallelFuncThrow::stop(){
 	delete[] buffer;
-	delete[] recvBuffer;
 	ParallelPatterns::stop();
 }

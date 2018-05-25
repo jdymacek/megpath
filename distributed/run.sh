@@ -1,3 +1,3 @@
 #!/bin/bash
 
-mpirun -n $3 -pernode -hostfile workingHosts distnmf $1 $2
+mpirun --tune params.conf -n $3 -pernode -hostfile workingHosts distnmf $1 $2

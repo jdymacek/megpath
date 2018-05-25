@@ -120,6 +120,10 @@ double MonteAnneal::monteCarlo(){
 				callback->monteCallback(efRow.error());
 			}
 		}
+		if(i % state->printRuns == 0 && callback != NULL){
+            callback->montePrintCallback(i);
+        }
+
 	}
 	cout << "Final Error: " << efRow.error() << endl;
 	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
@@ -145,17 +149,20 @@ double MonteAnneal::anneal(){
 			annealStep(state->patterns,t,&efCol);
 		}
 		if(ndx % state->interuptRuns == 0){
-
 			double error = efRow.error();
 			if(abs(formerError - error) < 0.005 && error < formerError)
 				running = false;
 			formerError = error;
 			if(callback != NULL){
+				running = true;
 				callback->iterations = ndx;
 				callback->annealCallback(error);
 			}
-
 		}
+		if(ndx % state->printRuns == 0 && callback != NULL){
+			callback->annealPrintCallback(ndx);
+		}
+
 		ndx++;
 		t *= 0.99975;
 	}

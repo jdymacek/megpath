@@ -24,9 +24,13 @@ class ParallelPatterns: virtual public Distributed, public Observer{
 		virtual void gatherCoefficients();
 		int findStart(int myRank, int curSize, int numRows);
 		int findRows(int myRank, int curSize, int numRows);
+		virtual void monteCallback(double error);	
+		virtual void annealCallback(double error);
+		virtual void montePrintCallback(int iter);
+		virtual void annealPrintCallback(int iter);
 	protected:
 		int bufferSize;
-	        double* sendBuffer;
+	    double* sendBuffer;
 		double* recvBuffer;
 
 		MatrixXd oexpression;

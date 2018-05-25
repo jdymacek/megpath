@@ -34,6 +34,8 @@ int main(int argc, char** argv){
 		a = new ParallelFuncThrow();
 	}else if(analysis == "PatternMatching" || analysis == "PatMatch" || analysis == "PM" || analysis == "pm"){
 		a = new PatternMatching();
+	}else if(analysis == "Test" || analysis == "test"){
+		a = new Distributed();
 	}
 
 	a->start(argFile);

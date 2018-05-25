@@ -17,17 +17,11 @@ using namespace std;
 class PatternMatching:  public ParallelPatterns{
 	public:
 		PatternMatching();	
-		virtual double monteCarlo();
-		virtual double anneal();
-		virtual void start(string filename);
-		virtual void run();
-		virtual void stop();
-		virtual void gatherCoefficients();
+		void matchPatterns();
 		void readMatrix(double* data, MatrixXd& matrix);
         void writeMatrix(double* data, MatrixXd& matrix);
-	protected:
-		MatrixXd oexpression;
-		int startPoint;
+		virtual void annealCallback(double error);
+		virtual void monteCallback(double error);
 };
 
 

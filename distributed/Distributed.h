@@ -2,6 +2,7 @@
 #define DISTRIBUTED__H
 
 #include <mpi.h>
+#include <unistd.h>
 #include "Analysis.h"
 
 using namespace std;
