@@ -16,6 +16,7 @@ void Analysis::start(string filename){
 	state = new State();
 	state->load(filename);
 	algorithm = new MonteAnneal(state);
+    cachedError = 2*state->expression.rows()*state->expression.cols();
 }
 
 void Analysis::run(){
@@ -24,6 +25,32 @@ void Analysis::run(){
 
 void Analysis::stop(){
 
+}
+
+void Analysis::monteCallback(int iterations){}
+
+bool Analysis::annealCallback(int iterations){
+	bool running = true;
+    ErrorFunctionRow ef(state);
+    double error = ef.error();
+    if(abs(cachedError - error) < 0.005 && error < cachedError)
+        running = false;
+    cachedError = error;
+	return running;
+}
+
+void Analysis::montePrintCallback(int iterations){
+    //needs time
+    ErrorFunctionRow ef(state);
+	cachedError = ef.error();
+    cout << iterations << "\t Error = " << cachedError << endl;
+}
+
+void Analysis::annealPrintCallback(int iterations){
+	//needs time
+    ErrorFunctionRow ef(state);
+	cachedError = ef.error();
+	cout << iterations << "\t Error = " << cachedError << endl;
 }
 
 void Analysis::output(){

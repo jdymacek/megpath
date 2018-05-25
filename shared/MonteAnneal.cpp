@@ -114,11 +114,8 @@ double MonteAnneal::monteCarlo(){
 			monteCarloStep(state->patterns,&efCol);
 		}
 		monteCarloStep(state->coefficients,&efRow);
-		if(i % state->interuptRuns == 0){
-			if(callback != NULL){
-				callback->iterations = i;
-				callback->monteCallback(efRow.error());
-			}
+		if(i % state->interuptRuns == 0 && callback != NULL){
+			callback->monteCallback(i);
 		}
 		if(i % state->printRuns == 0 && callback != NULL){
             callback->montePrintCallback(i);
@@ -140,24 +137,14 @@ double MonteAnneal::anneal(){
 	ErrorFunctionRow efRow(state);
 	ErrorFunctionCol efCol(state);
 
-
-	double formerError = 2*state->expression.rows()*state->expression.cols();
 	bool running = true;
 	while(running && ndx < 2*state->MAX_RUNS){
 		annealStep(state->coefficients,t,&efRow);
 		if(state->both){
 			annealStep(state->patterns,t,&efCol);
 		}
-		if(ndx % state->interuptRuns == 0){
-			double error = efRow.error();
-			if(abs(formerError - error) < 0.005 && error < formerError)
-				running = false;
-			formerError = error;
-			if(callback != NULL){
-				running = true;
-				callback->iterations = ndx;
-				callback->annealCallback(error);
-			}
+		if(ndx % state->interuptRuns == 0 && callback != NULL){
+			running = callback->annealCallback(ndx);
 		}
 		if(ndx % state->printRuns == 0 && callback != NULL){
 			callback->annealPrintCallback(ndx);
