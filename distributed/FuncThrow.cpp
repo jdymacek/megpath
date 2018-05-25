@@ -15,7 +15,7 @@ void FuncThrow::start(string filename){
 }
 
 
-bool FuncThrow::monteCallback(int iter){
+void FuncThrow::monteCallback(int iter){
 	int testFlag = 0;
 	int flag = 0;
 	int tag =0;
@@ -43,7 +43,6 @@ bool FuncThrow::monteCallback(int iter){
 				state->patterns.read(&recvBuffer[1]);
 			}
 		}
-	return true;
 
 		/*if(i % state->printRuns == 0){ //for printing
 			error = efRow.error();
