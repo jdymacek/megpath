@@ -10,7 +10,7 @@ using namespace std;
 class FuncThrow: virtual public Distributed, public Observer{
 	public:
 		FuncThrow();	
-		virtual void monteCallback(double error);
+		virtual void monteCallback(int iter);
 		virtual void start(string filename);
 		virtual void run();
 		virtual void stop();
