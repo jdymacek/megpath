@@ -15,13 +15,10 @@ void Distributed::start(string filename){
 	program = program + "_" + to_string(size);
 }
 
-void Distributed::sendLeastError(int process)
+void Distributed::sendLeastError(int process, double formerError)
 {
 	int tag = 0;
 	MPI_Status status;
-
-	algorithm->monteCarlo();
-	double formerError = algorithm->anneal();
 
 	double* recvBuffer = new double[size];
 
