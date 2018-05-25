@@ -12,7 +12,7 @@
 
 using namespace std;
 
-class ParallelFuncThrow: public FuncThrow {
+class ParallelFuncThrow: public FuncThrow, public ParallelPatterns{
 	public:
 		ParallelFuncThrow();
 		virtual void monteCallback(int iter);
