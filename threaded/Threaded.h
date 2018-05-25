@@ -11,8 +11,8 @@ using namespace std;
 class Threaded:public Analysis, public Observer{
 	public:
 		Threaded(int nt);
-		virtual void annealCallback(double error);
-		virtual void monteCallback(double error);
+		virtual void annealPrintCallback(int iterations);
+		virtual void montePrintCallback(int iterations):
 		virtual void start(string filename);
 		virtual void run();
 		virtual void stop();

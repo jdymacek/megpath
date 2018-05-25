@@ -10,13 +10,13 @@ Threaded::Threaded(int nt){
 	program = "Threaded";
 }
 
-void Threaded::monteCallback(double error){
+void Threaded::montePrintCallback(int iterations){
 	ErrorFunctionRow e(state);
 	cout << iterations << "\t" << e.error() << endl;
 }
 
-void Threaded::annealCallback(double error){
-	ErrorFunctionRow e(state);
+void Threaded::annealPrintCallback(int iterations){
+    ErrorFunctionRow e(state);
     cout << iterations << "\t" << e.error() << endl;
 }
 

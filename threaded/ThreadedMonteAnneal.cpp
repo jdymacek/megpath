@@ -29,9 +29,8 @@ void ThreadedMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int y
 		if(i % state->interuptRuns == 0){
 			if(callback != NULL){
 				barrier->Wait();
-				callback->iterations = i;
 				if(this_thread::get_id() == rootId){
-					callback->monteCallback(-1);
+					callback->monteCallback(i);
 				}
 				barrier->Wait();
 			}
@@ -109,16 +108,20 @@ void ThreadedMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd)
 			annealStep(state->patterns,t,&efCol,xStart,xEnd,0,state->patterns.rows);
             barrier->Wait(); 
 		}
-        if(i % state->interuptRuns == 0){
-            if(callback != NULL){
-                barrier->Wait();
-				callback->iterations = i;
-                if(this_thread::get_id() == rootId){
-                    callback->annealCallback(-1);
-                }
-                barrier->Wait();
+        if(i % state->interuptRuns == 0 && callback != NULL){
+            barrier->Wait();
+            if(this_thread::get_id() == rootId){
+				callback->annealCallback(i);
             }
+            barrier->Wait();
         }
+		if(i % state->printRuns == 0 && callback != NULL){
+	        barrier->Wait();
+            if(this_thread::get_id() == rootId){
+				callback->annealPrintCallback(i);
+            }
+			barrier->Wait();
+		}
 
 		t *= 0.99975;
     }
