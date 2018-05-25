@@ -10,8 +10,6 @@ void FuncThrow::start(string filename){
 	bufferSize = state->patterns.size()+1;
 	buffer = new double[bufferSize];
 	recvBuffer = new double[bufferSize];
-	//needs to be changed
-	srand(time(0));
 }
 
 
@@ -31,7 +29,9 @@ void FuncThrow::monteCallback(int iter){
 	MPI_Test(&req,&testFlag,MPI_STATUS_IGNORE);
 		if(testFlag == 1){
 			testFlag = 0;
+			//change this line
 			int randProcess = (rand()%(size-1))+1;
+			//----------------
 			MPI_Isend(buffer,bufferSize,MPI_DOUBLE,randProcess,tag,MPI_COMM_WORLD,&req);
 		}
 	MPI_Iprobe(MPI_ANY_SOURCE,MPI_ANY_TAG,MPI_COMM_WORLD,&flag,&status);

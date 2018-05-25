@@ -13,7 +13,6 @@ Standard::Standard(){
 
 void Standard::run(){
 	//Could put stop watch in here
-	ProbFunc::generator.seed(time(0));
 	algorithm->setObserver(this);
 	algorithm->monteCarlo();
 	algorithm->anneal();		

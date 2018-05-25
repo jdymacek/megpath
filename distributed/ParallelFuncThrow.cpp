@@ -16,7 +16,6 @@ void ParallelFuncThrow::monteCallback(int iter){
 void ParallelFuncThrow::start(string filename){
 	ParallelPatterns::start(filename);
 	buffer = new double[ParallelPatterns::bufferSize];
-	srand(time(0));
 }
 
 void ParallelFuncThrow::run(){
