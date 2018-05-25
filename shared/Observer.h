@@ -3,8 +3,8 @@
 
 class Observer{
 	public:
-		virtual void monteCallback(double error){}
-		virtual void annealCallback(double error){}
+		virtual bool monteCallback(int iter){return true;}
+		virtual bool annealCallback(int iter){return true;}
 		virtual void annealPrintCallback(int iter){}
 		virtual void montePrintCallback(int iter){}
 		int iterations;
