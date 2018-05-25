@@ -6,9 +6,8 @@
 #ifndef STOPWATCH__H
 #define STOPWATCH__H
 
-#include <iostream>
-#include <ctime>
-
+#include <chrono>
+#include <string>
 using namespace std;
 
 class Stopwatch{
@@ -18,9 +17,9 @@ class Stopwatch{
 		double lap();
 		string formatTime(double num);
 	private:
-		time_t startTime;
-		time_t stopTime;
-		time_t lapTime;
+		chrono::time_point<chrono::system_clock> startTime;
+		chrono::time_point<chrono::system_clock> stopTime;
+        chrono::time_point<chrono::system_clock> lapTime;
 };
 
 #endif

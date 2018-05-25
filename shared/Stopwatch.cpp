@@ -1,27 +1,30 @@
 //Stopwatch.cpp
 //Matthew Dyer
 //Created on 5/26/2017
-//Last Modified: 5/26/2017
+//Last Modified: 5/25/2018
 
 #include "Stopwatch.h"
 #include <sstream>
 
 void Stopwatch::start(){
-	startTime = time(0);
-	lapTime = time(0);
+	startTime = chrono::system_clock::now();	
+	lapTime = startTime;
 }
 
 double Stopwatch::stop(){
-	stopTime = time(0);
-	double diff = difftime(stopTime,startTime);
-	return diff;
+	stopTime = chrono::system_clock::now();
+	chrono::duration<double> elapsed = stopTime-startTime;
+	double milli = chrono::duration_cast<chrono::milliseconds>(elapsed).count();
+	return milli/1000;
 }
 
 double Stopwatch::lap(){
-	time_t newLapTime = time(0);
-	double diff = difftime(newLapTime,lapTime);
-	lapTime = time(0);
-	return diff;
+	chrono::time_point<chrono::system_clock> newLapTime;
+	newLapTime = chrono::system_clock::now();
+	chrono::duration<double> elapsed = newLapTime-lapTime;
+	lapTime = newLapTime;
+	double milli = chrono::duration_cast<chrono::milliseconds>(elapsed).count();
+	return milli/1000;
 }
 
 string Stopwatch::formatTime(double num){

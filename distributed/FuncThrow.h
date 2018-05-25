@@ -2,6 +2,7 @@
 #define FUNCTHROW__H
 
 #include "Distributed.h"
+#include "UniformPF.h"
 #include <mpi.h>
 #include <unistd.h>
 
@@ -16,6 +17,7 @@ class FuncThrow: virtual public Distributed{
 		virtual void stop();
 		void finished();
 	protected:
+		UniformPF* prob;
 		int bufferSize;
 		double* buffer;
 		double* recvBuffer;
