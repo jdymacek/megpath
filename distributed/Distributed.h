@@ -15,7 +15,7 @@ class Distributed: public Analysis{
 		virtual void stop();
 		virtual void montePrintCallback(int iter);
 		virtual void annealPrintCallback(int iter);
-		void sendLeastError(int process);
+		void sendLeastError(int process, double formerError);
 		void sendMatrix(MatrixXd& matrix,int dest);
 		void recvMatrix(MatrixXd& matrix,int src);
 	protected:

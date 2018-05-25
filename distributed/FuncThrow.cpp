@@ -87,7 +87,8 @@ void FuncThrow::run(){
 
 	algorithm->monteCarlo();
 	finished();
-	sendLeastError(0);
+	double formerError = algorithm->anneal();
+	sendLeastError(0, formerError);
 }
 
 void FuncThrow::stop(){

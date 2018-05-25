@@ -18,7 +18,9 @@ void DistNaive::start(string filename){
 }
 
 void DistNaive::run(){
-	sendLeastError(0);
+	algorithm->monteCarlo();
+	double formerError = algorithm->anneal();
+	sendLeastError(0, formerError);
 
 }
 
