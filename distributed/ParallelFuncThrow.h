@@ -15,7 +15,7 @@ using namespace std;
 class ParallelFuncThrow: public FuncThrow , public ParallelPatterns{
 	public:
 		ParallelFuncThrow();
-		virtual void monteCallback(double error);
+		virtual void monteCallback(int iter);
 //		virtual double monteCarlo();
 		virtual void start(string filename);
 		virtual void run();

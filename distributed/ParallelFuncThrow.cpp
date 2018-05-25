@@ -9,8 +9,8 @@ ParallelFuncThrow::ParallelFuncThrow(): Distributed(){
 	program = "ParallelFuncThrow";
 }
 
-void ParallelFuncThrow::monteCallback(double error){
-	FuncThrow::monteCallback(error);
+void ParallelFuncThrow::monteCallback(int iter){
+	FuncThrow::monteCallback(iter);
 }
 
 void ParallelFuncThrow::start(string filename){
