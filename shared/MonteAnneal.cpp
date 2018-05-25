@@ -6,9 +6,11 @@
 //Last Modified: 5/23/2018
 
 #include "MonteAnneal.h"
+#include <unistd.h>
 
 MonteAnneal::MonteAnneal(State* st){
-	ProbFunc::generator.seed(time(0));
+	cout << getpid() << endl;
+	ProbFunc::generator.seed(time(0)+getpid());
 	uniform = new UniformPF();
 	state = st;
 	callback = NULL;

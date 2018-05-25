@@ -35,13 +35,13 @@ void Distributed::sendLeastError(int process, double formerError)
 	}
 
 	//if i have the smallest send
-	if(smallest == rank){
+	if(smallest == rank && rank == process){
+		cout << hostname << " has the smallest error: " << formerError << endl;
+	}else if(smallest == rank){
 		cout << hostname << " has the smallest error: " << formerError << endl;
 		sendMatrix(state->patterns.matrix, process);
 		sendMatrix(state->coefficients.matrix, process);
-	}
-
-	if(rank == 0){
+	}else if(rank == process){
 		//recieve info
 		recvMatrix(state->patterns.matrix,smallest);	
 		recvMatrix(state->coefficients.matrix,smallest);
@@ -50,14 +50,15 @@ void Distributed::sendLeastError(int process, double formerError)
 }
 
 void Distributed::montePrintCallback(int iter){
-	cout << hostname << endl;
+	cout << hostname << "\t";
 	Analysis::montePrintCallback(iter);
 }
 
 void Distributed::annealPrintCallback(int iter){
-	cout << hostname << endl;
+	cout << hostname << "\t";
 	Analysis::annealPrintCallback(iter);
 }
+
 
 void Distributed::sendMatrix(MatrixXd& matrix,int dest){
 	int tag = 0;

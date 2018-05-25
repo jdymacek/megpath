@@ -173,7 +173,7 @@ bool State::load(string argFileName){
 		}
 	}
 
-	cout << patterns.matrix << endl;
+//	cout << patterns.matrix << endl;
 
 	if(numPatterns == patternArgs.size()){
 		both = false;

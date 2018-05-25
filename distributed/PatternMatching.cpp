@@ -59,7 +59,25 @@ bool PatternMatching::annealCallback(int iter){
 }*/
 
 /*void PatternMatching::run(){
-	ParallelPatterns::run();
+
+    for(int i =0; i < bufferSize; ++i){
+        recvBuffer[i] = 0;
+    }
+
+    //should we set observer in start?
+    algorithm->setObserver(this);
+    //end set observer
+    algorithm->monteCarlo();
+    allAnnealAverage();
+    error = algorithm->anneal();
+    allAnnealAverage();
+
+    state->both = false;
+    error = algorithm->anneal();
+
+    gatherCoefficients();
+
+
 }*/
 
 /*void PatternMatching::stop(){
