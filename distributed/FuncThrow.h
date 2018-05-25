@@ -7,7 +7,7 @@
 
 using namespace std;
 
-class FuncThrow: virtual public Distributed, public Observer{
+class FuncThrow: virtual public Distributed{
 	public:
 		FuncThrow();	
 		virtual void monteCallback(int iter);

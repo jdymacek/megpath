@@ -13,7 +13,7 @@
 
 using namespace std;
 
-class ParallelPatterns: virtual public Distributed, public Observer{
+class ParallelPatterns: virtual public Distributed{
 	public:
 		ParallelPatterns();
 		virtual void allAnnealAverage();
