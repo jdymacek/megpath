@@ -10,12 +10,6 @@ Standard::Standard(){
 	program = "MonteAnneal";
 }
 
-void Standard::monteCallback(double error){
-}
-
-void Standard::annealCallback(double error){
-}
-
 
 void Standard::run(){
 	//Could put stop watch in here

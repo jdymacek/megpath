@@ -10,6 +10,10 @@ Threaded::Threaded(int nt){
 	program = "Threaded";
 }
 
+bool Threaded::annealCallback(int iterations){
+	return true;
+}
+
 void Threaded::montePrintCallback(int iterations){
 	ErrorFunctionRow e(state);
 	cout << iterations << "\t" << e.error() << endl;
