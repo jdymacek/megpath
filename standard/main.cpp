@@ -21,10 +21,7 @@ int main(int argc, char** argv){
 	a->run();
 	a->state->time = watch.formatTime(watch.stop());
 	cout << "Total program running time: " << a->state->time << endl;
-	//a->output();
-
-	char bell = 7;
-	cout << bell;
+	a->output();
 
 	delete a;
 	return 0;

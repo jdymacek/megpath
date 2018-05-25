@@ -8,9 +8,11 @@
 
 ThreadedMonteAnneal::ThreadedMonteAnneal(State* st,int nt): MonteAnneal(st){
 	numThreads = nt;
-	ProbFunc::generator.seed(time(0));
+	random_device rd;
+	ProbFunc::generator.seed(rd());
 	uniform = new UniformPF();
 	barrier = new Barrier(numThreads);
+	callback = NULL;
 }
 
 /*Run a monte carlo markov chain*/

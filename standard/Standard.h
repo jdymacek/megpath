@@ -9,7 +9,6 @@ class Standard: public Analysis{
 	public:
 		Standard();
 		virtual void run();
-		virtual void stop();
 };
 
 #endif

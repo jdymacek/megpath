@@ -43,14 +43,14 @@ void Analysis::montePrintCallback(int iterations){
     //needs time
     ErrorFunctionRow ef(state);
 	cachedError = ef.error();
-    cout << iterations << "\t Error = " << cachedError << endl;
+    cout << iterations << "\t Error = " << cachedError << "\t montecarlo" << endl;
 }
 
 void Analysis::annealPrintCallback(int iterations){
 	//needs time
     ErrorFunctionRow ef(state);
 	cachedError = ef.error();
-	cout << iterations << "\t Error = " << cachedError << endl;
+	cout << iterations << "\t Error = " << cachedError << "\t anneal"<< endl;
 }
 
 void Analysis::output(){
