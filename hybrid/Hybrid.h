@@ -17,6 +17,8 @@ class Hybrid: public PatternMatching{
 	public:
 		Hybrid();
 		virtual void start(string filename);
+	protected:
+		int numThreads;
 };
 
 

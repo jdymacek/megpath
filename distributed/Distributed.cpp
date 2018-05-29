@@ -12,7 +12,7 @@ void Distributed::start(string filename){
 	char hostbuff[100];
 	gethostname(hostbuff,99);
 	hostname = string(hostbuff);
-	program = program + "_" + to_string(size);
+	program = program + "_" + to_string(size) + "n";
 }
 
 void Distributed::sendLeastError(int process, double formerError)

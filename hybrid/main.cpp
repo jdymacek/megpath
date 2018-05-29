@@ -9,18 +9,19 @@
 using namespace std;
 
 int main(int argc, char** argv){
-	if(argc < 3){
+	if(argc < 4){
 		cerr << "Needs an argument file and analysis to run!";
 		return 0;
 	}
 	Stopwatch watch;
 	string argFile = argv[1];
 	string analysis = argv[2];
+	int nt = argv[3];
 	
 	Analysis* a;
 
 	if(analysis == "Hybrid" || analysis == "H" || analysis == "h"){
-		a = new Hybrid();
+		a = new Hybrid(nt);
 	}
 	a->start(argFile);
 
