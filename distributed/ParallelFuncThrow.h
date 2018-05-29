@@ -16,7 +16,7 @@ class ParallelFuncThrow: public FuncThrow, public ParallelPatterns{
 	public:
 		ParallelFuncThrow();
 		virtual void monteCallback(int iter);
-//		virtual double monteCarlo();
+		virtual bool annealCallback(int iter);
 		virtual void start(string filename);
 		virtual void run();
 		virtual void stop();

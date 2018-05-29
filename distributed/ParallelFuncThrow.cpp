@@ -5,7 +5,7 @@
 
 #include"ParallelFuncThrow.h"
 
-ParallelFuncThrow::ParallelFuncThrow(): Distributed(){
+ParallelFuncThrow::ParallelFuncThrow(): ParallelPatterns(){
 	program = "ParallelFuncThrow";
 }
 
@@ -13,19 +13,35 @@ void ParallelFuncThrow::monteCallback(int iter){
 	FuncThrow::monteCallback(iter);
 }
 
+bool ParallelFuncThrow::annealCallback(int iter){
+	return ParallelPatterns::annealCallback(iter);
+}
+
 void ParallelFuncThrow::start(string filename){
 	ParallelPatterns::start(filename);
-	buffer = new double[ParallelPatterns::bufferSize];
+
+    buffer = new double[FuncThrow::bufferSize];
+    FuncThrow::recvBuffer = new double[FuncThrow::bufferSize];
+
+
 }
 
 void ParallelFuncThrow::run(){
 	double error = 0;
+	algorithm->setObserver(this);
 	algorithm->monteCarlo();
+	finished();
 	error = algorithm->anneal();
+	//allAnnealAverage();
+	//state->both = false;
+	//error = algorithm->anneal();
+	//allAnnealAverage();
+
 	ParallelPatterns::gatherCoefficients();
 }
 
 void ParallelFuncThrow::stop(){
 	delete[] buffer;
+	delete[] FuncThrow::recvBuffer;
 	ParallelPatterns::stop();
 }

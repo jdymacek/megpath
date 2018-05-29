@@ -1,18 +1,17 @@
-//Parallel Patterns main file
+//Hybrid -- combines PatternMatching with ThreadedMonteAnneal
 //Julian Dymacek
-//Matthew Dyer
-//Created on : 6/9/2017
-//Last Modified 6/13/2017
+//Dakota Martin
+//Created on : 5/29/2018
 
 #include "Hybrid.h"
 
-ParallelPatterns::ParallelPatterns(): PatternMatching(){
-	program = "ParallelPatterns";
+Hybrid::Hybrid(): PatternMatching(){
+	program = "Hybrid";
 }
 
 
-void ParallelPatterns::start(string filename){
+void Hybrid::start(string filename){
 	PatternMatching::start(filename);
-	algorithm = new ThreadeMonteAnneal(state):
+	algorithm = new ThreadedMonteAnneal(state,8);
 }
 

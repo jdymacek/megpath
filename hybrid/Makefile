@@ -1,11 +1,11 @@
 CC=mpic++
-CFLAGS=-O3 -c -Wfatal-errors -std=c++11 -I../shared/
-LDFLAGS=-L../shared/ 
+CFLAGS=-O3 -c -Wfatal-errors -std=c++11 -I../shared/ -I../threaded/ -I../distributed/
+LDFLAGS=-L../shared/ -L../threaded/ -L../distributed/ 
 LIBS=
-VPATH = src:../shared src:../distributed /usr/lib64/openmpi/bin
-SOURCES=PatternMatching.cpp FileUtil.cpp Distributed.cpp main.cpp PiecewisePF.cpp ParallelPatterns.cpp State.cpp ErrorFunction.cpp ErrorFunctionRow.cpp ErrorFunctionCol.cpp Analysis.cpp MonteAnneal.cpp ShiftPF.cpp Stopwatch.cpp UniformPF.cpp ArgFile.cpp CSVFile.cpp Value.cpp NMFMatrix.cpp Hybrid.cpp
+VPATH = src:../shared src:../distributed src:../threaded /usr/lib64/openmpi/bin
+SOURCES= PatternMatching.cpp FileUtil.cpp Distributed.cpp main.cpp PiecewisePF.cpp ParallelPatterns.cpp State.cpp ErrorFunction.cpp ErrorFunctionRow.cpp ErrorFunctionCol.cpp Analysis.cpp MonteAnneal.cpp ShiftPF.cpp Stopwatch.cpp UniformPF.cpp ArgFile.cpp CSVFile.cpp Value.cpp NMFMatrix.cpp Hybrid.cpp ProbFunc.cpp ThreadedMonteAnneal.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=distnmf
+EXECUTABLE=hybridnmf
 
 all: $(SOURCES) $(EXECUTABLE) 
 
