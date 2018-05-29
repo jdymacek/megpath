@@ -11,7 +11,7 @@ using namespace std;
 
 int main(int argc, char** argv){
 	if(argc < 3){
-		cerr << "Needs an argument file and analysis to run!";
+		cerr << "Needs: argument file, algorithm";
 		return 0;
 	}
 	Stopwatch watch;
@@ -21,7 +21,11 @@ int main(int argc, char** argv){
 	Analysis* a;
 
 	if(analysis == "Threaded" || analysis == "T" || analysis == "t"){
-		a = new Threaded(thread::hardware_concurrency());
+		if(argc == 4){
+			a = new Threaded(atoi(argv[3]);
+		}else{
+	       a = new Threaded(thread::hardware_concurrency());
+		}
 	}
 
 	a->start(argFile);

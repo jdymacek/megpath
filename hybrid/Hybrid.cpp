@@ -14,6 +14,6 @@ Hybrid::Hybrid(int nt): PatternMatching(){
 void Hybrid::start(string filename){
 	PatternMatching::start(filename);
 	algorithm = new ThreadedMonteAnneal(state,numThreads);
-	program += '_' + numThreads + 't';
+	program += "_" + to_string(numThreads) + "t";
 }
 
