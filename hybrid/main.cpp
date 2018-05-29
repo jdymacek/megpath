@@ -16,7 +16,7 @@ int main(int argc, char** argv){
 	Stopwatch watch;
 	string argFile = argv[1];
 	string analysis = argv[2];
-	int nt = argv[3];
+	int nt = atoi(argv[3]);
 	
 	Analysis* a;
 

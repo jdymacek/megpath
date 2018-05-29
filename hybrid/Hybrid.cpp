@@ -5,7 +5,7 @@
 
 #include "Hybrid.h"
 
-Hybrid::Hybrid(): PatternMatching(int nt){
+Hybrid::Hybrid(int nt): PatternMatching(){
 	program = "Hybrid";
 	numThreads = nt;
 }
@@ -14,6 +14,6 @@ Hybrid::Hybrid(): PatternMatching(int nt){
 void Hybrid::start(string filename){
 	PatternMatching::start(filename);
 	algorithm = new ThreadedMonteAnneal(state,numThreads);
-	program += "_" + numThreads + "t";
+	program += '_' + numThreads + 't';
 }
 
