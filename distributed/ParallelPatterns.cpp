@@ -158,6 +158,7 @@ void ParallelPatterns::gatherCoefficients(){
 }
 
 void ParallelPatterns::run(){
+	state->both = true;
 	double error = 0;
 
     for(int i =0; i < bufferSize; ++i){
