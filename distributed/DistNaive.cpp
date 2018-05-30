@@ -13,10 +13,6 @@ DistNaive::DistNaive():Distributed(){
 	program = "DistNaive";
 }
 
-void DistNaive::start(string filename){
-	Distributed::start(filename);
-}
-
 bool DistNaive::annealCallback(int iter){
 	return true;
 }
@@ -30,6 +26,3 @@ void DistNaive::run(){
 	cout <<  " heading out" << endl;
 }
 
-void DistNaive::stop(){
-	Distributed::stop();
-}

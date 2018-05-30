@@ -10,9 +10,7 @@ class DistNaive: public Distributed{
 	public:
 		DistNaive();
 		bool annealCallback(int iter);
-		virtual void start(string filename);
 		virtual void run();
-		virtual void stop();
 };
 
 
