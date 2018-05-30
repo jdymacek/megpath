@@ -1,3 +1,5 @@
+DESIGN FILE: --Created By: Dakota Martin 5/30/2018--
+
 Currently the system has these algorithms:
 DistNaive
 FuncThrow
