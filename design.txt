@@ -1,0 +1,20 @@
+Currently the system has these algorithms:
+DistNaive
+FuncThrow
+ParallelPatterns
+PatternMatching
+Threaded
+Hybrid
+Standard
+ParallelFuncThrow
+
+the classes for them are set up so they have a object of either ThreadedMonteCarlo or MonteCarlo
+and they all pull from Analysis, most of the distributed pull from Distributed.cpp which handles basic send/recieve/distribution
+of the mpi library
+
+Analysis and MonteCarlo/Threaded~ all pull from Observer MonteCarlo uses the Observer's virtual functions inside of its monteCarlo/Anneal functions
+periodically (based on a set number of iterations)
+
+this allows us to make hybrid because we can overright the virtual functions inside of Observer to get the specific algorithms we want to execute
+in things like PatternMatching and then be able to simply use the threadedMonteCarlo over MonteCarlo to get the threaded aspect without having
+to change the inner workings of PatternMatching.
