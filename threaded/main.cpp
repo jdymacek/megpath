@@ -22,7 +22,7 @@ int main(int argc, char** argv){
 
 	if(analysis == "Threaded" || analysis == "T" || analysis == "t"){
 		if(argc == 4){
-			a = new Threaded(atoi(argv[3]);
+			a = new Threaded(atoi(argv[3]));
 		}else{
 	       a = new Threaded(thread::hardware_concurrency());
 		}
