@@ -10,6 +10,18 @@ Hybrid
 Standard
 ParallelFuncThrow
 
+State:
+	-Holds nearly all the global variables
+		-two NMFMatricies
+			-Patterns
+			-Coefficients
+		-Error
+		-Time
+		-Constraints (dont remember how this is held)
+		-probably more stuff
+	-Can load all this data from a file
+		-usually loaded from a test_args file
+
 Analysis:
 	-A Template class the holds the start/run/stop setup
 	-holds global variables
