@@ -13,6 +13,7 @@ Analysis::Analysis(){
 
 void Analysis::start(string filename){
 	//initialize global variables
+	
 	state = new State();
 	state->load(filename);
 	algorithm = new MonteAnneal(state);

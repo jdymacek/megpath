@@ -8,13 +8,53 @@ Hybrid
 Standard
 ParallelFuncThrow
 
-the classes for them are set up so they have a object of either ThreadedMonteCarlo or MonteCarlo
-and they all pull from Analysis, most of the distributed pull from Distributed.cpp which handles basic send/recieve/distribution
-of the mpi library
+Analysis:
+	-A Template class the holds the start/run/stop setup
+	-holds global variables
+		-the algorithm variable that is a standin for MonteAnneal/ThreadedMonteAnneal
+		-Cached Error
+		-a State pointer
 
-Analysis and MonteCarlo/Threaded~ all pull from Observer MonteCarlo uses the Observer's virtual functions inside of its monteCarlo/Anneal functions
-periodically (based on a set number of iterations)
+MonteAnneal:
+	-A Class that handles the steps of matrix factorization
+	-Has a function pointer that is called every 'iteration' number of times
 
-this allows us to make hybrid because we can overright the virtual functions inside of Observer to get the specific algorithms we want to execute
-in things like PatternMatching and then be able to simply use the threadedMonteCarlo over MonteCarlo to get the threaded aspect without having
-to change the inner workings of PatternMatching.
+ThreadedMonteAnneal:
+	-Same as MonteAnneal but now uses Threads
+	-number of threads used can be defined at runtime
+
+Distributed:
+	-All distributed Classes pull from this
+	-Handles the sending and recieving of matricies to the computers
+	-Uses the MPI library for distribution
+
+Observer:
+	-Holds 4 virtual function templates
+	-Two of them are for MonteCarlo / Anneal callbacks
+		-used for injecting a specific algorithm into the base monteCarlo/Anneal algorithms
+		-deals with the seperating and re-adjusting of data between distributed process
+	-The other two are print callbacks
+		-Called at the end of MonteCarlo/Anneal
+		-used to configure what kind of information you want to print
+	-holds an int iterations for how often these functions are called within the monte/anneal loops
+
+ex:(is missing standard & some distributed setups like distNaive and ParallelFuncThrow as well as the majority of the shared library)
+
+					Observer
+					   |
+					/      \
+				MonteAnneal   Analysis
+				    /		  | \
+				   /		 /    \
+			ThreadedMonteAnneal	/       \ 
+					    threaded   Distributed
+							   /   \
+					       		  /     \
+					     ParallelPatterns  FuncThrow
+						     |
+					      PatternMatching
+						     |
+						  Hybrid
+
+This makes combining the function of threaded and distributed relativly easily as they have been objectively seprated
+all you need to do is replace the distributed's MonteAnneal with the ThreadedMonteAnneal and you have a Hybrid of the two.

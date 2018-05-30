@@ -14,9 +14,9 @@ class Analysis: public Observer{
 	public:
 		Analysis();
 		virtual void annealPrintCallback(int iterations);
-        virtual void montePrintCallback(int iterations);
-        virtual bool annealCallback(int iterations);
-        virtual void monteCallback(int iterations);
+        	virtual void montePrintCallback(int iterations);
+        	virtual bool annealCallback(int iterations);
+        	virtual void monteCallback(int iterations);
 		virtual void start(string filename);
 		virtual void run();
 		virtual void stop();
