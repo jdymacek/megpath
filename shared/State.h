@@ -29,6 +29,7 @@ class State{
 		string filename;
 		string time;
 		bool both;
+		bool debug;
 		vector<string> patternNames;
 		vector<string> ids;
 		int printRuns;

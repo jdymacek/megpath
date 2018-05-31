@@ -110,12 +110,16 @@ void ParallelPatterns::gatherCoefficients(){
     int  allDispls[size];
     double* sendBuf = new double[state->coefficients.matrix.cols()*state->coefficients.matrix.rows()];
 
-	cout << hostname << " entering gatherCoefficients" << endl;
+    	if(state->debug){
+		cout << hostname << " entering gatherCoefficients" << endl;
+	}
 	
 	if(rank == 0){
-		cout << hostname << " creating stuff" << endl;
-        buffer = new double[oexpression.rows()*state->coefficients.matrix.cols()];
-    }
+		if(state->debug){
+			cout << hostname << " creating stuff" << endl;
+		}
+        	buffer = new double[oexpression.rows()*state->coefficients.matrix.cols()];
+	}
 
 	int send = state->coefficients.matrix.size();
     MPI_Gather(&send,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
@@ -130,7 +134,9 @@ void ParallelPatterns::gatherCoefficients(){
     MPI_Gatherv(sendBuf,ct.size(),MPI_DOUBLE,
             buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
+    if(state->debug){
 	cout << hostname << " all gathered" << endl;
+    }
 
     if(rank == 0){
         double* nb = buffer;
@@ -149,7 +155,7 @@ void ParallelPatterns::gatherCoefficients(){
         ErrorFunctionRow efRow(state);
         double error = efRow.error();
 
-        cout << "Final Error: " << error << endl;
+       	cout << "Final Error: " << error << endl;
         cout << "Patterns: " << endl;
         cout << state->patterns.matrix << endl;;
         delete[] nb;

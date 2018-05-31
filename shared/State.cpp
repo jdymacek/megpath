@@ -26,7 +26,7 @@ bool State::load(string argFileName){
 
 	//grab arguments
 	args.load(argFileName);
-
+	
 	if(args.isArgument("analysis")){
 		Value val = args.getArgument("analysis");
 		analysis = val.asString();
@@ -38,7 +38,15 @@ bool State::load(string argFileName){
 		MAX_RUNS = val.asInt();
 	}
 
-	cout << "Using analysis: " << analysis.substr(0,analysis.size()-1) << "\n";
+	if(args.isArgument("debug")){
+		Value val = args.getArgument("debug");
+		debug = val.asBool();
+	}else{
+		debug = false;
+	}
+	if(debug){
+		cout << "Using analysis: " << analysis.substr(0,analysis.size()-1) << "\n";
+	}
 
 	if(args.isArgument(analysis + "filename")){
 		Value val = args.getArgument(analysis + "filename");
@@ -104,8 +112,10 @@ bool State::load(string argFileName){
 			columns.push_back(newVal);
 		}
 	}
-
-	cout << ROWS << "x" << COLUMNS << endl;
+	
+	if(debug){
+		cout << ROWS << "x" << COLUMNS << endl;
+	}
 
 	expression = MatrixXd(ROWS,COLUMNS);
 	expression = MatrixXd::Zero(ROWS,COLUMNS);
@@ -157,9 +167,13 @@ bool State::load(string argFileName){
 			vector<Entry> constraints;
 			for(int j = 0; j < intoMatrix.size(); ++j){
 				string str = intoMatrix[j].asString();
-				cout << str << endl;
+				if(debug){
+					cout << str << endl;
+				}
 				if(str != "?"){
-					cout << "adding to constraint" << endl;
+					if(debug){
+						cout << "adding to constraint" << endl;
+					}
 					Entry e;
 					patterns.matrix(i,j) = intoMatrix[j].asDouble();
 					patterns.functions(i,j) = shared;	

@@ -124,9 +124,11 @@ double MonteAnneal::monteCarlo(){
         }
 
 	}
-	cout << "Final Error: " << efRow.error() << endl;
-	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
-	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+	if(state->debug){
+		cout << "Final Error: " << efRow.error() << endl;
+		cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
+		cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+	}
 	return efRow.error();
 }
 
@@ -155,9 +157,11 @@ double MonteAnneal::anneal(){
 		ndx++;
 		t *= 0.99975;
 	}
-	cout << "Final Error: " << efRow.error() << endl;
-	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
-	cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+	if(state->debug){
+		cout << "Final Error: " << efRow.error() << endl;
+		cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
+		cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+	}
 	return efRow.error();
 }
 

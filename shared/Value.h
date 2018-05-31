@@ -12,6 +12,7 @@ class Value{
 		Value();
 		Value(string d);
 		Value(int d);
+		bool asBool() const;
 		int asInt() const;
 		double asDouble() const;
 		string asString() const;

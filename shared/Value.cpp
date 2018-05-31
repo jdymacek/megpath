@@ -14,6 +14,13 @@ Value::Value(int d){
 	data = ss.str();
 }
 
+bool Value::asBool() const{
+	string str = data;
+	if(atoi(str.c_str()))
+		return true;
+	return false;
+}
+
 int Value::asInt() const{
 	string str = data;
 	return atoi(str.c_str());

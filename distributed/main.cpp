@@ -43,7 +43,9 @@ int main(int argc, char** argv){
 	watch.start();	
 	a->run();
 	a->state->time = watch.formatTime(watch.stop());
-	cout << "Total program running time: " << a->state->time << endl;
+	if(a->state->debug){
+		cout << "Total program running time: " << a->state->time << endl;
+	}
 
 	a->stop();
 
