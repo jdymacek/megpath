@@ -10,6 +10,36 @@ State::State(){
 	interuptRuns = 1000;
 }
 
+
+vector<vector<int>> State::splitRanges(int by)
+{
+	int rowSize = coefficients.rows/by;
+	int colSize = patterns.columns/by;
+	int rowStart = 0;
+	int colStart = 0;
+	
+	vector<vector<int>> rv;
+
+	for(int i =0; i < by; ++i){
+        	int rowEnd = rowStart + rowSize;
+        	int colEnd = colStart + colSize;
+        	if(i < coefficients.rows%by)
+	            rowEnd += 1;
+	        if(i < patterns.columns%by)
+	            colEnd += 1;
+		vector<int> tmp;
+		tmp.push_back(colStart);
+		tmp.push_back(colEnd);
+		tmp.push_back(rowStart);
+		tmp.push_back(rowEnd);
+		rv.push_back(tmp);
+			
+        	rowStart = rowEnd;
+        	colStart = colEnd;
+    	}	 
+	return rv;
+}
+
 bool State::load(string argFileName){
 	int ROWS = 0;
 	int COLUMNS = 0;

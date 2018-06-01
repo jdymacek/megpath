@@ -66,20 +66,12 @@ double PhaseThreadedMonteAnneal::monteCarlo(){
     Stopwatch watch;
     watch.start();
 	vector<thread> threads;
-
-	int rowSize = state->coefficients.rows/numThreads;
-	int colSize = state->patterns.columns/numThreads;
-	int rowStart = 0;
-	int colStart = 0;
-
+	
 	threads.push_back(thread(&PhaseThreadedMonteAnneal::monteCarloThreadPattern,this));		
-	for(int i = 1; i < numThreads; ++i){
-		int rowEnd = rowStart + rowSize;
-		if(i < state->coefficients.rows%numThreads)
-			rowEnd += 1;
-		threads.push_back(thread(&PhaseThreadedMonteAnneal::monteCarloThreadCoefficient,this,rowStart,rowEnd));
-		rootId = threads[0].get_id();
-		rowStart = rowEnd;
+	vector<vector<int>> ranges = state->splitRanges(numThreads-1);
+	rootId = threads[0].get_id();
+   	for(int i = 0; i < ranges.size(); ++i){
+		threads.push_back(thread(&PhaseThreadedMonteAnneal::monteCarloThreadCoefficient,this,ranges[i][2],ranges[i][3]));
 	}
 
 	for(int i =0; i < threads.size();++i){
@@ -176,15 +168,9 @@ double PhaseThreadedMonteAnneal::anneal(){
 
 
     threads.push_back(thread(&PhaseThreadedMonteAnneal::annealThreadPattern,this));
-    for(int i =1; i < numThreads; ++i){
-        int rowEnd = rowStart + rowSize;
-        if(i < state->coefficients.rows%numThreads)
-            rowEnd += 1;
-		
-
-        threads.push_back(thread(&PhaseThreadedMonteAnneal::annealThreadCoefficient,this,rowStart,rowEnd));
-	rootId = threads[0].get_id();
-        rowStart = rowEnd;
+    vector<vector<int>> ranges = state->splitRanges(numThreads-1);
+    for(int i = 0; i < ranges.size(); ++i){
+    	threads.push_back(thread(&PhaseThreadedMonteAnneal::annealThreadCoefficient,this,ranges[i][2],ranges[i][3]));
     }
 
     for(int i =0; i < threads.size();++i){

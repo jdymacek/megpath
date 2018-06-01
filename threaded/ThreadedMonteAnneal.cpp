@@ -19,7 +19,7 @@ ThreadedMonteAnneal::ThreadedMonteAnneal(State* st,int nt): MonteAnneal(st){
 void ThreadedMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int yEnd){
 	ErrorFunctionRow efRow(state);
 	ErrorFunctionCol efCol(state);
-
+	
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < state->MAX_RUNS; i++){
 		monteCarloStep(state->coefficients,&efRow,0,state->coefficients.columns,yStart,yEnd);
@@ -61,29 +61,21 @@ double ThreadedMonteAnneal::monteCarlo(){
 		}
 	}
 
-	for(int i =0; i < numThreads; ++i){
-		int rowEnd = rowStart + rowSize;
-		int colEnd = colStart + colSize;
-		if(i < state->coefficients.rows%numThreads)
-			rowEnd += 1;
-		if(i < state->patterns.columns%numThreads)
-			colEnd += 1;
-		//give the first thread all of the columns if constrained
+	vector<vector<int>> ranges = state->splitRanges(numThreads);
+	for(int i = 0; i < ranges.size(); ++i){
+	
 		if(constrained == true && i == 0){
-			colStart = 0;
-			colEnd = state->patterns.columns;
+			ranges[i][0] = 0;
+			ranges[i][1] = state->patterns.columns;
 		}
 		else if(constrained == true){
-			colStart = 0;
-			colEnd = 0;
+			ranges[i][0] = 0;
+			ranges[i][0] = 0;
 		}
-			
-		cout << "rs:" << rowStart << " re:" << rowEnd << endl << "cs:" << colStart << " ce:" << colEnd << endl << endl;
-		threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this,colStart,colEnd,rowStart,rowEnd));
-		rootId = threads[0].get_id();
-		rowStart = rowEnd;
-		colStart = colEnd;
+        	threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
 	}
+	rootId = threads[0].get_id();
+
 
 	for(int i =0; i < threads.size();++i){
 		threads[i].join();
@@ -137,12 +129,6 @@ double ThreadedMonteAnneal::anneal(){
 
 
     vector<thread> threads;
-
-
-    int rowSize = state->coefficients.rows/numThreads;
-    int colSize = state->patterns.columns/numThreads;
-    int rowStart = 0;
-    int colStart = 0;
 	
     bool constrained = false;
 
@@ -155,29 +141,20 @@ double ThreadedMonteAnneal::anneal(){
 		}
     }
 
-    for(int i =0; i < numThreads; ++i){
-        int rowEnd = rowStart + rowSize;
-        int colEnd = colStart + colSize;
-        if(i < state->coefficients.rows%numThreads)
-            rowEnd += 1;
-        if(i < state->patterns.columns%numThreads)
-            colEnd += 1;
-		
-	//give the first thread all of the columns if constrained
-	if(constrained == true && i == 0){
-		colStart = 0;
-		colEnd = state->patterns.columns;
+	vector<vector<int>> ranges = state->splitRanges(numThreads); 
+	for(int i = 0; i < ranges.size(); ++i){
+	
+		if(constrained == true && i == 0){
+			ranges[i][0] = 0;
+			ranges[i][1] = state->patterns.columns;
+		}
+		else if(constrained == true){
+			ranges[i][0] = 0;
+			ranges[i][0] = 0;
+		}
+        	threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
 	}
-	else if(constrained == true){
-		colStart = 0;
-		colEnd = 0;
-	}
-
-        threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,colStart,colEnd,rowStart,rowEnd));
-		rootId = threads[0].get_id();
-        rowStart = rowEnd;
-        colStart = colEnd;
-    }
+	rootId = threads[0].get_id();
 
     for(int i =0; i < threads.size();++i){
         threads[i].join();
