@@ -42,14 +42,9 @@ void ThreadedMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int y
 
 
 double ThreadedMonteAnneal::monteCarlo(){
-    Stopwatch watch;
-    watch.start();
+    	Stopwatch watch;
+	watch.start();
 	vector<thread> threads;
-
-	int rowSize = state->coefficients.rows/numThreads;
-	int colSize = state->patterns.columns/numThreads;
-	int rowStart = 0;
-	int colStart = 0;
 	
 	//check to see if the matrix is constrained
 	bool constrained = false;
@@ -70,11 +65,11 @@ double ThreadedMonteAnneal::monteCarlo(){
 		}
 		else if(constrained == true){
 			ranges[i][0] = 0;
-			ranges[i][0] = 0;
+			ranges[i][1] = 0;
 		}
-        	threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
+        	threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
+		rootId = threads[0].get_id();
 	}
-	rootId = threads[0].get_id();
 
 
 	for(int i =0; i < threads.size();++i){
@@ -150,11 +145,11 @@ double ThreadedMonteAnneal::anneal(){
 		}
 		else if(constrained == true){
 			ranges[i][0] = 0;
-			ranges[i][0] = 0;
+			ranges[i][1] = 0;
 		}
         	threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
+		rootId = threads[0].get_id();
 	}
-	rootId = threads[0].get_id();
 
     for(int i =0; i < threads.size();++i){
         threads[i].join();

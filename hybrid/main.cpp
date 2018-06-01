@@ -6,6 +6,7 @@
 
 #include "Stopwatch.h"
 #include "Hybrid.h"
+#include "PhaseHybrid.h"
 using namespace std;
 
 int main(int argc, char** argv){
@@ -22,6 +23,8 @@ int main(int argc, char** argv){
 
 	if(analysis == "Hybrid" || analysis == "H" || analysis == "h"){
 		a = new Hybrid(nt);
+	}else if(analysis == "PhaseHybrid" || analysis == "PH" || analysis == "ph"){
+		a = new PhaseHybrid(nt);
 	}
 	a->start(argFile);
 
