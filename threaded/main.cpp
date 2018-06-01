@@ -4,6 +4,7 @@
 //Created on 5/25/2017
 //Last modified: 7/7/2017
 
+#include "PhaseThreaded.h"
 #include "Threaded.h"
 #include "Stopwatch.h"
 
@@ -17,15 +18,16 @@ int main(int argc, char** argv){
 	Stopwatch watch;
 	string argFile = argv[1];
 	string analysis = argv[2];
-	
+	int nt = thread::hardware_concurrency();
+	if(argc == 4){
+		nt = atoi(argv[3]);
+	}
 	Analysis* a;
 
 	if(analysis == "Threaded" || analysis == "T" || analysis == "t"){
-		if(argc == 4){
-			a = new Threaded(atoi(argv[3]));
-		}else{
-	       a = new Threaded(thread::hardware_concurrency());
-		}
+			a = new Threaded(nt);
+	}else if(analysis == "PhaseThreaded" || analysis == "PT" || analysis == "pt"){
+			a = new PhaseThreaded(nt);
 	}
 
 	a->start(argFile);

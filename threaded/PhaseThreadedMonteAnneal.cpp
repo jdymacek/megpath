@@ -1,0 +1,204 @@
+//Threaded Monte Anneal functions
+//Dakota Martin
+//Julian Dymacek
+//Created on 5/22/2018
+//Modified on 5/23/2018
+
+#include "PhaseThreadedMonteAnneal.h"
+
+PhaseThreadedMonteAnneal::PhaseThreadedMonteAnneal(State* st,int nt): MonteAnneal(st){
+	numThreads = nt;
+	random_device rd;
+	ProbFunc::generator.seed(rd());
+	uniform = new UniformPF();
+	barrier = new Barrier(numThreads);
+	callback = NULL;
+	dupe = new State();
+	*dupe = *st;
+}
+
+/*Run a monte carlo markov chain*/
+void PhaseThreadedMonteAnneal::monteCarloThreadCoefficient(int Start, int End){
+	ErrorFunctionRow efRow(state);
+
+	//For each spot take a gamble and record outcome
+	for(int i =0; i < state->MAX_RUNS; i++){
+		monteCarloStep(state->coefficients,&efRow,0,state->coefficients.columns,Start,End);
+            barrier->Wait();
+		//wait for Pattern thread to Exchange the coefficients/Patterns
+            barrier->Wait();
+		if(i % state->interuptRuns == 0){
+			if(callback != NULL){
+				barrier->Wait();
+				if(this_thread::get_id() == rootId){
+					callback->monteCallback(i);
+				}
+				barrier->Wait();
+			}
+		}
+	}
+}
+void PhaseThreadedMonteAnneal::monteCarloThreadPattern(){
+	ErrorFunctionCol efCol(dupe);
+
+	//For each spot take a gamble and record outcome
+	for(int i =0; i < state->MAX_RUNS; i++){
+		if(dupe->both && i != 0){
+			monteCarloStep(dupe->patterns,&efCol);
+		}
+            barrier->Wait();
+		dupe->coefficients = state->coefficients;
+		state->patterns = dupe->patterns;
+            barrier->Wait();
+		if(i % state->interuptRuns == 0){
+			if(callback != NULL){
+				barrier->Wait();
+				if(this_thread::get_id() == rootId){
+					callback->monteCallback(i);
+				}
+				barrier->Wait();
+			}
+		}
+	}
+}
+
+double PhaseThreadedMonteAnneal::monteCarlo(){
+    Stopwatch watch;
+    watch.start();
+	vector<thread> threads;
+
+	int rowSize = state->coefficients.rows/numThreads;
+	int colSize = state->patterns.columns/numThreads;
+	int rowStart = 0;
+	int colStart = 0;
+
+	threads.push_back(thread(&PhaseThreadedMonteAnneal::monteCarloThreadPattern,this));		
+	for(int i = 1; i < numThreads; ++i){
+		int rowEnd = rowStart + rowSize;
+		if(i < state->coefficients.rows%numThreads)
+			rowEnd += 1;
+		threads.push_back(thread(&PhaseThreadedMonteAnneal::monteCarloThreadCoefficient,this,rowStart,rowEnd));
+		rootId = threads[0].get_id();
+		rowStart = rowEnd;
+	}
+
+	for(int i =0; i < threads.size();++i){
+		threads[i].join();
+	}
+	ErrorFunctionRow efRow(state);
+
+
+	if(state->debug){
+		cout << "Final Error: " << efRow.error() << endl;
+    		cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
+    		cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+	}
+	return efRow.error();
+}
+
+
+void PhaseThreadedMonteAnneal::annealThreadCoefficient(int Start, int End){
+	double t = 0.5;
+    ErrorFunctionRow efRow(state);
+
+    //For each spot take a gamble and record outcome
+    for(int i =0; i < 2*state->MAX_RUNS; i++){
+		annealStep(state->coefficients,t,&efRow,0,state->coefficients.columns,Start,End);
+            barrier->Wait();
+            //wait for Pattern thread to exchange coefficients/rows
+	    barrier->Wait(); 
+        if(i % state->interuptRuns == 0 && callback != NULL){
+            barrier->Wait();
+            if(this_thread::get_id() == rootId){
+				callback->annealCallback(i);
+            }
+            barrier->Wait();
+        }
+		if(i % state->printRuns == 0 && callback != NULL){
+	        barrier->Wait();
+            if(this_thread::get_id() == rootId){
+				callback->annealPrintCallback(i);
+            }
+			barrier->Wait();
+		}
+
+		t *= 0.99975;
+    }
+}
+void PhaseThreadedMonteAnneal::annealThreadPattern(){
+	double t = 0.5;
+    	ErrorFunctionCol efCol(dupe);
+
+    //For each spot take a gamble and record outcome
+    for(int i =0; i < 2*state->MAX_RUNS; i++){
+	
+    	if(dupe->both && i != 0)
+	{		
+	    annealStep(dupe->patterns,t,&efCol);
+	}
+	    barrier->Wait();
+         	dupe->coefficients = state->coefficients;
+		state->patterns = dupe->patterns;
+	    barrier->Wait(); 
+        if(i % state->interuptRuns == 0 && callback != NULL){
+            barrier->Wait();
+            if(this_thread::get_id() == rootId){
+				callback->annealCallback(i);
+            }
+            barrier->Wait();
+        }
+		if(i % state->printRuns == 0 && callback != NULL){
+	        barrier->Wait();
+            if(this_thread::get_id() == rootId){
+				callback->annealPrintCallback(i);
+            }
+			barrier->Wait();
+		}
+
+		t *= 0.99975;
+    }
+}
+
+double PhaseThreadedMonteAnneal::anneal(){
+	Stopwatch watch;
+	watch.start();
+
+
+    vector<thread> threads;
+
+
+    int rowSize = state->coefficients.rows/numThreads;
+    int colSize = state->patterns.columns/numThreads;
+    int rowStart = 0;
+    int colStart = 0;
+	
+    bool constrained = false;
+
+
+    threads.push_back(thread(&PhaseThreadedMonteAnneal::annealThreadPattern,this));
+    for(int i =1; i < numThreads; ++i){
+        int rowEnd = rowStart + rowSize;
+        if(i < state->coefficients.rows%numThreads)
+            rowEnd += 1;
+		
+
+        threads.push_back(thread(&PhaseThreadedMonteAnneal::annealThreadCoefficient,this,rowStart,rowEnd));
+	rootId = threads[0].get_id();
+        rowStart = rowEnd;
+    }
+
+    for(int i =0; i < threads.size();++i){
+        threads[i].join();
+    }
+
+
+
+	ErrorFunctionRow efRow(state);
+	if(state->debug){
+		cout << "Final Error: " << efRow.error() << endl;
+		cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
+		cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+	}
+	return efRow.error();
+}
+
