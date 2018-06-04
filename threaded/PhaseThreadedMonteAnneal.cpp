@@ -43,18 +43,20 @@ void PhaseThreadedMonteAnneal::monteCarloThreadPattern(){
 
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < state->MAX_RUNS; i++){
-		if(dupe->both && i != 0){
+		if(state->both && i != 0){
 			monteCarloStep(dupe->patterns,&efCol);
 		}
             barrier->Wait();
-		dupe->coefficients = state->coefficients;
-		state->patterns = dupe->patterns;
+		dupe->coefficients.matrix = state->coefficients.matrix;
+		state->patterns.matrix = dupe->patterns.matrix;
             barrier->Wait();
 		if(i % state->interuptRuns == 0){
 			if(callback != NULL){
 				barrier->Wait();
 				if(this_thread::get_id() == rootId){
 					callback->monteCallback(i);
+					dupe->patterns.matrix = state->patterns.matrix;
+					dupe->coefficients.matrix = state->coefficients.matrix;
 				}
 				barrier->Wait();
 			}
@@ -73,7 +75,8 @@ double PhaseThreadedMonteAnneal::monteCarlo(){
    	for(int i = 0; i < ranges.size(); ++i){
 		threads.push_back(thread(&PhaseThreadedMonteAnneal::monteCarloThreadCoefficient,this,ranges[i][2],ranges[i][3]));
 	}
-
+	
+	
 	for(int i =0; i < threads.size();++i){
 		threads[i].join();
 	}
@@ -124,18 +127,20 @@ void PhaseThreadedMonteAnneal::annealThreadPattern(){
     //For each spot take a gamble and record outcome
     for(int i =0; i < 2*state->MAX_RUNS; i++){
 	
-    	if(dupe->both && i != 0)
+    	if(state->both && i != 0)
 	{		
 	    annealStep(dupe->patterns,t,&efCol);
 	}
 	    barrier->Wait();
-         	dupe->coefficients = state->coefficients;
-		state->patterns = dupe->patterns;
+         	dupe->coefficients.matrix = state->coefficients.matrix;
+		state->patterns.matrix = dupe->patterns.matrix;
 	    barrier->Wait(); 
         if(i % state->interuptRuns == 0 && callback != NULL){
             barrier->Wait();
             if(this_thread::get_id() == rootId){
 				callback->annealCallback(i);
+				dupe->patterns.matrix = state->patterns.matrix;
+				dupe->coefficients.matrix = state->coefficients.matrix;
             }
             barrier->Wait();
         }
@@ -169,6 +174,7 @@ double PhaseThreadedMonteAnneal::anneal(){
 
     threads.push_back(thread(&PhaseThreadedMonteAnneal::annealThreadPattern,this));
     vector<vector<int>> ranges = state->splitRanges(numThreads-1);
+    rootId = threads[0].get_id();
     for(int i = 0; i < ranges.size(); ++i){
     	threads.push_back(thread(&PhaseThreadedMonteAnneal::annealThreadCoefficient,this,ranges[i][2],ranges[i][3]));
     }

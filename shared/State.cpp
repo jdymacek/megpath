@@ -44,6 +44,7 @@ bool State::load(string argFileName){
 	int ROWS = 0;
 	int COLUMNS = 0;
 	int PATTERNS = 0;
+	constrained = false;
 
 	ArgFile args;
 	CSVFile file;
@@ -73,6 +74,10 @@ bool State::load(string argFileName){
 		debug = val.asBool();
 	}else{
 		debug = false;
+	}
+	if(args.isArgument("stats")){
+		Value val = args.getArgument("stats");
+		stats = val.asString();
 	}
 	if(debug){
 		cout << "Using analysis: " << analysis.substr(0,analysis.size()-1) << "\n";
@@ -204,6 +209,7 @@ bool State::load(string argFileName){
 					if(debug){
 						cout << "adding to constraint" << endl;
 					}
+					constrained = true;
 					Entry e;
 					patterns.matrix(i,j) = intoMatrix[j].asDouble();
 					patterns.functions(i,j) = shared;	

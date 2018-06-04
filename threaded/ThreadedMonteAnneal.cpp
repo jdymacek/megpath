@@ -46,24 +46,15 @@ double ThreadedMonteAnneal::monteCarlo(){
 	watch.start();
 	vector<thread> threads;
 	
-	//check to see if the matrix is constrained
-	bool constrained = false;
-	for(int x = 0; x < state->patterns.columns; x++){
-		for(int y = 0; y < state->patterns.rows; y++){
-			if(state->patterns.functions(y,x)->size() > 1){
-				constrained = true;
-			}
-		}
-	}
 
 	vector<vector<int>> ranges = state->splitRanges(numThreads);
 	for(int i = 0; i < ranges.size(); ++i){
 	
-		if(constrained == true && i == 0){
+		if(state->constrained == true && i == 0){
 			ranges[i][0] = 0;
 			ranges[i][1] = state->patterns.columns;
 		}
-		else if(constrained == true){
+		else if(state->constrained == true){
 			ranges[i][0] = 0;
 			ranges[i][1] = 0;
 		}
@@ -127,23 +118,16 @@ double ThreadedMonteAnneal::anneal(){
 	
     bool constrained = false;
 
-    //check to see if its constrained    
-    for(int x = 0; x < state->patterns.columns; x++){
-		for(int y = 0; y < state->patterns.rows; y++){
-			if(state->patterns.functions(y,x)->size() > 1){
-				constrained = true;
-			}
-		}
-    }
+    
 
 	vector<vector<int>> ranges = state->splitRanges(numThreads); 
 	for(int i = 0; i < ranges.size(); ++i){
 	
-		if(constrained == true && i == 0){
+		if(state->constrained == true && i == 0){
 			ranges[i][0] = 0;
 			ranges[i][1] = state->patterns.columns;
 		}
-		else if(constrained == true){
+		else if(state->constrained == true){
 			ranges[i][0] = 0;
 			ranges[i][1] = 0;
 		}

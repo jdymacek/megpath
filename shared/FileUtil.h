@@ -21,6 +21,7 @@ class FileUtil{
 		static bool isDirectory(string path);
 		static bool mkPath(string path);
 		static bool isFile(string file);
+		static string findMatchingFile(string path,string toSearch);
 		static string uniqueFile(string path);
 };
 #endif

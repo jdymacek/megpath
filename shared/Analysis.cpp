@@ -58,7 +58,48 @@ void Analysis::annealPrintCallback(int iterations){
 	}
 }
 
+
 void Analysis::output(){
+	if(state->stats == "all")
+		outputAll();
+	else
+		outputStats();
+}
+
+
+
+void Analysis::outputStats(){
+	string outputDir = state->directory;
+	FileUtil::mkPath(outputDir);
+	outputDir += "/";
+	ErrorFunctionRow efRow(state);
+
+	ofstream fout;
+	string toComp = "#file: ";
+	toComp += state->filename + "\n";
+	toComp += "#constrained: ";
+	if(state->constrained){
+		toComp += "true\n";
+	}else{
+		toComp += "false\n";
+	}
+	toComp += "#max_runs: ";
+	toComp += to_string(state->MAX_RUNS) + "\n";
+
+
+	string outputFile = FileUtil::findMatchingFile(outputDir + state->analysis + "statResults.csv", toComp);
+	if(!FileUtil::isFile(outputFile)){
+		fout.open(outputFile);
+		fout << toComp;
+	}else{
+		fout.open(outputFile, ofstream::app);
+	}
+	fout << program << "," <<state->time << "," << efRow.error() << endl;
+	fout.close();
+
+}
+
+void Analysis::outputAll(){
     char curTime[20];
     time_t t;
     struct tm *tmp;
@@ -66,14 +107,14 @@ void Analysis::output(){
     t = time(NULL);
     tmp = localtime(&t);
     if(tmp == NULL){
-        fprintf(stderr,"%s",strerror(errno));
-        exit(-1);
+    	    fprintf(stderr,"%s",strerror(errno));
+    	    exit(-1);
     }
 
     int timef = strftime(curTime, sizeof(curTime), "%T %m-%d-%Y" ,tmp);
     if(timef == 0){
-        fprintf(stderr,"strftime returned 0\n");
-        exit(-1);
+	    fprintf(stderr,"strftime returned 0\n");
+	    exit(-1);
     }
 
     string outputDir = state->directory;

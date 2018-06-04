@@ -1,4 +1,5 @@
 #include "FileUtil.h"
+#include "fstream"
 
 bool FileUtil::mkDirectory(string dir){
 	if(isDirectory(dir))
@@ -42,6 +43,53 @@ bool FileUtil::isFile(string file){
 		}	
 	}
 	return false;
+}
+
+string FileUtil::findMatchingFile(string path, string toSearch){
+	int i = 1;
+	string rv = path;
+	bool notFound = true;
+	while(notFound){
+		if(isFile(rv)){
+
+			ifstream fin;
+			fin.open(rv);
+			string tmp = "";
+			string toComp = "";
+			getline(fin, tmp);
+			toComp += tmp + "\n";
+			getline(fin, tmp);
+			toComp += tmp + "\n";
+			getline(fin, tmp);
+			toComp += tmp + "\n";
+			//cout << toComp;
+			//checks to see if the file's args match ours
+			if(toSearch == toComp){
+				notFound = true;//this is kinda pointless
+				return rv;
+			}
+			//if they dont check for another file:
+
+			stringstream ss;
+			ss.str(path);
+			string str = "";
+	
+			//grab base and extension
+			getline(ss,str,'.');
+			string base = str;
+			getline(ss,str);
+			string ext = str;
+	
+			stringstream append;
+			append << i;
+			rv = base + "_" + append.str()+ "." + ext;
+			++i;
+		}else{
+			return rv;
+		}
+	}
+	return rv;
+
 }
 
 string FileUtil::uniqueFile(string path){
