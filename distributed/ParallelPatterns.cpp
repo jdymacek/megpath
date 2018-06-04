@@ -177,10 +177,10 @@ void ParallelPatterns::run(){
 	algorithm->monteCarlo();
 	allAnnealAverage();
 	error = algorithm->anneal();
+	
 	allAnnealAverage();
-
-	state->both = false;
-	error = algorithm->anneal();
+	//state->both = false;
+	//error = algorithm->anneal();
 
 	gatherCoefficients();
 }

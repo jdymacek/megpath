@@ -45,7 +45,7 @@ bool FileUtil::isFile(string file){
 	return false;
 }
 
-string FileUtil::findMatchingFile(string path, string toSearch){
+string FileUtil::findMatchingFile(string path, string toSearch, int num){
 	int i = 1;
 	string rv = path;
 	bool notFound = true;
@@ -56,12 +56,10 @@ string FileUtil::findMatchingFile(string path, string toSearch){
 			fin.open(rv);
 			string tmp = "";
 			string toComp = "";
-			getline(fin, tmp);
-			toComp += tmp + "\n";
-			getline(fin, tmp);
-			toComp += tmp + "\n";
-			getline(fin, tmp);
-			toComp += tmp + "\n";
+			for(int i = 0; i < num; i++){
+				getline(fin, tmp);
+				toComp += tmp + "\n";
+			}
 			//cout << toComp;
 			//checks to see if the file's args match ours
 			if(toSearch == toComp){

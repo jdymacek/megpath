@@ -75,6 +75,7 @@ bool State::load(string argFileName){
 	}else{
 		debug = false;
 	}
+
 	if(args.isArgument("stats")){
 		Value val = args.getArgument("stats");
 		stats = val.asString();

@@ -1,12 +1,11 @@
 //Threaded Monte Anneal functions
 //Dakota Martin
 //Julian Dymacek
-//Created on 5/22/2018
-//Modified on 5/23/2018
+//Created on 6/4/2018
 
-#include "PhaseThreadedMonteAnneal.h"
+#include "FlipThreadedMonteAnneal.h"
 
-PhaseThreadedMonteAnneal::PhaseThreadedMonteAnneal(State* st,int nt): MonteAnneal(st){
+FlipThreadedMonteAnneal::FlipThreadedMonteAnneal(State* st,int nt): MonteAnneal(st){
 	numThreads = nt;
 	random_device rd;
 	ProbFunc::generator.seed(rd());
@@ -18,7 +17,7 @@ PhaseThreadedMonteAnneal::PhaseThreadedMonteAnneal(State* st,int nt): MonteAnnea
 }
 
 /*Run a monte carlo markov chain*/
-void PhaseThreadedMonteAnneal::monteCarloThreadCoefficient(int Start, int End){
+void FlipThreadedMonteAnneal::monteCarloThreadCoefficient(int Start, int End){
 	ErrorFunctionRow efRow(state);
 
 	//For each spot take a gamble and record outcome
@@ -38,7 +37,7 @@ void PhaseThreadedMonteAnneal::monteCarloThreadCoefficient(int Start, int End){
 		}
 	}
 }
-void PhaseThreadedMonteAnneal::monteCarloThreadPattern(){
+void FlipThreadedMonteAnneal::monteCarloThreadPattern(){
 	ErrorFunctionCol efCol(dupe);
 
 	//For each spot take a gamble and record outcome
@@ -64,16 +63,16 @@ void PhaseThreadedMonteAnneal::monteCarloThreadPattern(){
 	}
 }
 
-double PhaseThreadedMonteAnneal::monteCarlo(){
+double FlipThreadedMonteAnneal::monteCarlo(){
     Stopwatch watch;
     watch.start();
 	vector<thread> threads;
 	
-	threads.push_back(thread(&PhaseThreadedMonteAnneal::monteCarloThreadPattern,this));		
+	threads.push_back(thread(&FlipThreadedMonteAnneal::monteCarloThreadPattern,this));		
 	vector<vector<int>> ranges = state->splitRanges(numThreads-1);
 	rootId = threads[0].get_id();
    	for(int i = 0; i < ranges.size(); ++i){
-		threads.push_back(thread(&PhaseThreadedMonteAnneal::monteCarloThreadCoefficient,this,ranges[i][2],ranges[i][3]));
+		threads.push_back(thread(&FlipThreadedMonteAnneal::monteCarloThreadCoefficient,this,ranges[i][2],ranges[i][3]));
 	}
 	
 	
@@ -92,13 +91,15 @@ double PhaseThreadedMonteAnneal::monteCarlo(){
 }
 
 
-void PhaseThreadedMonteAnneal::annealThreadCoefficient(int Start, int End){
-	double t = 0.5;
-    ErrorFunctionRow efRow(state);
+void FlipThreadedMonteAnneal::annealThreadCoefficient(int num){
+	 double t = 0.5;
+   	 ErrorFunctionRow efRow(state);
+   	 barrier->Wait();
 
     //For each spot take a gamble and record outcome
     for(int i =0; i < 2*state->MAX_RUNS; i++){
-		annealStep(state->coefficients,t,&efRow,0,state->coefficients.columns,Start,End);
+	    int id = threadMap[this_thread.get_id()];
+		annealStep(state->coefficients,t,&efRow,0,state->coefficients.columns,ranges[id][2],ranges[id][3]);
             barrier->Wait();
             //wait for Pattern thread to exchange coefficients/rows
 	    barrier->Wait(); 
@@ -115,18 +116,19 @@ void PhaseThreadedMonteAnneal::annealThreadCoefficient(int Start, int End){
 				callback->annealPrintCallback(i);
             }
 			barrier->Wait();
-		}
+	}
 		
 
 		t *= 0.99975;
     }
 }
-void PhaseThreadedMonteAnneal::annealThreadPattern(){
+void FlipThreadedMonteAnneal::annealThreadPattern(int num){
 	double t = 0.5;
     	ErrorFunctionCol efCol(dupe);
+	barrier->Wait();
 
     //For each spot take a gamble and record outcome
-    for(int i =0; i < 2*state->MAX_RUNS; i++){
+    for(int i =0; i < num; i++){
 	
     	if(state->both && i != 0)
 	{		
@@ -145,22 +147,26 @@ void PhaseThreadedMonteAnneal::annealThreadPattern(){
             }
             barrier->Wait();
         }
-		if(i % state->printRuns == 0 && callback != NULL){
-	        barrier->Wait();
-            if(this_thread::get_id() == rootId){
-				callback->annealPrintCallback(i);
-            }
-			barrier->Wait();
-		}
-		//if(i > 1.5*state->MAX_RUNS){
-		//	state->both = false;
-		//}
+	if(i % state->printRuns == 0 && callback != NULL){
+	      barrier->Wait();
+	            if(this_thread::get_id() == rootId){
+			callback->annealPrintCallback(i);
+	            }
+		barrier->Wait();
+	}
+	if(i > 1.5*state->MAX_RUNS){
+		state->both = false;
+		ranges = state->splitRanges(numThreads);
+		threadMap[this_thread::get_id()] = ranges.size()-1;
+		return;
+	}
+	barrier->Wait();
 
-		t *= 0.99975;
+	t *= 0.99975;
     }
 }
 
-double PhaseThreadedMonteAnneal::anneal(){
+double FlipThreadedMonteAnneal::anneal(){
 	Stopwatch watch;
 	watch.start();
 
@@ -176,11 +182,12 @@ double PhaseThreadedMonteAnneal::anneal(){
     bool constrained = false;
 
 
-    threads.push_back(thread(&PhaseThreadedMonteAnneal::annealThreadPattern,this));
-    vector<vector<int>> ranges = state->splitRanges(numThreads-1);
+    threads.push_back(thread(&FlipThreadedMonteAnneal::annealThreadPattern,this));
+    ranges = state->splitRanges(numThreads-1);
     rootId = threads[0].get_id();
     for(int i = 0; i < ranges.size(); ++i){
-    	threads.push_back(thread(&PhaseThreadedMonteAnneal::annealThreadCoefficient,this,ranges[i][2],ranges[i][3]));
+    	threads.push_back(thread(&FlipThreadedMonteAnneal::annealThreadCoefficient,this))
+	threadMap[threads[i+1].get_id()] = i;
     }
 
     for(int i =0; i < threads.size();++i){

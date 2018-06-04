@@ -153,6 +153,9 @@ double MonteAnneal::anneal(){
 		if(ndx % state->printRuns == 0 && callback != NULL){
 			callback->annealPrintCallback(ndx);
 		}
+		//if(ndx > 1.5*state->MAX_RUNS){
+		//	state->both = false;
+		//}
 
 		ndx++;
 		t *= 0.99975;

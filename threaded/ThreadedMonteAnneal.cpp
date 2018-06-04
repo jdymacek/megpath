@@ -104,6 +104,9 @@ void ThreadedMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd)
             }
 			barrier->Wait();
 		}
+		//if(i > 1.5*state->MAX_RUNS){
+		//	state->both = false;
+		//}
 
 		t *= 0.99975;
     }

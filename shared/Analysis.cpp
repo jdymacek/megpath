@@ -60,37 +60,55 @@ void Analysis::annealPrintCallback(int iterations){
 
 
 void Analysis::output(){
-	if(state->stats == "all")
-		outputAll();
-	else
+	if(state->stats == "notAll"){
 		outputStats();
+	}else{
+		outputAll();
+	}
 }
 
 
 
 void Analysis::outputStats(){
-	string outputDir = state->directory;
+	char curTime[20];
+    	time_t t;
+    	struct tm *tmp;
+	
+    	t = time(NULL);
+    	tmp = localtime(&t);
+    	if(tmp == NULL){
+    		    fprintf(stderr,"%s",strerror(errno));
+    		    exit(-1);
+    	}
+
+    	int timef = strftime(curTime, sizeof(curTime), "%T %m-%d-%Y" ,tmp);
+    	if(timef == 0){
+		    fprintf(stderr,"strftime returned 0\n");
+		    exit(-1);
+    	}
+    	string outputDir = state->directory;
 	FileUtil::mkPath(outputDir);
 	outputDir += "/";
 	ErrorFunctionRow efRow(state);
 
 	ofstream fout;
-	string toComp = "#file: ";
+	string toComp = "#File: ";
 	toComp += state->filename + "\n";
-	toComp += "#constrained: ";
+	toComp += "#Constrained: ";
 	if(state->constrained){
 		toComp += "true\n";
 	}else{
 		toComp += "false\n";
 	}
-	toComp += "#max_runs: ";
+	toComp += "#MAX_RUNS: ";
 	toComp += to_string(state->MAX_RUNS) + "\n";
 
 
-	string outputFile = FileUtil::findMatchingFile(outputDir + state->analysis + "statResults.csv", toComp);
+	string outputFile = FileUtil::findMatchingFile(outputDir + state->analysis + "statResults.csv", toComp, 3);
 	if(!FileUtil::isFile(outputFile)){
 		fout.open(outputFile);
 		fout << toComp;
+		fout << "#Time: " << curTime << endl;
 	}else{
 		fout.open(outputFile, ofstream::app);
 	}
