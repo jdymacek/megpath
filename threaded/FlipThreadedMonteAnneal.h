@@ -10,18 +10,18 @@
 using namespace std;
 
 
-class PhaseThreadedMonteAnneal:public MonteAnneal{
+class FlipThreadedMonteAnneal:public MonteAnneal{
 	public:
-		PhaseThreadedMonteAnneal(State* st, int nt);
-		void monteCarloThreadCoefficient(int Start, int End);
+		FlipThreadedMonteAnneal(State* st, int nt);
+		void monteCarloThreadCoefficient();
 		void monteCarloThreadPattern();
-		void annealThreadCoefficient(int Start, int End);
+		void annealThreadCoefficient(int num, double t);
 		void annealThreadPattern();
 
 		virtual double monteCarlo();
 		virtual double anneal();
 	protected:
-		map <int, int> threadMap;
+		map <thread::id, int> threadMap;
 		vector<vector<int>> ranges;
 		State * dupe;
 		Barrier* barrier;

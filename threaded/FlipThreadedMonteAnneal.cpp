@@ -17,12 +17,13 @@ FlipThreadedMonteAnneal::FlipThreadedMonteAnneal(State* st,int nt): MonteAnneal(
 }
 
 /*Run a monte carlo markov chain*/
-void FlipThreadedMonteAnneal::monteCarloThreadCoefficient(int Start, int End){
+void FlipThreadedMonteAnneal::monteCarloThreadCoefficient(){
 	ErrorFunctionRow efRow(state);
 
 	//For each spot take a gamble and record outcome
-	for(int i =0; i < state->MAX_RUNS; i++){
-		monteCarloStep(state->coefficients,&efRow,0,state->coefficients.columns,Start,End);
+	for(int i = 0; i < state->MAX_RUNS; i++){
+		int id = threadMap[this_thread::get_id()];
+		monteCarloStep(state->coefficients,&efRow,0,state->coefficients.columns,ranges[id][2],ranges[id][3]);
             barrier->Wait();
 		//wait for Pattern thread to Exchange the coefficients/Patterns
             barrier->Wait();
@@ -41,7 +42,7 @@ void FlipThreadedMonteAnneal::monteCarloThreadPattern(){
 	ErrorFunctionCol efCol(dupe);
 
 	//For each spot take a gamble and record outcome
-	for(int i =0; i < state->MAX_RUNS; i++){
+	for(int i = 0; i < state->MAX_RUNS; i++){
 		if(state->both && i != 0){
 			monteCarloStep(dupe->patterns,&efCol);
 		}
@@ -69,10 +70,12 @@ double FlipThreadedMonteAnneal::monteCarlo(){
 	vector<thread> threads;
 	
 	threads.push_back(thread(&FlipThreadedMonteAnneal::monteCarloThreadPattern,this));		
-	vector<vector<int>> ranges = state->splitRanges(numThreads-1);
+	
+	ranges = state->splitRanges(numThreads-1);
 	rootId = threads[0].get_id();
    	for(int i = 0; i < ranges.size(); ++i){
-		threads.push_back(thread(&FlipThreadedMonteAnneal::monteCarloThreadCoefficient,this,ranges[i][2],ranges[i][3]));
+   	 	threads.push_back(thread(&FlipThreadedMonteAnneal::monteCarloThreadCoefficient,this));
+		threadMap[threads[i+1].get_id()] = i;
 	}
 	
 	
@@ -91,17 +94,17 @@ double FlipThreadedMonteAnneal::monteCarlo(){
 }
 
 
-void FlipThreadedMonteAnneal::annealThreadCoefficient(int num){
-	 double t = 0.5;
+void FlipThreadedMonteAnneal::annealThreadCoefficient(int num, double tstart){
+	 double t = tstart;
    	 ErrorFunctionRow efRow(state);
    	 barrier->Wait();
+	 int id = threadMap[this_thread::get_id()];
 
     //For each spot take a gamble and record outcome
-    for(int i =0; i < 2*state->MAX_RUNS; i++){
-	    int id = threadMap[this_thread.get_id()];
+    for(int i =num; i < 2*state->MAX_RUNS; i++){
 		annealStep(state->coefficients,t,&efRow,0,state->coefficients.columns,ranges[id][2],ranges[id][3]);
             barrier->Wait();
-            //wait for Pattern thread to exchange coefficients/rows
+	    //wait for Pattern thread to exchange coefficients/rows
 	    barrier->Wait(); 
         if(i % state->interuptRuns == 0 && callback != NULL){
             barrier->Wait();
@@ -117,18 +120,21 @@ void FlipThreadedMonteAnneal::annealThreadCoefficient(int num){
             }
 			barrier->Wait();
 	}
+		barrier->Wait();
+		//pattern thread switches over to coefficient
+		barrier->Wait();
 		
 
 		t *= 0.99975;
     }
 }
-void FlipThreadedMonteAnneal::annealThreadPattern(int num){
+void FlipThreadedMonteAnneal::annealThreadPattern(){
 	double t = 0.5;
     	ErrorFunctionCol efCol(dupe);
 	barrier->Wait();
 
     //For each spot take a gamble and record outcome
-    for(int i =0; i < num; i++){
+    for(int i = 0; i < 2*state->MAX_RUNS; i++){
 	
     	if(state->both && i != 0)
 	{		
@@ -154,10 +160,16 @@ void FlipThreadedMonteAnneal::annealThreadPattern(int num){
 	            }
 		barrier->Wait();
 	}
+	//could have given this function less RUNS
+	//however that could cause some raceconditions
+	//fixing those would cause the barriers to go out of sync
+	//this keeps the barriers in sync and prevents race conditions
+	barrier->Wait();
 	if(i > 1.5*state->MAX_RUNS){
 		state->both = false;
 		ranges = state->splitRanges(numThreads);
 		threadMap[this_thread::get_id()] = ranges.size()-1;
+		annealThreadCoefficient(i+1, t);
 		return;
 	}
 	barrier->Wait();
@@ -186,7 +198,7 @@ double FlipThreadedMonteAnneal::anneal(){
     ranges = state->splitRanges(numThreads-1);
     rootId = threads[0].get_id();
     for(int i = 0; i < ranges.size(); ++i){
-    	threads.push_back(thread(&FlipThreadedMonteAnneal::annealThreadCoefficient,this))
+    	threads.push_back(thread(&FlipThreadedMonteAnneal::annealThreadCoefficient,this, 0, 0.5));
 	threadMap[threads[i+1].get_id()] = i;
     }
 

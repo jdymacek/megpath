@@ -15,5 +15,8 @@ void Standard::run(){
 	//Could put stop watch in here
 	algorithm->setObserver(this);
 	algorithm->monteCarlo();
-	algorithm->anneal();		
+	algorithm->anneal();
+	
+	//state->both = false;
+	//algorithm->anneal();	
 }

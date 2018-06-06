@@ -5,6 +5,7 @@
 //Last modified: 7/7/2017
 
 #include "PhaseThreaded.h"
+#include "FlipThreaded.h"
 #include "Threaded.h"
 #include "Stopwatch.h"
 
@@ -28,6 +29,8 @@ int main(int argc, char** argv){
 			a = new Threaded(nt);
 	}else if(analysis == "PhaseThreaded" || analysis == "PT" || analysis == "pt"){
 			a = new PhaseThreaded(nt);
+	}else if(analysis == "FlipThreaded" || analysis == "FT" || analysis == "ft"){
+			a = new FlipThreaded(nt);
 	}
 
 	a->start(argFile);
