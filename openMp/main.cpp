@@ -17,7 +17,7 @@ int main(int argc, char** argv){
 	Stopwatch watch;
 	string argFile = argv[1];
 	string analysis = argv[2];
-	int nt = thread::hardware_concurrency();
+	int nt = 8;
 	if(argc == 4){
 		nt = atoi(argv[3]);
 	}
