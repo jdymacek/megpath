@@ -55,7 +55,7 @@ double OMPMonteAnneal::monteCarlo(){
 	{
 		
 	       	id = omp_get_thread_num();
-		cout << id << endl;
+		cout << omp_get_num_threads() << endl;
 		if(state->constrained == true && id == 0){
 			ranges[id][0] = 0;
 			ranges[id][1] = state->patterns.columns;
@@ -64,7 +64,7 @@ double OMPMonteAnneal::monteCarlo(){
 			ranges[id][0] = 0;
 			ranges[id][1] = 0;
 		}
-        	annealThread(ranges[id][0],ranges[id][1],ranges[id][2],ranges[id][3]);
+        	monteCarloThread(ranges[id][0],ranges[id][1],ranges[id][2],ranges[id][3]);
 	}
 
 
