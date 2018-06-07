@@ -46,29 +46,27 @@ double OMPMonteAnneal::monteCarlo(){
 	watch.start();
 	
 	vector<vector<int>> ranges = state->splitRanges(numThreads);
+	
 	omp_set_dynamic(0);
 	omp_set_num_threads(numThreads);
 
-	for(int i = 0; i < numThreads; i++)
+	int id;
+	#pragma omp prallel private(id)
 	{
-		if(state->constrained == true && i == 0){
-			ranges[i][0] = 0;
-			ranges[i][1] = state->patterns.columns;
+		
+	       	id = omp_get_thread_num();
+		cout << id << endl;
+		if(state->constrained == true && id == 0){
+			ranges[id][0] = 0;
+			ranges[id][1] = state->patterns.columns;
 		}
 		else if(state->constrained == true){
-			ranges[i][0] = 0;
-			ranges[i][1] = 0;
+			ranges[id][0] = 0;
+			ranges[id][1] = 0;
 		}
+        	annealThread(ranges[id][0],ranges[id][1],ranges[id][2],ranges[id][3]);
 	}
-	
-	#pragma omp parallel
-	{
-	int i;
-	#pragma omp for
-	for(i = 0; i<numThreads;i++){
-        	monteCarloThread(ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]);
-	}
-	}
+
 
 
 
