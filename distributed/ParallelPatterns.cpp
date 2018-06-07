@@ -41,7 +41,6 @@ void ParallelPatterns::start(string filename){
 
 	vector<vector<int>> ranges = state->splitRanges(size);
 	//split the coefficients
-<<<<<<< HEAD
 	int myRRows = ranges[rank][3] - ranges[rank][2];
 	//findRows(rank, size, state->coefficients.rows);
 	state->coefficients.resize(myRRows, state->coefficients.columns);
@@ -52,16 +51,7 @@ void ParallelPatterns::start(string filename){
 	int myRows = findRows(rank, size, state->expression.rows());
 	if(!(startPoint == ranges[rank][2] && myRows == myRRows))
 		cout << "NOT EQUAL\n";
-	exit(1);
-=======
-	int myRows = ranges[rank][3] - ranges[rank][2];
-	//int myRows = findRows(rank, size, state->coefficients.rows);
-	state->coefficients.resize(myRows, state->coefficients.columns);
-
-	//split the expression	
-	//int start = findStart(rank, size, state->expression.rows());
-	//myRows = findRows(rank, size, state->expression.rows());
->>>>>>> master
+	
 	MatrixXd temp = state->expression.block(ranges[rank][2], 0, myRows, state->expression.cols());
 	state->expression = temp;
 
@@ -195,19 +185,10 @@ void ParallelPatterns::run(){
 	//end set observer
 	algorithm->monteCarlo();
 	allAnnealAverage();
-
-	int num = state->MAX_RUNS;
-	state->MAX_RUNS =  num;
 	error = algorithm->anneal();
 	if(state->debug){
 		cout << state->patterns.matrix << endl << endl;
 	}	
-	allAnnealAverage();
-	state->MAX_RUNS =  num;
-	state->both = false;
-	error = algorithm->anneal();
-	state->MAX_RUNS = num;
-	
 	allAnnealAverage();
 
 	gatherCoefficients();
