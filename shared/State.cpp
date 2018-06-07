@@ -80,6 +80,10 @@ bool State::load(string argFileName){
 		Value val = args.getArgument("stats");
 		stats = val.asString();
 	}
+	if(args.isArgument("anneal_cut_off")){
+		Value val = args.getArgument("anneal_cut_off");
+		annealCutOff = val.asDouble();
+	}
 	if(debug){
 		cout << "Using analysis: " << analysis.substr(0,analysis.size()-1) << "\n";
 	}
@@ -127,8 +131,8 @@ bool State::load(string argFileName){
 		Value val = args.getArgument("print_runs");
 		printRuns = val.asInt();
 	}
-	if(args.isArgument("interuptRuns")){
-		Value val = args.getArgument("interuptRuns");
+	if(args.isArgument("interupt_runs")){
+		Value val = args.getArgument("interupt_runs");
 		interuptRuns = val.asInt();
 	}
 

@@ -36,6 +36,7 @@ class State{
 		vector<string> ids;
 		int printRuns;
 		int interuptRuns;
+		double annealCutOff;
 		vector<vector<int>> splitRanges(int by);
 		bool load(string argFileName);
 		void patternMatch(MatrixXd& other);
