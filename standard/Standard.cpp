@@ -16,7 +16,8 @@ void Standard::run(){
 	algorithm->setObserver(this);
 	algorithm->monteCarlo();
 	algorithm->anneal();
-	
+
+	cout << state->patterns.matrix << endl << endl;	
 	//state->both = false;
 	//algorithm->anneal();	
 }

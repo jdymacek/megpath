@@ -176,11 +176,20 @@ void ParallelPatterns::run(){
 	//end set observer
 	algorithm->monteCarlo();
 	allAnnealAverage();
+
+	int num = state->MAX_RUNS;
+	state->MAX_RUNS =  num;
 	error = algorithm->anneal();
+	if(state->debug){
+		cout << state->patterns.matrix << endl << endl;
+	}	
+	allAnnealAverage();
+	state->MAX_RUNS =  num;
+	state->both = false;
+	error = algorithm->anneal();
+	state->MAX_RUNS = num;
 	
 	allAnnealAverage();
-	//state->both = false;
-	//error = algorithm->anneal();
 
 	gatherCoefficients();
 }
@@ -189,5 +198,8 @@ void ParallelPatterns::stop(){
 	delete[] sendBuffer;
     delete[] recvBuffer;
 
+    if(state->debug){
+	    cout << "interupt_runs: " << state->interuptRuns << endl;
+    }
 	Distributed::stop();
 }

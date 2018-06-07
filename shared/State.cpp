@@ -127,6 +127,10 @@ bool State::load(string argFileName){
 		Value val = args.getArgument("print_runs");
 		printRuns = val.asInt();
 	}
+	if(args.isArgument("interuptRuns")){
+		Value val = args.getArgument("interuptRuns");
+		interuptRuns = val.asInt();
+	}
 
 	if(args.isArgument(analysis+"ids")){
 		Value val = args.getArgument(analysis + "ids");

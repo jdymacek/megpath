@@ -152,11 +152,11 @@ void PhaseThreadedMonteAnneal::annealThreadPattern(){
             }
 			barrier->Wait();
 		}
+		t *= 0.99975;
 		//if(i > 1.5*state->MAX_RUNS){
 		//	state->both = false;
 		//}
 
-		t *= 0.99975;
     }
 }
 
