@@ -10,6 +10,7 @@ ParallelPatterns::ParallelPatterns(): Distributed(){
 	program = "ParallelPatterns";
 }
 
+
 int ParallelPatterns::findStart(int myRank, int curSize, int numRows){
 	int startRow = 0;
 	int split = numRows/curSize;
@@ -38,14 +39,16 @@ void ParallelPatterns::start(string filename){
 		oexpression = state->expression;
 	}
 
+	vector<vector<int>> ranges = state->splitRanges(size);
 	//split the coefficients
-	int myRows = findRows(rank, size, state->coefficients.rows);
+	int myRows = ranges[rank][3] - ranges[rank][2];
+	//int myRows = findRows(rank, size, state->coefficients.rows);
 	state->coefficients.resize(myRows, state->coefficients.columns);
 
 	//split the expression	
-	startPoint = findStart(rank, size, state->expression.rows());
-	myRows = findRows(rank, size, state->expression.rows());
-	MatrixXd temp = state->expression.block(startPoint, 0, myRows, state->expression.cols());
+	//int start = findStart(rank, size, state->expression.rows());
+	//myRows = findRows(rank, size, state->expression.rows());
+	MatrixXd temp = state->expression.block(ranges[rank][2], 0, myRows, state->expression.cols());
 	state->expression = temp;
 
     bufferSize = state->patterns.size();
@@ -168,7 +171,7 @@ void ParallelPatterns::gatherCoefficients(){
 void ParallelPatterns::run(){
 	state->both = true;
 	double error = 0;
-
+	
     for(int i =0; i < bufferSize; ++i){
         recvBuffer[i] = 0;
     }
