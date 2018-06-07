@@ -22,8 +22,12 @@ void OMPMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int yEnd){
 	for(int i =0; i < state->MAX_RUNS; i++){
 		monteCarloStep(state->coefficients,&efRow,0,state->coefficients.columns,yStart,yEnd);
         if(state->both){
-            monteCarloStep(state->patterns,&efCol,xStart,xEnd,0,state->patterns.rows);
+		#pragma omp barrier
+        	monteCarloStep(state->patterns,&efCol,xStart,xEnd,0,state->patterns.rows);
+		#pragma omp barrier
         }
+		#pragma omp master
+		{
         	if(i % state->printRuns == 0 && callback != NULL){
 			callback->montePrintCallback(i);
         	}
@@ -31,6 +35,7 @@ void OMPMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int yEnd){
 			if(callback != NULL){
 				callback->monteCallback(i);
 			}
+		}
 		}
 	}
 }
@@ -46,10 +51,9 @@ double OMPMonteAnneal::monteCarlo(){
 //	omp_set_num_threads(8);
 
 	int id;
-	#pragma omp parallel private(id) num_threads(6)
+	#pragma omp parallel private(id) num_threads(numThreads)
 	{
-	    id = omp_get_thread_num();
-		cout << omp_get_num_threads() << endl;
+	    	id = omp_get_thread_num();
 
 		if(state->constrained == true && id == 0){
 			ranges[id][0] = 0;
@@ -113,11 +117,11 @@ double OMPMonteAnneal::anneal(){
 
 
 	
-	vector<vector<int>> ranges = state->splitRanges(omp_get_num_threads());
-	#pragma omp prallel
+	vector<vector<int>> ranges = state->splitRanges(numThreads);
+	int id;
+	#pragma omp parallel private(id) num_threads(numThreads)
 	{
-		int id = omp_get_thread_num();
-		cout << id << endl;
+		id = omp_get_thread_num();
 		if(state->constrained == true && id == 0){
 			ranges[id][0] = 0;
 			ranges[id][1] = state->patterns.columns;
