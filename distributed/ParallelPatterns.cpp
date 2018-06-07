@@ -98,6 +98,8 @@ void ParallelPatterns::annealPrintCallback(int iter){
 
 bool ParallelPatterns::annealCallback(int iter){
 	if(state->both){
+		if(iter > state->MAX_RUNS*1.5)
+			state->both = false;
 		allAnnealAverage();
 	}
 	return true;
