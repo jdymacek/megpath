@@ -8,6 +8,7 @@ State::State(){
 	time = "";
 	printRuns = 1000;
 	interuptRuns = 1000;
+	annealCutOff = 1.5;
 }
 
 
