@@ -306,3 +306,27 @@ void State::normalize(){
 	expression = expression/(max-min);
 }
 
+//Old State split functions
+/*int ParallelPatterns::findStart(int myRank, int curSize, int numRows){
+	int startRow = 0;
+	int split = numRows/curSize;
+	int leftover = numRows%curSize;
+	if(myRank < leftover){
+		split = split + 1;
+		startRow = myRank*split;
+	}else{
+		startRow = numRows - (curSize - myRank) * split;
+	}
+	return startRow;
+}
+
+int ParallelPatterns::findRows(int myRank, int curSize, int numRows){
+	int split = numRows/curSize;
+	int leftover = numRows%curSize;
+	if(myRank < leftover){
+		split = split + 1;
+	}
+	return split;
+}*/
+
+
