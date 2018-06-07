@@ -38,14 +38,20 @@ void ParallelPatterns::start(string filename){
 		oexpression = state->expression;
 	}
 
+	vector<vector<int>> ranges = state->splitRanges(size);
 	//split the coefficients
-	int myRows = findRows(rank, size, state->coefficients.rows);
-	state->coefficients.resize(myRows, state->coefficients.columns);
-
+	int myRRows = ranges[rank][3] - ranges[rank][2];
+	//findRows(rank, size, state->coefficients.rows);
+	state->coefficients.resize(myRRows, state->coefficients.columns);
 	//split the expression	
+	//ranges = state->splitRanges(size);
+	//myRows = ranges[rank][3] - ranges[rank][2;
 	startPoint = findStart(rank, size, state->expression.rows());
-	myRows = findRows(rank, size, state->expression.rows());
-	MatrixXd temp = state->expression.block(startPoint, 0, myRows, state->expression.cols());
+	int myRows = findRows(rank, size, state->expression.rows());
+	if(!(startPoint == ranges[rank][2] && myRows == myRRows))
+		cout << "NOT EQUAL\n";
+	exit(1);
+	MatrixXd temp = state->expression.block(ranges[rank][2], 0, myRows, state->expression.cols());
 	state->expression = temp;
 
     bufferSize = state->patterns.size();
