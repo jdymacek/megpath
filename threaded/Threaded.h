@@ -11,6 +11,7 @@ using namespace std;
 class Threaded:public Analysis{
 	public:
 		Threaded(int nt);
+		virtual void annealPrintCallback(int iterations);
 		virtual void montePrintCallback(int iterations);
 		virtual bool annealCallback(int iterations);
 		virtual void start(string filename);
