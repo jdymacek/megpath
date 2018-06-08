@@ -11,6 +11,7 @@ using namespace std;
 class OpenMP:public Analysis{
 	public:
 		OpenMP(int nt);
+		virtual void annealPrintCallback(int iterations);
 		virtual bool annealCallback(int iterations);
 		virtual void start(string filename);
 		virtual void run();

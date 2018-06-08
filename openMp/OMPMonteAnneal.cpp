@@ -37,6 +37,7 @@ void OMPMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int yEnd){
 				}
 			}
 		}
+		#pragma omp barrier
 	}
 }
 
@@ -50,21 +51,12 @@ double OMPMonteAnneal::monteCarlo(){
 	int id;
 	#pragma omp parallel private(id) num_threads(numThreads)
 	{
-	    	id = omp_get_thread_num();
-
-		if(state->constrained == true && id == 0){
-			ranges[id][0] = 0;
-			ranges[id][1] = state->patterns.columns;
-		}
-		else if(state->constrained == true){
-			ranges[id][0] = 0;
-			ranges[id][1] = 0;
-		}
+		id = omp_get_thread_num();
+		if(state->constrained){
+            ranges[id][1] = (id == 0 ? state->patterns.columns : 0);
+        }  
 		monteCarloThread(ranges[id][0],ranges[id][1],ranges[id][2],ranges[id][3]);
 	}
-	
-
-
 
 	ErrorFunctionRow efRow(state);
 	if(state->debug){
@@ -99,12 +91,8 @@ void OMPMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd){
 				callback->annealPrintCallback(i);
 			}
 		}
-		
-
+		#pragma omp barrier
 		t *= 0.99975;
-		//if(i > 1.5*state->MAX_RUNS){
-		//	state->both = false;
-		//}
     }
 }
 
@@ -118,17 +106,11 @@ double OMPMonteAnneal::anneal(){
 	{
 		id = omp_get_thread_num();
 		ranges[id][0] = 0;
-		if(state->constrained == true && id == 0){
-			ranges[id][1] = state->patterns.columns;
-		}
-		else if(state->constrained == true){
-			ranges[id][1] = 0;
+		if(state->constrained){
+			ranges[id][1] = (id == 0 ? state->patterns.columns : 0);
 		}
         annealThread(ranges[id][0],ranges[id][1],ranges[id][2],ranges[id][3]);
 	}
-
-
-
 
 	ErrorFunctionRow efRow(state);
 	if(state->debug){

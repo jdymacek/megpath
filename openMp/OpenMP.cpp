@@ -10,7 +10,15 @@ OpenMP::OpenMP(int nt){
 	program = "OpenMP";
 }
 
+void OpenMP::annealPrintCallback(int iterations){
+	Analysis::annealPrintCallback(iterations);
+	cout << "accepts: " << state->acceptCounts << endl;
+	state->acceptCounts = 0;
+}
+
 bool OpenMP::annealCallback(int iterations){
+	if(state->both && iterations >= state->MAX_RUNS*state->annealCutOff)
+		state->both = false;
 	return true;
 }
 

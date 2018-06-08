@@ -40,6 +40,8 @@ class State{
 		vector<vector<int>> splitRanges(int by);
 		bool load(string argFileName);
 		void patternMatch(MatrixXd& other);
+
+		int acceptCounts;
 	protected:
 		void normalize();
 		void normalizeMatrix(MatrixXd& mat);
