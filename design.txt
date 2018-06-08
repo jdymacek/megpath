@@ -37,6 +37,18 @@ ThreadedMonteAnneal:
 	-Same as MonteAnneal but now uses Threads
 	-number of threads used can be defined at runtime
 
+PhaseThreadedMonteAnneal:
+	-has an extra state
+	-simultaniusly runs patterns and coefficients
+
+FlipThreadedMonteAnneal:
+	-when it turns state off it flips the pattern thread
+	-so there are no idle threads
+
+OMPMonteAnneal
+	-uses openMP to thread
+	-mimics the same system as base threadedMonteAnneal
+
 Distributed:
 	-All distributed Classes pull from this
 	-Handles the sending and recieving of matricies to the computers
@@ -52,7 +64,7 @@ Observer:
 		-used to configure what kind of information you want to print
 	-holds an int iterations for how often these functions are called within the monte/anneal loops
 
-ex:(is missing standard & some distributed setups like distNaive and ParallelFuncThrow as well as the majority of the shared library)
+ex:(This isnt the entire setup but it shows how things are orginized)
 
 					Observer
 					   |
