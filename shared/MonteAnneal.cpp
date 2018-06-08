@@ -101,6 +101,9 @@ void MonteAnneal::annealStep(NMFMatrix& m, double t,ErrorFunction* ef, int xStar
 				for(int i =0; i < function->size(); ++i){
 					m.matrix(entries[i].y,entries[i].x) = entries[i].val;
 				}
+			}else if(error >= olderror){
+				state->errorAvg += error - olderror;
+				state->errorCount++;
 			}
 		}
 	}
