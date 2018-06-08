@@ -53,6 +53,9 @@ void MonteAnneal::monteCarloStep(NMFMatrix& m,ErrorFunction* ef, int xStart, int
 			}
 			if(error <= oldError){
 				function->addObservation(r);
+			}else{
+				state->errorAvg += error - oldError;
+				state->errorCount++;
 			}
 		}
 	}

@@ -37,6 +37,13 @@ void ThreadedMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int y
 				barrier->Wait();
 			}
 		}
+		if(i % state->printRuns == 0 && callback != NULL){
+	        	barrier->Wait();
+            		if(this_thread::get_id() == rootId){
+				callback->montePrintCallback(i);
+            		}
+			barrier->Wait();
+		}
 	}
 }
 

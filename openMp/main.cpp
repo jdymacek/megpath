@@ -6,6 +6,7 @@
 
 #include "OpenMP.h"
 #include "Stopwatch.h"
+#include <omp.h>
 
 using namespace std;
 
@@ -17,7 +18,7 @@ int main(int argc, char** argv){
 	Stopwatch watch;
 	string argFile = argv[1];
 	string analysis = argv[2];
-	int nt = 8;
+	int nt = omp_get_num_threads();
 	if(argc == 4){
 		nt = atoi(argv[3]);
 	}
