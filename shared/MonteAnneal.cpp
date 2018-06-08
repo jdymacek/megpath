@@ -101,8 +101,6 @@ void MonteAnneal::annealStep(NMFMatrix& m, double t,ErrorFunction* ef, int xStar
 				for(int i =0; i < function->size(); ++i){
 					m.matrix(entries[i].y,entries[i].x) = entries[i].val;
 				}
-			}else if(error-olderror > 0){
-				state->acceptCounts += 1;
 			}
 		}
 	}
@@ -159,9 +157,6 @@ double MonteAnneal::anneal(){
 			callback->annealPrintCallback(ndx);
 		}
 		t *= 0.99975;
-		//if(ndx > 1.5*state->MAX_RUNS){
-		//	state->both = false;
-		//}
 
 		ndx++;
 	}
