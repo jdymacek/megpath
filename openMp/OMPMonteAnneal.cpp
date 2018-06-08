@@ -31,11 +31,11 @@ void OMPMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int yEnd){
         	if(i % state->printRuns == 0 && callback != NULL){
 			callback->montePrintCallback(i);
         	}
-		if(i % state->interuptRuns == 0){
-			if(callback != NULL){
-				callback->monteCallback(i);
+			if(i % state->interuptRuns == 0){
+				if(callback != NULL){
+					callback->monteCallback(i);
+				}
 			}
-		}
 		}
 	}
 }
@@ -46,9 +46,6 @@ double OMPMonteAnneal::monteCarlo(){
 	watch.start();
 	
 	vector<vector<int>> ranges = state->splitRanges(numThreads);
-	
-//	omp_set_dynamic(0);
-//	omp_set_num_threads(8);
 
 	int id;
 	#pragma omp parallel private(id) num_threads(numThreads)
@@ -88,20 +85,20 @@ void OMPMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd){
     for(int i =0; i < 2*state->MAX_RUNS; i++){
 		annealStep(state->coefficients,t,&efRow,0,state->coefficients.columns,yStart,yEnd);
         if(state->both){
-		#pragma omp barrier
-		annealStep(state->patterns,t,&efCol,xStart,xEnd,0,state->patterns.rows);
-		#pragma omp barrier
-	}
-	#pragma omp master
-        if(i % state->interuptRuns == 0 && callback != NULL){
-		callback->annealCallback(i);
-        }
+			#pragma omp barrier
+			annealStep(state->patterns,t,&efCol,xStart,xEnd,0,state->patterns.rows);
+			#pragma omp barrier
+		}
+		#pragma omp master
+		{
+			if(i % state->interuptRuns == 0 && callback != NULL){
+				callback->annealCallback(i);
+			}
 
-	#pragma omp master
-	if(i % state->printRuns == 0 && callback != NULL){
-		callback->annealPrintCallback(i);
-	}
-	#pragma omp barrier
+			if(i % state->printRuns == 0 && callback != NULL){
+				callback->annealPrintCallback(i);
+			}
+		}
 		
 
 		t *= 0.99975;
@@ -114,23 +111,20 @@ void OMPMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd){
 double OMPMonteAnneal::anneal(){
 	Stopwatch watch;
 	watch.start();
-
-
 	
 	vector<vector<int>> ranges = state->splitRanges(numThreads);
 	int id;
 	#pragma omp parallel private(id) num_threads(numThreads)
 	{
 		id = omp_get_thread_num();
+		ranges[id][0] = 0;
 		if(state->constrained == true && id == 0){
-			ranges[id][0] = 0;
 			ranges[id][1] = state->patterns.columns;
 		}
 		else if(state->constrained == true){
-			ranges[id][0] = 0;
 			ranges[id][1] = 0;
 		}
-        	annealThread(ranges[id][0],ranges[id][1],ranges[id][2],ranges[id][3]);
+        annealThread(ranges[id][0],ranges[id][1],ranges[id][2],ranges[id][3]);
 	}
 
 
