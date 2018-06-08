@@ -39,8 +39,14 @@ class State{
 		double annealCutOff;
 		double errorAvg;
 		double errorCount;
+		double start_error;
+		double end_error;
+		double start_prob;
+		double end_prob;
 		vector<vector<int>> splitRanges(int by);
 		bool load(string argFileName);
+		double calcT();
+		double calcAlpha(double t);
 		void patternMatch(MatrixXd& other);
 
 	protected:

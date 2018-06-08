@@ -1,4 +1,5 @@
 #include "State.h"
+#include <math.h>
 
 State::State(){
 	both = true;
@@ -11,6 +12,10 @@ State::State(){
 	annealCutOff = 1.5;
 	errorAvg = 0;
 	errorCount = 0;
+	start_error = 0.2;
+	end_error = 0.001;
+	start_prob = 0.67;
+	end_prob = 0.1;
 }
 
 
@@ -41,6 +46,13 @@ vector<vector<int>> State::splitRanges(int by)
         	colStart = colEnd;
     	}	 
 	return rv;
+}
+
+double State::calcT(){
+	return (-start_error)/log(start_prob);
+}
+double State::calcAlpha(double t){
+	return pow((-end_error / (log(end_prob)*t)),(1/(MAX_RUNS*annealCutOff)));
 }
 
 bool State::load(string argFileName){
@@ -77,6 +89,22 @@ bool State::load(string argFileName){
 		debug = val.asBool();
 	}else{
 		debug = false;
+	}
+	if(args.isArgument("start_error")){
+		Value val = args.getArgument("start_error");
+		start_error = val.asDouble();
+	}
+	if(args.isArgument("end_error")){
+		Value val = args.getArgument("end_error");
+		end_error = val.asDouble();
+	}
+	if(args.isArgument("start_prob")){
+	       Value val = args.getArgument("start_prob");
+	       start_prob = val.asDouble();
+	}
+	if(args.isArgument("end_prob")){
+		Value val = args.getArgument("end_prob");
+		end_prob = val.asDouble();
 	}
 
 	if(args.isArgument("stats")){

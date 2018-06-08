@@ -87,7 +87,8 @@ double ThreadedMonteAnneal::monteCarlo(){
 void ThreadedMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd){
     ErrorFunctionRow efRow(state);
     ErrorFunctionCol efCol(state);
-	double t = 0.5;
+	double t = state->calcT();
+	double alpha = state->calcAlpha(t);
 
     //For each spot take a gamble and record outcome
     for(int i =0; i < 2*state->MAX_RUNS; i++){
@@ -113,7 +114,8 @@ void ThreadedMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd)
 		}
 		
 
-		t *= 0.99975;
+		t *= alpha;
+		//0.99975;
 		//if(i > 1.5*state->MAX_RUNS){
 		//	state->both = false;
 		//}

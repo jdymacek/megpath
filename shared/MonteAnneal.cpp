@@ -141,7 +141,8 @@ double MonteAnneal::monteCarlo(){
 double MonteAnneal::anneal(){
 	Stopwatch watch;
 	int ndx = 0;
-	double t = 0.5;
+	double t = state->calcT();
+	double alpha = state->calcAlpha(t);
 	watch.start();
 
 	ErrorFunctionRow efRow(state);
@@ -159,7 +160,8 @@ double MonteAnneal::anneal(){
 		if(ndx % state->printRuns == 0 && callback != NULL){
 			callback->annealPrintCallback(ndx);
 		}
-		t *= 0.99975;
+		t *= alpha;
+		//0.99975; - the old alpha
 
 		ndx++;
 	}
