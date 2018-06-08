@@ -9,6 +9,8 @@ State::State(){
 	printRuns = 1000;
 	interuptRuns = 1000;
 	annealCutOff = 1.5;
+	errorAvg = 0;
+	errorCount = 0;
 }
 
 

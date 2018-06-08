@@ -10,6 +10,11 @@ Threaded::Threaded(int nt){
 	program = "Threaded";
 }
 
+void Threaded::montePrintCallback(int iterations){
+	cout << "Average Error: " << state->errorAvg/state->errorCount << endl;
+	state->errorAvg = 0;
+	state->errorCount = 0;
+}
 bool Threaded::annealCallback(int iterations){
 	return true;
 }
