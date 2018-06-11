@@ -5,6 +5,7 @@
 //Last modified: 7/7/2017
 
 #include "OpenMP.h"
+#include "FlipOpenMp.h"
 #include "Stopwatch.h"
 #include <omp.h>
 
@@ -24,8 +25,10 @@ int main(int argc, char** argv){
 	}
 	Analysis* a;
 
-	if(analysis == "OpenMP" || analysis == "o" || analysis == "o"){
+	if(analysis == "OpenMP" || analysis == "O" || analysis == "o"){
 			a = new OpenMP(nt);
+	}else if(analysis == "FlipOpenMp" || analysis == "FO" || analysis == "fo"){
+			a = new FlipOpenMP(nt);
 	}
 
 	a->start(argFile);
