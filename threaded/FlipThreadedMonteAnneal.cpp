@@ -94,7 +94,7 @@ double FlipThreadedMonteAnneal::monteCarlo(){
 }
 
 
-void FlipThreadedMonteAnneal::annealThreadCoefficient(int num, double tstart){
+void FlipThreadedMonteAnneal::annealThreadCoefficient(int num, double tstart, double alpha){
 	 double t = tstart;
    	 ErrorFunctionRow efRow(state);
    	 barrier->Wait();
@@ -125,11 +125,12 @@ void FlipThreadedMonteAnneal::annealThreadCoefficient(int num, double tstart){
 		barrier->Wait();
 		
 
-		t *= 0.99975;
+		t *= alpha;
     }
 }
 void FlipThreadedMonteAnneal::annealThreadPattern(){
-	double t = 0.5;
+	double t = state->calcT();
+	double alpha = state->calcAlpha(t);
     	ErrorFunctionCol efCol(dupe);
 	barrier->Wait();
 
@@ -169,12 +170,12 @@ void FlipThreadedMonteAnneal::annealThreadPattern(){
 		state->both = false;
 		ranges = state->splitRanges(numThreads);
 		threadMap[this_thread::get_id()] = ranges.size()-1;
-		annealThreadCoefficient(i+1, t);
+		annealThreadCoefficient(i+1, t, alpha);
 		return;
 	}
 	barrier->Wait();
 
-	t *= 0.99975;
+	t *= alpha;
     }
 }
 
@@ -193,12 +194,13 @@ double FlipThreadedMonteAnneal::anneal(){
 	
     bool constrained = false;
 
-
+    double t = state->calcT();
+    double alpha = state->calcAlpha(t);
     threads.push_back(thread(&FlipThreadedMonteAnneal::annealThreadPattern,this));
     ranges = state->splitRanges(numThreads-1);
     rootId = threads[0].get_id();
     for(int i = 0; i < ranges.size(); ++i){
-    	threads.push_back(thread(&FlipThreadedMonteAnneal::annealThreadCoefficient,this, 0, 0.5));
+    	threads.push_back(thread(&FlipThreadedMonteAnneal::annealThreadCoefficient,this, 0, t,alpha));
 	threadMap[threads[i+1].get_id()] = i;
     }
 

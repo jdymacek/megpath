@@ -12,8 +12,8 @@ OpenMP::OpenMP(int nt){
 
 void OpenMP::annealPrintCallback(int iterations){
 	Analysis::annealPrintCallback(iterations);
-	cout << "accepts: " << state->acceptCounts << endl;
-	state->acceptCounts = 0;
+	cout << "accepts: " << state->errorCount << endl;
+	state->errorCount = 0;
 }
 
 bool OpenMP::annealCallback(int iterations){

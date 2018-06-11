@@ -15,7 +15,7 @@ class FlipThreadedMonteAnneal:public MonteAnneal{
 		FlipThreadedMonteAnneal(State* st, int nt);
 		void monteCarloThreadCoefficient();
 		void monteCarloThreadPattern();
-		void annealThreadCoefficient(int num, double t);
+		void annealThreadCoefficient(int num, double t, double alpha);
 		void annealThreadPattern();
 
 		virtual double monteCarlo();

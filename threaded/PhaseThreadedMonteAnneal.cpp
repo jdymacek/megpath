@@ -93,7 +93,8 @@ double PhaseThreadedMonteAnneal::monteCarlo(){
 
 
 void PhaseThreadedMonteAnneal::annealThreadCoefficient(int Start, int End){
-	double t = 0.5;
+	double t = state->calcT();
+	double alpha = state->calcAlpha(t);
     ErrorFunctionRow efRow(state);
 
     //For each spot take a gamble and record outcome
@@ -118,11 +119,12 @@ void PhaseThreadedMonteAnneal::annealThreadCoefficient(int Start, int End){
 		}
 		
 
-		t *= 0.99975;
+		t *= alpha;
     }
 }
 void PhaseThreadedMonteAnneal::annealThreadPattern(){
-	double t = 0.5;
+	double t = state->calcT();
+	double alpha = state->calcAlpha(t);
     	ErrorFunctionCol efCol(dupe);
 
     //For each spot take a gamble and record outcome
@@ -152,7 +154,7 @@ void PhaseThreadedMonteAnneal::annealThreadPattern(){
             }
 			barrier->Wait();
 		}
-		t *= 0.99975;
+		t *= alpha;
 		//if(i > 1.5*state->MAX_RUNS){
 		//	state->both = false;
 		//}

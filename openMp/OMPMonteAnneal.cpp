@@ -71,7 +71,8 @@ double OMPMonteAnneal::monteCarlo(){
 void OMPMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd){
     ErrorFunctionRow efRow(state);
     ErrorFunctionCol efCol(state);
-	double t = 0.5;
+	double t = state->calcT();
+	double alpha = state->calcAlpha(t);
 
     //For each spot take a gamble and record outcome
     for(int i =0; i < 2*state->MAX_RUNS; i++){
@@ -92,7 +93,7 @@ void OMPMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd){
 			}
 		}
 		#pragma omp barrier
-		t *= 0.99975;
+		t *= alpha;
     }
 }
 
