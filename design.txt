@@ -18,7 +18,15 @@ State:
 		-Error
 		-Time
 		-Constraints (dont remember how this is held)
-		-probably more stuff
+		-parameters involving the t value
+			-the value that is associated with accepting higher error
+			-deals with the anneal step
+			-allows for scalability of MAX_RUNS
+			-we currently have fixed values
+			-0.2, 0.001
+			-0.67, 0.1
+			-start_error, end_error
+			-start_prob, end_prob
 	-Can load all this data from a file
 		-usually loaded from a test_args file
 
