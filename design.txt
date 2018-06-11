@@ -92,3 +92,5 @@ ex:(This isnt the entire setup but it shows how things are orginized)
 
 This makes combining the function of threaded and distributed relativly easily as they have been objectively seprated
 all you need to do is replace the distributed's MonteAnneal with the ThreadedMonteAnneal and you have a Hybrid of the two.
+
+we found that to get decent error you set MAX_RUNS to be 10x the data set size
