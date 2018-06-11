@@ -26,15 +26,13 @@ void ThreadedMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int y
         if(state->both){
             barrier->Wait();
             monteCarloStep(state->patterns,&efCol,xStart,xEnd,0,state->patterns.rows);
-            barrier->Wait();
         }
+            barrier->Wait();
 		if(i % state->interuptRuns == 0){
 			if(callback != NULL){
-				barrier->Wait();
 				if(this_thread::get_id() == rootId){
 					callback->monteCallback(i);
 				}
-				barrier->Wait();
 			}
 		}
 		if(i % state->printRuns == 0 && callback != NULL){
@@ -57,14 +55,11 @@ double ThreadedMonteAnneal::monteCarlo(){
 	vector<vector<int>> ranges = state->splitRanges(numThreads);
 	for(int i = 0; i < ranges.size(); ++i){
 	
-		if(state->constrained == true && i == 0){
+		if(state->constrained){
 			ranges[i][0] = 0;
-			ranges[i][1] = state->patterns.columns;
+			ranges[i][1] = (i == 0 ? state->patterns.columns : 0);
 		}
-		else if(state->constrained == true){
-			ranges[i][0] = 0;
-			ranges[i][1] = 0;
-		}
+
         	threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
 		rootId = threads[0].get_id();
 	}
@@ -96,14 +91,12 @@ void ThreadedMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd)
         if(state->both){
             barrier->Wait();
 			annealStep(state->patterns,t,&efCol,xStart,xEnd,0,state->patterns.rows);
-            barrier->Wait(); 
 		}
+            barrier->Wait(); 
         if(i % state->interuptRuns == 0 && callback != NULL){
-            barrier->Wait();
             if(this_thread::get_id() == rootId){
 				callback->annealCallback(i);
             }
-            barrier->Wait();
         }
 		if(i % state->printRuns == 0 && callback != NULL){
 	        barrier->Wait();
@@ -136,13 +129,9 @@ double ThreadedMonteAnneal::anneal(){
 	vector<vector<int>> ranges = state->splitRanges(numThreads); 
 	for(int i = 0; i < ranges.size(); ++i){
 	
-		if(state->constrained == true && i == 0){
+		if(state->constrained){
 			ranges[i][0] = 0;
-			ranges[i][1] = state->patterns.columns;
-		}
-		else if(state->constrained == true){
-			ranges[i][0] = 0;
-			ranges[i][1] = 0;
+			ranges[i][1] = (i == 0 ? state->patterns.columns : 0);
 		}
         	threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
 		rootId = threads[0].get_id();

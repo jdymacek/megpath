@@ -21,11 +21,11 @@ void OMPMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int yEnd){
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < state->MAX_RUNS; i++){
 		monteCarloStep(state->coefficients,&efRow,0,state->coefficients.columns,yStart,yEnd);
-        if(state->both){
+        	if(state->both){
+			#pragma omp barrier
+        		monteCarloStep(state->patterns,&efCol,xStart,xEnd,0,state->patterns.rows);
+        	}
 		#pragma omp barrier
-        	monteCarloStep(state->patterns,&efCol,xStart,xEnd,0,state->patterns.rows);
-		#pragma omp barrier
-        }
 		#pragma omp master
 		{
         	if(i % state->printRuns == 0 && callback != NULL){
@@ -80,8 +80,8 @@ void OMPMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd){
         if(state->both){
 			#pragma omp barrier
 			annealStep(state->patterns,t,&efCol,xStart,xEnd,0,state->patterns.rows);
-			#pragma omp barrier
 		}
+		#pragma omp barrier
 		#pragma omp master
 		{
 			if(i % state->interuptRuns == 0 && callback != NULL){
@@ -106,8 +106,8 @@ double OMPMonteAnneal::anneal(){
 	#pragma omp parallel private(id) num_threads(numThreads)
 	{
 		id = omp_get_thread_num();
-		ranges[id][0] = 0;
 		if(state->constrained){
+			ranges[id][0] = 0;
 			ranges[id][1] = (id == 0 ? state->patterns.columns : 0);
 		}
         annealThread(ranges[id][0],ranges[id][1],ranges[id][2],ranges[id][3]);
