@@ -27,21 +27,16 @@ void ThreadedMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int y
             barrier->Wait();
             monteCarloStep(state->patterns,&efCol,xStart,xEnd,0,state->patterns.rows);
         }
-            barrier->Wait();
-		if(i % state->interuptRuns == 0){
-			if(callback != NULL){
-				if(this_thread::get_id() == rootId){
-					callback->monteCallback(i);
-				}
+        barrier->Wait();
+		if(this_thread::get_id() == rootId){
+			if(i % state->interuptRuns == 0 && callback != NULL){
+				callback->monteCallback(i);
 			}
-		}
-		if(i % state->printRuns == 0 && callback != NULL){
-	        	barrier->Wait();
-            		if(this_thread::get_id() == rootId){
+			if(i % state->printRuns == 0 && callback != NULL){
 				callback->montePrintCallback(i);
-            		}
-			barrier->Wait();
+            }
 		}
+		barrier->Wait();
 	}
 }
 
@@ -92,26 +87,18 @@ void ThreadedMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd)
             barrier->Wait();
 			annealStep(state->patterns,t,&efCol,xStart,xEnd,0,state->patterns.rows);
 		}
-            barrier->Wait(); 
-        if(i % state->interuptRuns == 0 && callback != NULL){
-            if(this_thread::get_id() == rootId){
+        barrier->Wait(); 
+		if(this_thread::get_id() == rootId){
+			if(i % state->interuptRuns == 0 && callback != NULL){
 				callback->annealCallback(i);
-            }
-        }
-		if(i % state->printRuns == 0 && callback != NULL){
-	        barrier->Wait();
-            if(this_thread::get_id() == rootId){
+			}
+			if(i % state->printRuns == 0 && callback != NULL){
 				callback->annealPrintCallback(i);
             }
-			barrier->Wait();
 		}
-		
+		barrier->Wait();
 
 		t *= alpha;
-		//0.99975;
-		//if(i > 1.5*state->MAX_RUNS){
-		//	state->both = false;
-		//}
     }
 }
 
