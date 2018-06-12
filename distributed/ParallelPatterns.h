@@ -16,6 +16,7 @@ using namespace std;
 class ParallelPatterns: virtual public Distributed{
 	public:
 		ParallelPatterns();
+		void startSplit();
 		virtual void allAnnealAverage();
 		virtual void allAverage();	
 		virtual void start();

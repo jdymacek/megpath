@@ -5,13 +5,18 @@ Distributed::Distributed():Analysis(){
 }
 
 void Distributed::start(){
-	MPI_Init(NULL,NULL);
+	Analysis::start();
+	int flag = 0;
+    MPI_Initialized(&flag);
+	if(flag == 0){
+		MPI_Init(NULL,NULL);
+    }
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-	MPI_Comm_size(MPI_COMM_WORLD, &size);
-	char hostbuff[100];
-	gethostname(hostbuff,99);
-	hostname = string(hostbuff);
-	program = program + "_" + to_string(size) + "n";
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    char hostbuff[100];
+    gethostname(hostbuff,99);
+    hostname = string(hostbuff);
+    program = program + "_" + to_string(size) + "n";
 }
 
 void Distributed::sendLeastError(int process, double formerError)
@@ -79,5 +84,9 @@ void Distributed::stop(){
 	if(rank == 0){
 		Analysis::output();
 	}
-	MPI_Finalize();
+	int flag = 0;
+	MPI_Finalized(&flag);
+	if(flag == 0){
+		MPI_Finalize();
+	}
 }

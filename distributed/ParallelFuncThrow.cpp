@@ -8,7 +8,7 @@
 ParallelFuncThrow::ParallelFuncThrow(): Distributed(){
 	program = "ParallelFuncThrow";
 	ft = new FuncThrow();
-	pp = new ParallelPatterns();
+	pp = new PatternMatching();
 }
 
 void ParallelFuncThrow::monteCallback(int iter){
@@ -20,18 +20,21 @@ bool ParallelFuncThrow::annealCallback(int iter){
 }
 
 void ParallelFuncThrow::start(){
+	Distributed::start();
 	pp->state = state;
+	pp->start();
+	algorithm = pp->algorithm;
 	ft->state = state;
 	ft->start();
+	ft->algorithm = algorithm;
 }
 
 void ParallelFuncThrow::run(){
-	double error = 0;
+	double error= 0;
 	algorithm->setObserver(this);
 	algorithm->monteCarlo();
 	ft->finished();
-	ft->stop();
-	pp->start();
+	pp->allAnnealAverage();
 	error = algorithm->anneal();
 	pp->allAnnealAverage();
 	pp->gatherCoefficients();
@@ -39,4 +42,5 @@ void ParallelFuncThrow::run(){
 
 void ParallelFuncThrow::stop(){
 	pp->stop();
+	ft->stop();
 }

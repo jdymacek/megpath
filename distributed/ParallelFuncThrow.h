@@ -6,7 +6,7 @@
 #ifndef PARALLELFUNCTHROW__H
 #define PARALLELFUNCTHROW__H
 
-#include "ParallelPatterns.h"
+#include "PatternMatching.h"
 #include "FuncThrow.h"
 #include "Distributed.h"
 
@@ -22,7 +22,7 @@ class ParallelFuncThrow: public Distributed{
 		virtual void stop();
 	private:
 		FuncThrow* ft;
-		ParallelPatterns* pp;
+		PatternMatching* pp;
 
 };
 

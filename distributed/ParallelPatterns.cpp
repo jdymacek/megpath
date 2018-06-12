@@ -10,28 +10,27 @@ ParallelPatterns::ParallelPatterns(): Distributed(){
 	program = "ParallelPatterns";
 }
 
-
 void ParallelPatterns::start(){
 	Distributed::start();
-	if(rank == 0){
-		oexpression = state->expression;
-	}
 
-	vector<vector<int>> ranges = state->splitRanges(size);
-	//split the coefficients
-	int myRows = ranges[rank][3] - ranges[rank][2];
-	state->coefficients.resize(myRows, state->coefficients.columns);
-	//split the expression	
-	
-	startPoint = ranges[rank][2];
+    if(rank == 0){
+        oexpression = state->expression;
+    }
 
-	MatrixXd temp = state->expression.block(startPoint, 0, myRows, state->expression.cols());
-	state->expression = temp;
+    vector<vector<int>> ranges = state->splitRanges(size);
+    //split the coefficients
+    int myRows = ranges[rank][3] - ranges[rank][2];
+    state->coefficients.resize(myRows, state->coefficients.columns);
+	 //split the expression  
+
+    startPoint = ranges[rank][2];
+
+    MatrixXd temp = state->expression.block(startPoint, 0, myRows, state->expression.cols());
+    state->expression = temp;
 
     bufferSize = state->patterns.size();
     sendBuffer = new double[bufferSize];
     recvBuffer = new double[bufferSize];
-
 
 }
 
