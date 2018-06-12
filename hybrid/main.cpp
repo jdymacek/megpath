@@ -6,6 +6,7 @@
 
 #include "Stopwatch.h"
 #include "Hybrid.h"
+#include "FlipHybrid.h"
 #include "PhaseHybrid.h"
 using namespace std;
 
@@ -25,6 +26,8 @@ int main(int argc, char** argv){
 		a = new Hybrid(nt);
 	}else if(analysis == "PhaseHybrid" || analysis == "PH" || analysis == "ph"){
 		a = new PhaseHybrid(nt);
+	}else if(analysis == "FlipHybrid" || analysis == "FH" || analysis == "fh"){
+		a = new FlipHybrid(nt);
 	}
 	a->load(argFile);
 	a->start();
