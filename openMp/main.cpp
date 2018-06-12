@@ -5,7 +5,7 @@
 //Last modified: 7/7/2017
 
 #include "OpenMP.h"
-#include "FlipOpenMp.h"
+#include "FlipOpenMP.h"
 #include "Stopwatch.h"
 #include <omp.h>
 
