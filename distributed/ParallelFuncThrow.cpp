@@ -7,41 +7,36 @@
 
 ParallelFuncThrow::ParallelFuncThrow(): ParallelPatterns(){
 	program = "ParallelFuncThrow";
+	ft = new FuncThrow();
+	pp = new ParallelPatterns();
 }
 
 void ParallelFuncThrow::monteCallback(int iter){
-	FuncThrow::monteCallback(iter);
+	ft->monteCallback(iter);
 }
 
 bool ParallelFuncThrow::annealCallback(int iter){
-	return ParallelPatterns::annealCallback(iter);
+	return pp->annealCallback(iter);
 }
 
 void ParallelFuncThrow::start(){
-	ParallelPatterns::start();
-
-    buffer = new double[FuncThrow::bufferSize];
-    FuncThrow::recvBuffer = new double[FuncThrow::bufferSize];
-
-
+	pp->state = state;
+	ft->state = state;
+	ft->start();
 }
 
 void ParallelFuncThrow::run(){
 	double error = 0;
 	algorithm->setObserver(this);
 	algorithm->monteCarlo();
-	finished();
+	ft->finished();
+	ft->stop();
+	pp->start();
 	error = algorithm->anneal();
-	//allAnnealAverage();
-	//state->both = false;
-	//error = algorithm->anneal();
-	//allAnnealAverage();
-
-	ParallelPatterns::gatherCoefficients();
+	allAnnealAverage();
+	pp->gatherCoefficients();
 }
 
 void ParallelFuncThrow::stop(){
-	delete[] buffer;
-	delete[] FuncThrow::recvBuffer;
-	ParallelPatterns::stop();
+	pp->stop();
 }

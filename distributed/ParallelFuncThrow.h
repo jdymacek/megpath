@@ -20,6 +20,10 @@ class ParallelFuncThrow: public FuncThrow, public ParallelPatterns{
 		virtual void start();
 		virtual void run();
 		virtual void stop();
+	private:
+		FuncThrow* ft;
+		ParallelPatterns* pp;
+
 };
 
 
