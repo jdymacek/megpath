@@ -57,6 +57,12 @@ OMPMonteAnneal
 	-uses openMP to thread
 	-mimics the same system as base threadedMonteAnneal
 
+ParallelFuncThrow
+	-"son of func throw" -J.Dymacek
+	-uses func-throws Pattern swaping in the monte carlo step
+	-uses PatternMatching in anneal step
+	-is ever so slightly better then patternMatching
+
 Distributed:
 	-All distributed Classes pull from this
 	-Handles the sending and recieving of matricies to the computers
