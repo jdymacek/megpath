@@ -26,7 +26,8 @@ int main(int argc, char** argv){
 	}else if(analysis == "PhaseHybrid" || analysis == "PH" || analysis == "ph"){
 		a = new PhaseHybrid(nt);
 	}
-	a->start(argFile);
+	a->load(argFile);
+	a->start();
 
 	watch.start();	
 	a->run();

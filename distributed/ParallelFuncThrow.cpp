@@ -17,8 +17,8 @@ bool ParallelFuncThrow::annealCallback(int iter){
 	return ParallelPatterns::annealCallback(iter);
 }
 
-void ParallelFuncThrow::start(string filename){
-	ParallelPatterns::start(filename);
+void ParallelFuncThrow::start(){
+	ParallelPatterns::start();
 
     buffer = new double[FuncThrow::bufferSize];
     FuncThrow::recvBuffer = new double[FuncThrow::bufferSize];

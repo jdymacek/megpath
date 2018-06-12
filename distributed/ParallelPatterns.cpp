@@ -11,8 +11,8 @@ ParallelPatterns::ParallelPatterns(): Distributed(){
 }
 
 
-void ParallelPatterns::start(string filename){
-	Distributed::start(filename);
+void ParallelPatterns::start(){
+	Distributed::start();
 	if(rank == 0){
 		oexpression = state->expression;
 	}

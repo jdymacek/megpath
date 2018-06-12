@@ -31,7 +31,8 @@ int main(int argc, char** argv){
 			a = new FlipOpenMP(nt);
 	}
 
-	a->start(argFile);
+	a->load(argFile);
+	a->start();
 
 	watch.start();	
 	a->run();

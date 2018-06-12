@@ -16,7 +16,7 @@ using namespace std;
 class Hybrid: public PatternMatching{
 	public:
 		Hybrid(int nt);
-		virtual void start(string filename);
+		virtual void start();
 	protected:
 		int numThreads;
 };

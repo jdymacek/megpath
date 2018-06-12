@@ -11,8 +11,8 @@ PhaseHybrid::PhaseHybrid(int nt): PatternMatching(){
 }
 
 
-void PhaseHybrid::start(string filename){
-	PatternMatching::start(filename);
+void PhaseHybrid::start(){
+	PatternMatching::start();
 	algorithm = new PhaseThreadedMonteAnneal(state,numThreads);
 	program += "_" + to_string(numThreads) + "t";
 }

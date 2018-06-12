@@ -32,8 +32,8 @@ int main(int argc, char** argv){
 	}else if(analysis == "FlipThreaded" || analysis == "FT" || analysis == "ft"){
 			a = new FlipThreaded(nt);
 	}
-
-	a->start(argFile);
+	a->load(argFile);
+	a->start();
 
 	watch.start();	
 	a->run();

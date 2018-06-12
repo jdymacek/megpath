@@ -13,7 +13,7 @@ class OpenMP:public Analysis{
 		OpenMP(int nt);
 		virtual void annealPrintCallback(int iterations);
 		virtual bool annealCallback(int iterations);
-		virtual void start(string filename);
+		virtual void start();
 		virtual void run();
 	protected:
 		int numThreads;

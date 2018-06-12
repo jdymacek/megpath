@@ -10,7 +10,7 @@ using namespace std;
 class Distributed: public Analysis{
 	public:
 		Distributed();
-		virtual void start(string filename);
+		virtual void start();
 		virtual void run();
 		virtual void stop();
 		virtual void montePrintCallback(int iter);

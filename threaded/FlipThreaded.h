@@ -10,7 +10,7 @@ class FlipThreaded:public Analysis{
 	public:
 		FlipThreaded(int nt);
 		virtual bool annealCallback(int iterations);
-		virtual void start(string filename);
+		virtual void start();
 		virtual void run();
 	protected:
 		int numThreads;

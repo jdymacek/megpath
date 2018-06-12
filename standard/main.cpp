@@ -15,7 +15,8 @@ int main(int argc, char** argv){
 	}
 	string argFile = argv[1];
 	Analysis* a = new Standard();
-	a->start(argFile);
+	a->load(argFile);
+	a->start();
 	Stopwatch watch;
 	watch.start();	
 	a->run();

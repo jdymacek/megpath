@@ -14,8 +14,8 @@ bool PhaseThreaded::annealCallback(int iterations){
 	return true;
 }
 
-void PhaseThreaded::start(string filename){
-	Analysis::start(filename);
+void PhaseThreaded::start(){
+	Analysis::start();
 	algorithm = new PhaseThreadedMonteAnneal(state,numThreads);
 	program += "_" + to_string(numThreads) + "t";
 }

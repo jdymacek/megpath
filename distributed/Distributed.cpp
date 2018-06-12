@@ -4,8 +4,7 @@ Distributed::Distributed():Analysis(){
 	program = "Dist_MonteAnneal";
 }
 
-void Distributed::start(string filename){
-	Analysis::start(filename);
+void Distributed::start(){
 	MPI_Init(NULL,NULL);
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 	MPI_Comm_size(MPI_COMM_WORLD, &size);

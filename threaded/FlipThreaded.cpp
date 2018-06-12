@@ -14,8 +14,8 @@ bool FlipThreaded::annealCallback(int iterations){
 	return true;
 }
 
-void FlipThreaded::start(string filename){
-	Analysis::start(filename);
+void FlipThreaded::start(){
+	Analysis::start();
 	algorithm = new FlipThreadedMonteAnneal(state,numThreads);
 	program += "_" + to_string(numThreads) + "t";
 }

@@ -38,7 +38,8 @@ int main(int argc, char** argv){
 		a = new Distributed();
 	}
 
-	a->start(argFile);
+	a->load(argFile);
+	a->start();
 
 	watch.start();	
 	a->run();

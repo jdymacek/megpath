@@ -12,7 +12,7 @@ class FuncThrow: virtual public Distributed{
 	public:
 		FuncThrow();	
 		virtual void monteCallback(int iter);
-		virtual void start(string filename);
+		virtual void start();
 		virtual void run();
 		virtual void stop();
 		void finished();

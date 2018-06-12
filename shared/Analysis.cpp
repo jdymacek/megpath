@@ -11,14 +11,18 @@ Analysis::Analysis(){
 	algorithm = NULL;
 }
 
-void Analysis::start(string filename){
-	//initialize global variables
-	
+void Analysis::load(string filename){
 	state = new State();
 	state->load(filename);
+}
+
+
+void Analysis::start(){
+	//initialize global variables
 	algorithm = new MonteAnneal(state);
     cachedError = 2*state->expression.rows()*state->expression.cols();
 }
+
 
 void Analysis::run(){
 

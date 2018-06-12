@@ -22,8 +22,8 @@ bool FlipOpenMP::annealCallback(int iterations){
 	return true;
 }
 
-void FlipOpenMP::start(string filename){
-	Analysis::start(filename);
+void FlipOpenMP::start(){
+	Analysis::start();
 	algorithm = new FlipOMPMonteAnneal(state,numThreads);
 	program += "_" + to_string(numThreads) + "t";
 }

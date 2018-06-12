@@ -29,8 +29,8 @@ bool Threaded::annealCallback(int iterations){
 	return true;
 }
 
-void Threaded::start(string filename){
-	Analysis::start(filename);
+void Threaded::start(){
+	Analysis::start();
 	algorithm = new ThreadedMonteAnneal(state,numThreads);
 	program += "_" + to_string(numThreads) + "t";
 }

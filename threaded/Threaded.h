@@ -14,7 +14,7 @@ class Threaded:public Analysis{
 		virtual void annealPrintCallback(int iterations);
 		virtual void montePrintCallback(int iterations);
 		virtual bool annealCallback(int iterations);
-		virtual void start(string filename);
+		virtual void start();
 		virtual void run();
 	protected:
 		int numThreads;

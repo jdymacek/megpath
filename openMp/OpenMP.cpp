@@ -22,8 +22,8 @@ bool OpenMP::annealCallback(int iterations){
 	return true;
 }
 
-void OpenMP::start(string filename){
-	Analysis::start(filename);
+void OpenMP::start(){
+	Analysis::start();
 	algorithm = new OMPMonteAnneal(state,numThreads);
 	program += "_" + to_string(numThreads) + "t";
 }

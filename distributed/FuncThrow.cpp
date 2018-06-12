@@ -6,13 +6,12 @@ FuncThrow::FuncThrow(): Distributed(){
 	program = "FuncThrow";
 }
 
-void FuncThrow::start(string filename){
-	Distributed::start(filename);
+void FuncThrow::start(){
+	Distributed::start();
 	bufferSize = state->patterns.size()+1;
 	buffer = new double[bufferSize];
 	recvBuffer = new double[bufferSize];
 }
-
 
 void FuncThrow::monteCallback(int iter){
 	int testFlag = 0;

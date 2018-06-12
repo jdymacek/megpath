@@ -16,7 +16,7 @@ using namespace std;
 class PhaseHybrid: public PatternMatching{
 	public:
 		PhaseHybrid(int nt);
-		virtual void start(string filename);
+		virtual void start();
 	protected:
 		int numThreads;
 };
