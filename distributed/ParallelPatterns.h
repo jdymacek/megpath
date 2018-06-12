@@ -18,8 +18,8 @@ class ParallelPatterns: virtual public Distributed{
 		ParallelPatterns();
 		void startSplit();
 		virtual void allAnnealAverage();
-		virtual void allAverage();	
-		virtual void start();
+		virtual void allAverage();
+		virtual void start();	
 		virtual void run();
 		virtual void stop();
 		virtual void gatherCoefficients();

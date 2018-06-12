@@ -7,6 +7,8 @@
 #include "Stopwatch.h"
 #include "Hybrid.h"
 #include "FlipHybrid.h"
+#include "FlipFuncThrowHybrid.h"
+#include "PhaseFuncThrowHybrid.h"
 #include "PhaseHybrid.h"
 using namespace std;
 
@@ -28,6 +30,10 @@ int main(int argc, char** argv){
 		a = new PhaseHybrid(nt);
 	}else if(analysis == "FlipHybrid" || analysis == "FH" || analysis == "fh"){
 		a = new FlipHybrid(nt);
+	}else if(analysis == "FlipFuncThrowHybrid" || analysis == "FFTH" || analysis == "ffth"){
+		a = new FlipFuncThrowHybrid(nt);
+	}else if(analysis == "PhaseFuncThrowHybrid" || analysis == "PFTH" || analysis == "pfth"){
+		a = new PhaseFuncThrowHybrid(nt);
 	}
 	a->load(argFile);
 	a->start();
