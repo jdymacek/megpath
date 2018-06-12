@@ -5,7 +5,7 @@
 
 #include"ParallelFuncThrow.h"
 
-ParallelFuncThrow::ParallelFuncThrow(): ParallelPatterns(){
+ParallelFuncThrow::ParallelFuncThrow(): Distributed(){
 	program = "ParallelFuncThrow";
 	ft = new FuncThrow();
 	pp = new ParallelPatterns();
@@ -33,7 +33,7 @@ void ParallelFuncThrow::run(){
 	ft->stop();
 	pp->start();
 	error = algorithm->anneal();
-	allAnnealAverage();
+	pp->allAnnealAverage();
 	pp->gatherCoefficients();
 }
 
