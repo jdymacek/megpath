@@ -12,7 +12,8 @@ Threaded::Threaded(int nt){
 
 void Threaded::montePrintCallback(int iterations){
 	Analysis::montePrintCallback(iterations);
-	cout << "Average Error: " << state->errorAvg/state->errorCount << endl;
+	double avgError = state->errorAvg/state->errorCount;
+	cout << "Average Error: " << avgError << endl;
 	state->errorAvg = 0;
 	state->errorCount = 0;
 }

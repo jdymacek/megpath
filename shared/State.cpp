@@ -49,6 +49,7 @@ vector<vector<int>> State::splitRanges(int by)
 }
 
 double State::calcT(){
+	//start_error = errorAvg/errorCount;
 	return (-start_error)/log(start_prob);
 }
 double State::calcAlpha(double t){
