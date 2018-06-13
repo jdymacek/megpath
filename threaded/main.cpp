@@ -26,13 +26,19 @@ int main(int argc, char** argv){
 	}
 	Analysis* a = new Analysis();
 	a->load(argFile);
+	string name = "";
 	if(analysis == "Threaded" || analysis == "T" || analysis == "t"){
 		a->setAlgorithm(new ThreadedMonteAnneal(a->state, nt));
+		name = "Threaded";
 	}else if(analysis == "PhaseThreaded" || analysis == "PT" || analysis == "pt"){
 		a->setAlgorithm(new PhaseThreadedMonteAnneal(a->state, nt));
+		name = "PhaseThreaded";
 	}else if(analysis == "FlipThreaded" || analysis == "FT" || analysis == "ft"){
 		a->setAlgorithm(new FlipThreadedMonteAnneal(a->state,nt));
+		name = "FlipThreaded";
 	}
+	name += "_" + to_string(nt);
+	a->setName(name);
 	a->start();
 
 	watch.start();	
