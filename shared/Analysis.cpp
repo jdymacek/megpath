@@ -25,7 +25,9 @@ void Analysis::start(){
 
 
 void Analysis::run(){
-
+	algorithm->setObserver(this);
+	algorithm->monteCarlo();
+	algorithm->anneal();
 }
 
 void Analysis::stop(){

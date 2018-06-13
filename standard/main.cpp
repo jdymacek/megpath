@@ -14,7 +14,7 @@ int main(int argc, char** argv){
 		return 0;
 	}
 	string argFile = argv[1];
-	Analysis* a = new Standard();
+	Analysis* a = new Analysis();
 	a->load(argFile);
 	a->start();
 	Stopwatch watch;
