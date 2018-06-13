@@ -4,9 +4,10 @@
 //Created on 5/25/2017
 //Last modified: 7/7/2017
 
-#include "PhaseThreaded.h"
-#include "FlipThreaded.h"
-#include "Threaded.h"
+#include "PhaseThreadedMonteAnneal.h"
+#include "FlipThreadedMonteAnneal.h"
+#include "ThreadedMonteAnneal.h"
+#include "Analysis.h"
 #include "Stopwatch.h"
 
 using namespace std;
@@ -23,16 +24,15 @@ int main(int argc, char** argv){
 	if(argc == 4){
 		nt = atoi(argv[3]);
 	}
-	Analysis* a;
-
-	if(analysis == "Threaded" || analysis == "T" || analysis == "t"){
-			a = new Threaded(nt);
-	}else if(analysis == "PhaseThreaded" || analysis == "PT" || analysis == "pt"){
-			a = new PhaseThreaded(nt);
-	}else if(analysis == "FlipThreaded" || analysis == "FT" || analysis == "ft"){
-			a = new FlipThreaded(nt);
-	}
+	Analysis* a = new Analysis();
 	a->load(argFile);
+	if(analysis == "Threaded" || analysis == "T" || analysis == "t"){
+		a->setAlgorithm(new ThreadedMonteAnneal(a->state, nt));
+	}else if(analysis == "PhaseThreaded" || analysis == "PT" || analysis == "pt"){
+		a->setAlgorithm(new PhaseThreadedMonteAnneal(a->state, nt));
+	}else if(analysis == "FlipThreaded" || analysis == "FT" || analysis == "ft"){
+		a->setAlgorithm(new FlipThreadedMonteAnneal(a->state,nt));
+	}
 	a->start();
 
 	watch.start();	

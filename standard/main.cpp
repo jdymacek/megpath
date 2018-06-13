@@ -4,8 +4,7 @@
 //Created on 5/25/2017
 //Last modified: 5/23/2018
 
-#include "Standard.h"
-
+#include "Analysis.h"
 using namespace std;
 
 int main(int argc, char** argv){

@@ -24,6 +24,7 @@ class Analysis: public Observer{
 		virtual void output();
 		virtual void outputAll();
 		virtual void outputStats();
+		void setAlgorithm(MonteAnneal* al);
 		State* state;
 		MonteAnneal* algorithm;
 	protected:

@@ -11,6 +11,10 @@ Analysis::Analysis(){
 	algorithm = NULL;
 }
 
+void Analysis::setAlgorithm(MonteAnneal* al){
+	algorithm = al;
+}
+
 void Analysis::load(string filename){
 	state = new State();
 	state->load(filename);
