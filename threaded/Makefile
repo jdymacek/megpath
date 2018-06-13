@@ -1,7 +1,7 @@
 CC=g++
 CFLAGS=-O3 -c -fopenmp -std=c++11 -I../shared/
 LDFLAGS=-L../shared/ -fopenmp
-LIBS=-lnmf -lpthread
+LIBS=-lpthread -lnmf
 SOURCES=FlipThreadedMonteAnneal.cpp PhaseThreaded.cpp PhaseThreadedMonteAnneal.cpp ThreadedMonteAnneal.cpp main.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=threadednmf
@@ -9,7 +9,7 @@ EXECUTABLE=threadednmf
 all: $(SOURCES) $(EXECUTABLE) 
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $^ -o $@ $(LIBS)
+	$(CC) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@

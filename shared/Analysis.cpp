@@ -27,7 +27,9 @@ void Analysis::load(string filename){
 
 void Analysis::start(){
 	//initialize global variables
-	algorithm = new MonteAnneal(state);
+	if(algorithm == NULL){
+		algorithm = new MonteAnneal(state);
+	}
     cachedError = 2*state->expression.rows()*state->expression.cols();
 }
 

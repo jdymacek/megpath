@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-c -std=c++11 -Wfatal-errors -Werror
+CFLAGS=-c -lpthread -std=c++11 -Wfatal-errors -Werror
 LDFLAGS= 
 LIBS=
 SOURCES=Stopwatch.cpp PiecewisePF.cpp MonteAnneal.cpp ErrorFunctionCol.cpp ErrorFunctionRow.cpp ErrorFunction.cpp Analysis.cpp State.cpp HybridPF.cpp NMFMatrix.cpp FileUtil.cpp ArgFile.cpp FixedPF.cpp NormalPF.cpp ShiftPF.cpp Value.cpp CSVFile.cpp HistoPF.cpp ProbFunc.cpp UniformPF.cpp
