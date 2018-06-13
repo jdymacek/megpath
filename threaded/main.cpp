@@ -7,6 +7,7 @@
 #include "PhaseThreadedMonteAnneal.h"
 #include "FlipThreadedMonteAnneal.h"
 #include "ThreadedMonteAnneal.h"
+#include "Threaded.h"
 #include "Analysis.h"
 #include "Stopwatch.h"
 
@@ -30,6 +31,7 @@ int main(int argc, char** argv){
 	if(analysis == "Threaded" || analysis == "T" || analysis == "t"){
 		a->setAlgorithm(new ThreadedMonteAnneal(a->state, nt));
 		name = "Threaded";
+//		a = new Threaded(nt);
 	}else if(analysis == "PhaseThreaded" || analysis == "PT" || analysis == "pt"){
 		a->setAlgorithm(new PhaseThreadedMonteAnneal(a->state, nt));
 		name = "PhaseThreaded";
