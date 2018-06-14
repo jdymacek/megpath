@@ -12,7 +12,6 @@
 #include "ParallelPatterns.h"
 #include "ParallelFuncThrow.h"
 #include "PatternMatching.h"
-#include "Stopwatch.h"
 
 using namespace std;
 
@@ -21,7 +20,6 @@ int main(int argc, char** argv){
 		cerr << "Needs an argument file and analysis to run!";
 		return 0;
 	}
-	Stopwatch watch;
 	string argFile = argv[1];
 	string analysis = argv[2];
 	string al = argv[3]; 
@@ -60,12 +58,10 @@ int main(int argc, char** argv){
 
 	watch.start();	
 	a->run();
-	a->state->time = watch.formatTime(watch.stop());
+	a->stop();
 	if(a->state->debug){
 		cout << "Total program running time: " << a->state->time << endl;
 	}
-
-	a->stop();
 
 	return 0;
 }

@@ -9,7 +9,6 @@
 #include "ThreadedMonteAnneal.h"
 #include "Threaded.h"
 #include "Analysis.h"
-#include "Stopwatch.h"
 
 using namespace std;
 
@@ -18,7 +17,6 @@ int main(int argc, char** argv){
 		cerr << "Needs: argument file, algorithm";
 		return 0;
 	}
-	Stopwatch watch;
 	string argFile = argv[1];
 	string analysis = argv[2];
 	int nt = thread::hardware_concurrency();
@@ -36,11 +34,9 @@ int main(int argc, char** argv){
 	}
 	a->start();
 
-	watch.start();	
 	a->run();
-	a->state->time = watch.formatTime(watch.stop());
-	cout << "Total program running time: " << a->state->time << endl;
 	a->output();
+	cout << "Total program running time: " << a->state->time << endl;
 	a->stop();
 
 	return 0;

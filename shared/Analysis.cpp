@@ -27,10 +27,11 @@ void Analysis::load(string filename){
 
 void Analysis::start(){
 	//initialize global variables
+	watch.start();
 	if(algorithm == NULL){
 		algorithm = new MonteAnneal(state);
 	}
-    cachedError = 2*state->expression.rows()*state->expression.cols();
+    	cachedError = 2*state->expression.rows()*state->expression.cols();
 }
 
 
@@ -41,7 +42,7 @@ void Analysis::run(){
 }
 
 void Analysis::stop(){
-
+	
 }
 
 void Analysis::monteCallback(int iterations){}
@@ -72,6 +73,7 @@ void Analysis::annealPrintCallback(int iterations){
 
 
 void Analysis::output(){
+	state->time = watch.formatTime(watch.stop());
 	if(state->stats == "notAll"){
 		outputStats();
 	}else if(state->stats == "none"){

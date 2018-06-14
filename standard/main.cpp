@@ -17,12 +17,9 @@ int main(int argc, char** argv){
 	a->setName("Standard");
 	a->load(argFile);
 	a->start();
-	Stopwatch watch;
-	watch.start();	
 	a->run();
-	a->state->time = watch.formatTime(watch.stop());
-	cout << "Total program running time: " << a->state->time << endl;
 	a->output();
+	cout << "Total program running time: " << a->state->time << endl;
 
 	delete a;
 	return 0;

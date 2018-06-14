@@ -5,6 +5,7 @@
 #define ANALYSIS__H
 
 #include "State.h"
+#include "Stopwatch.h"
 #include "MonteAnneal.h"
 #include "Observer.h"
 
@@ -26,6 +27,7 @@ class Analysis: public Observer{
 		virtual void outputStats();
 		void setAlgorithm(MonteAnneal* al);
 		void setName(string name);
+		Stopwatch watch;
 		State* state;
 		MonteAnneal* algorithm;
 	protected:
