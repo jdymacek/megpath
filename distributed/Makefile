@@ -3,11 +3,17 @@ CFLAGS=-O3 -c -Wfatal-errors -std=c++11 -I../shared/
 LDFLAGS=-L../shared/ 
 LIBS=-lnmf
 VPATH = /usr/lib64/openmpi/bin
-SOURCES=PatternMatching.cpp Distributed.cpp main.cpp ParallelPatterns.cpp FuncThrow.cpp DistNaive.cpp ParallelFuncThrow.cpp 
+LIB_SOURCES=PatternMatching.cpp Distributed.cpp ParallelPatterns.cpp FuncThrow.cpp DistNaive.cpp ParallelFuncThrow.cpp 
+SOURCES=$(LIB_SOURCES) main.cpp 
+LIB_OBJECTS=$(LIB_SOURCES:.cpp=.o)
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=distnmf
+LIBRARY=libnmfdist.a
 
-all: $(SOURCES) $(EXECUTABLE) 
+all: $(SOURCES) $(LIBRARY) $(EXECUTABLE) 
+
+$(LIBRARY): $(LIB_OBJECTS)
+	ar rcs $@ $^
 
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LIBS)
@@ -18,6 +24,7 @@ $(EXECUTABLE): $(OBJECTS)
 clean:	
 	rm -f *.o 
 	touch *.cpp
+	rm $(LIBRARY)
 	rm $(EXECUTABLE)
 
 trials:

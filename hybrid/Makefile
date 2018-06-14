@@ -1,9 +1,9 @@
 CC=mpic++
 CFLAGS=-O3 -c -Wfatal-errors -std=c++11 -I../shared/ -I../threaded/ -I../distributed/
 LDFLAGS=-L../shared/ -L../threaded/ -L../distributed/ 
-LIBS=-lnmf -lnmfthread
-VPATH =src:../distributed src:../threaded /usr/lib64/openmpi/bin
-SOURCES=PatternMatching.cpp Distributed.cpp main.cpp ParallelPatterns.cpp FuncThrow.cpp DistNaive.cpp ParallelFuncThrow.cpp 
+LIBS=-lnmf -lnmfthread -lnmfdist
+VPATH =/usr/lib64/openmpi/bin
+SOURCES=main.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=hybridnmf
 
