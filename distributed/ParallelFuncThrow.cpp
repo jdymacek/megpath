@@ -6,9 +6,9 @@
 #include"ParallelFuncThrow.h"
 
 ParallelFuncThrow::ParallelFuncThrow(): Distributed(){
-	program = "ParallelFuncThrow";
 	ft = new FuncThrow();
 	pp = new PatternMatching();
+	program = "ParallelFuncThrow";
 }
 
 void ParallelFuncThrow::monteCallback(int iter){
@@ -41,6 +41,8 @@ void ParallelFuncThrow::run(){
 }
 
 void ParallelFuncThrow::stop(){
+	Distributed::stop();
+	state->stats = "none";
 	pp->stop();
 	ft->stop();
 }

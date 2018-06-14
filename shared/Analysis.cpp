@@ -74,6 +74,8 @@ void Analysis::annealPrintCallback(int iterations){
 void Analysis::output(){
 	if(state->stats == "notAll"){
 		outputStats();
+	}else if(state->stats == "none"){
+	
 	}else{
 		outputAll();
 	}
