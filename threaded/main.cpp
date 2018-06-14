@@ -7,7 +7,6 @@
 #include "PhaseThreadedMonteAnneal.h"
 #include "FlipThreadedMonteAnneal.h"
 #include "ThreadedMonteAnneal.h"
-#include "Threaded.h"
 #include "Analysis.h"
 
 using namespace std;

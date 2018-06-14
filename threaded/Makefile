@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-O3 -c -fopenmp -std=c++11 -I../shared/
 LDFLAGS=-L../shared/ -fopenmp
 LIBS=-lpthread -lnmf
-LIB_SOURCES=FlipThreadedMonteAnneal.cpp PhaseThreaded.cpp PhaseThreadedMonteAnneal.cpp ThreadedMonteAnneal.cpp
+LIB_SOURCES=FlipThreadedMonteAnneal.cpp PhaseThreadedMonteAnneal.cpp ThreadedMonteAnneal.cpp
 SOURCES=$(LIB_SOURCES) main.cpp
 LIB_OBJECTS=$(LIB_SOURCES:.cpp=.o)
 OBJECTS=$(SOURCES:.cpp=.o)

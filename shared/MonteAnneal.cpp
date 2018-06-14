@@ -127,14 +127,13 @@ double MonteAnneal::monteCarlo(){
 			callback->monteCallback(i);
 		}
 		if(i % state->printRuns == 0 && callback != NULL){
-            callback->montePrintCallback(i);
-        }
+            		callback->montePrintCallback(i);
+        	}
 
 	}
-	if(state->debug){
-		cout << "Final Error: " << efRow.error() << endl;
-		cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
-		cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+	state->time = watch.formatTime(watch.stop());
+	if(callback != NULL){
+		callback->monteFinalCallback();
 	}
 	return efRow.error();
 }
@@ -166,11 +165,11 @@ double MonteAnneal::anneal(){
 
 		ndx++;
 	}
-	if(state->debug){
-		cout << "Final Error: " << efRow.error() << endl;
-		cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
-		cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
+	state->time = watch.formatTime(watch.stop());
+	if(callback != NULL){
+		callback->annealFinalCallback();
 	}
+	
 	return efRow.error();
 }
 

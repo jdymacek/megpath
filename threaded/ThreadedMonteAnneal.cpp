@@ -18,6 +18,8 @@ ThreadedMonteAnneal::ThreadedMonteAnneal(State* st,int nt): MonteAnneal(st){
 
 /*Run a monte carlo markov chain*/
 void ThreadedMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int yEnd){
+    	Stopwatch watch;
+	watch.start();
 	ErrorFunctionRow efRow(state);
 	ErrorFunctionCol efCol(state);
 	
@@ -35,16 +37,18 @@ void ThreadedMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int y
 			}
 			if(i % state->printRuns == 0 && callback != NULL){
 				callback->montePrintCallback(i);
-            }
+            		}
 		}
 		barrier->Wait();
+	}
+	if(this_thread::get_id() == rootId && callback != NULL){
+		state->time = watch.formatTime(watch.stop());
+		callback->monteFinalCallback();
 	}
 }
 
 
 double ThreadedMonteAnneal::monteCarlo(){
-    	Stopwatch watch;
-	watch.start();
 	vector<thread> threads;
 	
 
@@ -65,17 +69,14 @@ double ThreadedMonteAnneal::monteCarlo(){
 		threads[i].join();
 	}
 
-	ErrorFunctionRow efRow(state);
-	if(state->debug){
-		cout << "Final Error: " << efRow.error() << endl;
-    		cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
-    		cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
-	}
+    	ErrorFunctionRow efRow(state);
 	return efRow.error();
 }
 
 
 void ThreadedMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd){
+	Stopwatch watch;
+	watch.start();
     ErrorFunctionRow efRow(state);
     ErrorFunctionCol efCol(state);
 	double t = state->calcT();
@@ -95,17 +96,19 @@ void ThreadedMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd)
 			}
 			if(i % state->printRuns == 0 && callback != NULL){
 				callback->annealPrintCallback(i);
-            }
+            		}
 		}
 		barrier->Wait();
 
 		t *= alpha;
-    }
+    	}
+	if(this_thread::get_id() == rootId && callback != NULL){
+		state->time = watch.formatTime(watch.stop());
+		callback->annealFinalCallback();
+	}
 }
 
 double ThreadedMonteAnneal::anneal(){
-	Stopwatch watch;
-	watch.start();
 
 
     vector<thread> threads;
@@ -130,13 +133,8 @@ double ThreadedMonteAnneal::anneal(){
     }
 
 
+    ErrorFunctionRow efRow(state);
 
-	ErrorFunctionRow efRow(state);
-	if(state->debug){
-		cout << "Final Error: " << efRow.error() << endl;
-		cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
-		cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
-	}
 	return efRow.error();
 }
 

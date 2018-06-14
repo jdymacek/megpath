@@ -20,6 +20,8 @@ PhaseThreadedMonteAnneal::PhaseThreadedMonteAnneal(State* st,int nt): MonteAnnea
 
 /*Run a monte carlo markov chain*/
 void PhaseThreadedMonteAnneal::monteCarloThreadCoefficient(int Start, int End){
+    Stopwatch watch;
+    watch.start();
 	ErrorFunctionRow efRow(state);
 
 	//For each spot take a gamble and record outcome
@@ -38,8 +40,14 @@ void PhaseThreadedMonteAnneal::monteCarloThreadCoefficient(int Start, int End){
 			}
 		}
 	}
+	if(this_thread::get_id() == rootId && callback != NULL){
+		state->time = watch.formatTime(watch.stop());
+		callback->monteFinalCallback();
+	}
 }
 void PhaseThreadedMonteAnneal::monteCarloThreadPattern(){
+    Stopwatch watch;
+    watch.start();
 	ErrorFunctionCol efCol(dupe);
 
 	//For each spot take a gamble and record outcome
@@ -63,11 +71,13 @@ void PhaseThreadedMonteAnneal::monteCarloThreadPattern(){
 			}
 		}
 	}
+	if(this_thread::get_id() == rootId && callback != NULL){
+		state->time = watch.formatTime(watch.stop());
+		callback->monteFinalCallback();
+	}
 }
 
 double PhaseThreadedMonteAnneal::monteCarlo(){
-    Stopwatch watch;
-    watch.start();
 	vector<thread> threads;
 	
 	threads.push_back(thread(&PhaseThreadedMonteAnneal::monteCarloThreadPattern,this));		
@@ -82,18 +92,13 @@ double PhaseThreadedMonteAnneal::monteCarlo(){
 		threads[i].join();
 	}
 	ErrorFunctionRow efRow(state);
-
-
-	if(state->debug){
-		cout << "Final Error: " << efRow.error() << endl;
-    		cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
-    		cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
-	}
 	return efRow.error();
 }
 
 
 void PhaseThreadedMonteAnneal::annealThreadCoefficient(int Start, int End){
+	Stopwatch watch;
+    watch.start();
 	double t = state->calcT();
 	double alpha = state->calcAlpha(t);
     ErrorFunctionRow efRow(state);
@@ -122,8 +127,14 @@ void PhaseThreadedMonteAnneal::annealThreadCoefficient(int Start, int End){
 
 		t *= alpha;
     }
+	if(this_thread::get_id() == rootId && callback != NULL){
+		state->time = watch.formatTime(watch.stop());
+		callback->annealFinalCallback();
+	}
 }
 void PhaseThreadedMonteAnneal::annealThreadPattern(){
+	Stopwatch watch;
+    watch.start();
 	double t = state->calcT();
 	double alpha = state->calcAlpha(t);
     	ErrorFunctionCol efCol(dupe);
@@ -148,24 +159,26 @@ void PhaseThreadedMonteAnneal::annealThreadPattern(){
             }
             barrier->Wait();
         }
-		if(i % state->printRuns == 0 && callback != NULL){
-	        barrier->Wait();
-            if(this_thread::get_id() == rootId){
-				callback->annealPrintCallback(i);
-            }
-			barrier->Wait();
+	if(i % state->printRuns == 0 && callback != NULL){
+		barrier->Wait();
+			if(this_thread::get_id() == rootId){
+					callback->annealPrintCallback(i);
+        	    	}
+				barrier->Wait();
 		}
 		t *= alpha;
 		//if(i > 1.5*state->MAX_RUNS){
 		//	state->both = false;
 		//}
 
-    }
+    	}
+	if(this_thread::get_id() == rootId && callback != NULL){
+		state->time = watch.formatTime(watch.stop());
+		callback->annealFinalCallback();
+	}
 }
 
 double PhaseThreadedMonteAnneal::anneal(){
-	Stopwatch watch;
-	watch.start();
 
 
     vector<thread> threads;
@@ -193,11 +206,6 @@ double PhaseThreadedMonteAnneal::anneal(){
 
 
 	ErrorFunctionRow efRow(state);
-	if(state->debug){
-		cout << "Final Error: " << efRow.error() << endl;
-		cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
-		cout << "Total time: " << watch.formatTime(watch.stop()) << endl;
-	}
 	return efRow.error();
 }
 

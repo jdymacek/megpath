@@ -56,6 +56,20 @@ bool Analysis::annealCallback(int iterations){
     cachedError = error;
 	return running;
 }
+void Analysis::annealFinalCallback(){
+	ErrorFunctionRow efRow(state);
+
+	cout << "Final Error: " << efRow.error() << endl;
+	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
+	cout << "Total time: " << state->time << endl;
+}
+void Analysis::monteFinalCallback(){
+	ErrorFunctionRow efRow(state);
+
+	cout << "Final Error: " << efRow.error() << endl;
+	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
+	cout << "Total time: " << state->time << endl;
+}
 
 void Analysis::montePrintCallback(int iterations){
     //needs time

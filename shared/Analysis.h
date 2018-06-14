@@ -18,6 +18,8 @@ class Analysis: public Observer{
         	virtual void montePrintCallback(int iterations);
         	virtual bool annealCallback(int iterations);
         	virtual void monteCallback(int iterations);
+		virtual void monteFinalCallback();
+		virtual void annealFinalCallback();
 		virtual void load(string filename);
 		virtual void start();
 		virtual void run();
