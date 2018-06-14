@@ -12,6 +12,7 @@ ThreadedMonteAnneal::ThreadedMonteAnneal(State* st,int nt): MonteAnneal(st){
 	ProbFunc::generator.seed(rd());
 	uniform = new UniformPF();
 	barrier = new Barrier(numThreads);
+	program = "ThreadedMonteAnneal_" + to_string(nt) + "t";
 	callback = NULL;
 }
 

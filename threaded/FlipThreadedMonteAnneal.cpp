@@ -12,6 +12,7 @@ FlipThreadedMonteAnneal::FlipThreadedMonteAnneal(State* st,int nt): MonteAnneal(
 	uniform = new UniformPF();
 	barrier = new Barrier(numThreads);
 	callback = NULL;
+	program = "FlipThreadedMonteAnneal_" + to_string(nt) + "t";
 	dupe = new State();
 	*dupe = *st;
 }

@@ -13,6 +13,7 @@ PhaseThreadedMonteAnneal::PhaseThreadedMonteAnneal(State* st,int nt): MonteAnnea
 	uniform = new UniformPF();
 	barrier = new Barrier(numThreads);
 	callback = NULL;
+	program = "PhaseThreadedMonteAnneal_" + to_string(nt) + "t";
 	dupe = new State();
 	*dupe = *st;
 }

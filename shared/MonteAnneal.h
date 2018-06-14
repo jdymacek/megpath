@@ -30,6 +30,7 @@ class MonteAnneal{
 		virtual double monteCarlo();
 		virtual double anneal();
 		virtual void setObserver(Observer* obs);
+		string program;
 	protected:
 		State* state;
 		UniformPF* uniform;

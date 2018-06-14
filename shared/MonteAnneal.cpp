@@ -13,6 +13,7 @@ MonteAnneal::MonteAnneal(State* st){
 	ProbFunc::generator.seed(rd());
 	uniform = new UniformPF();
 	state = st;
+	program = "MonteAnneal";
 	callback = NULL;
 }
 

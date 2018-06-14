@@ -13,10 +13,9 @@ Analysis::Analysis(){
 
 void Analysis::setAlgorithm(MonteAnneal* al){
 	algorithm = al;
-}
-
-void Analysis::setName(string name){
-	program = name;
+	if(program.size() > 0)
+		program += "_";
+	program += al->program;
 }
 
 void Analysis::load(string filename){
