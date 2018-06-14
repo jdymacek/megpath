@@ -1,9 +1,9 @@
 CC=mpic++
 CFLAGS=-O3 -c -Wfatal-errors -std=c++11 -I../shared/ -I../threaded/ -I../distributed/
 LDFLAGS=-L../shared/ -L../threaded/ -L../distributed/ 
-LIBS=
-VPATH = src:../shared src:../distributed src:../threaded /usr/lib64/openmpi/bin
-SOURCES= DistNaive.cpp ParallelFuncThrow.cpp FuncThrow.cpp FlipThreadedMonteAnneal.cpp PhaseThreadedMonteAnneal.cpp PatternMatching.cpp FileUtil.cpp Distributed.cpp main.cpp PiecewisePF.cpp ParallelPatterns.cpp State.cpp ErrorFunction.cpp ErrorFunctionRow.cpp ErrorFunctionCol.cpp Analysis.cpp MonteAnneal.cpp ShiftPF.cpp Stopwatch.cpp UniformPF.cpp ArgFile.cpp CSVFile.cpp Value.cpp NMFMatrix.cpp ProbFunc.cpp ThreadedMonteAnneal.cpp
+LIBS=-lnmf
+VPATH =src:../distributed src:../threaded /usr/lib64/openmpi/bin
+SOURCES=ThreadedMonteAnneal.cpp FlipThreadedMonteAnneal.cpp PhaseThreadedMonteAnneal.cpp PatternMatching.cpp Distributed.cpp main.cpp ParallelPatterns.cpp FuncThrow.cpp DistNaive.cpp ParallelFuncThrow.cpp 
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=hybridnmf
 
