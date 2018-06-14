@@ -4,8 +4,9 @@
 //Created on 5/25/2017
 //Last modified: 7/7/2017
 
-#include "OpenMP.h"
-#include "FlipOpenMP.h"
+#include "OMPMonteAnneal.h"
+#include "FlipOMPMonteAnneal.h"
+#include "Analysis.h"
 #include "Stopwatch.h"
 #include <omp.h>
 
@@ -23,15 +24,15 @@ int main(int argc, char** argv){
 	if(argc == 4){
 		nt = atoi(argv[3]);
 	}
-	Analysis* a;
-
-	if(analysis == "OpenMP" || analysis == "O" || analysis == "o"){
-			a = new OpenMP(nt);
-	}else if(analysis == "FlipOpenMp" || analysis == "FO" || analysis == "fo"){
-			a = new FlipOpenMP(nt);
-	}
+	Analysis* a = new Analysis();
 
 	a->load(argFile);
+	if(analysis == "OpenMP" || analysis == "O" || analysis == "o"){
+			a->setAlgorithm(new OMPMonteAnneal(a->state, nt));
+	}else if(analysis == "FlipOpenMp" || analysis == "FO" || analysis == "fo"){
+			a->setAlgorithm(new FlipOMPMonteAnneal(a->state, nt));
+	}
+
 	a->start();
 
 	watch.start();	
