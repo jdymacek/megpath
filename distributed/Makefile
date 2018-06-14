@@ -29,3 +29,9 @@ clean:
 
 trials:
 	g++ -std=c++11 readTrials.cpp ../shared/Value.cpp ../shared/ArgFile.cpp ../shared/FileUtil.cpp -o trials
+
+everything:
+	$(MAKE) -C ../
+
+cleanall:
+	$(MAKE) clean -C ../

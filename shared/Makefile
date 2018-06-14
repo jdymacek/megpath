@@ -18,3 +18,8 @@ clean:
 	rm -f *.o 
 	touch *.cpp
 
+everything:
+	$(MAKE) -C ../
+
+cleanall:
+	$(MAKE) clean -C ../

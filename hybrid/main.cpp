@@ -56,7 +56,6 @@ int main(int argc, char** argv){
 
 	a->start();
 
-	watch.start();	
 	a->run();
 	a->stop();
 	if(a->state->debug){

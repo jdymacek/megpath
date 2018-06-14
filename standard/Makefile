@@ -19,3 +19,8 @@ clean:
 	rm $(EXECUTABLE)
 	touch *.cpp
 
+everything:
+	$(MAKE) -C ../
+
+cleanall:
+	$(MAKE) clean -C ../
