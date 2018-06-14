@@ -13,8 +13,9 @@ Analysis::Analysis(){
 
 void Analysis::setAlgorithm(MonteAnneal* al){
 	algorithm = al;
-	if(program.size() > 0)
+	if(program.size() > 0){
 		program += "_";
+	}
 	program += al->program;
 }
 

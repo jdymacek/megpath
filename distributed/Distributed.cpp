@@ -1,7 +1,7 @@
 #include "Distributed.h"
 
 Distributed::Distributed():Analysis(){
-	program = "Dist_MonteAnneal";
+	program = "Distributed";
 }
 
 void Distributed::start(){
@@ -16,7 +16,7 @@ void Distributed::start(){
     char hostbuff[100];
     gethostname(hostbuff,99);
     hostname = string(hostbuff);
-    program = program + "_" + to_string(size) + "n";
+    program += "_" + to_string(size) + "n";
 }
 
 void Distributed::sendLeastError(int process, double formerError)

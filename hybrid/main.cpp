@@ -4,6 +4,9 @@
 //Created on 5/25/2017
 //Last modified: 7/7/2017
 
+#include "PhaseThreadedMonteAnneal.h"
+#include "FlipThreadedMonteAnneal.h"
+#include "ThreadedMonteAnneal.h"
 #include "DistNaive.h"
 #include "FuncThrow.h"
 #include "ParallelPatterns.h"
@@ -14,13 +17,14 @@
 using namespace std;
 
 int main(int argc, char** argv){
-	if(argc < 3){
+	if(argc < 5){
 		cerr << "Needs an argument file and analysis to run!";
 		return 0;
 	}
 	Stopwatch watch;
 	string argFile = argv[1];
 	string analysis = argv[2];
+	string al = argv[3]; 
 	
 	Analysis* a;
 
@@ -39,6 +43,19 @@ int main(int argc, char** argv){
 	}
 
 	a->load(argFile);
+	int nt = thread::hardware_concurrency();
+	if(argc == 4){
+		nt = atoi(argv[4]);
+	}
+	a->load(argFile);
+	if(al == "Threaded" || al == "T" || al == "t"){
+		a->setAlgorithm(new ThreadedMonteAnneal(a->state, nt));
+	}else if(al == "PhaseThreaded" || al == "PT" || al == "pt"){
+		a->setAlgorithm(new PhaseThreadedMonteAnneal(a->state, nt));
+	}else if(al == "FlipThreaded" || al == "FT" || al == "ft"){
+		a->setAlgorithm(new FlipThreadedMonteAnneal(a->state,nt));
+	}
+
 	a->start();
 
 	watch.start();	
