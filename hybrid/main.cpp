@@ -34,6 +34,7 @@ int main(int argc, char** argv){
 	int nt = args.getAsInt(al,to_string(thread::hardware_concurrency()));
 	if(args.wasFatal()){
 		cout << "Missing Args" << endl;
+		cout << args.errors() << endl;
 		exit(1);
 	}
 	Analysis* a;
