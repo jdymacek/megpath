@@ -59,7 +59,6 @@ double ThreadedMonteAnneal::monteCarlo(){
 			ranges[i][0] = 0;
 			ranges[i][1] = (i == 0 ? state->patterns.columns : 0);
 		}
-
         	threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
 		rootId = threads[0].get_id();
 	}

@@ -42,10 +42,9 @@ int main(int argc, char** argv){
 
 	a->load(argFile);
 	int nt = thread::hardware_concurrency();
-	if(argc == 4){
+	if(argc == 5){
 		nt = atoi(argv[4]);
 	}
-	a->load(argFile);
 	if(al == "Threaded" || al == "T" || al == "t"){
 		a->setAlgorithm(new ThreadedMonteAnneal(a->state, nt));
 	}else if(al == "PhaseThreaded" || al == "PT" || al == "pt"){
@@ -54,8 +53,8 @@ int main(int argc, char** argv){
 		a->setAlgorithm(new FlipThreadedMonteAnneal(a->state,nt));
 	}
 
-	a->start();
 
+	a->start();
 	a->run();
 	a->stop();
 	if(a->state->debug){

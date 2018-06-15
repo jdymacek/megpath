@@ -35,7 +35,7 @@ int main(){
 
 	default_random_engine gen;
 	uniform_real_distribution<double> dist(0.0,1.0);
-	MatrixXd coefficients(4000,3);
+	MatrixXd coefficients(2996,3);
 	double total = 0;
 	for(int i = 0; i < coefficients.rows(); ++i){
 		total = 0;
