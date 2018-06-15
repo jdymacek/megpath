@@ -4,6 +4,7 @@ all:
 	$(MAKE) -C threaded
 	$(MAKE) -C openMp
 	$(MAKE) -C hybrid
+	$(MAKE) -C standard
 
 clean:
 	$(MAKE) -C shared clean
@@ -11,3 +12,4 @@ clean:
 	$(MAKE) -C threaded clean
 	$(MAKE) -C openMp clean
 	$(MAKE) -C hybrid clean
+	$(MAKE) -C standard clean

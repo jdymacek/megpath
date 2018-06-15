@@ -14,7 +14,6 @@ int main(int argc, char** argv){
 	}
 	string argFile = argv[1];
 	Analysis* a = new Analysis();
-	a->setName("Standard");
 	a->load(argFile);
 	a->start();
 	a->run();
