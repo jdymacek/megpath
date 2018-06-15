@@ -26,9 +26,16 @@ int main(int argc, char** argv){
 					  {"3","pft","PFT","ParFuncThrow","ParallelFuncThrow"},
 					  {"4","pm","PM","PatMatch","PatternMatching"},
 					  {"5","test","Test"}});
+	
 	string al = args.findFlag({{"0","t","T","Threaded"},
 				    {"1","tf","TF","FlipThreaded"},
 				    {"2","tp","TP","PhaseThreaded"}});
+	
+	int nt = args.getAsInt(al,to_string(thread::hardware_concurrency()));
+	if(args.wasFatal()){
+		cout << "Missing Args" << endl;
+		exit(1);
+	}
 	Analysis* a;
 	switch(stoi(analysis)){
 		case 0:
@@ -50,7 +57,6 @@ int main(int argc, char** argv){
 			a = new Distributed();
 	}
 	a->load(argFile);
-	int nt = args.getAsInt(al,to_string(thread::hardware_concurrency()));
 	switch(stoi(al)){
 		case 0:
 			a->setAlgorithm(new ThreadedMonteAnneal(a->state,nt));
