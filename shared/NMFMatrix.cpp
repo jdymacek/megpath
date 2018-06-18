@@ -41,6 +41,15 @@ int NMFMatrix::size(){
 	return matrix.size()+rv;
 }
 
+void NMFMatrix::reset(){
+	int s = size();
+	double* buff = new double[s];
+	fill(buff,buff+s,1.0);
+	write(buff);
+	delete buff;
+}
+
+
 void NMFMatrix::read(double* data){
 
 	Map<MatrixXd> mapper(data,matrix.rows(),matrix.cols());

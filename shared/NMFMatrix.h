@@ -25,6 +25,7 @@ class NMFMatrix{
 		NMFMatrix(int rowss, int cols);
 		void read(double* data);
 		void write(double* data);
+		void reset();
 		void write(string filename);
 		int size();
 		void resize(int newRows, int newCols);
