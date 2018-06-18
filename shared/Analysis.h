@@ -14,6 +14,8 @@ using namespace std;
 class Analysis: public Observer{
 	public:
 		Analysis();
+		virtual void monteStartCallback();
+		virtual void annealStartCallback();
 		virtual void annealPrintCallback(int iterations);
         	virtual void montePrintCallback(int iterations);
         	virtual bool annealCallback(int iterations);
@@ -29,7 +31,9 @@ class Analysis: public Observer{
 		virtual void outputStats();
 		void setAlgorithm(MonteAnneal* al);
 		void setName(string name);
+		string ttime;
 		Stopwatch watch;
+		Stopwatch lap;
 		State* state;
 		MonteAnneal* algorithm;
 	protected:

@@ -55,7 +55,7 @@ int main(int argc, char** argv){
 
 	a->run();
 	a->stop();
-	cout << "Total program running time: " << a->state->time << endl;
+	cout << "Total program running time: " << a->ttime << endl;
 	return 0;
 }
 
