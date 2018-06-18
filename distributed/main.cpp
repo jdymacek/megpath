@@ -16,6 +16,7 @@ using namespace std;
 int main(int argc, char** argv){
 	CmdArgs args(argc,argv);
 	string argFile = "";
+	int runs = args.getAsInt("r","1");
 	args.getAsString("a",argFile,"../testing/testnmf/test_arguments.txt");
 	string analysis = args.findFlag({{"0","dn", "DN", "DistNaive"},
 					  {"1","ft", "FT", "Functhrow"},
@@ -51,11 +52,13 @@ int main(int argc, char** argv){
 	}
 
 	a->load(argFile);
-	a->start();
-
-	a->run();
-	a->stop();
-	cout << "Total program running time: " << a->ttime << endl;
+	for(int i = 0; i < runs;i++)
+	{
+		a->start();
+		a->run();
+		a->stop();
+		cout << "Total program running time: " << a->ttime << endl;
+	}
 	delete a;
 	return 0;
 }
