@@ -46,6 +46,9 @@ int main(int argc, char** argv){
 		a->run();
 		a->output();
 		cout << "Total program running time: " << a->ttime << endl;
+		if(a->state->debug){
+			cout << "Patterns:\n" << a->state->patterns.matrix << endl;
+		}
 		a->stop();
 	}
 	
