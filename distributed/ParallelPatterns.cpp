@@ -13,9 +13,9 @@ ParallelPatterns::ParallelPatterns(): Distributed(){
 void ParallelPatterns::start(){
 	Distributed::start();
 
-    if(rank == 0){
-        oexpression = state->expression;
-    }
+    //if(rank == 0){
+    oexpression = state->expression;
+    //}
 
     vector<vector<int>> ranges = state->splitRanges(size);
     //split the coefficients
@@ -128,7 +128,6 @@ void ParallelPatterns::gatherCoefficients(){
                 buffer += 1;
             }
         }
-
         state->coefficients.matrix = temp;
         state->coefficients.rows = state->coefficients.matrix.rows();
         state->coefficients.columns = state->coefficients.matrix.cols();
@@ -140,9 +139,14 @@ void ParallelPatterns::gatherCoefficients(){
         cout << "Patterns: " << endl;
         cout << state->patterns.matrix << endl;;
         delete[] nb;
-    }
+    }else{
+		state->coefficients.resize(oexpression.rows(),state->coefficients.matrix.cols());
+		state->expression = oexpression;
+	}
 	delete[] sendBuf;
 }
+
+
 
 void ParallelPatterns::run(){
 	state->both = true;
