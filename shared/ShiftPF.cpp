@@ -61,6 +61,10 @@ int ShiftPF::dataSize(){
 	return function.dataSize() + org.size()*3;
 }
 
+void ShiftPF::reset(){
+	function.reset();
+}
+
 void ShiftPF::toDoubles(double* buffer){
 	double fromEntries[3];
 	for(int i = 0; i < org.size(); ++i){

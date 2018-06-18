@@ -16,6 +16,12 @@ PiecewisePF::PiecewisePF(){
 	uniform = new UniformPF();
 }
 
+void PiecewisePF::reset(){
+	for(int i =0; i < SIZE; ++i){
+        weights[i] = 1;
+    }
+}
+
 PiecewisePF::~PiecewisePF(){
 	delete[] weights;
 	delete uniform;

@@ -42,11 +42,12 @@ int NMFMatrix::size(){
 }
 
 void NMFMatrix::reset(){
-	int s = size();
-	double* buff = new double[s];
-	fill(buff,buff+s,1.0);
-	write(buff);
-	delete buff;
+
+	for(int y =0; y < matrix.rows(); ++y){
+        for(int x = 0; x < matrix.cols(); ++x){
+            functions(y,x)->reset();
+        }
+    }
 }
 
 

@@ -25,6 +25,7 @@ class PiecewisePF: public ProbFunc{
 		void toDoubles(double* buffer);
 		void fromDoubles(double* buffer);
 		int dataSize();	
+		void reset();
 	private:
 		double* weights;
 		double total;

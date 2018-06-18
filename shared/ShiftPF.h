@@ -18,6 +18,7 @@ class ShiftPF: public ProbFunc{
 	public:
 		ShiftPF();
 		ShiftPF(vector<Entry> vec);
+		void reset();
 		double random();
 		void addObservation(double d);
 		int size();

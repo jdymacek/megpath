@@ -21,6 +21,10 @@ int ProbFunc::dataSize(){
 	return 0;
 }
 
+void ProbFunc::reset(){
+
+}
+
 void ProbFunc::toDoubles(double* buffer){
 
 }

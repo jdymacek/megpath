@@ -31,7 +31,7 @@ class ProbFunc{
 		virtual void setVector(vector<double> vec);
 		virtual void toDoubles(double* buffer);
 		virtual void fromDoubles(double* buffer);
-
+		virtual void reset();
 		static mt19937_64 generator;
 };
 
