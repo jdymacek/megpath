@@ -8,28 +8,35 @@
 #include "FlipThreadedMonteAnneal.h"
 #include "ThreadedMonteAnneal.h"
 #include "Analysis.h"
+#include "CmdArgs.h"
 
 using namespace std;
 
 int main(int argc, char** argv){
-	if(argc < 3){
-		cerr << "Needs: argument file, algorithm";
-		return 0;
-	}
-	string argFile = argv[1];
-	string analysis = argv[2];
-	int nt = thread::hardware_concurrency();
-	if(argc == 4){
-		nt = atoi(argv[3]);
+	CmdArgs args(argc,argv);
+	string argFile = "";
+	args.getAsString("a",argFile,"../testing/testnmf/test_arguments.txt");
+	string al = args.findFlag({{"0","t","T","Threaded"},
+				    {"1","tf","TF","FlipThreaded"},
+				    {"2","tp","TP","PhaseThreaded"}});
+	
+	int nt = args.getAsInt(al,to_string(thread::hardware_concurrency()));
+	if(args.wasFatal()){
+		cout << "Missing Args" << endl;
+		cout << args.errors() << endl;
+		exit(1);
 	}
 	Analysis* a = new Analysis();
 	a->load(argFile);
-	if(analysis == "Threaded" || analysis == "T" || analysis == "t"){
-		a->setAlgorithm(new ThreadedMonteAnneal(a->state, nt));
-	}else if(analysis == "PhaseThreaded" || analysis == "PT" || analysis == "pt"){
-		a->setAlgorithm(new PhaseThreadedMonteAnneal(a->state, nt));
-	}else if(analysis == "FlipThreaded" || analysis == "FT" || analysis == "ft"){
-		a->setAlgorithm(new FlipThreadedMonteAnneal(a->state,nt));
+	switch(stoi(al)){
+		case 0:
+			a->setAlgorithm(new ThreadedMonteAnneal(a->state,nt));
+			break;
+		case 1:
+			a->setAlgorithm(new FlipThreadedMonteAnneal(a->state,nt));
+			break;
+		case 2:
+			a->setAlgorithm(new PhaseThreadedMonteAnneal(a->state,nt));
 	}
 	a->start();
 
