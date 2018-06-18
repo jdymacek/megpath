@@ -42,7 +42,9 @@ void ParallelFuncThrow::run(){
 
 void ParallelFuncThrow::stop(){
 	Distributed::stop();
+	string prev = state->stats;
 	state->stats = "none";
 	pp->stop();
 	ft->stop();
+	state->stats = prev;
 }

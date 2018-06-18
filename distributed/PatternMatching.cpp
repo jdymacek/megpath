@@ -11,6 +11,7 @@ PatternMatching::PatternMatching(): ParallelPatterns(){
 
 /*void PatternMatching::start(string filename){
 	ParallelPatterns::start(filename);
+
 }*/
 
 
