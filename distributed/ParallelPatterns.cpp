@@ -119,6 +119,8 @@ void ParallelPatterns::gatherCoefficients(){
 	cout << hostname << " all gathered" << endl;
     }
 
+    state->coefficients.resize(oexpression.rows(),state->coefficients.matrix.cols());
+    state->expression = oexpression;
     if(rank == 0){
         double* nb = buffer;
         MatrixXd temp = MatrixXd::Zero(oexpression.rows(),state->coefficients.matrix.cols());
@@ -129,9 +131,9 @@ void ParallelPatterns::gatherCoefficients(){
             }
         }
         state->coefficients.matrix = temp;
-        state->coefficients.rows = state->coefficients.matrix.rows();
-        state->coefficients.columns = state->coefficients.matrix.cols();
-        state->expression = oexpression;
+        //state->coefficients.rows = state->coefficients.matrix.rows();
+        //state->coefficients.columns = state->coefficients.matrix.cols();
+        //state->expression = oexpression;
         ErrorFunctionRow efRow(state);
         double error = efRow.error();
 
@@ -139,10 +141,11 @@ void ParallelPatterns::gatherCoefficients(){
         cout << "Patterns: " << endl;
         cout << state->patterns.matrix << endl;;
         delete[] nb;
-    }else{
-		state->coefficients.resize(oexpression.rows(),state->coefficients.matrix.cols());
-		state->expression = oexpression;
-	}
+    }
+	//else{
+	//	state->coefficients.resize(oexpression.rows(),state->coefficients.matrix.cols());
+	//	state->expression = oexpression;
+	//}
 	delete[] sendBuf;
 }
 
