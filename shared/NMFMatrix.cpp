@@ -42,12 +42,12 @@ int NMFMatrix::size(){
 }
 
 void NMFMatrix::reset(){
-
 	for(int y =0; y < matrix.rows(); ++y){
         for(int x = 0; x < matrix.cols(); ++x){
             functions(y,x)->reset();
         }
     }
+	matrix = MatrixXd::Zero(rows,columns);
 }
 
 
