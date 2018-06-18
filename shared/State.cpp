@@ -20,6 +20,11 @@ State::State(){
 
 void State::reset()
 {
+	both = true;
+	//this is broken -- fix if all patterns are constrained
+    //if(numPatterns == patternArgs.size()){
+    //    both = false;
+    //}
 	patterns.reset();
 	coefficients.reset();
 }
