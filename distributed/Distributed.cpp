@@ -4,7 +4,7 @@ Distributed::Distributed():Analysis(){
 	program = "Distributed";
 }
 Distributed::~Distributed(){
-	cout << "I GOT DESTRUCTED" <<endl;
+	MPI_Finalize();
 }
 
 void Distributed::start(){
@@ -86,10 +86,5 @@ void Distributed::run(){
 void Distributed::stop(){
 	if(rank == 0){
 		Analysis::output();
-	}
-	int flag = 0;
-	MPI_Finalized(&flag);
-	if(flag == 0){
-		MPI_Finalize();
 	}
 }

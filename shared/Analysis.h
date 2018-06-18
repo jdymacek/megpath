@@ -14,6 +14,7 @@ using namespace std;
 class Analysis: public Observer{
 	public:
 		Analysis();
+		virtual ~Analysis();
 		virtual void annealPrintCallback(int iterations);
         	virtual void montePrintCallback(int iterations);
         	virtual bool annealCallback(int iterations);

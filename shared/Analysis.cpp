@@ -1,4 +1,5 @@
 //Analysis.cpp 
+//
 //Julian Dymacek
 //Created: 6/6/2017
 //A base class for different ConNMF algorithms
@@ -10,6 +11,8 @@ Analysis::Analysis(){
 	state = NULL;
 	algorithm = NULL;
 }
+
+Analysis::~Analysis(){}
 
 void Analysis::setAlgorithm(MonteAnneal* al){
 	algorithm = al;

@@ -51,11 +51,13 @@ int main(int argc, char** argv){
 	}
 
 	a->load(argFile);
-	a->start();
-
-	a->run();
-	a->stop();
+	//for
+		a->start();
+		a->run();
+		a->stop();
+		//a->state->reset()
 	cout << "Total program running time: " << a->state->time << endl;
+	delete a;
 	return 0;
 }
 
