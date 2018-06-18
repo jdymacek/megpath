@@ -17,6 +17,7 @@ PiecewisePF::PiecewisePF(){
 }
 
 void PiecewisePF::reset(){
+	total = SIZE;
 	for(int i =0; i < SIZE; ++i){
         weights[i] = 1;
     }

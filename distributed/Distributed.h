@@ -19,10 +19,10 @@ class Distributed: public Analysis{
 		void sendLeastError(int process, double formerError);
 		void sendMatrix(MatrixXd& matrix,int dest);
 		void recvMatrix(MatrixXd& matrix,int src);
+		string hostname;
 	protected:
         int rank;
         int size;
-        string hostname;
 };
 
 #endif

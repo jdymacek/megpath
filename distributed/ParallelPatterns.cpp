@@ -79,7 +79,7 @@ bool ParallelPatterns::annealCallback(int iter){
 	if(state->both){
 		if(iter > state->MAX_RUNS*state->annealCutOff)
 			state->both = false;
-		allAnnealAverage();
+		allAverage();
 	}
 	return true;
 }
@@ -140,6 +140,7 @@ void ParallelPatterns::gatherCoefficients(){
        	cout << "Final Error: " << error << endl;
         cout << "Patterns: " << endl;
         cout << state->patterns.matrix << endl;;
+		cout << state->patterns.functions(0,0)->toString() << endl;
         delete[] nb;
     }
 	//else{
@@ -163,12 +164,12 @@ void ParallelPatterns::run(){
 	algorithm->setObserver(this);
 	//end set observer
 	algorithm->monteCarlo();
-	allAnnealAverage();
+	allAverage();
 	error = algorithm->anneal();
 	if(state->debug){
 		cout << state->patterns.matrix << endl << endl;
 	}	
-	allAnnealAverage();
+	allAverage();
 
 	gatherCoefficients();
 }

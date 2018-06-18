@@ -42,9 +42,18 @@ int NMFMatrix::size(){
 }
 
 void NMFMatrix::reset(){
+    rows = matrix.rows();
+    columns = matrix.cols();
 	for(int y =0; y < matrix.rows(); ++y){
         for(int x = 0; x < matrix.cols(); ++x){
             functions(y,x)->reset();
+			if(functions(y,x)->size() > 1){
+				cout << functions(y,x)->toString() << endl;
+	            for(int k=0; k < functions(y,x)->size(); ++k){
+                    Entry e = functions(y,x)->getEntry(k);
+                    matrix(e.y,e.x) = e.val;
+                }
+			}
         }
     }
 	matrix = MatrixXd::Zero(rows,columns);

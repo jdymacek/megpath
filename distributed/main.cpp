@@ -52,12 +52,10 @@ int main(int argc, char** argv){
 	}
 
 	a->load(argFile);
-	for(int i = 0; i < runs;i++)
-	{
+	for(int i = 0; i < runs;i++){
 		a->start();
 		a->run();
 		a->stop();
-		a->state->reset();
 	}
 	delete a;
 	return 0;
