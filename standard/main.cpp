@@ -5,14 +5,18 @@
 //Last modified: 5/23/2018
 
 #include "Analysis.h"
+#include "CmdArgs.h"
 using namespace std;
 
 int main(int argc, char** argv){
-	if(argc < 2){
-		cerr << "Need an argument file!";
-		return 0;
+	CmdArgs args(argc,argv);
+	string argFile = "";
+	args.getAsString("a",argFile,"../testing/testnmf/test_arguments.txt");
+	if(args.wasFatal()){
+		cout << "Missing Args" << endl;
+		cout << args.errors() << endl;
+		exit(1);
 	}
-	string argFile = argv[1];
 	Analysis* a = new Analysis();
 	a->load(argFile);
 	a->start();
