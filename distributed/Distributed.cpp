@@ -86,5 +86,6 @@ void Distributed::run(){
 void Distributed::stop(){
 	if(rank == 0){
 		Analysis::output();
+		cout << "Total program running time: " << ttime << endl;
 	}
 }
