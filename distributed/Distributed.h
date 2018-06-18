@@ -10,6 +10,7 @@ using namespace std;
 class Distributed: public Analysis{
 	public:
 		Distributed();
+		virtual ~Distributed();
 		virtual void start();
 		virtual void run();
 		virtual void stop();

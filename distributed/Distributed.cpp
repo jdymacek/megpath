@@ -3,6 +3,9 @@
 Distributed::Distributed():Analysis(){
 	program = "Distributed";
 }
+Distributed::~Distributed(){
+	cout << "I GOT DESTRUCTED" <<endl;
+}
 
 void Distributed::start(){
 	Analysis::start();
