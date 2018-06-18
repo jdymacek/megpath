@@ -45,7 +45,7 @@ void PatternMatching::monteCallback(int iter){
 bool PatternMatching::annealCallback(int iter){
 	if(state->both == true){
 		matchPatterns();
-		allAnnealAverage();
+		allAverage();
 	}
 	return true;
 }

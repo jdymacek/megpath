@@ -34,9 +34,9 @@ void ParallelFuncThrow::run(){
 	algorithm->setObserver(this);
 	algorithm->monteCarlo();
 	ft->finished();
-	pp->allAnnealAverage();
+	pp->allAverage();
 	error = algorithm->anneal();
-	pp->allAnnealAverage();
+	pp->allAverage();
 	pp->gatherCoefficients();
 }
 

@@ -17,7 +17,6 @@ class ParallelPatterns: virtual public Distributed{
 	public:
 		ParallelPatterns();
 		void startSplit();
-		virtual void allAnnealAverage();
 		virtual void allAverage();
 		virtual void start();	
 		virtual void run();
@@ -27,6 +26,8 @@ class ParallelPatterns: virtual public Distributed{
 		virtual bool annealCallback(int iter);
 		virtual void montePrintCallback(int iter);
 		virtual void annealPrintCallback(int iter);
+		virtual void monteFinalCallback();
+		virtual void annealFinalCallback();
 	protected:
 		int bufferSize;
 	    double* sendBuffer;
