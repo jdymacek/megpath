@@ -57,6 +57,7 @@ int main(int argc, char** argv){
 		a->start();
 		a->run();
 		a->stop();
+		a->state->reset();
 		cout << "Total program running time: " << a->ttime << endl;
 	}
 	delete a;
