@@ -78,6 +78,11 @@ Observer:
 		-used to configure what kind of information you want to print
 	-holds an int iterations for how often these functions are called within the monte/anneal loops
 
+CmdArgs:
+	-a class that handles cmd line arguments
+	-a flag based system '-'
+	-flags can be located anywhere and a single argument can be placed after a flag
+
 ex:(This isnt the entire setup but it shows how things are orginized)
 
 					Observer
