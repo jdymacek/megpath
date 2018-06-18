@@ -30,6 +30,7 @@ void Analysis::load(string filename){
 
 void Analysis::start(){
 	//initialize global variables
+	state->reset();
 	watch.start();
 	if(algorithm == NULL){
 		algorithm = new MonteAnneal(state);

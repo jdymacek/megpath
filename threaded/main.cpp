@@ -21,6 +21,7 @@ int main(int argc, char** argv){
 				    {"2","tp","TP","PhaseThreaded"}});
 	
 	int nt = args.getAsInt(al,to_string(thread::hardware_concurrency()));
+	int runs = args.getAsInt("r","1");
 	if(args.wasFatal()){
 		cout << "Missing Args" << endl;
 		cout << args.errors() << endl;
@@ -38,12 +39,16 @@ int main(int argc, char** argv){
 		case 2:
 			a->setAlgorithm(new PhaseThreadedMonteAnneal(a->state,nt));
 	}
-	a->start();
 
-	a->run();
-	a->output();
-	cout << "Total program running time: " << a->ttime << endl;
-	a->stop();
+	for(int i = 0; i < runs; i++)
+	{
+		a->start();
+		a->run();
+		a->output();
+		cout << "Total program running time: " << a->ttime << endl;
+		a->stop();
+	}
+	
 
 	return 0;
 }

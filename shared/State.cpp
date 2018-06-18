@@ -18,6 +18,12 @@ State::State(){
 }
 
 
+void State::reset()
+{
+	patterns.reset();
+	coefficients.reset();
+}
+
 vector<vector<int>> State::splitRanges(int by)
 {
 	int rowSize = coefficients.rows/by;

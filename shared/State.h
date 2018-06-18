@@ -47,6 +47,7 @@ class State{
 		double calcT();
 		double calcAlpha(double t);
 		void patternMatch(MatrixXd& other);
+		void reset();
 
 	protected:
 		void normalize();
