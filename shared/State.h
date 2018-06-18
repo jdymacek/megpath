@@ -27,7 +27,6 @@ class State{
 		string directory;
 		string analysis;
 		string filename;
-		string time;
 		string stats;
 		bool both;
 		bool debug;

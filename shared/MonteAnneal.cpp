@@ -112,8 +112,7 @@ void MonteAnneal::annealStep(NMFMatrix& m, double t,ErrorFunction* ef, int xStar
 
 /*Run a monte carlo markov chain*/
 double MonteAnneal::monteCarlo(){
-	Stopwatch watch;
-	watch.start();
+	callback->monteStartCallback();
 	ErrorFunctionRow efRow(state);
 	ErrorFunctionCol efCol(state);
 
@@ -131,7 +130,6 @@ double MonteAnneal::monteCarlo(){
         	}
 
 	}
-	state->time = watch.formatTime(watch.stop());
 	if(callback != NULL){
 		callback->monteFinalCallback();
 	}
@@ -139,11 +137,10 @@ double MonteAnneal::monteCarlo(){
 }
 
 double MonteAnneal::anneal(){
-	Stopwatch watch;
+	callback->annealStartCallback();
 	int ndx = 0;
 	double t = state->calcT();
 	double alpha = state->calcAlpha(t);
-	watch.start();
 
 	ErrorFunctionRow efRow(state);
 	ErrorFunctionCol efCol(state);
@@ -165,7 +162,6 @@ double MonteAnneal::anneal(){
 
 		ndx++;
 	}
-	state->time = watch.formatTime(watch.stop());
 	if(callback != NULL){
 		callback->annealFinalCallback();
 	}

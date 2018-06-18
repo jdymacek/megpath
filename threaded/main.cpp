@@ -42,7 +42,7 @@ int main(int argc, char** argv){
 
 	a->run();
 	a->output();
-	cout << "Total program running time: " << a->state->time << endl;
+	cout << "Total program running time: " << a->ttime << endl;
 	a->stop();
 
 	return 0;

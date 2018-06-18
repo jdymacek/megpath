@@ -3,6 +3,8 @@
 
 class Observer{
 	public:
+		virtual void monteStartCallback(){}
+		virtual void annealStartCallback(){}
 		virtual void monteCallback(int iter){}
 		virtual bool annealCallback(int iter){return true;}
 		virtual void annealPrintCallback(int iter){}

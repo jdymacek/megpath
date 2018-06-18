@@ -48,6 +48,13 @@ void Analysis::stop(){
 	
 }
 
+void Analysis::monteStartCallback(){
+	lap.start();
+}
+void Analysis::annealStartCallback(){
+	lap.start();
+}
+
 void Analysis::monteCallback(int iterations){}
 
 bool Analysis::annealCallback(int iterations){
@@ -64,14 +71,14 @@ void Analysis::annealFinalCallback(){
 
 	cout << "Final Error: " << efRow.error() << endl;
 	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
-	cout << "Total time: " << state->time << endl;
+	cout << "Total time: " << lap.formatTime(lap.stop()) << endl;
 }
 void Analysis::monteFinalCallback(){
 	ErrorFunctionRow efRow(state);
 
 	cout << "Final Error: " << efRow.error() << endl;
 	cout << "Error Histogram: " << efRow.errorDistribution(10) << endl;
-	cout << "Total time: " << state->time << endl;
+	cout << "Total time: " << lap.formatTime(lap.stop()) << endl;
 }
 
 void Analysis::montePrintCallback(int iterations){
@@ -90,7 +97,7 @@ void Analysis::annealPrintCallback(int iterations){
 
 
 void Analysis::output(){
-	state->time = watch.formatTime(watch.stop());
+	ttime = watch.formatTime(watch.stop());
 	if(state->stats == "notAll"){
 		outputStats();
 	}else if(state->stats == "none"){
@@ -145,7 +152,7 @@ void Analysis::outputStats(){
 	}else{
 		fout.open(outputFile, ofstream::app);
 	}
-	fout << program << "," <<state->time << "," << efRow.error() << endl;
+	fout << program << "," << ttime << "," << efRow.error() << endl;
 	fout.close();
 
 }
@@ -189,7 +196,7 @@ void Analysis::outputAll(){
     fout << "#Program : " << program << endl;
     fout << "#MAX_RUNS : " << state->MAX_RUNS << endl;
     fout << "#Total_error : " << efRow.error() << endl;
-    fout << "#Total_running_time : " << state->time << endl;
+    fout << "#Total_running_time : " << ttime << endl;
     for(int i =0; i < state->patterns.rows; ++i){
         fout << "#" << state->patternNames[i] << "," << state->patterns.matrix.row(i) << endl;
     }

@@ -18,8 +18,7 @@ ThreadedMonteAnneal::ThreadedMonteAnneal(State* st,int nt): MonteAnneal(st){
 
 /*Run a monte carlo markov chain*/
 void ThreadedMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int yEnd){
-    	Stopwatch watch;
-	watch.start();
+	callback->monteStartCallback();
 	ErrorFunctionRow efRow(state);
 	ErrorFunctionCol efCol(state);
 	
@@ -42,7 +41,6 @@ void ThreadedMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int y
 		barrier->Wait();
 	}
 	if(this_thread::get_id() == rootId && callback != NULL){
-		state->time = watch.formatTime(watch.stop());
 		callback->monteFinalCallback();
 	}
 }
@@ -74,10 +72,9 @@ double ThreadedMonteAnneal::monteCarlo(){
 
 
 void ThreadedMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd){
-	Stopwatch watch;
-	watch.start();
-    ErrorFunctionRow efRow(state);
-    ErrorFunctionCol efCol(state);
+    	callback->annealStartCallback();
+	ErrorFunctionRow efRow(state);
+    	ErrorFunctionCol efCol(state);
 	double t = state->calcT();
 	double alpha = state->calcAlpha(t);
 
@@ -102,7 +99,6 @@ void ThreadedMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd)
 		t *= alpha;
     	}
 	if(this_thread::get_id() == rootId && callback != NULL){
-		state->time = watch.formatTime(watch.stop());
 		callback->annealFinalCallback();
 	}
 }

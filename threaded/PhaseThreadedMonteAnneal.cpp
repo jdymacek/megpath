@@ -20,8 +20,7 @@ PhaseThreadedMonteAnneal::PhaseThreadedMonteAnneal(State* st,int nt): MonteAnnea
 
 /*Run a monte carlo markov chain*/
 void PhaseThreadedMonteAnneal::monteCarloThreadCoefficient(int Start, int End){
-    Stopwatch watch;
-    watch.start();
+	callback->monteStartCallback();
 	ErrorFunctionRow efRow(state);
 
 	//For each spot take a gamble and record outcome
@@ -41,13 +40,11 @@ void PhaseThreadedMonteAnneal::monteCarloThreadCoefficient(int Start, int End){
 		}
 	}
 	if(this_thread::get_id() == rootId && callback != NULL){
-		state->time = watch.formatTime(watch.stop());
 		callback->monteFinalCallback();
 	}
 }
 void PhaseThreadedMonteAnneal::monteCarloThreadPattern(){
-    Stopwatch watch;
-    watch.start();
+	callback->monteStartCallback();
 	ErrorFunctionCol efCol(dupe);
 
 	//For each spot take a gamble and record outcome
@@ -72,7 +69,6 @@ void PhaseThreadedMonteAnneal::monteCarloThreadPattern(){
 		}
 	}
 	if(this_thread::get_id() == rootId && callback != NULL){
-		state->time = watch.formatTime(watch.stop());
 		callback->monteFinalCallback();
 	}
 }
@@ -97,8 +93,7 @@ double PhaseThreadedMonteAnneal::monteCarlo(){
 
 
 void PhaseThreadedMonteAnneal::annealThreadCoefficient(int Start, int End){
-	Stopwatch watch;
-    watch.start();
+	callback->annealStartCallback();
 	double t = state->calcT();
 	double alpha = state->calcAlpha(t);
     ErrorFunctionRow efRow(state);
@@ -128,13 +123,11 @@ void PhaseThreadedMonteAnneal::annealThreadCoefficient(int Start, int End){
 		t *= alpha;
     }
 	if(this_thread::get_id() == rootId && callback != NULL){
-		state->time = watch.formatTime(watch.stop());
 		callback->annealFinalCallback();
 	}
 }
 void PhaseThreadedMonteAnneal::annealThreadPattern(){
-	Stopwatch watch;
-    watch.start();
+	callback->annealStartCallback();
 	double t = state->calcT();
 	double alpha = state->calcAlpha(t);
     	ErrorFunctionCol efCol(dupe);
@@ -173,7 +166,6 @@ void PhaseThreadedMonteAnneal::annealThreadPattern(){
 
     	}
 	if(this_thread::get_id() == rootId && callback != NULL){
-		state->time = watch.formatTime(watch.stop());
 		callback->annealFinalCallback();
 	}
 }
