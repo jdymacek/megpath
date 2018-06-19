@@ -40,6 +40,10 @@ int main(int argc, char** argv){
 			a->setAlgorithm(new PhaseThreadedMonteAnneal(a->state,nt));
 	}
 
+	int runTime = args.getAsInt("rt", "-1");
+	if(runTime != -1){
+		a->timedRun(runTime);
+	}
 	for(int i = 0; i < runs; i++)
 	{
 		a->start();

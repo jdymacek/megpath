@@ -14,6 +14,44 @@ Analysis::Analysis(){
 
 Analysis::~Analysis(){}
 
+void Analysis::timedRun(int runTime){
+
+	double prevTime;
+	int prevRuns;
+	Stopwatch watch;
+	int running = 1;
+	double deltaT = 0;
+	int deltI = 0;
+	while(running > 0 ){
+		watch.start();
+		start();
+		run();
+		stop();
+		double time = watch.stop();
+		if(time > runTime-0.5 && time < runTime+0.5){
+			running = -5;
+		}else if (running == 1){
+			//running = 2;
+			prevRuns = state->MAX_RUNS;
+			prevTime = time;
+			state->MAX_RUNS = (state->MAX_RUNS * runTime/time);
+		}else{
+			double deltaT = (deltaT + (prevTime - time))/running;
+			int deltaI = (deltaI + (prevRuns - state->MAX_RUNS))/running;
+			if(deltaT > 1){	
+				int nextRuns = (deltaI/deltaT) * runTime;
+				prevTime = time;
+				prevRuns = state->MAX_RUNS;
+				state->MAX_RUNS = nextRuns;
+			}
+		}
+		running ++;
+		if(state->MAX_RUNS > prevRuns-1 && state->MAX_RUNS < prevRuns+1){
+			running = -5;
+		}
+	}
+
+}
 void Analysis::setAlgorithm(MonteAnneal* al){
 	algorithm = al;
 	if(program.size() > 0){

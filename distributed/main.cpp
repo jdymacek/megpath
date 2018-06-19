@@ -54,35 +54,7 @@ int main(int argc, char** argv){
 	int runTime = args.getAsInt("rt", "-1");
 	a->load(argFile);
 	if(runTime != -1){
-		double prevTime;
-		int prevRuns;
-		Stopwatch watch;
-		int running = 1;
-		double deltaT = 0;
-		int deltI = 0;
-		while(running > 0 ){
-			watch.start();
-			a->start();
-			a->run();
-			a->stop();
-			double time = watch.stop();
-			if(time > runTime-0.5 && time < runTime+0.5){
-				running = -5;
-			}else if (running == 1){
-				//running = 2;
-				prevRuns = a->state->MAX_RUNS;
-				prevTime = time;
-				a->state->MAX_RUNS = a->broadcastInt(a->state->MAX_RUNS * runTime/time);
-			}else{
-				double deltaT = (deltaT + (prevTime - time))/running;
-				int deltaI = (deltaI + (prevRuns - a->state->MAX_RUNS))/running;
-				prevRuns = a->state->MAX_RUNS;
-				prevTime = time;
-				a->state->MAX_RUNS = a->broadcastInt((deltaI/deltaT) * runTime);
-			}
-			running ++;
-			cout << "time/runs: " << time << ":" << a->state->MAX_RUNS << endl;
-		}
+		a->timedRun(runTime);
 	}
 	for(int i = 0; i < runs;i++){
 		a->start();

@@ -19,6 +19,10 @@ int main(int argc, char** argv){
 	}
 	Analysis* a = new Analysis();
 	a->load(argFile);
+	int runTime = args.getAsInt("rt", "-1");
+	if(runTime != -1){
+		a->timedRun(runTime);
+	}
 	int runs = args.getAsInt("r","1");
 	for(int i = 0; i < runs; i++)
 	{

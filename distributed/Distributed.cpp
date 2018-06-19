@@ -7,6 +7,44 @@ Distributed::~Distributed(){
 	MPI_Finalize();
 }
 
+void Distributed::timedRun(int runTime){
+
+	double prevTime;
+	int prevRuns;
+	Stopwatch watch;
+	int running = 1;
+	double deltaT = 0;
+	int deltI = 0;
+	while(running > 0 ){
+		watch.start();
+		start();
+		run();
+		stop();
+		double time = watch.stop();
+		if(time > runTime-0.5 && time < runTime+0.5){
+			running = -5;
+		}else if (running == 1){
+			//running = 2;
+			prevRuns = state->MAX_RUNS;
+			prevTime = time;
+			state->MAX_RUNS = broadcastInt(state->MAX_RUNS * runTime/time);
+		}else{
+			double deltaT = (deltaT + (prevTime - time))/running;
+			int deltaI = (deltaI + (prevRuns - state->MAX_RUNS))/running;
+			if(deltaT > 1){	
+				prevTime = time;
+				prevRuns = state->MAX_RUNS;
+				int nextRuns = (deltaI/deltaT) * runTime;
+				state->MAX_RUNS = broadcastInt(nextRuns);
+			}
+		}
+		if(state->MAX_RUNS > prevRuns-1 && state->MAX_RUNS < prevRuns+1){
+			running = -5;
+		}
+		running ++;
+		//cout << "time/runs: " << time << ":" << state->MAX_RUNS << endl;
+	}
+}
 void Distributed::start(){
 	Analysis::start();
 	int flag = 0;
