@@ -78,9 +78,7 @@ int main(int argc, char** argv){
 		a->stop();
 	}
 	
-	if(a->state->debug){
-		cout << "Total program running time: " << a->ttime << endl;
-	}
+	delete a;
 
 	return 0;
 }
