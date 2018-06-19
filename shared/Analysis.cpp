@@ -23,6 +23,9 @@ void Analysis::setAlgorithm(MonteAnneal* al){
 }
 
 void Analysis::load(string filename){
+	if(program.size() == 0){
+		program = "Standard";
+	}
 	state = new State();
 	state->load(filename);
 }
