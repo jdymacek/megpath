@@ -70,10 +70,14 @@ int main(int argc, char** argv){
 			break;
 	}
 
-
-	a->start();
-	a->run();
-	a->stop();
+	int runs = args.getAsInt("r","1");
+	for(int i = 0; i < runs; i++)
+	{
+		a->start();
+		a->run();
+		a->stop();
+	}
+	
 	if(a->state->debug){
 		cout << "Total program running time: " << a->ttime << endl;
 	}
