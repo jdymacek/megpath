@@ -46,7 +46,6 @@ void Analysis::run(){
 }
 
 void Analysis::stop(){
-	
 }
 
 void Analysis::monteStartCallback(){

@@ -81,11 +81,19 @@ void Distributed::recvMatrix(MatrixXd& matrix,int src){
 	MPI_Recv(matrix.data(),matrix.rows()*matrix.cols(),MPI_DOUBLE,src,tag,MPI_COMM_WORLD,&status);
 }
 
+int Distributed::broadcastInt(int toSend){
+	int tag = 0;
+	MPI_Status status;
+	int rv = toSend;
+	MPI_Bcast(&rv,1,MPI_INT,0,MPI_COMM_WORLD);
+	return rv;
+}
 void Distributed::run(){
 
 }
 
 void Distributed::stop(){
+	Analysis::stop();
 	if(rank == 0){
 		Analysis::output();
 		cout << "Total program running time: " << ttime << endl;

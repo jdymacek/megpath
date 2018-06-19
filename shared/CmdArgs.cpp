@@ -62,6 +62,7 @@ bool CmdArgs::getAsDouble(string arg,double& rv,string val){
 		}
 		arglist[arg].asked = true;
 	}else{
+		rv = stod(val);
 		arglist[arg] = {arg,"",false,true};
 	}
 	return arglist[arg].found;
@@ -86,6 +87,7 @@ bool CmdArgs::getAsInt(string arg,int& rv,string val){
         }
         arglist[arg].asked = true;
     }else{
+	rv = stod(val);
         arglist[arg] = {arg,"",false,true};
     }
     return arglist[arg].found;

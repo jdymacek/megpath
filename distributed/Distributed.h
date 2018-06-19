@@ -19,6 +19,7 @@ class Distributed: public Analysis{
 		void sendLeastError(int process, double formerError);
 		void sendMatrix(MatrixXd& matrix,int dest);
 		void recvMatrix(MatrixXd& matrix,int src);
+		int broadcastInt(int tosend);
 		string hostname;
 	protected:
         int rank;
