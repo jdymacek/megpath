@@ -19,9 +19,13 @@ int main(int argc, char** argv){
 	}
 	Analysis* a = new Analysis();
 	a->load(argFile);
-	a->start();
-	a->run();
-	a->output();
+	int runs = args.getAsInt("r","1");
+	for(int i = 0; i < runs; i++)
+	{
+		a->start();
+		a->run();
+		a->output();
+	}
 	cout << "Total program running time: " << a->ttime << endl;
 
 	delete a;
