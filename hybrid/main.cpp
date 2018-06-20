@@ -4,6 +4,7 @@
 //Created on 5/25/2017
 //Last modified: 7/7/2017
 
+#include "OMPMonteAnneal.h"
 #include "PhaseThreadedMonteAnneal.h"
 #include "FlipThreadedMonteAnneal.h"
 #include "ThreadedMonteAnneal.h"
@@ -29,7 +30,8 @@ int main(int argc, char** argv){
 	
 	string al = args.findFlag({{"0","t","T","Threaded"},
 				    {"1","tf","TF","FlipThreaded"},
-				    {"2","tp","TP","PhaseThreaded"}});
+				    {"2","tp","TP","PhaseThreaded"},
+				    {"3","o","O","OpenMP"}});
 	
 	int nt = args.getAsInt(al,to_string(thread::hardware_concurrency()));
 	if(args.wasFatal()){
@@ -67,6 +69,9 @@ int main(int argc, char** argv){
 			break;
 		case 2:
 			a->setAlgorithm(new PhaseThreadedMonteAnneal(a->state,nt));
+			break;
+		case 3:
+			a->setAlgorithm(new OMPMonteAnneal(a->state, nt));
 			break;
 	}
 

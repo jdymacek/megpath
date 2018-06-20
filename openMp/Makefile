@@ -1,22 +1,28 @@
 CC=g++
 CFLAGS=-O3 -c -fopenmp -std=c++11 -I../shared/
 LDFLAGS=-L../shared/ -fopenmp
-LIBS=
-VPATH = src:../shared
-SOURCES= FlipOMPMonteAnneal.cpp OMPMonteAnneal.cpp FileUtil.cpp PiecewisePF.cpp MonteAnneal.cpp State.cpp main.cpp ShiftPF.cpp Stopwatch.cpp ProbFunc.cpp UniformPF.cpp HistoPF.cpp ArgFile.cpp CSVFile.cpp Value.cpp NMFMatrix.cpp Analysis.cpp ErrorFunction.cpp ErrorFunctionRow.cpp ErrorFunctionCol.cpp
+LIBS=-lpthread -lnmf -fopenmp
+LIB_SOURCES=FlipOMPMonteAnneal.cpp OMPMonteAnneal.cpp
+SOURCES=$(LIB_SOURCES) main.cpp
+LIB_OBJECTS=$(LIB_SOURCES:.cpp=.o)
 OBJECTS=$(SOURCES:.cpp=.o)
+LIBRARY=libnmfomp.a
 EXECUTABLE=ompnmf
 
-all: $(SOURCES) $(EXECUTABLE) 
+all: $(SOURCES) $(LIBRARY) $(EXECUTABLE) 
+
+$(LIBRARY): $(LIB_OBJECTS)
+	ar rcs $@ $^
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $^ -o $@ $(LIBS)
+	$(CC) -o $@ $^ $(LDFLAGS) $(LIBS)
 
 .cpp.o:
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:	
 	rm -f *.o 
+	rm $(LIBRARY)
 	rm $(EXECUTABLE)
 	touch *.cpp
 
