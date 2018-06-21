@@ -23,7 +23,7 @@ void ParallelFuncThrow::start(){
 	Distributed::start();
 	pp->state = state;
 	pp->start();
-	algorithm = pp->algorithm;
+	pp->algorithm = algorithm;
 	ft->state = state;
 	ft->start();
 	ft->algorithm = algorithm;
