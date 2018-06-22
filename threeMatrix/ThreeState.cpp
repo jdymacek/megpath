@@ -37,5 +37,6 @@ bool ThreeState::load(string argFileName){
 	int ROWS = csv.size() - origin[1].asInt();
 	coefficients.resize(ROWS,WEIGHTS);
 	weights.resize(WEIGHTS,PATTERNS);
+	cout << "ROWS:" << ROWS << " WEIGHTS:" << WEIGHTS << " PATTERNS:" << PATTERNS << endl;
 	return rv;
 }

@@ -44,7 +44,7 @@ class State{
 		double start_prob;
 		double end_prob;
 		vector<vector<int>> splitRanges(int by);
-		bool load(string argFileName);
+		virtual bool load(string argFileName);
 		double calcT();
 		double calcAlpha(double t);
 		void patternMatch(MatrixXd& other);

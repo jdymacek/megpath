@@ -12,7 +12,7 @@ using namespace Eigen;
 class ThreeState: public State{
 	public:
 		ThreeState();
-		bool load(string ArgFileName);
+		virtual bool load(string ArgFileName);
 		NMFMatrix weights;	
 };
 #endif
