@@ -15,7 +15,8 @@ Analysis::Analysis(){
 Analysis::~Analysis(){}
 
 void Analysis::timedRun(int runTime){
-
+	string toSet = state->stats;
+	state->stats = "none";
 	double prevTime;
 	int prevRuns;
 	Stopwatch watch;
@@ -36,20 +37,21 @@ void Analysis::timedRun(int runTime){
 			prevTime = time;
 			state->MAX_RUNS = (state->MAX_RUNS * runTime/time);
 		}else{
-			double deltaT = (deltaT + (prevTime - time))/running;
-			int deltaI = (deltaI + (prevRuns - state->MAX_RUNS))/running;
-			if(deltaT > 1){	
+			double deltaT = ((prevTime - time));
+			int deltaI = ((prevRuns - state->MAX_RUNS));
+			//if(deltaT > 0.2){	
 				int nextRuns = (deltaI/deltaT) * runTime;
 				prevTime = time;
 				prevRuns = state->MAX_RUNS;
 				state->MAX_RUNS = nextRuns;
-			}
+			//}
 		}
 		running ++;
 		if(state->MAX_RUNS > prevRuns-1 && state->MAX_RUNS < prevRuns+1){
 			running = -5;
 		}
 	}
+	state->stats = toSet;
 
 }
 void Analysis::setAlgorithm(MonteAnneal* al){

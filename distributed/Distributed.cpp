@@ -8,7 +8,8 @@ Distributed::~Distributed(){
 }
 
 void Distributed::timedRun(int runTime){
-
+	string toSet = state->stats;
+	state->stats = "none";
 	double prevTime;
 	int prevRuns;
 	Stopwatch watch;
@@ -29,14 +30,14 @@ void Distributed::timedRun(int runTime){
 			prevTime = time;
 			state->MAX_RUNS = broadcastInt(state->MAX_RUNS * runTime/time);
 		}else{
-			double deltaT = (deltaT + (prevTime - time))/running;
-			int deltaI = (deltaI + (prevRuns - state->MAX_RUNS))/running;
-			if(deltaT > 1){	
+			double deltaT = ((prevTime - time));
+			int deltaI = ((prevRuns - state->MAX_RUNS));
+			//if(deltaT > 1){	
 				prevTime = time;
 				prevRuns = state->MAX_RUNS;
 				int nextRuns = (deltaI/deltaT) * runTime;
 				state->MAX_RUNS = broadcastInt(nextRuns);
-			}
+			//}
 		}
 		if(state->MAX_RUNS > prevRuns-1 && state->MAX_RUNS < prevRuns+1){
 			running = -5;
@@ -44,6 +45,7 @@ void Distributed::timedRun(int runTime){
 		running ++;
 		//cout << "time/runs: " << time << ":" << state->MAX_RUNS << endl;
 	}
+	state->stats = toSet;
 }
 void Distributed::start(){
 	Analysis::start();
