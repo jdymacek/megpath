@@ -8,7 +8,7 @@
 #include "Analysis.h"
 
 Analysis::Analysis(){
-	state = NULL;
+	state = new State();
 	algorithm = NULL;
 }
 
@@ -62,11 +62,13 @@ void Analysis::setAlgorithm(MonteAnneal* al){
 	program += al->program;
 }
 
+void Analysis::setState(State* st){
+	state = st;
+}
 void Analysis::load(string filename){
 	if(program.size() == 0){
 		program = "Standard";
 	}
-	state = new State();
 	state->load(filename);
 }
 

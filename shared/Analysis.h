@@ -24,6 +24,7 @@ class Analysis: public Observer{
 		virtual void monteFinalCallback();
 		virtual void annealFinalCallback();
 		virtual void load(string filename);
+		virtual void setState(State* st);
 		virtual void start();
 		virtual void run();
 		virtual void stop();

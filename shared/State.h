@@ -1,8 +1,9 @@
 //State.h
 //Julian Dymacek
 //Matthew Dyer
+//Dakota Martin
 //Created: 6/6/2017
-//Modified: 6/20/2017
+//Modified: 6/10/2018
 
 #ifndef STATE__H
 #define STATE__H

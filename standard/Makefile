@@ -1,7 +1,7 @@
 CC=g++
-CFLAGS=-O3 -c -fopenmp -std=c++11 -I../shared/
-LDFLAGS=-L../shared/ -fopenmp
-LIBS=-lnmf
+CFLAGS=-O3 -c -fopenmp -std=c++11 -I../shared/ -I../threeMatrix
+LDFLAGS=-L../shared/ -L../threeMatrix -fopenmp
+LIBS=-lnmf -l3nmf
 SOURCES=main.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=connmf
