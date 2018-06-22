@@ -13,8 +13,6 @@ FlipThreadedMonteAnneal::FlipThreadedMonteAnneal(State* st,int nt): MonteAnneal(
 	barrier = new Barrier(numThreads);
 	callback = NULL;
 	program = "FlipThreadedMonteAnneal_" + to_string(nt) + "t";
-	dupe = new State();
-	*dupe = *st;
 }
 
 /*Run a monte carlo markov chain*/
@@ -72,6 +70,8 @@ void FlipThreadedMonteAnneal::monteCarloThreadPattern(){
 }
 
 double FlipThreadedMonteAnneal::monteCarlo(){
+	dupe = new State();
+	*dupe = *state;
 	vector<thread> threads;
 	
 	threads.push_back(thread(&FlipThreadedMonteAnneal::monteCarloThreadPattern,this));		
@@ -97,10 +97,10 @@ void FlipThreadedMonteAnneal::annealThreadCoefficient(int num, double tstart, do
 	 double t = tstart;
    	 ErrorFunctionRow efRow(state);
    	 barrier->Wait();
-	 int id = threadMap[this_thread::get_id()];
 
     //For each spot take a gamble and record outcome
     for(int i =num; i < 2*state->MAX_RUNS; i++){
+	 	int id = threadMap[this_thread::get_id()];
 		annealStep(state->coefficients,t,&efRow,0,state->coefficients.columns,ranges[id][2],ranges[id][3]);
             barrier->Wait();
 	    //wait for Pattern thread to exchange coefficients/rows

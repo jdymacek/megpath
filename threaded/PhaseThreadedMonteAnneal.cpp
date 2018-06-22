@@ -14,8 +14,6 @@ PhaseThreadedMonteAnneal::PhaseThreadedMonteAnneal(State* st,int nt): MonteAnnea
 	barrier = new Barrier(numThreads);
 	callback = NULL;
 	program = "PhaseThreadedMonteAnneal_" + to_string(nt) + "t";
-	dupe = new State();
-	*dupe = *st;
 }
 
 /*Run a monte carlo markov chain*/
@@ -74,6 +72,8 @@ void PhaseThreadedMonteAnneal::monteCarloThreadPattern(){
 }
 
 double PhaseThreadedMonteAnneal::monteCarlo(){
+	dupe = new State();
+	*dupe = *state;
 	vector<thread> threads;
 	
 	threads.push_back(thread(&PhaseThreadedMonteAnneal::monteCarloThreadPattern,this));		
