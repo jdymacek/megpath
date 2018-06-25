@@ -35,7 +35,7 @@ int main(){
 
 	default_random_engine gen;
 	uniform_real_distribution<double> dist(0.0,1.0);
-	MatrixXd coefficients(5000,3);
+	MatrixXd coefficients(1000,3);
 	double total = 0;
 	for(int i = 0; i < coefficients.rows(); ++i){
 		total = 0;
@@ -62,6 +62,7 @@ int main(){
 	ofstream outfile;
 	outfile.open("test_arguments.txt");
 	outfile << "analysis = \"test\"\n";
+	outfile << "stats = \"notAll\"\n";
 	outfile << "max_runs = 40000\n";
 	outfile << "print_runs = 10000\n";
 	outfile << "test_patterns = [\"\",\"\",\"\"]\n";

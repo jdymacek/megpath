@@ -6,7 +6,6 @@
 
 #include "Analysis.h"
 #include "CmdArgs.h"
-#include "ThreeMonteAnneal.h"
 using namespace std;
 
 int main(int argc, char** argv){
@@ -19,11 +18,6 @@ int main(int argc, char** argv){
 		exit(1);
 	}
 	Analysis* a = new Analysis();
-	string thr = args.findFlag({"tr", "TR", "ThreeMonteAnneal"});
-	if(thr == "tr"){
-		a->setState(new ThreeState());
-		a->setAlgorithm(new ThreeMonteAnneal((ThreeState*)(a->state)));
-	}
 	a->load(argFile);
 	int runTime = args.getAsInt("rt", "-1");
 	if(runTime != -1){

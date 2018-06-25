@@ -31,7 +31,7 @@ double ThreeMonteAnneal::monteCarlo(){
 	if(callback != NULL){
 		callback->monteFinalCallback();
 	}
-	return ef.error();
+	return -1;
 }
 
 double ThreeMonteAnneal::anneal(){
@@ -64,6 +64,7 @@ double ThreeMonteAnneal::anneal(){
 		callback->annealFinalCallback();
 	}
 	
-	return ef.error();
+//	return ef.error();
+	return 0;
 }
 
