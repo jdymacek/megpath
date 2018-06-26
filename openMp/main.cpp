@@ -1,44 +1,57 @@
 //Main file
-//Matthew Dyer
+//Dakota Martin
 //Julian Dymacek
-//Created on 5/25/2017
-//Last modified: 7/7/2017
+//Created on 6/26/2018
 
 #include "OMPMonteAnneal.h"
 #include "FlipOMPMonteAnneal.h"
 #include "Analysis.h"
-#include <omp.h>
+#include "CmdArgs.h"
 
 using namespace std;
 
 int main(int argc, char** argv){
-	if(argc < 3){
-		cerr << "Needs: argument file, algorithm";
-		return 0;
-	}
-	Stopwatch watch;
-	string argFile = argv[1];
-	string analysis = argv[2];
-	int nt = omp_get_num_threads();
-	if(argc == 4){
-		nt = atoi(argv[3]);
+	CmdArgs args(argc,argv);
+	string argFile = "";
+	args.getAsString("a",argFile,"../testing/testnmf/test_arguments.txt");
+	string al = args.findFlag({{"0","o","O","OMPMonteAnneal"},
+				    {"1","of","OF","FlipOMPMonteAnneal"}});
+	
+	int nt = args.getAsInt(al,to_string(thread::hardware_concurrency()));
+	int runs = args.getAsInt("r","1");
+	if(args.wasFatal()){
+		cout << "Missing Args" << endl;
+		cout << args.errors() << endl;
+		exit(1);
 	}
 	Analysis* a = new Analysis();
-
 	a->load(argFile);
-	if(analysis == "OpenMP" || analysis == "O" || analysis == "o"){
-			a->setAlgorithm(new OMPMonteAnneal(a->state, nt));
-	}else if(analysis == "FlipOpenMp" || analysis == "FO" || analysis == "fo"){
-			a->setAlgorithm(new FlipOMPMonteAnneal(a->state, nt));
+	switch(stoi(al)){
+		case 0:
+			a->setAlgorithm(new OMPMonteAnneal(a->state,nt));
+			break;
+		case 1:
+			a->setAlgorithm(new FlipOMPMonteAnneal(a->state,nt));
+			break;
 	}
 
-	a->start();
-
-	a->run();
-	a->output();
-	cout << "Total program running time: " << a->ttime << endl;
-	a->stop();
-
+	int runTime = args.getAsInt("rt", "-1");
+	if(runTime != -1){
+		a->timedRun(runTime);
+	}
+	for(int i = 0; i < runs; i++)
+	{
+		a->start();
+		a->run();
+		a->output();
+		cout << "Total program running time: " << a->ttime << endl;
+		if(a->state->debug){
+			cout << "Patterns:\n" << a->state->patterns.matrix << endl;
+		}
+		a->stop();
+	}
+	
+	delete a;
 	return 0;
 }
 
