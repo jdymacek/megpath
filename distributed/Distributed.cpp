@@ -52,6 +52,7 @@ void Distributed::start(){
 	int flag = 0;
     	MPI_Initialized(&flag);
 	if(flag == 0){
+		MPI_Init_thread(NULL,NULL,MPI_THREAD_FUNNELED,NULL);
 		MPI_Init(NULL,NULL);
     	}
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);

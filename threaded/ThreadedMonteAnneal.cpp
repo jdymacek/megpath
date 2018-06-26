@@ -21,7 +21,6 @@ void ThreadedMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int y
 	callback->monteStartCallback();
 	ErrorFunctionRow efRow(state);
 	ErrorFunctionCol efCol(state);
-	
 	//For each spot take a gamble and record outcome
 	for(int i =0; i < state->MAX_RUNS; i++){
 		monteCarloStep(state->coefficients,&efRow,0,state->coefficients.columns,yStart,yEnd);
