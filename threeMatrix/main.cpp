@@ -36,6 +36,9 @@ int main(int argc, char** argv){
 		a->run();
 		a->output();
 	}
+	cout << "Patterns:\n" << a->state->patterns.matrix << endl;
+	cout << "Coefficients:\n" << a->state->coefficients.matrix << endl;
+	cout << "Weights:\n" << ((ThreeState*)(a->state))->weights.matrix << endl;
 	cout << "Total program running time: " << a->ttime << endl;
 
 	delete a;

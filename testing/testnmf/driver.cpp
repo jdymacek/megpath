@@ -31,11 +31,11 @@ void writeCSV(string filename, MatrixXd m){
 
 int main(){
 	MatrixXd patterns(3,5);
-	patterns << 0.1,0.35,0.5,0.65,0.8, 0.7,0.5,0.3,0.1,0, 0.1,0.25,0.5,0.25,0.1;
+	patterns << 0.1,0.35,0.5,0.65,0.8, 0.7,0.5,0.3,0.1,0, 0.1,0.25,0.5,0.25,0.1;//, 0.5,0.25,0.1,0.25,0.5;
 
 	default_random_engine gen;
 	uniform_real_distribution<double> dist(0.0,1.0);
-	MatrixXd coefficients(1000,3);
+	MatrixXd coefficients(4000,3);
 	double total = 0;
 	for(int i = 0; i < coefficients.rows(); ++i){
 		total = 0;
