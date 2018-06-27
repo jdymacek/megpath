@@ -31,6 +31,7 @@ class Analysis: public Observer{
 		virtual void output();
 		virtual void outputAll();
 		virtual void outputStats();
+		virtual void outputRuns();
 		virtual void timedRun(int runTime);
 		void setAlgorithm(MonteAnneal* al);
 		void setName(string name);

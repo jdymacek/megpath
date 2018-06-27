@@ -145,6 +145,8 @@ void Analysis::output(){
 	ttime = watch.formatTime(watch.stop());
 	if(state->stats == "notAll"){
 		outputStats();
+	}else if(state->stats == "withRuns"){
+		outputRuns();
 	}else if(state->stats == "none"){
 	
 	}else{
@@ -153,6 +155,51 @@ void Analysis::output(){
 }
 
 
+
+void Analysis::outputRuns(){
+	char curTime[20];
+    	time_t t;
+    	struct tm *tmp;
+	
+    	t = time(NULL);
+    	tmp = localtime(&t);
+    	if(tmp == NULL){
+    		    fprintf(stderr,"%s",strerror(errno));
+    		    exit(-1);
+    	}
+
+    	int timef = strftime(curTime, sizeof(curTime), "%T %m-%d-%Y" ,tmp);
+    	if(timef == 0){
+		    fprintf(stderr,"strftime returned 0\n");
+		    exit(-1);
+    	}
+    	string outputDir = state->directory;
+	FileUtil::mkPath(outputDir);
+	outputDir += "/";
+	ErrorFunctionRow efRow(state);
+
+	ofstream fout;
+	string toComp = "#File: ";
+	toComp += state->filename + "\n";
+	toComp += "#Constrained: ";
+	if(state->constrained){
+		toComp += "true\n";
+	}else{
+		toComp += "false\n";
+	}
+
+	string outputFile = FileUtil::findMatchingFile(outputDir + state->analysis + "runResults.csv", toComp, 2);
+	if(!FileUtil::isFile(outputFile)){
+		fout.open(outputFile);
+		fout << toComp;
+		fout << "#Time: " << curTime << endl;
+	}else{
+		fout.open(outputFile, ofstream::app);
+	}
+	fout << program << "," << ttime << "," << efRow.error() << "," << to_string(state->MAX_RUNS) << endl;
+	fout.close();
+
+}
 
 void Analysis::outputStats(){
 	char curTime[20];
