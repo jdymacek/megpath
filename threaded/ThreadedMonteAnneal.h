@@ -14,8 +14,8 @@ using namespace std;
 class ThreadedMonteAnneal:public MonteAnneal{
 	public:
 		ThreadedMonteAnneal(State* st, int nt);
-		void monteCarloThread(int xStart, int xEnd, int yStart, int yEnd);
-		void annealThread(int xStart, int xEnd,int yStart,int yEnd);
+		void monteCarloThread(int xStart, int xEnd, int yStart, int yEnd,vector<int> core);
+		void annealThread(int xStart, int xEnd,int yStart,int yEnd,vector<int> core);
 
 		virtual double monteCarlo();
 		virtual double anneal();

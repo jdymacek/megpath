@@ -16,8 +16,19 @@ ThreadedMonteAnneal::ThreadedMonteAnneal(State* st,int nt): MonteAnneal(st){
 	callback = NULL;
 }
 
+void mapThread(vector<int> core){
+	cpu_set_t cpuset;
+	CPU_ZERO(&cpuset);
+	for(int i = 0; i < core.size(); i++){
+		CPU_SET(core[i],&cpuset);
+	}
+
+	pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
+}
+
 /*Run a monte carlo markov chain*/
-void ThreadedMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int yEnd){
+void ThreadedMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int yEnd, vector<int> cores){
+	mapThread(cores);
 	callback->monteStartCallback();
 	ErrorFunctionRow efRow(state);
 	ErrorFunctionCol efCol(state);
@@ -55,6 +66,8 @@ double ThreadedMonteAnneal::monteCarlo(){
 		toSplit = numThreads;
 		combine = false;
 	}
+	int c = 0;
+	vector<vector<int>> cores = {{0,4,1,5},{1,5,0,4},{2,6,3,7},{2,6,3,7},{3,7,6,2},{3,7,6,2},{4,0,1,5},{5,1,0,4}};
 	vector<vector<int>> ranges = state->splitRanges(toSplit);
 	for(int i = 0; i < ranges.size(); ++i){
 	
@@ -71,14 +84,15 @@ double ThreadedMonteAnneal::monteCarlo(){
 			if(state->constrained && i == 0){
 				ranges[next][1] = state->patterns.columns;
 			}
-        		threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this,ranges[i][0],ranges[next][1],ranges[i][2],ranges[next][3]));
+        		threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this,ranges[i][0],ranges[next][1],ranges[i][2],ranges[next][3],cores[c]));
 			i = next;
 			if(i > toSplit%numThreads && toSplit%numThreads != 0){
 				combine = false;
 			}
 		}else{
-			threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
+			threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3],cores[c]));
 		}
+		c++;
 		rootId = threads[0].get_id();
 	}
 
@@ -92,7 +106,8 @@ double ThreadedMonteAnneal::monteCarlo(){
 }
 
 
-void ThreadedMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd){
+void ThreadedMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd,vector<int> cores){
+	mapThread(cores);
     	callback->annealStartCallback();
 	ErrorFunctionRow efRow(state);
     	ErrorFunctionCol efCol(state);
@@ -137,9 +152,11 @@ double ThreadedMonteAnneal::anneal(){
 		toSplit = numThreads;
 		combine = false;
 	}
+	int c = 0;
+	vector<vector<int>> cores = {{0,4,1,5},{1,5,0,4},{2,6,3,7},{2,6,3,7},{3,7,6,2},{3,7,6,2},{4,0,1,5},{5,1,0,4}};
 	vector<vector<int>> ranges = state->splitRanges(toSplit);
 	for(int i = 0; i < ranges.size(); ++i){
-	
+		
 		if(state->constrained){
 			ranges[i][0] = 0;
 			ranges[i][1] = (i == 0 ? state->patterns.columns : 0);
@@ -153,14 +170,15 @@ double ThreadedMonteAnneal::anneal(){
 			if(state->constrained && i == 0){
 				ranges[next][1] = state->patterns.columns;
 			}
-        		threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,ranges[i][0],ranges[next][1],ranges[i][2],ranges[next][3]));
+        		threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,ranges[i][0],ranges[next][1],ranges[i][2],ranges[next][3],cores[c]));
 			i = next;
 			if(i > toSplit%numThreads && toSplit%numThreads != 0){
 				combine = false;
 			}
 		}else{
-			threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
+			threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3],cores[c]));
 		}
+		c ++;
 		rootId = threads[0].get_id();
 	}
 
