@@ -50,9 +50,10 @@ void Distributed::timedRun(int runTime){
 void Distributed::start(){
 	Analysis::start();
 	int flag = 0;
+	int tmp = 0;
     	MPI_Initialized(&flag);
 	if(flag == 0){
-		MPI_Init_thread(NULL,NULL,MPI_THREAD_FUNNELED,&flag);
+		MPI_Init_thread(NULL,NULL,MPI_THREAD_FUNNELED,&tmp);
 //		MPI_Init(NULL,NULL);
     	}
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
