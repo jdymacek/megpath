@@ -2,7 +2,8 @@
 //Dakota Martin
 //Julian Dymacek
 //Created on 5/22/2018
-//Modified on 5/23/2018
+//Modified on 6/27/2018
+//git repository has the thread affinity stuff around 6/27/2018
 
 #include "ThreadedMonteAnneal.h"
 
@@ -16,19 +17,9 @@ ThreadedMonteAnneal::ThreadedMonteAnneal(State* st,int nt): MonteAnneal(st){
 	callback = NULL;
 }
 
-void mapThread(vector<int> core){
-	cpu_set_t cpuset;
-	CPU_ZERO(&cpuset);
-	for(int i = 0; i < core.size(); i++){
-		CPU_SET(core[i],&cpuset);
-	}
-
-	pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
-}
 
 /*Run a monte carlo markov chain*/
-void ThreadedMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int yEnd, vector<int> cores){
-	mapThread(cores);
+void ThreadedMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int yEnd){
 	callback->monteStartCallback();
 	ErrorFunctionRow efRow(state);
 	ErrorFunctionCol efCol(state);
@@ -60,15 +51,7 @@ double ThreadedMonteAnneal::monteCarlo(){
 	vector<thread> threads;
 	
 
-	bool combine = true;
-	int toSplit = thread::hardware_concurrency();
-	if(toSplit < numThreads){
-		toSplit = numThreads;
-		combine = false;
-	}
-	int c = 0;
-	vector<vector<int>> cores = {{0,4,1,5},{1,5,0,4},{2,6,3,7},{2,6,3,7},{3,7,6,2},{3,7,6,2},{4,0,1,5},{5,1,0,4}};
-	vector<vector<int>> ranges = state->splitRanges(toSplit);
+	vector<vector<int>> ranges = state->splitRanges(numThreads);
 	for(int i = 0; i < ranges.size(); ++i){
 	
 		if(state->constrained){
@@ -76,23 +59,7 @@ double ThreadedMonteAnneal::monteCarlo(){
 			ranges[i][1] = (i == 0 ? state->patterns.columns : 0);
 		}
 		
-		if(combine == true){
-			int next = i+(toSplit/numThreads);
-			if(toSplit % numThreads == 0){
-				next--;
-			}
-			if(state->constrained && i == 0){
-				ranges[next][1] = state->patterns.columns;
-			}
-        		threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this,ranges[i][0],ranges[next][1],ranges[i][2],ranges[next][3],cores[c]));
-			i = next;
-			if(i > toSplit%numThreads && toSplit%numThreads != 0){
-				combine = false;
-			}
-		}else{
-			threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3],cores[c]));
-		}
-		c++;
+		threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
 		rootId = threads[0].get_id();
 	}
 
@@ -106,8 +73,7 @@ double ThreadedMonteAnneal::monteCarlo(){
 }
 
 
-void ThreadedMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd,vector<int> cores){
-	mapThread(cores);
+void ThreadedMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd){
     	callback->annealStartCallback();
 	ErrorFunctionRow efRow(state);
     	ErrorFunctionCol efCol(state);
@@ -146,15 +112,7 @@ double ThreadedMonteAnneal::anneal(){
 	
 
     
-	bool combine = true;
-	int toSplit = thread::hardware_concurrency();
-	if(toSplit < numThreads){
-		toSplit = numThreads;
-		combine = false;
-	}
-	int c = 0;
-	vector<vector<int>> cores = {{0,4,1,5},{1,5,0,4},{2,6,3,7},{2,6,3,7},{3,7,6,2},{3,7,6,2},{4,0,1,5},{5,1,0,4}};
-	vector<vector<int>> ranges = state->splitRanges(toSplit);
+	vector<vector<int>> ranges = state->splitRanges(numThreads);
 	for(int i = 0; i < ranges.size(); ++i){
 		
 		if(state->constrained){
@@ -162,23 +120,7 @@ double ThreadedMonteAnneal::anneal(){
 			ranges[i][1] = (i == 0 ? state->patterns.columns : 0);
 		}
 		
-		if(combine == true){
-			int next = i+(toSplit/numThreads);
-			if(toSplit % numThreads == 0){
-				next--;
-			}
-			if(state->constrained && i == 0){
-				ranges[next][1] = state->patterns.columns;
-			}
-        		threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,ranges[i][0],ranges[next][1],ranges[i][2],ranges[next][3],cores[c]));
-			i = next;
-			if(i > toSplit%numThreads && toSplit%numThreads != 0){
-				combine = false;
-			}
-		}else{
-			threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3],cores[c]));
-		}
-		c ++;
+		threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
 		rootId = threads[0].get_id();
 	}
 
