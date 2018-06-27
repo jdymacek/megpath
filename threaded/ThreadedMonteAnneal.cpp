@@ -49,14 +49,36 @@ double ThreadedMonteAnneal::monteCarlo(){
 	vector<thread> threads;
 	
 
-	vector<vector<int>> ranges = state->splitRanges(numThreads);
+	bool combine = true;
+	int toSplit = thread::hardware_concurrency();
+	if(toSplit < numThreads){
+		toSplit = numThreads;
+		combine = false;
+	}
+	vector<vector<int>> ranges = state->splitRanges(toSplit);
 	for(int i = 0; i < ranges.size(); ++i){
 	
 		if(state->constrained){
 			ranges[i][0] = 0;
 			ranges[i][1] = (i == 0 ? state->patterns.columns : 0);
 		}
-        	threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
+		
+		if(combine == true){
+			int next = i+(toSplit/numThreads);
+			if(toSplit % numThreads == 0){
+				next--;
+			}
+			if(state->constrained && i == 0){
+				ranges[next][1] = state->patterns.columns;
+			}
+        		threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this,ranges[i][0],ranges[next][1],ranges[i][2],ranges[next][3]));
+			i = next;
+			if(i > toSplit%numThreads && toSplit%numThreads != 0){
+				combine = false;
+			}
+		}else{
+			threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
+		}
 		rootId = threads[0].get_id();
 	}
 
@@ -77,14 +99,14 @@ void ThreadedMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd)
 	double t = state->calcT();
 	double alpha = state->calcAlpha(t);
 
-    //For each spot take a gamble and record outcome
-    for(int i =0; i < 2*state->MAX_RUNS; i++){
+    	//For each spot take a gamble and record outcome
+    	for(int i =0; i < 2*state->MAX_RUNS; i++){
 		annealStep(state->coefficients,t,&efRow,0,state->coefficients.columns,yStart,yEnd);
-        if(state->both){
-            barrier->Wait();
+        	if(state->both){
+        	    barrier->Wait();
 			annealStep(state->patterns,t,&efCol,xStart,xEnd,0,state->patterns.rows);
 		}
-        barrier->Wait(); 
+        	barrier->Wait(); 
 		if(this_thread::get_id() == rootId){
 			if(i % state->interuptRuns == 0 && callback != NULL){
 				callback->annealCallback(i);
@@ -107,18 +129,38 @@ double ThreadedMonteAnneal::anneal(){
 
     vector<thread> threads;
 	
-    bool constrained = false;
 
     
-
-	vector<vector<int>> ranges = state->splitRanges(numThreads); 
+	bool combine = true;
+	int toSplit = thread::hardware_concurrency();
+	if(toSplit < numThreads){
+		toSplit = numThreads;
+		combine = false;
+	}
+	vector<vector<int>> ranges = state->splitRanges(toSplit);
 	for(int i = 0; i < ranges.size(); ++i){
 	
 		if(state->constrained){
 			ranges[i][0] = 0;
 			ranges[i][1] = (i == 0 ? state->patterns.columns : 0);
 		}
-        	threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
+		
+		if(combine == true){
+			int next = i+(toSplit/numThreads);
+			if(toSplit % numThreads == 0){
+				next--;
+			}
+			if(state->constrained && i == 0){
+				ranges[next][1] = state->patterns.columns;
+			}
+        		threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,ranges[i][0],ranges[next][1],ranges[i][2],ranges[next][3]));
+			i = next;
+			if(i > toSplit%numThreads && toSplit%numThreads != 0){
+				combine = false;
+			}
+		}else{
+			threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
+		}
 		rootId = threads[0].get_id();
 	}
 
