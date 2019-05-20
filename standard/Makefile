@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-O3 -c -fopenmp -std=c++11 -I../shared/ -I../threeMatrix
+CFLAGS=-O3 -c -std=c++11 -I../shared/ -I../threeMatrix
 LDFLAGS=-L../shared/ -L../threeMatrix -fopenmp
 LIBS=-lnmf -l3nmf
 SOURCES=main.cpp
