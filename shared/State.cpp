@@ -128,7 +128,7 @@ bool State::load(string argFileName){
 		annealCutOff = val.asDouble();
 	}
 	if(debug){
-		cout << "Using analysis: " << analysis.substr(0,analysis.size()-1) << "\n";
+		cout << "Using analysis: " << analysis.substr(0,analysis.size()-1) << "\n";	
 	}
 
 	if(args.isArgument(analysis + "filename")){
@@ -280,6 +280,10 @@ bool State::load(string argFileName){
 	if(numPatterns == patternArgs.size()){
 		both = false;
 	}
+
+	string print = args.toString();
+	cout << print << endl;
+
 	return true;
 }
 
