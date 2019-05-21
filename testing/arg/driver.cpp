@@ -12,7 +12,9 @@ using namespace std;
 int main(){
 	ArgFile args;
 
+	args.fromString("analysis = default\nmax_runs = 1000\ndebug = false\nstart_error = 0.2\nend_error = 0.001\nstart_prob = 0.67\nend_prob = 0.1\nstats = none\nanneal_cut_off = 1.5\ndefault_filename = mixed.csv\ndefault_patterns = {0,0,0,0,0}\ndefault_origin = {1,1}\ndefault_directory = ../testing/csv/\ndefault_controls = {0,0,0,0,0}\nprint_runs = 1000\ninterrupt_runs = 1000\ndefault_ids = {0,0,0,0,0}");
 	args.load("tests.txt");
+	args.load("ovwrt.txt");
 
 	cout << "Print out the args: \n";
 	string print = args.toString();
