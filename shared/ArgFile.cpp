@@ -53,24 +53,24 @@ string ArgFile::toString(){
 }
 
 Value ArgFile::getArgument(string key){
-	Value rv = Value();
-	string val = "";
+//	Value rv = Value();
+//	string val = "";
+//
+//	for(map<string,Value>::iterator i = args.begin(); i != args.end(); ++i){
+//		if(i->first == key){
+//			rv = i->second;
+//			return rv;
+//		}
+//	}
 
-	for(map<string,Value>::iterator i = args.begin(); i != args.end(); ++i){
-		if(i->first == key){
-			rv = i->second;
-			return rv;
-		}
-	}
-
-	return rv;
+	return args.at(key);
 }
 
 bool ArgFile::isArgument(string key){
-	for(map<string,Value>::iterator i = args.begin(); i != args.end(); ++i){
-		if(i->first == key){
-			return true;
-		}
-	}
-	return false;
+//	for(map<string,Value>::iterator i = args.begin(); i != args.end(); ++i){
+//		if(i->first == key){
+//			return true;
+//		}
+//	}
+	return args.find(key) != args.end();
 }
