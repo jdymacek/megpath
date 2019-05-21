@@ -40,7 +40,7 @@ void ArgFile::fromStream(istream& stream){
 			val = Value(value);
 		}
 
-		args.insert(pair<string,Value>(key,val));
+		args[key] = val;
 	}
 }
 
@@ -53,7 +53,10 @@ string ArgFile::toString(){
 }
 
 Value ArgFile::getArgument(string key){
-//	Value rv = Value();
+	Value rv = Value();
+	if(args.find(key) != args.end()){
+		rv = args[key];
+	}
 //	string val = "";
 //
 //	for(map<string,Value>::iterator i = args.begin(); i != args.end(); ++i){
@@ -63,7 +66,7 @@ Value ArgFile::getArgument(string key){
 //		}
 //	}
 
-	return args.at(key);
+	return rv;
 }
 
 bool ArgFile::isArgument(string key){
