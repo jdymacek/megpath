@@ -1,0 +1,5 @@
+analysis = new
+new_filename = doubles.csv
+new_directory = ../testing/csv/
+anneal_cut_off = 2
+max_runs = 1000000
