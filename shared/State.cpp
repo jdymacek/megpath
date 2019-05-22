@@ -296,6 +296,35 @@ bool State::load(string argFileName){
 
 	string print = args.toString();
 	cout << print << endl;
+	if(img){
+		Image* ret;
+		ret = createImage(png->height, png->width);
+		cout << ROWS << '\t' << ret->height << endl;
+		if(ROWS == ret->height*3){
+			for(int i = 0; i<ROWS; i++){
+				for(int j = 0; j<COLUMNS; j=j+3){
+					ret->data[j/3*4+4*COLUMNS*i] = (int)(expression(i,j)*255);
+					ret->data[j/3*4+4*COLUMNS*i+1] = (int)(expression(i,j+1)*255);
+					ret->data[j/3*4+4*COLUMNS*i+2] = (int)(expression(i,j+2)*255);
+					ret->data[j/3*4+4*COLUMNS*i+3] = 255;
+				}
+			}
+		}else if(ROWS == ret->height){
+			for(int i = 0; i<ROWS; i++){
+				for(int j = 0; j<COLUMNS; j++){
+					int temp = (int)(expression(i,j)*255);
+					ret->data[4*j+4*COLUMNS*i] = temp;
+					ret->data[4*j+4*COLUMNS*i+1] = temp;
+					ret->data[4*j+4*COLUMNS*i+2] = temp;
+					ret->data[4*j+4*COLUMNS*i+3] = 255;
+				}
+			}
+		}else{
+			cout << "expression-to-PNG failed" << endl;
+			return true;
+		}
+		writePng("return.png",ret);
+	}
 
 	return true;
 }
@@ -366,16 +395,40 @@ void State::normalize(){
 }
 
 vector<vector<Value> > State::pixlToVal(Image* png){
-	vector<vector<Value> > rv(png->width, vector<Value>(png->height,1));
-	for(int i = 0; i<png->width*4; i=i+4){
-		for(int j = 0; j<png->height; j++){
-			rv[i/4][j] = Value(png->data[i+4*png->width*j]<<16 | png->data[i+4*png->width*j+1]<<8 | png->data[i+4*png->width*j+2]);
-			//rv[i/4][j] = Value(png->data[i+4*png->width*j]);
-			cout << i/4 << '\t' << j << '\t' << rv[i/4][j].asInt() << endl; 
+	bool gray = true;
+	for(int i = 0; i<png->width*png->height*4; i = i+4){
+		if(png->data[i] != png->data[i+1] || png->data[i] != png->data[i+2]){
+			gray = false;
+			break;
 		}
 	}
-	cout << "done" << endl;
-	return rv;
+
+	if(!gray){
+		vector<vector<Value> > rv(png->width*3, vector<Value>(png->height,1));
+		for(int i = 0; i<png->width*4; i=i+4){
+			for(int j = 0; j<png->height; j++){
+				//rv[i/4][j] = Value(png->data[i+4*png->width*j]<<16 | png->data[i+4*png->width*j+1]<<8 | png->data[i+4*png->width*j+2]);
+				rv[i/4*3][j] = Value(png->data[i+4*png->width*j]);
+				rv[i/4*3+1][j] = Value(png->data[i+4*png->width*j+1]);
+				rv[i/4*3+2][j] = Value(png->data[i+4*png->width*j+2]);
+				//rv[i/4][j] = Value(png->data[i+4*png->width*j]);
+				//cout << i/4*3 << '\t' << j << '\t' << rv[i/4][j].asInt() << endl; 
+				//cout << i/4*3+1 << '\t' << j << '\t' << rv[i/4][j].asInt() << endl; 
+				//cout << i/4*3+2 << '\t' << j << '\t' << rv[i/4][j].asInt() << endl; 
+			}
+		}
+		return rv;
+	}else{
+		vector<vector<Value> > rv(png->width, vector<Value>(png->height,1));
+		for(int i = 0; i<png->width*4; i=i+4){
+			for(int j = 0; j<png->height; j++){
+				//rv[i/4][j] = Value(png->data[i+4*png->width*j]<<16 | png->data[i+4*png->width*j+1]<<8 | png->data[i+4*png->width*j+2]);
+				rv[i/4][j] = Value(png->data[i+4*png->width*j]);
+				//cout << i/4 << '\t' << j << '\t' << rv[i/4][j].asInt() << endl; 
+			}
+		}
+		return rv;
+	}
 }
 //Old State split functions
 /*int ParallelPatterns::findStart(int myRank, int curSize, int numRows){
