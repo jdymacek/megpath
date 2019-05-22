@@ -14,6 +14,7 @@
 #include "NMFMatrix.h"
 #include "../../Eigen/Core"
 #include "ShiftPF.h"
+#include "PNG.h"
 
 using namespace std;
 using namespace Eigen;
@@ -32,6 +33,7 @@ class State{
 		bool both;
 		bool debug;
 		bool constrained;
+		bool img;
 		vector<string> patternNames;
 		vector<string> ids;
 		int printRuns;
@@ -53,7 +55,7 @@ class State{
 	protected:
 		void normalize();
 		void normalizeMatrix(MatrixXd& mat);
-
+		vector<vector<Value> > pixlToVal(Image* png);
 };
 
 #endif

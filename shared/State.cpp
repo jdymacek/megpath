@@ -71,9 +71,12 @@ bool State::load(string argFileName){
 	int COLUMNS = 0;
 	int PATTERNS = 0;
 	constrained = false;
+	img = false;
 
 	ArgFile args;
 	CSVFile file;
+	Image* png;
+
 
 	vector<Value> origin;
 	vector<Value> controls;
@@ -82,7 +85,7 @@ bool State::load(string argFileName){
 	vector<Value> idArgs;		
 
 	//grab arguments
-	args.fromString("analysis = \"default\"\nmax_runs = 1000\ndebug = false\nstart_error = 0.2\nend_error = 0.001\nstart_prob = 0.67\nend_prob = 0.1\nstats = \"none\"\nanneal_cut_off = 1.5\ndefault_filename = \"mixed.csv\"\ndefault_patterns = ["","","","",""]\ndefault_origin = {1,1}\ndefault_directory = \"../testing/csv/\"\nprint_runs = 1000\ninterrupt_runs = 1000");
+	args.fromString("analysis = \"default\"\nmax_runs = 1000\ndebug = false\nstart_error = 0.2\nend_error = 0.001\nstart_prob = 0.67\nend_prob = 0.1\nstats = \"none\"\nanneal_cut_off = 1.5\ndefault_filename = \"mixed.csv\"\ndefault_patterns = [\"\",\"\",\"\",\"\",\"\"]\ndefault_origin = {0,0}\ndefault_directory = \"../testing/csv/\"\nprint_runs = 1000\ninterrupt_runs = 1000");
 	args.load(argFileName);
 	
 	if(args.isArgument("analysis")){
@@ -134,6 +137,11 @@ bool State::load(string argFileName){
 	if(args.isArgument(analysis + "filename")){
 		Value val = args.getArgument(analysis + "filename");
 		filename = val.asString();
+
+		if(filename.substr(filename.size()-4,4) == ".png"){
+			cout << "PNG Found" << endl;
+			img = true;
+		}
 	}
 
 	if(args.isArgument(analysis + "patterns")){
@@ -184,16 +192,21 @@ bool State::load(string argFileName){
 		idArgs = val.asVector();
 	}
 
-	vector<vector<Value> > csv = file.readCSV(filename);
-
+	vector<vector<Value> > res;
+	if(img){
+		png = readPng(filename.c_str());
+		res = pixlToVal(png);
+	}else{
+		res = file.readCSV(filename);
+	}	
 	//expression matrix
-	ROWS = csv.size() - origin[1].asInt();
+	ROWS = res.size() - origin[1].asInt();
 	if(args.isArgument(analysis + "columns")){
 		Value val = args.getArgument(analysis + "columns");
 		columns = val.asVector();
 		COLUMNS = columns.size();
 	}else{
-		COLUMNS = csv[0].size() - origin[0].asInt();
+		COLUMNS = res[0].size() - origin[0].asInt();
 		for(int i = 0; i < COLUMNS;++i){
 			Value newVal(i);
 			columns.push_back(newVal);
@@ -215,16 +228,16 @@ bool State::load(string argFileName){
 	for(int i = 0; i < ROWS; ++i){
 		for(int j = 0; j < COLUMNS; ++j){
 			if(columns.size() == controls.size()){
-				expression(i,j) = csv[i+origin[1].asInt()][columns[j].asInt()+origin[0].asInt()].asDouble() - csv[i+origin[1].asInt()][controls[j].asInt()+origin[0].asInt()].asDouble();
+				expression(i,j) = res[i+origin[1].asInt()][columns[j].asInt()+origin[0].asInt()].asDouble() - res[i+origin[1].asInt()][controls[j].asInt()+origin[0].asInt()].asDouble();
 			}else{
-				expression(i,j) = csv[i+origin[1].asInt()][columns[j].asInt()+origin[0].asInt()].asDouble();
+				expression(i,j) = res[i+origin[1].asInt()][columns[j].asInt()+origin[0].asInt()].asDouble();
 			}
 		}
 		//read columns to make an id
 		if(idArgs.size() > 0){
 			string id = "";
 			for(int k =0; k < idArgs.size(); ++k){
-				id += (csv[i+origin[1].asInt()][idArgs[k].asInt()]).toString();
+				id += (res[i+origin[1].asInt()][idArgs[k].asInt()]).toString();
 				if(k != idArgs.size()-1){
 					id += ",";
 				}
@@ -352,6 +365,18 @@ void State::normalize(){
 	expression = expression/(max-min);
 }
 
+vector<vector<Value> > State::pixlToVal(Image* png){
+	vector<vector<Value> > rv(png->width, vector<Value>(png->height,1));
+	for(int i = 0; i<png->width*4; i=i+4){
+		for(int j = 0; j<png->height; j++){
+			rv[i/4][j] = Value(png->data[i+4*png->width*j]<<16 | png->data[i+4*png->width*j+1]<<8 | png->data[i+4*png->width*j+2]);
+			//rv[i/4][j] = Value(png->data[i+4*png->width*j]);
+			cout << i/4 << '\t' << j << '\t' << rv[i/4][j].asInt() << endl; 
+		}
+	}
+	cout << "done" << endl;
+	return rv;
+}
 //Old State split functions
 /*int ParallelPatterns::findStart(int myRank, int curSize, int numRows){
 	int startRow = 0;
