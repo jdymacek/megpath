@@ -8,7 +8,7 @@ Image* createImage(int width,int height){
 	Image* image = (Image*)malloc(sizeof(Image));
     image->width    = width;
     image->height   = height;
-    image->channels = 3;
+    image->channels = 4;
     image->data = (unsigned char*) malloc(image->width*image->height*image->channels);
 	memset(image->data,0,image->width*image->height*image->channels);
 	return image;
