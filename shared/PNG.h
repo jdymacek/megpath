@@ -13,6 +13,9 @@ typedef struct Image{
 	unsigned char* data;
 } Image;
 
+Image* createImage(int width,int height);
+
+
 Image* readPng(const char* filename);
 void writePng(const char* filename,Image* image);
 

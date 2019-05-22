@@ -4,6 +4,17 @@
 
 #define PNG_BYTES_TO_CHECK 8
 
+Image* createImage(int width,int height){
+	Image* image = (Image*)malloc(sizeof(Image));
+    image->width    = width;
+    image->height   = height;
+    image->channels = 3;
+    image->data = (unsigned char*) malloc(image->width*image->height*image->channels);
+	memset(image->data,0,image->width*image->height*image->channels);
+	return image;
+}
+
+
 Image* readPng(const char* file_name){
 	/* open file and test for it being a png */
 	FILE* fp;
