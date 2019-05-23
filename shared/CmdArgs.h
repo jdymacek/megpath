@@ -19,7 +19,10 @@ template<typename Numeric>
 bool isNumber(const std::string& s)
 {
     Numeric n;
-    return((std::istringstream(s) >> n >> std::ws).eof());
+	stringstream sin(s);
+	if(sin >> n)
+		return true;
+	return false;
 }
 
 class CmdArgs{

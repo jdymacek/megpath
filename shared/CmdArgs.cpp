@@ -5,6 +5,8 @@ CmdArgs::CmdArgs(int argc, char** argv){
 	string parameter = "";
 	for(int i = argc-1; i >=1 ; --i){
 		string arg = string(argv[i]);
+		if(isNumber<double>(arg))
+			cout << "is double" << endl;
 		if(isNumber<int>(arg) || isNumber<double>(arg) || arg[0] != '-'){
 			parameter = arg;	
 		}else{

@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-O3 -c -std=c++11 -I../shared/ -I../threeMatrix
+CFLAGS=-g -c -std=c++11 -I../shared/ -I../threeMatrix -I/usr/local/include
 LDFLAGS=-L../shared/ -L../threeMatrix
 LIBS=-lnmf -lpng
 SOURCES=main.cpp
