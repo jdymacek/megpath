@@ -273,9 +273,6 @@ void Analysis::outputAll(){
 
     ErrorFunctionRow efRow(state);
 
-    if(state->img){
-	    state->MXdToPng(state->patterns.matrix,state->patterns.rows,state->patterns.columns,true);
-    }
     ofstream fout;
     string outputFile = FileUtil::uniqueFile(outputDir + state->analysis + "results.csv");
 
@@ -293,8 +290,12 @@ void Analysis::outputAll(){
     fout << "#Total_error : " << efRow.error() << endl;
     fout << "#Total_running_time : " << ttime << endl;
 
-    for(int i =0; i < state->patterns.rows; ++i){
-        fout << "#" << state->patternNames[i] << "," << state->patterns.matrix.row(i) << endl;
+    if(state->img){
+	    state->MXdToPng(state->patterns.matrix,state->patterns.rows,state->patterns.columns,true,"result.png");
+    }else{
+    	for(int i =0; i < state->patterns.rows; ++i){
+    	    fout << "#" << state->patternNames[i] << "," << state->patterns.matrix.row(i) << endl;
+    	}
     }
 
     for(int i = 0; i < state->coefficients.rows; ++i){
