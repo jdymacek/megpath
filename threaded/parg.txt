@@ -3,6 +3,7 @@ analysis = "png"
 max_runs = 100000;
 png_filename = "testout.png"
 png_origin = [0,0]
+#png_patterns = ["","","","","","","","","","","","","","","",""]
 png_patterns = ["","",""]
 png_directory = "."
 stats = "all"

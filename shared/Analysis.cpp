@@ -291,7 +291,7 @@ void Analysis::outputAll(){
     fout << "#Total_running_time : " << ttime << endl;
 
     if(state->img){
-	    state->MXdToPng(state->patterns.matrix,state->patterns.rows,state->patterns.columns,true,"result.png");
+	    state->MXdToPng(state->patterns.matrix,state->patterns.rows,state->patterns.columns,false,"result.png");
     }else{
     	for(int i =0; i < state->patterns.rows; ++i){
     	    fout << "#" << state->patternNames[i] << "," << state->patterns.matrix.row(i) << endl;
