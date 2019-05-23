@@ -1,7 +1,7 @@
 #test argument file
 analysis = "png"
 max_runs = 10000;
-png_filename = "bbg.png"
+png_filename = "invxp.png"
 png_origin = [0,0]
 png_patterns = ["","",""]
 png_directory = "."
