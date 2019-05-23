@@ -2,13 +2,35 @@
 //Justin Moore
 //May 22, 2019
 
-#include<iostream>
+#include <iostream>
 #include "../../shared/PNG.h"
+#include <time.h>
 
 using namespace std;
 
+void pngMake(){
+	Image* mak = createImage(16,16);	
+	unsigned int len = mak->width*mak->height*mak->channels;
+	int rless = 0;
+	for(int i = 0; i<len; i++){
+		if(i%4 == 0){
+			mak->data[i] = rand()%(rless+1);
+		}else if(i%4 == 1){
+			mak->data[i] = rand()%(rless+1);
+		}else if(i%4 == 2){
+			rless = rand()%256;
+			mak->data[i] = rless;
+		}else{
+			mak->data[i] = 255;
+		}
+	}
+	writePng("randb.png",mak);
+}
+
 int main(int argc, char* argv[]){
+	srand(time(0));
 	if(argc < 2){
+		pngMake();
 		return 0;
 	}
 
@@ -34,14 +56,11 @@ int main(int argc, char* argv[]){
 		for(int i = 0; i<len; i++){
 			if(i%4 == 0){
 				wag += tst->data[i]*2;
-			}
-			if(i%4 == 1){
+			}else if(i%4 == 1){
 				wag += tst->data[i]*3;
-			}
-			if(i%4 == 2){
+			}else if(i%4 == 2){
 				wag += tst->data[i];
-			}
-			if(i%4 == 3){
+			}else{
 				wag /= 6;
 				tst->data[i-1] = wag;
 				tst->data[i-2] = wag;

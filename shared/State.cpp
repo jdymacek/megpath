@@ -298,33 +298,35 @@ bool State::load(string argFileName){
 	cout << print << endl;
 
 	if(img){
-		Image* ret;
-		ret = createImage(png->width, png->height);
-		cout << COLUMNS << '\t' << ret->width << endl;
-		if(COLUMNS == ret->width*3){
-			for(int i = 0; i<ROWS; i++){
-				for(int j = 0; j<COLUMNS; j=j+3){
-					ret->data[j/3*4+COLUMNS/3*4*i] = (int)(expression(i,j)*255);
-					ret->data[j/3*4+COLUMNS/3*4*i+1] = (int)(expression(i,j+1)*255);
-					ret->data[j/3*4+COLUMNS/3*4*i+2] = (int)(expression(i,j+2)*255);
-					ret->data[j/3*4+COLUMNS/3*4*i+3] = 255;
-				}
-			}
-		}else if(COLUMNS == ret->width){
-			for(int i = 0; i<ROWS; i++){
-				for(int j = 0; j<COLUMNS; j++){
-					int temp = (int)(expression(i,j)*255);
-					ret->data[4*j+4*COLUMNS*i] = temp;
-					ret->data[4*j+4*COLUMNS*i+1] = temp;
-					ret->data[4*j+4*COLUMNS*i+2] = temp;
-					ret->data[4*j+4*COLUMNS*i+3] = 255;
-				}
-			}
+//		Image* ret;
+//		ret = createImage(png->width, png->height);
+//		cout << COLUMNS << '\t' << ret->width << endl;
+		if(COLUMNS == png->width*3){
+			MXdToPng(expression,ROWS,COLUMNS,false,"return.png");
+//			for(int i = 0; i<ROWS; i++){
+//				for(int j = 0; j<COLUMNS; j=j+3){
+//					ret->data[j/3*4+COLUMNS/3*4*i] = (int)(expression(i,j)*255);
+//					ret->data[j/3*4+COLUMNS/3*4*i+1] = (int)(expression(i,j+1)*255);
+//					ret->data[j/3*4+COLUMNS/3*4*i+2] = (int)(expression(i,j+2)*255);
+//					ret->data[j/3*4+COLUMNS/3*4*i+3] = 255;
+//				}
+//			}
+		}else if(COLUMNS == png->width){
+			MXdToPng(expression,ROWS,COLUMNS,true,"return.png");
+//			for(int i = 0; i<ROWS; i++){
+//				for(int j = 0; j<COLUMNS; j++){
+//					int temp = (int)(expression(i,j)*255);
+//					ret->data[4*j+4*COLUMNS*i] = temp;
+//					ret->data[4*j+4*COLUMNS*i+1] = temp;
+//					ret->data[4*j+4*COLUMNS*i+2] = temp;
+//					ret->data[4*j+4*COLUMNS*i+3] = 255;
+//				}
+//			}
 		}else{
 			cout << "expression-to-PNG failed" << endl;
 			return true;
 		}
-		writePng("return.png",ret);
+//		writePng("return.png",ret);
 	}
 
 	return true;
@@ -442,6 +444,33 @@ vector<vector<Value> > State::pixlToVal(Image* png){
 		}
 		return rv;
 	}
+}
+
+void State::MXdToPng(MatrixXd mat, int r, int c, bool g, const char* name){
+	Image* ret;
+	if(!g){
+		ret = createImage(c/3, r);
+		for(int i = 0; i<r; i++){
+			for(int j = 0; j<c; j=j+3){
+				ret->data[j/3*4+c/3*4*i] = (int)(mat(i,j)*255);
+				ret->data[j/3*4+c/3*4*i+1] = (int)(mat(i,j+1)*255);
+				ret->data[j/3*4+c/3*4*i+2] = (int)(mat(i,j+2)*255);
+				ret->data[j/3*4+c/3*4*i+3] = 255;
+			}
+		}
+	}else{
+		ret = createImage(c, r);
+		for(int i = 0; i<r; i++){
+			for(int j = 0; j<c; j++){
+				int temp = (int)(mat(i,j)*255);
+				ret->data[4*j+4*c*i] = temp;
+				ret->data[4*j+4*c*i+1] = temp;
+				ret->data[4*j+4*c*i+2] = temp;
+				ret->data[4*j+4*c*i+3] = 255;
+			}
+		}
+	}
+	writePng(name,ret);
 }
 //Old State split functions
 /*int ParallelPatterns::findStart(int myRank, int curSize, int numRows){

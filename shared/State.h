@@ -51,6 +51,7 @@ class State{
 		double calcAlpha(double t);
 		void patternMatch(MatrixXd& other);
 		void reset();
+		void MXdToPng(MatrixXd mat, int r, int c, bool g, const char* name);
 
 	protected:
 		void normalize();
