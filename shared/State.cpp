@@ -36,7 +36,7 @@ vector<vector<int>> State::splitRanges(int by)
 	int colSize = patterns.columns/by;
 	int rowStart = 0;
 	int colStart = 0;
-	
+
 	vector<vector<int>> rv;
 
 	for(int i =0; i < by; ++i){
@@ -52,10 +52,10 @@ vector<vector<int>> State::splitRanges(int by)
 		tmp.push_back(rowStart);
 		tmp.push_back(rowEnd);
 		rv.push_back(tmp);
-			
+
         	rowStart = rowEnd;
         	colStart = colEnd;
-    	}	 
+    	}
 	return rv;
 }
 
@@ -83,12 +83,12 @@ bool State::load(string argFileName){
 	vector<Value> controls;
 	vector<Value> columns;
 	vector<Value> patternArgs;
-	vector<Value> idArgs;		
+	vector<Value> idArgs;
 
 	//grab arguments
 	args.fromString("analysis = \"default\"\nmax_runs = 1000\ndebug = false\nstart_error = 0.2\nend_error = 0.001\nstart_prob = 0.67\nend_prob = 0.1\nstats = \"none\"\nanneal_cut_off = 1.5\ndefault_filename = \"mixed.csv\"\ndefault_patterns = [\"\",\"\",\"\",\"\",\"\"]\ndefault_origin = {0,0}\ndefault_directory = \"../testing/csv/\"\nprint_runs = 1000\ninterrupt_runs = 1000");
 	args.load(argFileName);
-	
+
 	if(args.isArgument("analysis")){
 		Value val = args.getArgument("analysis");
 		analysis = val.asString();
@@ -132,7 +132,7 @@ bool State::load(string argFileName){
 		annealCutOff = val.asDouble();
 	}
 	if(debug){
-		cout << "Using analysis: " << analysis.substr(0,analysis.size()-1) << "\n";	
+		cout << "Using analysis: " << analysis.substr(0,analysis.size()-1) << "\n";
 	}
 
 	if(args.isArgument(analysis + "filename")){
@@ -199,7 +199,7 @@ bool State::load(string argFileName){
 		res = pixlToVal(png, gray);
 	}else{
 		res = file.readCSV(filename);
-	}	
+	}
 	//expression matrix
 	ROWS = res.size() - origin[1].asInt();
 	if(args.isArgument(analysis + "columns")){
@@ -213,7 +213,7 @@ bool State::load(string argFileName){
 			columns.push_back(newVal);
 		}
 	}
-	
+
 	if(debug){
 		cout << ROWS << "x" << COLUMNS << endl;
 	}
@@ -244,6 +244,9 @@ bool State::load(string argFileName){
 				}
 			}
 			ids.push_back(id);
+		}else{
+			string id = "row-" + to_string(i);
+			ids.push_back(id);
 		}
 	}
 
@@ -252,7 +255,7 @@ bool State::load(string argFileName){
 	//should be PATTERNS and COLUMNS
 	patterns.resize(PATTERNS,COLUMNS);
 	//should be ROWS and PATTERNS
-	coefficients.resize(ROWS,PATTERNS);	
+	coefficients.resize(ROWS,PATTERNS);
 
 
 	int numPatterns = 0;
@@ -264,7 +267,7 @@ bool State::load(string argFileName){
 			Value newVal = args.getArgument(findPattern);
 			intoMatrix = newVal.asVector();
 
-			ShiftPF* shared = new ShiftPF();			
+			ShiftPF* shared = new ShiftPF();
 			vector<Entry> constraints;
 			for(int j = 0; j < intoMatrix.size(); ++j){
 				string str = intoMatrix[j].asString();
@@ -278,10 +281,10 @@ bool State::load(string argFileName){
 					constrained = true;
 					Entry e;
 					patterns.matrix(i,j) = intoMatrix[j].asDouble();
-					patterns.functions(i,j) = shared;	
+					patterns.functions(i,j) = shared;
 					e.x = j;
 					e.y = i;
-					e.val = patterns.matrix(i,j);	
+					e.val = patterns.matrix(i,j);
 					constraints.push_back(e);
 				}
 			}
@@ -422,9 +425,9 @@ vector<vector<Value> > State::pixlToVal(Image* png, bool& gray){
 					}
 				}
 				//rv[i/4][j] = Value(png->data[i+4*png->width*j]);
-				//cout << j/4*3 << '\t' << i << '\t' << rv[i][j/4*3].asInt() << endl; 
-				//cout << j/4*3+1 << '\t' << i << '\t' << rv[i][j/4*3+1].asInt() << endl; 
-				//cout << j/4*3+2 << '\t' << i << '\t' << rv[i][j/4*3+2].asInt() << endl; 
+				//cout << j/4*3 << '\t' << i << '\t' << rv[i][j/4*3].asInt() << endl;
+				//cout << j/4*3+1 << '\t' << i << '\t' << rv[i][j/4*3+1].asInt() << endl;
+				//cout << j/4*3+2 << '\t' << i << '\t' << rv[i][j/4*3+2].asInt() << endl;
 			}
 		}
 		return rv;
@@ -434,7 +437,7 @@ vector<vector<Value> > State::pixlToVal(Image* png, bool& gray){
 			for(int j = 0; j<png->width*4; j=j+4){
 				//rv[i/4][j] = Value(png->data[i+4*png->width*j]<<16 | png->data[i+4*png->width*j+1]<<8 | png->data[i+4*png->width*j+2]);
 				rv[i][j/4] = Value(png->data[4*png->width*i+j]);
-				//cout << j/4 << '\t' << i << '\t' << rv[i][j/4].asInt() << endl; 
+				//cout << j/4 << '\t' << i << '\t' << rv[i][j/4].asInt() << endl;
 				int per = png->height/10;
 				for(int k=1; k<=10; k++){
 					if(j == 0 && i == per*k){
@@ -495,5 +498,3 @@ int ParallelPatterns::findRows(int myRank, int curSize, int numRows){
 	}
 	return split;
 }*/
-
-
