@@ -4,31 +4,46 @@
 
 #include <iostream>
 #include "../../shared/PNG.h"
-#include <time.h>
+//#include <time.h>
 
 using namespace std;
 
 void pngMake(){
-	Image* mak = createImage(16,16);	
+	Image* mak = createImage(64,4);	
 	unsigned int len = mak->width*mak->height*mak->channels;
-	int rless = 0;
+	/*int rless = 0;
 	for(int i = 0; i<len; i++){
 		if(i%4 == 0){
-			mak->data[i] = rand()%(rless+1);
+			mak->data[i] = 255;
 		}else if(i%4 == 1){
-			mak->data[i] = rand()%(rless+1);
-		}else if(i%4 == 2){
-			rless = rand()%256;
-			mak->data[i] = rless;
+			mak->data[i] = 255;
+		}else if(i%4 == 2){;
+			mak->data[i] = 255;
 		}else{
 			mak->data[i] = 255;
 		}
+	}*/
+	for(int i = 0; i < mak->width*4; i=i+4){
+		for(int j = 0; j < mak->height; j++){
+			if(j%2 == 1){
+				mak->data[j*mak->width*4+i] = 255;
+				mak->data[j*mak->width*4+i+1] = 0;
+				mak->data[j*mak->width*4+i+2] = 0;
+				mak->data[j*mak->width*4+i+3] = 255;
+			}else{
+				mak->data[j*mak->width*4+i] = 0;
+				mak->data[j*mak->width*4+i+1] = 0;
+				mak->data[j*mak->width*4+i+2] = 0;
+				mak->data[j*mak->width*4+i+3] = 255;
+			}
+		}
 	}
-	writePng("randb.png",mak);
+
+	writePng("stripr.png",mak);
 }
 
 int main(int argc, char* argv[]){
-	srand(time(0));
+	//srand(time(0));
 	if(argc < 2){
 		pngMake();
 		return 0;

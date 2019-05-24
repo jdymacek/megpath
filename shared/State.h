@@ -34,6 +34,7 @@ class State{
 		bool debug;
 		bool constrained;
 		bool img;
+		bool gray;
 		vector<string> patternNames;
 		vector<string> ids;
 		int printRuns;
@@ -56,7 +57,7 @@ class State{
 	protected:
 		void normalize();
 		void normalizeMatrix(MatrixXd& mat);
-		vector<vector<Value> > pixlToVal(Image* png);
+		vector<vector<Value> > pixlToVal(Image* png, bool& gray);
 };
 
 #endif

@@ -3,6 +3,7 @@
 
 State::State(){
 	both = true;
+	gray = true;
 	analysis = "";
 	directory = "";
 	filename = "";
@@ -195,7 +196,7 @@ bool State::load(string argFileName){
 	vector<vector<Value> > res;
 	if(img){
 		png = readPng(filename.c_str());
-		res = pixlToVal(png);
+		res = pixlToVal(png, gray);
 	}else{
 		res = file.readCSV(filename);
 	}	
@@ -397,8 +398,8 @@ void State::normalize(){
 	expression = expression/(max-min);
 }
 
-vector<vector<Value> > State::pixlToVal(Image* png){
-	bool gray = true;
+vector<vector<Value> > State::pixlToVal(Image* png, bool& gray){
+	gray = true;
 	for(int i = 0; i<png->width*png->height*4; i = i+4){
 		if(png->data[i] != png->data[i+1] || png->data[i] != png->data[i+2]){
 			gray = false;
