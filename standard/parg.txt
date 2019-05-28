@@ -1,8 +1,9 @@
 #test argument file
 analysis = "png"
 max_runs = 50000;
-png_filename = "testout.png"
+png_filename = "merge.png"
 png_origin = [0,0]
-png_patterns = ["","","","","","","",""]
+png_patterns = ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""]
 png_directory = "."
 stats = "all"
+print_runs = 100

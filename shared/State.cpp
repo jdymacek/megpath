@@ -292,7 +292,6 @@ bool State::load(string argFileName){
 		}
 	}
 
-//	cout << patterns.matrix << endl;
 
 	if(numPatterns == patternArgs.size()){
 		both = false;
@@ -302,35 +301,14 @@ bool State::load(string argFileName){
 	cout << print << endl;
 
 	if(img){
-//		Image* ret;
-//		ret = createImage(png->width, png->height);
-//		cout << COLUMNS << '\t' << ret->width << endl;
 		if(COLUMNS == png->width*3){
 			MXdToPng(expression,ROWS,COLUMNS,false,"return.png");
-//			for(int i = 0; i<ROWS; i++){
-//				for(int j = 0; j<COLUMNS; j=j+3){
-//					ret->data[j/3*4+COLUMNS/3*4*i] = (int)(expression(i,j)*255);
-//					ret->data[j/3*4+COLUMNS/3*4*i+1] = (int)(expression(i,j+1)*255);
-//					ret->data[j/3*4+COLUMNS/3*4*i+2] = (int)(expression(i,j+2)*255);
-//					ret->data[j/3*4+COLUMNS/3*4*i+3] = 255;
-//				}
-//			}
 		}else if(COLUMNS == png->width){
 			MXdToPng(expression,ROWS,COLUMNS,true,"return.png");
-//			for(int i = 0; i<ROWS; i++){
-//				for(int j = 0; j<COLUMNS; j++){
-//					int temp = (int)(expression(i,j)*255);
-//					ret->data[4*j+4*COLUMNS*i] = temp;
-//					ret->data[4*j+4*COLUMNS*i+1] = temp;
-//					ret->data[4*j+4*COLUMNS*i+2] = temp;
-//					ret->data[4*j+4*COLUMNS*i+3] = 255;
-//				}
-//			}
 		}else{
 			cout << "expression-to-PNG failed" << endl;
 			return true;
 		}
-//		writePng("return.png",ret);
 	}
 
 	return true;
@@ -413,37 +391,18 @@ vector<vector<Value> > State::pixlToVal(Image* png, bool& gray){
 	if(!gray){
 		vector<vector<Value> > rv(png->height, vector<Value>(png->width*3,1));
 		for(int i = 0; i<png->height; i++){
-			for(int j = 0; j<png->width*4; j=j+4){
-				//rv[i/4][j] = Value(png->data[i+4*png->width*j]<<16 | png->data[i+4*png->width*j+1]<<8 | png->data[i+4*png->width*j+2]);
-				rv[i][j/4*3] = Value(png->data[4*png->width*i+j]);
-				rv[i][j/4*3+1] = Value(png->data[4*png->width*i+j+1]);
-				rv[i][j/4*3+2] = Value(png->data[4*png->width*i+j+2]);
-				int per = png->height/10;
-				for(int k=1; k<=10; k++){
-					if(j == 0 && i == per*k){
-						cout << 10*k << endl;
-					}
-				}
-				//rv[i/4][j] = Value(png->data[i+4*png->width*j]);
-				//cout << j/4*3 << '\t' << i << '\t' << rv[i][j/4*3].asInt() << endl;
-				//cout << j/4*3+1 << '\t' << i << '\t' << rv[i][j/4*3+1].asInt() << endl;
-				//cout << j/4*3+2 << '\t' << i << '\t' << rv[i][j/4*3+2].asInt() << endl;
+			for(int j = 0; j<png->width; j++){
+				rv[i][j*3] = Value(png->data[4*png->width*i+j*4]);
+				rv[i][j*3+1] = Value(png->data[4*png->width*i+j*4+1]);
+				rv[i][j*3+2] = Value(png->data[4*png->width*i+j*4+2]);
 			}
 		}
 		return rv;
 	}else{
 		vector<vector<Value> > rv(png->height, vector<Value>(png->width,1));
 		for(int i = 0; i<png->height; i++){
-			for(int j = 0; j<png->width*4; j=j+4){
-				//rv[i/4][j] = Value(png->data[i+4*png->width*j]<<16 | png->data[i+4*png->width*j+1]<<8 | png->data[i+4*png->width*j+2]);
-				rv[i][j/4] = Value(png->data[4*png->width*i+j]);
-				//cout << j/4 << '\t' << i << '\t' << rv[i][j/4].asInt() << endl;
-				int per = png->height/10;
-				for(int k=1; k<=10; k++){
-					if(j == 0 && i == per*k){
-						cout << 10*k << endl;
-					}
-				}
+			for(int j = 0; j<png->width; j++){
+				rv[i][j] = Value(png->data[4*png->width*i+j*4]);
 			}
 		}
 		return rv;
