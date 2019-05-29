@@ -269,7 +269,9 @@ void Analysis::outputAll(){
 
     string outputDir = state->directory;
     FileUtil::mkPath(outputDir);
-    outputDir = outputDir + "/";
+    if(state->directory != ""){
+    	outputDir = outputDir + "/";
+    }
 
     ErrorFunctionRow efRow(state);
 
