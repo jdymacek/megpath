@@ -26,19 +26,19 @@ int main(){
 	FileUtil::mkPath("testDir/this/path/out/please");
 	cout << endl;
 
-	cout << "Making a unique file for 'testDir/file.txt'.\n";
+	cout << "Making a unique file for 'file.txt'.\n";
 	ofstream outFile;
-	outFile.open(FileUtil::uniqueFile("testDir/file.txt"));
+	outFile.open(FileUtil::uniqueFile("file.txt"));
 	outFile << "Three rings for the elven kings under the sky.";
 	outFile.close();
 
-	cout << "Making a unique file for 'testDir/file.txt' again.\n";
-	outFile.open(FileUtil::uniqueFile("testDir/file.txt"));
+	cout << "Making a unique file for 'file.txt' again.\n";
+	outFile.open(FileUtil::uniqueFile("file.txt"));
 	outFile << "Seven for the dwarf lords in their halls of stone.";
 	outFile.close();
 
-	cout << "Making a unique file for 'testDir/file.txt' once more.\n";
-	outFile.open(FileUtil::uniqueFile("testDir/file.txt"));
+	cout << "Making a unique file for 'file.txt' once more.\n";
+	outFile.open(FileUtil::uniqueFile("file.txt"));
 	outFile << "Nine for the mortal men doomed to die.";
 	outFile.close();
 
