@@ -1,0 +1,9 @@
+analysis = "testRange"
+distribution = "1*1+2*2+3*3"
+testRange_filename = "testSize.csv"
+max_runs = 2500;
+testRange_origin = [0,0]
+testRange_directory = ""
+testRange_patterns = ["","",""]
+stats = "all"
+print_runs = 100

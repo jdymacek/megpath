@@ -32,9 +32,9 @@ int main(int argc, char* argv[]){
 			for(int j = 0; j < db[0]->width*db[0]->height; j++){
 				//Set-or-add to vals the pixel * the image's coefficient
 				if(i == 0)
-					vals[j] = db[i]->data[j*4]*cos[cos.size()-a-1][i+1].asDouble();
+					vals[j] = db[i]->data[j*4]*cos[a][i+1].asDouble();
 				else
-					vals[j] += db[i]->data[j*4]*cos[cos.size()-a-1][i+1].asDouble();
+					vals[j] += db[i]->data[j*4]*cos[a][i+1].asDouble();
 				//Once vals[j] is fully enumerated, check if it's the new min/max
 				if(i == db.size()-1){
 					if(j == 0){
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]){
 			}
 		}
 		
-		cout << min << '\t' << max << endl;
+//		cout << min << '\t' << max << endl;
 		for(int i = 0; i < db[0]->width*db[0]->height; i++){
 			//		cout << i << '\t' << vals[i] << endl;
 			vals[i] = vals[i]/max;

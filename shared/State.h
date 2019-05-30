@@ -19,6 +19,13 @@
 using namespace std;
 using namespace Eigen;
 
+struct Range{
+	int rowStart;
+	int rowEnd;
+	int colStart;
+	int colEnd;
+};
+
 class State{
 	public:
 		State();
@@ -30,6 +37,7 @@ class State{
 		string analysis;
 		string filename;
 		string stats;
+		string dist;
 		bool both;
 		bool debug;
 		bool constrained;
@@ -46,8 +54,9 @@ class State{
 		double end_error;
 		double start_prob;
 		double end_prob;
-		vector<vector<int>> splitRanges(int by);
 		virtual bool load(string argFileName);
+		//vector<vector<int> > splitRanges(int by)
+		Range getRange(int rank);
 		double calcT();
 		double calcAlpha(double t);
 		void patternMatch(MatrixXd& other);

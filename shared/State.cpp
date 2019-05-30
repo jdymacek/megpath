@@ -16,6 +16,7 @@ State::State(){
 	end_error = 0.001;
 	start_prob = 0.67;
 	end_prob = 0.1;
+	dist = "1";
 }
 
 
@@ -30,7 +31,7 @@ void State::reset()
 	coefficients.reset();
 }
 
-vector<vector<int>> State::splitRanges(int by)
+/*vector<vector<int>> State::splitRanges(int by)
 {
 	int rowSize = coefficients.rows/by;
 	int colSize = patterns.columns/by;
@@ -57,6 +58,94 @@ vector<vector<int>> State::splitRanges(int by)
         	colStart = colEnd;
     	}
 	return rv;
+}*/
+Range State::getRange(int rank){
+	Range r;
+	vector<int> parse;
+
+	int push = 0;
+	for(int i = 0; i<dist.size(); i++){
+		if(dist[i] >= '0' && dist[i] <= '9'){
+			push = push*10 + dist[i]-'0';
+		}
+
+		if(dist[i] == '+' || i == dist.size()-1){
+			if(push == 0)
+				push = 1;
+			parse.push_back(push);
+			push = 0;
+			if(parse.size()%2 == 1)
+				parse.push_back(1);
+		}else if(dist[i] == '*'){
+			if(push == 0)
+				push = 1;
+			parse.push_back(push);
+			push = 0;
+		}
+	}
+
+	int cTotal = 0;
+	int dTotal = 0;
+	for(int i = 1; i < parse.size(); i=i+2){
+		cTotal += parse[i];
+		dTotal += (parse[i-1]*parse[i]);
+	}
+	if(cTotal > patterns.columns){
+		cTotal = patterns.columns;
+	}
+
+	int cWidth = patterns.columns/cTotal;
+	vector<Range> lookup;
+
+	for(int i = 0; i<cTotal; i++){
+		int sub = 1;
+		int up = parse[1];
+		while(i >= up){
+			sub += 2;
+			up += parse[sub];
+		}
+
+		r.colStart = i*cWidth;
+		if(i < patterns.columns%cTotal)
+			r.colStart += i;
+		else
+			r.colStart += patterns.columns%cTotal;
+
+		r.colEnd = r.colStart + cWidth - 1;
+		if(i < patterns.columns%cTotal)
+			r.colEnd += 1;
+
+		int rStep = parse[sub-1];
+		if(parse[sub-1] > coefficients.rows)
+			rStep = coefficients.rows;
+
+		int rHeight = coefficients.rows/rStep;
+		
+		for(int j = 0; j < rStep; j++){
+			
+			r.rowStart = j*rHeight;
+			if(j < coefficients.rows%rStep)
+				r.rowStart += j;
+			else
+				r.rowStart += coefficients.rows%rStep;
+
+			r.rowEnd = r.rowStart + rHeight - 1;
+			if(j < coefficients.rows%rStep)
+				r.rowEnd += 1;
+
+			lookup.push_back(r);
+		}
+	}
+	
+	if(rank >= lookup.size()){
+		r.rowStart = -1;
+		r.rowEnd = -1;
+		r.colStart = -1;
+		r.colEnd = -1;
+		return r;
+	}else{
+		return lookup[rank];
+	}
 }
 
 double State::calcT(){
@@ -78,7 +167,6 @@ bool State::load(string argFileName){
 	CSVFile file;
 	Image* png;
 
-
 	vector<Value> origin;
 	vector<Value> controls;
 	vector<Value> columns;
@@ -86,7 +174,7 @@ bool State::load(string argFileName){
 	vector<Value> idArgs;
 
 	//grab arguments
-	args.fromString("analysis = \"default\"\nmax_runs = 1000\ndebug = false\nstart_error = 0.2\nend_error = 0.001\nstart_prob = 0.67\nend_prob = 0.1\nstats = \"none\"\nanneal_cut_off = 1.5\ndefault_filename = \"mixed.csv\"\ndefault_patterns = [\"\",\"\",\"\",\"\",\"\"]\ndefault_origin = {0,0}\ndefault_directory = \"\"\nprint_runs = 1000\ninterrupt_runs = 1000");
+	args.fromString("analysis = \"default\"\nmax_runs = 1000\ndebug = false\nstart_error = 0.2\nend_error = 0.001\nstart_prob = 0.67\nend_prob = 0.1\nstats = \"none\"\nanneal_cut_off = 1.5\ndefault_filename = \"mixed.csv\"\ndefault_patterns = [\"\",\"\",\"\",\"\",\"\"]\ndefault_origin = {0,0}\ndefault_directory = \"\"\nprint_runs = 1000\ninterrupt_runs = 1000\ndistribution = 1*1+2*2+3*3");
 	args.load(argFileName);
 
 	if(args.isArgument("analysis")){
@@ -191,6 +279,11 @@ bool State::load(string argFileName){
 	if(args.isArgument(analysis+"ids")){
 		Value val = args.getArgument(analysis + "ids");
 		idArgs = val.asVector();
+	}
+
+	if(args.isArgument("distribution")){
+		Value val = args.getArgument("distribution");
+		dist = val.asString();
 	}
 
 	vector<vector<Value> > res;
