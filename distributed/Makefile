@@ -1,9 +1,9 @@
 CC=mpic++
 CFLAGS=-O3 -c -Wfatal-errors -std=c++11 -I../shared/
 LDFLAGS=-L../shared/ 
-LIBS=-lnmf
+LIBS=-lnmf -lpng
 VPATH = /usr/lib64/openmpi/bin
-LIB_SOURCES=PatternMatching.cpp Distributed.cpp ParallelPatterns.cpp FuncThrow.cpp DistNaive.cpp ParallelFuncThrow.cpp 
+LIB_SOURCES=PatternMatching.cpp Distributed.cpp FuncThrow.cpp DistNaive.cpp ParallelFuncThrow.cpp ParallelPatterns.cpp
 SOURCES=$(LIB_SOURCES) main.cpp 
 LIB_OBJECTS=$(LIB_SOURCES:.cpp=.o)
 OBJECTS=$(SOURCES:.cpp=.o)

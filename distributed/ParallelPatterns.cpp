@@ -17,14 +17,17 @@ void ParallelPatterns::start(){
     oexpression = state->expression;
     //}
 
-    vector<vector<int>> ranges = state->splitRanges(size);
+    //vector<vector<int>> ranges = state->splitRanges(size);
+    Range r = state->getRange(rank);
     //split the coefficients
-    int myRows = ranges[rank][3] - ranges[rank][2];
+    int myRows = r.rowStart - r.rowEnd;
     state->coefficients.resize(myRows, state->coefficients.columns);
 	 //split the expression  
 
-    startPoint = ranges[rank][2];
+	//change to range startRow
+    startPoint = r.rowStart;
 
+	//replace with the 4 Range coordinates
     MatrixXd temp = state->expression.block(startPoint, 0, myRows, state->expression.cols());
     state->expression = temp;
 
