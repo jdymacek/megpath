@@ -22,7 +22,7 @@ class FlipThreadedMonteAnneal:public MonteAnneal{
 		virtual double anneal();
 	protected:
 		map <thread::id, int> threadMap;
-		vector<vector<int>> ranges;
+//		vector<vector<int>> ranges;
 		State * dupe;
 		Barrier* barrier;
 		int numThreads;
