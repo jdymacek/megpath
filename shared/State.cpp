@@ -76,7 +76,7 @@ Range State::getRange(int rank){
 			push = 0;
 			if(parse.size()%2 == 1)
 				parse.push_back(1);
-		}else if(dist[i] == '*'){
+		}else if(dist[i] == '*' || dist[i] == 'x'){
 			if(push == 0)
 				push = 1;
 			parse.push_back(push);

@@ -21,9 +21,9 @@ void FlipThreadedMonteAnneal::monteCarloThreadCoefficient(){
 	ErrorFunctionRow efRow(state);
 
 	//For each spot take a gamble and record outcome
+	Range r = state->getRange(threadMap[this_thread::get_id()]);
 	for(int i = 0; i < state->MAX_RUNS; i++){
-		int id = threadMap[this_thread::get_id()];
-		monteCarloStep(state->coefficients,&efRow,0,state->coefficients.columns,ranges[id][2],ranges[id][3]);
+		monteCarloStep(state->coefficients,&efRow,0,state->coefficients.columns,r.rowStart,r.rowEnd);
             barrier->Wait();
 		//wait for Pattern thread to Exchange the coefficients/Patterns
             barrier->Wait();
@@ -76,7 +76,8 @@ double FlipThreadedMonteAnneal::monteCarlo(){
 	
 	threads.push_back(thread(&FlipThreadedMonteAnneal::monteCarloThreadPattern,this));		
 	
-	ranges = state->splitRanges(numThreads-1);
+	state->dist = "\"" + to_string(numThreads-1) + "*1\"";
+//	ranges = state->splitRanges(numThreads-1);
 	rootId = threads[0].get_id();
    	for(int i = 0; i < ranges.size(); ++i){
    	 	threads.push_back(thread(&FlipThreadedMonteAnneal::monteCarloThreadCoefficient,this));
