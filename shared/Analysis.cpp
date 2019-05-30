@@ -106,7 +106,7 @@ bool Analysis::annealCallback(int iterations){
 	bool running = true;
     ErrorFunctionRow ef(state);
     double error = ef.error();
-    if(abs(cachedError - error) < 0.005 && error < cachedError)
+    if(error < cachedError && cachedError - error < 0.005);
         running = false;
     cachedError = error;
 	return running;
