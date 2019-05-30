@@ -14,14 +14,15 @@ using namespace std;
 class PhaseThreadedMonteAnneal:public MonteAnneal{
 	public:
 		PhaseThreadedMonteAnneal(State* st, int nt);
-		void monteCarloThreadCoefficient(int Start, int End);
+		void monteCarloThreadCoefficient();
 		void monteCarloThreadPattern();
-		void annealThreadCoefficient(int Start, int End);
-		void annealThreadPattern();
+		void annealThreadCoefficient(double t, double alpha);
+		void annealThreadPattern(double t, double alpha);
 
 		virtual double monteCarlo();
 		virtual double anneal();
 	protected:
+		map <thread::id, int> threadMap;
 		State * dupe;
 		Barrier* barrier;
 		int numThreads;

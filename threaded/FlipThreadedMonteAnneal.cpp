@@ -2,6 +2,7 @@
 //Dakota Martin
 //Julian Dymacek
 //Created on 6/4/2018
+//Modified on 5/30/2019
 
 #include "FlipThreadedMonteAnneal.h"
 
@@ -77,6 +78,7 @@ double FlipThreadedMonteAnneal::monteCarlo(){
 	threads.push_back(thread(&FlipThreadedMonteAnneal::monteCarloThreadPattern,this));		
 
 	state->dist = to_string(numThreads-1) + "*1";
+	dupe->dist = to_string(numThreads-1) + "*1";
 	//	ranges = state->splitRanges(numThreads-1);
 	rootId = threads[0].get_id();
 	for(int i = 0; i < numThreads-1; ++i){
@@ -93,15 +95,14 @@ double FlipThreadedMonteAnneal::monteCarlo(){
 }
 
 
-void FlipThreadedMonteAnneal::annealThreadCoefficient(int num, double tstart, double alpha){
+void FlipThreadedMonteAnneal::annealThreadCoefficient(double t, double alpha){
 	callback->annealStartCallback();
-	double t = tstart;
 	ErrorFunctionRow efRow(state);
 	barrier->Wait();
 
 	//For each spot take a gamble and record outcome
 	Range r = state->getRange(threadMap[this_thread::get_id()]);
-	for(int i =num; i < 2*state->MAX_RUNS; i++){
+	for(int i=0; i < 2*state->MAX_RUNS; i++){
 		annealStep(state->coefficients,t,&efRow,0,state->coefficients.columns,r.rowStart,r.rowEnd);
 		barrier->Wait();
 		//wait for Pattern thread to exchange coefficients/rows
@@ -131,10 +132,8 @@ void FlipThreadedMonteAnneal::annealThreadCoefficient(int num, double tstart, do
 		callback->annealFinalCallback();
 	}
 }
-void FlipThreadedMonteAnneal::annealThreadPattern(){
+void FlipThreadedMonteAnneal::annealThreadPattern(double t, double alpha){
 	callback->annealStartCallback();
-	double t = state->calcT();
-	double alpha = state->calcAlpha(t);
 	ErrorFunctionCol efCol(dupe);
 	barrier->Wait();
 
@@ -192,12 +191,13 @@ double FlipThreadedMonteAnneal::anneal(){
 
 	double t = state->calcT();
 	double alpha = state->calcAlpha(t);
-	threads.push_back(thread(&FlipThreadedMonteAnneal::annealThreadPattern,this));
+	threads.push_back(thread(&FlipThreadedMonteAnneal::annealThreadPattern,this,t,alpha));
 //	ranges = state->splitRanges(numThreads-1);
 	state->dist = to_string(numThreads-1) + "*1";
+	dupe->dist = to_string(numThreads-1) + "*1";
 	rootId = threads[0].get_id();
 	for(int i = 0; i < numThreads-1; ++i){
-		threads.push_back(thread(&FlipThreadedMonteAnneal::annealThreadCoefficient,this, 0, t,alpha));
+		threads.push_back(thread(&FlipThreadedMonteAnneal::annealThreadCoefficient,this,t,alpha));
 		threadMap[threads[i+1].get_id()] = i;
 	}
 
