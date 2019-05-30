@@ -17,27 +17,28 @@ ThreadedMonteAnneal::ThreadedMonteAnneal(State* st,int nt): MonteAnneal(st){
 	callback = NULL;
 }
 
-
 /*Run a monte carlo markov chain*/
-void ThreadedMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int yEnd){
+void ThreadedMonteAnneal::monteCarloThread(){
 	callback->monteStartCallback();
 	ErrorFunctionRow efRow(state);
 	ErrorFunctionCol efCol(state);
 	//For each spot take a gamble and record outcome
+	Range rc = state->getRange(threadMap[this_thread::get_id()]);
+	Range rp = state->getRange(threadMap[this_thread::get_id()]*numThreads);
 	for(int i =0; i < state->MAX_RUNS; i++){
-		monteCarloStep(state->coefficients,&efRow,0,state->coefficients.columns,yStart,yEnd);
-        if(state->both){
-            barrier->Wait();
-            monteCarloStep(state->patterns,&efCol,xStart,xEnd,0,state->patterns.rows);
-        }
-        barrier->Wait();
+		monteCarloStep(state->coefficients,&efRow,0,state->coefficients.columns,rc.rowStart,rc.rowEnd);
+		if(state->both){
+			barrier->Wait();
+			monteCarloStep(state->patterns,&efCol,rp.colStart,rp.colEnd,0,state->patterns.rows);
+		}
+		barrier->Wait();
 		if(this_thread::get_id() == rootId){
 			if(i % state->interuptRuns == 0 && callback != NULL){
 				callback->monteCallback(i);
 			}
 			if(i % state->printRuns == 0 && callback != NULL){
 				callback->montePrintCallback(i);
-            		}
+			}
 		}
 		barrier->Wait();
 	}
@@ -49,17 +50,17 @@ void ThreadedMonteAnneal::monteCarloThread(int xStart, int xEnd,int yStart,int y
 
 double ThreadedMonteAnneal::monteCarlo(){
 	vector<thread> threads;
-	
 
-	vector<vector<int>> ranges = state->splitRanges(numThreads);
-	for(int i = 0; i < ranges.size(); ++i){
-	
+//	vector<vector<int>> ranges = state->splitRanges(numThreads);
+	state->dist = to_string(numThreads) + "*" + to_string(numThreads);
+	for(int i = 0; i < numThreads; ++i){	
+		//TODO: Constrained rows need reconfiguration
 		if(state->constrained){
-			ranges[i][0] = 0;
-			ranges[i][1] = (i == 0 ? state->patterns.columns : 0);
+//			ranges[i][0] = 0;
+//			ranges[i][1] = (i == 0 ? state->patterns.columns : 0);
 		}
-		
-		threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
+		threads.push_back(thread(&ThreadedMonteAnneal::monteCarloThread,this));
+		threadMap[threads[i].get_id()] = i;
 		rootId = threads[0].get_id();
 	}
 
@@ -68,69 +69,65 @@ double ThreadedMonteAnneal::monteCarlo(){
 		threads[i].join();
 	}
 
-    	ErrorFunctionRow efRow(state);
+	ErrorFunctionRow efRow(state);
 	return efRow.error();
 }
 
 
-void ThreadedMonteAnneal::annealThread(int xStart, int xEnd,int yStart,int yEnd){
-    	callback->annealStartCallback();
+void ThreadedMonteAnneal::annealThread(double t, double alpha){
+	callback->annealStartCallback();
 	ErrorFunctionRow efRow(state);
-    	ErrorFunctionCol efCol(state);
-	double t = state->calcT();
-	double alpha = state->calcAlpha(t);
+	ErrorFunctionCol efCol(state);
 
-    	//For each spot take a gamble and record outcome
-    	for(int i =0; i < 2*state->MAX_RUNS; i++){
-		annealStep(state->coefficients,t,&efRow,0,state->coefficients.columns,yStart,yEnd);
-        	if(state->both){
-        	    barrier->Wait();
-			annealStep(state->patterns,t,&efCol,xStart,xEnd,0,state->patterns.rows);
+	//For each spot take a gamble and record outcome
+	Range rc = state->getRange(threadMap[this_thread::get_id()]);
+	Range rp = state->getRange(threadMap[this_thread::get_id()]*numThreads);
+	for(int i =0; i < 2*state->MAX_RUNS; i++){
+		annealStep(state->coefficients,t,&efRow,0,state->coefficients.columns,rc.rowStart,rc.rowEnd);
+		if(state->both){
+			barrier->Wait();
+			annealStep(state->patterns,t,&efCol,rp.colStart,rp.colEnd,0,state->patterns.rows);
 		}
-        	barrier->Wait(); 
+		barrier->Wait(); 
 		if(this_thread::get_id() == rootId){
 			if(i % state->interuptRuns == 0 && callback != NULL){
 				callback->annealCallback(i);
 			}
 			if(i % state->printRuns == 0 && callback != NULL){
 				callback->annealPrintCallback(i);
-            		}
+			}
 		}
 		barrier->Wait();
 
 		t *= alpha;
-    	}
+	}
 	if(this_thread::get_id() == rootId && callback != NULL){
 		callback->annealFinalCallback();
 	}
 }
 
 double ThreadedMonteAnneal::anneal(){
+	vector<thread> threads;
 
-
-    vector<thread> threads;
-	
-
-    
-	vector<vector<int>> ranges = state->splitRanges(numThreads);
-	for(int i = 0; i < ranges.size(); ++i){
-		
+	double t = state->calcT();
+	double alpha = state->calcAlpha(t);
+//	vector<vector<int>> ranges = state->splitRanges(numThreads);
+	for(int i = 0; i < numThreads; ++i){
+		//TODO: Constrained rows need reconfiguration
 		if(state->constrained){
-			ranges[i][0] = 0;
-			ranges[i][1] = (i == 0 ? state->patterns.columns : 0);
+//			ranges[i][0] = 0;
+//			ranges[i][1] = (i == 0 ? state->patterns.columns : 0);
 		}
-		
-		threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,ranges[i][0],ranges[i][1],ranges[i][2],ranges[i][3]));
+
+		threads.push_back(thread(&ThreadedMonteAnneal::annealThread,this,t,alpha));
 		rootId = threads[0].get_id();
 	}
 
-    for(int i =0; i < threads.size();++i){
-        threads[i].join();
-    }
+	for(int i =0; i < threads.size();++i){
+		threads[i].join();
+	}
 
-
-    ErrorFunctionRow efRow(state);
+	ErrorFunctionRow efRow(state);
 
 	return efRow.error();
 }
-

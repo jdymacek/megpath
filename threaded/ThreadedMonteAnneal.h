@@ -14,12 +14,13 @@ using namespace std;
 class ThreadedMonteAnneal:public MonteAnneal{
 	public:
 		ThreadedMonteAnneal(State* st, int nt);
-		void monteCarloThread(int xStart, int xEnd, int yStart, int yEnd);
-		void annealThread(int xStart, int xEnd,int yStart,int yEnd);
+		void monteCarloThread();
+		void annealThread(double t, double alpha);
 
 		virtual double monteCarlo();
 		virtual double anneal();
 	protected:
+		map <thread::id, int> threadMap;
 		Barrier* barrier;
 		int numThreads;
 		thread::id rootId;
