@@ -16,11 +16,13 @@ void ParallelPatterns::start(){
     //if(rank == 0){
     oexpression = state->expression;
     //}
+    
+    state->dist = to_string(size) + "*1";
 
     //vector<vector<int>> ranges = state->splitRanges(size);
     Range r = state->getRange(rank);
     //split the coefficients
-    int myRows = r.rowStart - r.rowEnd;
+    int myRows = r.rowEnd - r.rowStart;
     state->coefficients.resize(myRows, state->coefficients.columns);
 	 //split the expression  
 
