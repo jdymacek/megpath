@@ -10,6 +10,7 @@
 #include "ParallelPatterns.h"
 #include "ParallelFuncThrow.h"
 #include "PatternMatching.h"
+#include "BlockParallel.h"
 #include "CmdArgs.h"
 
 using namespace std;
@@ -19,12 +20,13 @@ int main(int argc, char** argv){
 	string argFile = "";
 	args.getAsString("a",argFile,"../testing/testnmf/test_arguments.txt");
 	string analysis = args.findFlag({{"0","dn", "DN", "DistNaive"},
-					  {"1","ft", "FT", "Functhrow"},
-					  {"2","pp", "PP", "ParPat", "ParallelPatterns"},
-					  {"3","pft","PFT","ParFuncThrow","ParallelFuncThrow"},
-					  {"4","pm","PM","PatMatch","PatternMatching"},
-					  {"5","test","Test"}});
-	
+			{"1","ft", "FT", "Functhrow"},
+			{"2","pp", "PP", "ParPat", "ParallelPatterns"},
+			{"3","pft","PFT","ParFuncThrow","ParallelFuncThrow"},
+			{"4","pm","PM","PatMatch","PatternMatching"},
+			{"5","bp","BP","BlocPar","BlockParallel"},
+			{"6","test","Test"}});
+
 	if(args.wasFatal()){
 		cout << "Missing Args" << endl;
 		cout << args.errors() << endl;
@@ -49,6 +51,9 @@ int main(int argc, char** argv){
 			a = new PatternMatching();
 			break;
 		case 5:
+			a = new BlockParallel();
+			break;
+		case 6:
 			a = new Distributed();
 	}
 	int runTime = args.getAsInt("rt", "-1");
@@ -63,5 +68,5 @@ int main(int argc, char** argv){
 	}
 	delete a;
 	return 0;
-}
+	}
 

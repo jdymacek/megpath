@@ -1,0 +1,9 @@
+analysis = "png"
+max_runs = 10000;
+png_filename = "testSize.csv"
+png_origin = [0,0]
+png_patterns = ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",""]
+png_directory = ""
+stats = "all"
+print_runs = 100
+distribution = "1*1+2*2+3*3"

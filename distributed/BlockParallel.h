@@ -3,8 +3,8 @@
 //Created on : 6/9/2017
 //Last Modified 6/12/2017
 
-#ifndef PARALLELPATTERNS__H
-#define PARALLELPATTERNS__H
+#ifndef BLOCKPARALLEL__H
+#define BLOCKPARALLEL__H
 
 #include "Distributed.h"
 #include <mpi.h>
@@ -15,7 +15,7 @@ using namespace std;
 
 class BlockParallel: virtual public Distributed{
 	public:
-//		BlockParallel();
+		BlockParallel();
 //		void startSplit();
 //		virtual void allAverage();
 		virtual void start();	
