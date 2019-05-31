@@ -6,4 +6,4 @@ png_patterns = ["","","","","","","","","","","","","","","","","","","","","","
 png_directory = ""
 stats = "all"
 print_runs = 100
-distribution = "1*1+2*2+3*3"
+distribution = "3*3"

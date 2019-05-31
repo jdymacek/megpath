@@ -23,63 +23,61 @@ void BlockParallel::start(){
 		ar.push_back(r);
 	}
 
-	if(rank == 0){
-		set<vector<int>> rowGroups;
-		set<vector<int>>::iterator it;
-		for(int i = 0; i < state->expression.rows(); i++){
-			vector<int> row;
-			for(int j = 0; j < ar.size(); j++){
-				if(i >= ar[j].rowStart && i <= ar[j].rowEnd){
-					row.push_back(j);
-				}
+	set<vector<int>> rowGroups;
+	for(int i = 0; i < state->expression.rows(); i++){
+		vector<int> row;
+		for(int j = 0; j < ar.size(); j++){
+			if(i >= ar[j].rowStart && i <= ar[j].rowEnd){
+				row.push_back(j);
 			}
-//			for(int j = 0; j < row.size(); j++){
-//				cout << row[j] << '\t';
-//			}
-//			cout << endl;
-			if(row.size() > 0)
-				rowGroups.insert(row);
 		}
+		if(row.size() > 0)
+			rowGroups.insert(row);
+	}
 
-		cout << "Row Amount: " << rowGroups.size() << endl;
-		for(it = rowGroups.begin(); it != rowGroups.end(); it++){
-			const vector<int> rowOut = (*it);
-			for(int j = 0; j<rowOut.size(); j++){
-				cout << rowOut[j] << '\t';
+	set<vector<int>> colGroups;
+	for(int i = 0; i < state->expression.cols(); i++){
+		vector<int> col;
+		for(int j = 0; j < ar.size(); j++){
+			if(i >= ar[j].colStart && i <= ar[j].colEnd){
+				col.push_back(j);
 			}
-			cout << endl;
-		} 
-
-		set<vector<int>> colGroups;
-		for(int i = 0; i < state->expression.cols(); i++){
-			vector<int> col;
-			for(int j = 0; j < ar.size(); j++){
-				if(i >= ar[j].colStart && i <= ar[j].colEnd){
-					col.push_back(j);
-				}
-			}
-//			for(int j = 0; j < col.size(); j++){
-//				cout << col[j] << '\t';
-//			}
-//			cout << endl;
-			if(col.size() > 0)
-				colGroups.insert(col);
 		}
+		if(col.size() > 0)
+			colGroups.insert(col);
+	}
 
-		cout << "Col Amount: " << colGroups.size() << endl;
-		for(it = colGroups.begin(); it != colGroups.end(); it++){
-			const vector<int> colOut = (*it);
-			for(int j = 0; j<colOut.size(); j++){
-				cout << colOut[j] << '\t';
+	MPI_Group world_group;
+	MPI_Comm_group(MPI_COMM_WORLD, &world_group);
+
+	vector<MPI_Group> grps;
+	vector<MPI_Comm> comms;
+	for(vector<int> row : rowGroups){
+		bool in = false;
+		for(int i = 0; i < row.size(); i++){
+			if(rank == row[i]){
+				in = true;
+				break;
 			}
-			cout << endl;
-		} 
+		}
+		if(in){
+			MPI_Group groupR;
+			MPI_Comm commR;
+			int n = row.size();
+			int vtoa[n];
+			for(int i = 0; i < n; i++){
+				vtoa[i] = row[i];
+			}
+			MPI_Group_incl(world_group, n, vtoa, &groupR);
+			grps.push_back(groupR);
+			MPI_Comm_create(MPI_COMM_WORLD, groupR, &commR);
+			comms.push_back(commR);
+		}
 	}
 	/*	//if(rank == 0){
 		oexpression = state->expression;
 	//}
 
-	//vector<vector<int>> ranges = state->splitRanges(size);
 	Range r = state->getRange(rank);
 	//split the coefficients
 	int rowSect = r.rowEnd - r.rowStart;
