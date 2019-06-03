@@ -116,7 +116,7 @@ void BlockParallel::run(){
 	}
 
 	MPI_Gather(&count,1,MPI_INT,counts,1,MPI_INT,0,MPI_COMM_WORLD);
-	    MPI_Gather(&dis,1,MPI_INT,counts,1,MPI_INT,0,MPI_COMM_WORLD);
+	MPI_Gather(&dis,1,MPI_INT,disp,1,MPI_INT,0,MPI_COMM_WORLD);
 
 
 	if(rank == 0){
