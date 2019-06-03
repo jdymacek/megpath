@@ -10,6 +10,7 @@
 #include <mpi.h>
 #include <unistd.h>
 #include <algorithm>
+#include <vector>
 
 using namespace std;
 
@@ -19,7 +20,7 @@ class BlockParallel: virtual public Distributed{
 //		void startSplit();
 //		virtual void allAverage();
 		virtual void start();	
-//		virtual void run();
+		virtual void run();
 //		virtual void stop();
 //		virtual void gatherCoefficients();
 //		virtual void monteCallback(int iter);	
@@ -29,11 +30,16 @@ class BlockParallel: virtual public Distributed{
 //		virtual void monteFinalCallback();
 //		virtual void annealFinalCallback();
 	protected:
+		Range block;
 		int bufferSize;
 		double* sendBuffer;
 		double* recvBuffer;
 		MatrixXd oexpression;
 		int startPoint;
+		vector<MPI_Group> rGrps;
+		vector<MPI_Comm> rComms;
+		vector<MPI_Group> cGrps;
+		vector<MPI_Comm> cComms;
 };
 
 

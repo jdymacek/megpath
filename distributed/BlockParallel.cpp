@@ -23,6 +23,8 @@ void BlockParallel::start(){
 		ar.push_back(r);
 	}
 
+	block = ar[rank];
+
 	set<vector<int>> rowGroups;
 	for(int i = 0; i < state->expression.rows(); i++){
 		vector<int> row;
@@ -50,8 +52,6 @@ void BlockParallel::start(){
 	MPI_Group world_group;
 	MPI_Comm_group(MPI_COMM_WORLD, &world_group);
 
-	vector<MPI_Group> grps;
-	vector<MPI_Comm> comms;
 	for(vector<int> row : rowGroups){
 		bool in = false;
 		for(int i = 0; i < row.size(); i++){
@@ -69,32 +69,102 @@ void BlockParallel::start(){
 				vtoa[i] = row[i];
 			}
 			MPI_Group_incl(world_group, n, vtoa, &groupR);
-			grps.push_back(groupR);
+			rGrps.push_back(groupR);
 			MPI_Comm_create(MPI_COMM_WORLD, groupR, &commR);
-			comms.push_back(commR);
+			rComms.push_back(commR);
 		}
 	}
-	/*	//if(rank == 0){
+	for(vector<int> col : colGroups){
+		bool in = false;
+		for(int i = 0; i < col.size(); i++){
+			if(rank == col[i]){
+				in = true;
+				break;
+			}
+		}
+		if(in){
+			MPI_Group groupC;
+			MPI_Comm commC;
+			int n = col.size();
+			int vtoa[n];
+			for(int i = 0; i < n; i++){
+				vtoa[i] = col[i];
+			}
+			MPI_Group_incl(world_group, n, vtoa, &groupC);
+			cGrps.push_back(groupC);
+			MPI_Comm_create(MPI_COMM_WORLD, groupC, &commC);
+			cComms.push_back(commC);
+		}
+	}
+/*
+	//if(rank == 0){
 		oexpression = state->expression;
 	//}
 
-	Range r = state->getRange(rank);
 	//split the coefficients
-	int rowSect = r.rowEnd - r.rowStart;
+	int rowSect = block.rowEnd - block.rowStart;
 	state->coefficients.resize(rowSect, state->coefficients.columns);
 	//split the patterns
-	int colSect = r.colEnd - r.colStart;
+	int colSect = block.colEnd - block.colStart;
 	state->patterns.resize(colSect, state->patterns.rows);
 
 	//change to Range rowStart
 	//startPoint = r.rowStart;
 
 	//replace with the 4 Range coordinates
-	MatrixXd temp = state->expression.block(r.rowStart, r.colStart, rowSect, colSect);
+	MatrixXd temp = state->expression.block(block.rowStart, block.colStart, rowSect, colSect);
 	state->expression = temp;
 
 	bufferSize = state->patterns.size();
 	sendBuffer = new double[bufferSize];
 	recvBuffer = new double[bufferSize];
-	*/
+*/
+}
+
+void BlockParallel::run(){
+	double* buffer = NULL;
+	int send = state->coefficients.matrix.size();
+	int gRank;
+	int gSize;
+	for(int i = 0; i < rComms.size(); i++){
+		MPI_Comm_rank(rComms[i], &gRank);
+		MPI_Comm_size(rComms[i], &gSize);
+//		int gCounts[gSize];
+//		int gDispls[gSize];
+		int res;
+		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_MAX,rComms[i]);
+		cout << rank << '\t' << rComms[i] << '\t' << "Max: " << res << endl;
+		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_MIN,rComms[i]);
+		cout << rank << '\t' << rComms[i] << '\t' << "Min: " << res << endl;
+		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_PROD,rComms[i]);
+		cout << rank << '\t' << rComms[i] << '\t' << "Prd: " << res << endl;
+/*		MPI_Allgather(&rank,1,MPI_INT,&gCounts[0],1,MPI_INT,rComms[i]);
+		MPI_Allgather(&send,1,MPI_INT,&gDispls[0],1,MPI_INT,rComms[i]);
+		for(int r : gCounts){
+			cout << rank << '\t' << rComms[i] << '\t' << r << endl;
+		}
+*/
+	}
+	for(int i = 0; i < cComms.size(); i++){
+		MPI_Comm_rank(cComms[i], &gRank);
+		MPI_Comm_size(cComms[i], &gSize);
+//		int gCounts[gSize];
+//		int gDispls[gSize];
+		int res;
+		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_MAX,cComms[i]);
+		cout << rank << '\t' << cComms[i] << '\t' << "Max: " << res << endl;
+		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_MIN,cComms[i]);
+		cout << rank << '\t' << cComms[i] << '\t' << "Min: " << res << endl;
+		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_PROD,cComms[i]);
+		cout << rank << '\t' << cComms[i] << '\t' << "Prd: " << res << endl;
+/*		MPI_Allgather(&rank,1,MPI_INT,&gCounts[0],1,MPI_INT,cComms[i]);
+		MPI_Allgather(&send,1,MPI_INT,&gDispls[0],1,MPI_INT,rComms[i]);
+		for(int c : gCounts){
+			cout << rank << '\t' << cComms[i] << '\t' << c << endl;
+		}
+*/
+	}
+	
+//	state->patterns.write(&sendBuffer[0]);
+//	MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 }
