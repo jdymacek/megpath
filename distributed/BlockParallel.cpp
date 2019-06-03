@@ -102,18 +102,30 @@ void BlockParallel::run(){
 	int* disp = new int[size];
 	memset(counts,0,sizeof(int)*size);
 	memset(disp,0,sizeof(int)*size);
+
+	int count = 0;
+	int dis = 0;
+
 	for(auto r : rComms){
 		MPI_Comm_rank(r, &gRank);
 		if(gRank == 0){
-			counts[rank] = 2;
-			disp[rank] = 2*rank;
+			count = 2;
+			dis = 2*rank;
 		}
 		MPI_Reduce(vals,&recv[0],2,MPI_INT,MPI_MAX,0,r);
 	}
+
+	MPI_Gather(&count,1,MPI_INT,counts,1,MPI_INT,0,MPI_COMM_WORLD);
+	    MPI_Gather(&dis,1,MPI_INT,counts,1,MPI_INT,0,MPI_COMM_WORLD);
+
+
+	if(rank == 0){
+
 		for(int i = 0; i < size; i++){
 			cout << counts[i] << ',' << disp[i] << "; ";
 		}
 		cout << endl;
+	}
 	MPI_Gatherv(recv,counts[rank],MPI_INT,gBuff,counts,disp,MPI_INT,0,MPI_COMM_WORLD);
 	if(rank == 0){
 		for(int i = 0; i < rowTotal*2; i++){
