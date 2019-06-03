@@ -21,7 +21,7 @@ class BlockParallel: virtual public Distributed{
 //		virtual void allAverage();
 		virtual void start();	
 		virtual void run();
-//		virtual void stop();
+		virtual void stop();
 //		virtual void gatherCoefficients();
 //		virtual void monteCallback(int iter);	
 //		virtual bool annealCallback(int iter);
