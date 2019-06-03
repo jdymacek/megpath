@@ -27,7 +27,17 @@ struct Range{
 	bool contains(int r,int c){
 		return c >= colStart && c <= colEnd && r >= rowStart && r <= rowEnd;
 	}
-
+	int rowSize(){
+		return rowEnd - rowStart;
+	}
+	int colSize(){
+		return colEnd - colStart;
+	}
+	bool isValid(){
+		if(rowStart < 0 || rowEnd < 0 || colStart < 0 || colEnd < 0)
+			return false;
+		return true;
+	}
 };
 
 class State{
