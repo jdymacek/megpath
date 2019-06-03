@@ -24,6 +24,10 @@ struct Range{
 	int rowEnd;
 	int colStart;
 	int colEnd;
+	bool contains(int r,int c){
+		return c >= colStart && c <= colEnd && r >= rowStart && r <= rowEnd;
+	}
+
 };
 
 class State{
