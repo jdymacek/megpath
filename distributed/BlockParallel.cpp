@@ -41,7 +41,8 @@ void BlockParallel::start(){
 	set<set<int>> rowGroups(rowSets.begin(),rowSets.end());
 	set<set<int>> colGroups(colSets.begin(),colSets.end());
 
-	rowTotal = rowGroups.size();
+	rowUnique = rowSets[0].size();
+	cout << rowUnique << endl;
 
 	MPI_Group worldGroup;
 	MPI_Comm_group(MPI_COMM_WORLD, &worldGroup);
@@ -97,7 +98,7 @@ void BlockParallel::run(){
 	int gRank;
 	int recv[] = {rank, rank};
 	int vals[] = {rank, rank};
-	int* gBuff = new int[rowTotal*2];
+	int* gBuff = new int[rowUnique*2];
 	int* counts = new int[size];
 	int* disp = new int[size];
 	memset(counts,0,sizeof(int)*size);
@@ -118,19 +119,18 @@ void BlockParallel::run(){
 	MPI_Gather(&count,1,MPI_INT,counts,1,MPI_INT,0,MPI_COMM_WORLD);
 	MPI_Gather(&dis,1,MPI_INT,disp,1,MPI_INT,0,MPI_COMM_WORLD);
 
-
 	if(rank == 0){
-
 		for(int i = 0; i < size; i++){
 			cout << counts[i] << ',' << disp[i] << "; ";
 		}
 		cout << endl;
 	}
+
 	MPI_Gatherv(recv,count,MPI_INT,gBuff,counts,disp,MPI_INT,0,MPI_COMM_WORLD);
 	cout << rank << " " << hostname << endl;
 	
 	if(rank == 0){
-		for(int i = 0; i < rowTotal*2; i++){
+		for(int i = 0; i < rowUnique*2; i++){
 			cout << gBuff[i] << ' ';
 		}
 		cout << endl;

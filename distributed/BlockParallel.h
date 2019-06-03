@@ -30,7 +30,7 @@ class BlockParallel: virtual public Distributed{
 //		virtual void monteFinalCallback();
 //		virtual void annealFinalCallback();
 	protected:
-		int rowTotal;
+		int rowUnique;
 		Range block;
 		int bufferSize;
 		double* sendBuffer;
