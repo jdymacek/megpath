@@ -55,13 +55,13 @@ void BlockParallel::start(){
 		rGrps.push_back(group);
 	}
 
-    for(auto s: colGroups){
-        vector<int> v(s.begin(),s.end());
-        MPI_Group_incl(worldGroup,v.size(),&v[0], &group);
-        MPI_Comm_create(MPI_COMM_WORLD,group,&comm);
-        cComms.push_back(comm);
-        cGrps.push_back(group);
-    }
+	for(auto s: colGroups){
+		vector<int> v(s.begin(),s.end());
+		MPI_Group_incl(worldGroup,v.size(),&v[0], &group);
+		MPI_Comm_create(MPI_COMM_WORLD,group,&comm);
+		cComms.push_back(comm);
+		cGrps.push_back(group);
+	}
 
 	/*	//if(rank == 0){
 		oexpression = state->expression;
@@ -84,7 +84,7 @@ void BlockParallel::start(){
 	bufferSize = state->patterns.size();
 	sendBuffer = new double[bufferSize];
 	recvBuffer = new double[bufferSize];
-*/
+	*/
 }
 
 void BlockParallel::run(){
@@ -94,44 +94,47 @@ void BlockParallel::run(){
 //	int gRank;
 //	int gSize;
 	for(int i = 0; i < rComms.size(); i++){
+		if(rComms[i] != MPI_COMM_NULL){
 //		MPI_Comm_rank(rComms[i], &gRank);
 //		MPI_Comm_size(rComms[i], &gSize);
 //		int gCounts[gSize];
 //		int gDispls[gSize];
-		int res;
-		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_MAX,rComms[i]);
-		cout << rank << '\t' << rComms[i] << '\t' << "Max: " << res << endl;
-		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_MIN,rComms[i]);
-		cout << rank << '\t' << rComms[i] << '\t' << "Min: " << res << endl;
-		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_PROD,rComms[i]);
-		cout << rank << '\t' << rComms[i] << '\t' << "Prd: " << res << endl;
-/*		MPI_Allgather(&rank,1,MPI_INT,&gCounts[0],1,MPI_INT,rComms[i]);
-		MPI_Allgather(&send,1,MPI_INT,&gDispls[0],1,MPI_INT,rComms[i]);
-		for(int r : gCounts){
+			int res;
+			MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_MAX,rComms[i]);
+			cout << rank << '\t' << rComms[i] << '\t' << "Max: " << res << endl;
+			MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_MIN,rComms[i]);
+			cout << rank << '\t' << rComms[i] << '\t' << "Min: " << res << endl;
+			MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_PROD,rComms[i]);
+			cout << rank << '\t' << rComms[i] << '\t' << "Prd: " << res << endl;
+/*			MPI_Allgather(&rank,1,MPI_INT,&gCounts[0],1,MPI_INT,rComms[i]);
+			MPI_Allgather(&send,1,MPI_INT,&gDispls[0],1,MPI_INT,rComms[i]);
+			for(int r : gCounts){
 			cout << rank << '\t' << rComms[i] << '\t' << r << endl;
+			}
+			*/
 		}
-*/
 	}
 	for(int i = 0; i < cComms.size(); i++){
+		if(cComms[i] != MPI_COMM_NULL){
 //		MPI_Comm_rank(cComms[i], &gRank);
 //		MPI_Comm_size(cComms[i], &gSize);
 //		int gCounts[gSize];
 //		int gDispls[gSize];
-		int res;
-		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_MAX,cComms[i]);
-		cout << rank << '\t' << cComms[i] << '\t' << "Max: " << res << endl;
-		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_MIN,cComms[i]);
-		cout << rank << '\t' << cComms[i] << '\t' << "Min: " << res << endl;
-		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_PROD,cComms[i]);
-		cout << rank << '\t' << cComms[i] << '\t' << "Prd: " << res << endl;
+			int res;
+			MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_MAX,cComms[i]);
+			cout << rank << '\t' << cComms[i] << '\t' << "Max: " << res << endl;
+			MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_MIN,cComms[i]);
+			cout << rank << '\t' << cComms[i] << '\t' << "Min: " << res << endl;
+			MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_PROD,cComms[i]);
+			cout << rank << '\t' << cComms[i] << '\t' << "Prd: " << res << endl;
 /*		MPI_Allgather(&rank,1,MPI_INT,&gCounts[0],1,MPI_INT,cComms[i]);
 		MPI_Allgather(&send,1,MPI_INT,&gDispls[0],1,MPI_INT,rComms[i]);
 		for(int c : gCounts){
-			cout << rank << '\t' << cComms[i] << '\t' << c << endl;
+		cout << rank << '\t' << cComms[i] << '\t' << c << endl;
 		}
-*/
+		*/
+		}
 	}
-	
-//	state->patterns.write(&sendBuffer[0]);
-//	MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
+	//	state->patterns.write(&sendBuffer[0]);
+	//	MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
 }
