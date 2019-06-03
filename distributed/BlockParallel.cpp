@@ -126,7 +126,9 @@ void BlockParallel::run(){
 		}
 		cout << endl;
 	}
-	MPI_Gatherv(recv,counts[rank],MPI_INT,gBuff,counts,disp,MPI_INT,0,MPI_COMM_WORLD);
+	MPI_Gatherv(recv,count,MPI_INT,gBuff,counts,disp,MPI_INT,0,MPI_COMM_WORLD);
+	cout << rank << " " << hostname << endl;
+	
 	if(rank == 0){
 		for(int i = 0; i < rowTotal*2; i++){
 			cout << gBuff[i] << ' ';
