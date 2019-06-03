@@ -19,85 +19,49 @@ void BlockParallel::start(){
 	vector<Range> ar;
 
 	for(int i = 0; i < size; i++){
-		Range r = state->getRange(i);
-		ar.push_back(r);
+		ar.push_back(state->getRange(i));
 	}
 
 	block = ar[rank];
 
-	set<vector<int>> rowGroups;
-	for(int i = 0; i < state->expression.rows(); i++){
-		vector<int> row;
-		for(int j = 0; j < ar.size(); j++){
-			if(i >= ar[j].rowStart && i <= ar[j].rowEnd){
-				row.push_back(j);
+	vector<set<int>> rowSets(state->expression.rows());
+	vector<set<int>> colSets(state->expression.cols());
+
+	for(int i =0; i < state->expression.rows(); ++i){
+		for(int j = 0; j < state->expression.cols(); ++j){
+			for(int r = 0; r < ar.size(); ++r){
+				if(ar[r].contains(i,j)){
+					rowSets[i].insert(r);
+					colSets[j].insert(r);
+				}	
 			}
 		}
-		if(row.size() > 0)
-			rowGroups.insert(row);
 	}
 
-	set<vector<int>> colGroups;
-	for(int i = 0; i < state->expression.cols(); i++){
-		vector<int> col;
-		for(int j = 0; j < ar.size(); j++){
-			if(i >= ar[j].colStart && i <= ar[j].colEnd){
-				col.push_back(j);
-			}
-		}
-		if(col.size() > 0)
-			colGroups.insert(col);
+	set<set<int>> rowGroups(rowSets.begin(),rowSets.end());
+	set<set<int>> colGroups(colSets.begin(),colSets.end());
+
+	MPI_Group worldGroup;
+	MPI_Comm_group(MPI_COMM_WORLD, &worldGroup);
+
+	//seperate groups for rows and columns?  
+	//rGrps, rComms, cGrps, cComms
+	vector<MPI_Group> grps;
+	vector<MPI_Comm> comms;
+	MPI_Group groupR;
+	MPI_Comm commR;
+
+	for(auto s: rowGroups){
+		vector<int> v(s.begin(),s.end());
+		MPI_Group_incl(worldGroup,v.size(),&v[0], &groupR);
+		MPI_Comm_create(MPI_COMM_WORLD,groupR,&commR);
+		comms.push_back(commR);
+		grps.push_back(groupR);
 	}
 
-	MPI_Group world_group;
-	MPI_Comm_group(MPI_COMM_WORLD, &world_group);
 
-	for(vector<int> row : rowGroups){
-		bool in = false;
-		for(int i = 0; i < row.size(); i++){
-			if(rank == row[i]){
-				in = true;
-				break;
-			}
-		}
-		if(in){
-			MPI_Group groupR;
-			MPI_Comm commR;
-			int n = row.size();
-			int vtoa[n];
-			for(int i = 0; i < n; i++){
-				vtoa[i] = row[i];
-			}
-			MPI_Group_incl(world_group, n, vtoa, &groupR);
-			rGrps.push_back(groupR);
-			MPI_Comm_create(MPI_COMM_WORLD, groupR, &commR);
-			rComms.push_back(commR);
-		}
-	}
-	for(vector<int> col : colGroups){
-		bool in = false;
-		for(int i = 0; i < col.size(); i++){
-			if(rank == col[i]){
-				in = true;
-				break;
-			}
-		}
-		if(in){
-			MPI_Group groupC;
-			MPI_Comm commC;
-			int n = col.size();
-			int vtoa[n];
-			for(int i = 0; i < n; i++){
-				vtoa[i] = col[i];
-			}
-			MPI_Group_incl(world_group, n, vtoa, &groupC);
-			cGrps.push_back(groupC);
-			MPI_Comm_create(MPI_COMM_WORLD, groupC, &commC);
-			cComms.push_back(commC);
-		}
-	}
-/*
-	//if(rank == 0){
+
+	/*	//if(rank == 0){
 		oexpression = state->expression;
 	//}
 
