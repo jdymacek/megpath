@@ -88,21 +88,22 @@ void BlockParallel::start(){
 }
 
 void BlockParallel::run(){
+	cout << rank << '\t' << hostname << endl;
 	double* buffer = NULL;
 	int send = state->coefficients.matrix.size();
-	int gRank;
-	int gSize;
+//	int gRank;
+//	int gSize;
 	for(int i = 0; i < rComms.size(); i++){
-		MPI_Comm_rank(rComms[i], &gRank);
-		MPI_Comm_size(rComms[i], &gSize);
+//		MPI_Comm_rank(rComms[i], &gRank);
+//		MPI_Comm_size(rComms[i], &gSize);
 //		int gCounts[gSize];
 //		int gDispls[gSize];
 		int res;
-		MPI_Allreduce(&gRank,&res,1,MPI_INT,MPI_MAX,rComms[i]);
+		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_MAX,rComms[i]);
 		cout << rank << '\t' << rComms[i] << '\t' << "Max: " << res << endl;
-		MPI_Allreduce(&gRank,&res,1,MPI_INT,MPI_MIN,rComms[i]);
+		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_MIN,rComms[i]);
 		cout << rank << '\t' << rComms[i] << '\t' << "Min: " << res << endl;
-		MPI_Allreduce(&gRank,&res,1,MPI_INT,MPI_PROD,rComms[i]);
+		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_PROD,rComms[i]);
 		cout << rank << '\t' << rComms[i] << '\t' << "Prd: " << res << endl;
 /*		MPI_Allgather(&rank,1,MPI_INT,&gCounts[0],1,MPI_INT,rComms[i]);
 		MPI_Allgather(&send,1,MPI_INT,&gDispls[0],1,MPI_INT,rComms[i]);
@@ -112,16 +113,16 @@ void BlockParallel::run(){
 */
 	}
 	for(int i = 0; i < cComms.size(); i++){
-		MPI_Comm_rank(cComms[i], &gRank);
-		MPI_Comm_size(cComms[i], &gSize);
+//		MPI_Comm_rank(cComms[i], &gRank);
+//		MPI_Comm_size(cComms[i], &gSize);
 //		int gCounts[gSize];
 //		int gDispls[gSize];
 		int res;
-		MPI_Allreduce(&gRank,&res,1,MPI_INT,MPI_MAX,cComms[i]);
+		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_MAX,cComms[i]);
 		cout << rank << '\t' << cComms[i] << '\t' << "Max: " << res << endl;
-		MPI_Allreduce(&gRank,&res,1,MPI_INT,MPI_MIN,cComms[i]);
+		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_MIN,cComms[i]);
 		cout << rank << '\t' << cComms[i] << '\t' << "Min: " << res << endl;
-		MPI_Allreduce(&gRank,&res,1,MPI_INT,MPI_PROD,cComms[i]);
+		MPI_Allreduce(&rank,&res,1,MPI_INT,MPI_PROD,cComms[i]);
 		cout << rank << '\t' << cComms[i] << '\t' << "Prd: " << res << endl;
 /*		MPI_Allgather(&rank,1,MPI_INT,&gCounts[0],1,MPI_INT,cComms[i]);
 		MPI_Allgather(&send,1,MPI_INT,&gDispls[0],1,MPI_INT,rComms[i]);
