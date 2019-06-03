@@ -41,7 +41,7 @@ void BlockParallel::start(){
 	set<set<int>> rowGroups(rowSets.begin(),rowSets.end());
 	set<set<int>> colGroups(colSets.begin(),colSets.end());
 
-	rowUnique = rowSets[0].size();
+	rowUnique = colSets[0].size();
 	cout << rowUnique << endl;
 
 	MPI_Group worldGroup;
