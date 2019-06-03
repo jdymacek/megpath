@@ -44,22 +44,24 @@ void BlockParallel::start(){
 	MPI_Group worldGroup;
 	MPI_Comm_group(MPI_COMM_WORLD, &worldGroup);
 
-	//seperate groups for rows and columns?  
-	//rGrps, rComms, cGrps, cComms
-	vector<MPI_Group> grps;
-	vector<MPI_Comm> comms;
-	MPI_Group groupR;
-	MPI_Comm commR;
+	MPI_Group group;
+	MPI_Comm comm;
 
 	for(auto s: rowGroups){
 		vector<int> v(s.begin(),s.end());
-		MPI_Group_incl(worldGroup,v.size(),&v[0], &groupR);
-		MPI_Comm_create(MPI_COMM_WORLD,groupR,&commR);
-		comms.push_back(commR);
-		grps.push_back(groupR);
+		MPI_Group_incl(worldGroup,v.size(),&v[0], &group);
+		MPI_Comm_create(MPI_COMM_WORLD,group,&comm);
+		rComms.push_back(comm);
+		rGrps.push_back(group);
 	}
 
-
+    for(auto s: colGroups){
+        vector<int> v(s.begin(),s.end());
+        MPI_Group_incl(worldGroup,v.size(),&v[0], &group);
+        MPI_Comm_create(MPI_COMM_WORLD,group,&comm);
+        cComms.push_back(comm);
+        cGrps.push_back(group);
+    }
 
 	/*	//if(rank == 0){
 		oexpression = state->expression;
