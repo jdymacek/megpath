@@ -68,6 +68,15 @@ void BlockParallel::start(){
 		}
 	}
 
+	pCount = 0;
+	pDisp = 0;
+	for(int r : rowSets[0]){
+		if(rank == r){
+			pCount = state->patterns.matrix.size();
+			pDisp = block.colStart*state->patterns.rows;
+		}
+	}
+
 	MPI_Group worldGroup;
 	MPI_Comm_group(MPI_COMM_WORLD, &worldGroup);
 
@@ -97,49 +106,7 @@ void BlockParallel::start(){
 
 }
 
-void BlockParallel::run(){
-
-/*	
-	double* buffer = NULL;
-	int send = state->coefficients.matrix.size();
-	int gRank;
-	int recv[] = {rank, rank};
-	int vals[] = {rank, rank};
-	int* gBuff = new int[rowUnique*2];
-	int* counts = new int[size];
-	int* disp = new int[size];
-	memset(counts,0,sizeof(int)*size);
-	memset(disp,0,sizeof(int)*size);
-
-	for(auto r : rComms){
-		MPI_Comm_rank(r, &gRank);
-		if(gRank == 0){
-			count = 2;
-			dis = 2*rank;
-		}
-		MPI_Reduce(vals,&recv[0],2,MPI_INT,MPI_MAX,0,r);
-	}
-
-	MPI_Gather(&count,1,MPI_INT,counts,1,MPI_INT,0,MPI_COMM_WORLD);
-	MPI_Gather(&dis,1,MPI_INT,disp,1,MPI_INT,0,MPI_COMM_WORLD);
-
-	if(rank == 0){
-		for(int i = 0; i < size; i++){
-			cout << counts[i] << ',' << disp[i] << "; ";
-		}
-		cout << endl;
-	}
-
-	MPI_Gatherv(recv,count,MPI_INT,gBuff,counts,disp,MPI_INT,0,MPI_COMM_WORLD);
-
-	if(rank == 0){
-		for(int i = 0; i < rowUnique*2; i++){
-			cout << gBuff[i] << ' ';
-		}
-		cout << endl;
-	}
-*/
-	
+void BlockParallel::run(){	
 	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
 	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows,state->patterns.columns,rank);
 
@@ -155,6 +122,54 @@ void BlockParallel::run(){
 	if(rank == 0){
 		cout << state->coefficients.matrix << endl;
 	}
+
+	gatherPatterns();
+	if(rank == 0){
+		cout << state->patterns.matrix << endl;
+	}
+	
+}
+
+void BlockParallel::gatherPatterns(){
+	double* buffer = NULL;
+	int  allCounts[size];
+	int  allDispls[size];
+	double* sendBuf = new double[state->patterns.matrix.size()];
+
+	if(rank == 0){
+		buffer = new double[oexpression.cols()*state->patterns.matrix.rows()];
+	}
+
+	MPI_Gather(&pCount,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
+	MPI_Gather(&pDisp,1,MPI_INT,&allDispls[0],1,MPI_INT, 0, MPI_COMM_WORLD);
+
+	MatrixXd ct = state->patterns.matrix.transpose();
+
+	copy(ct.data(),ct.data()+ct.size(), sendBuf);
+
+	MPI_Gatherv(sendBuf, pCount, MPI_DOUBLE, buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+
+	state->patterns.resize(state->patterns.matrix.rows(),oexpression.cols());
+	state->expression = oexpression;
+	if(rank == 0){
+		double* nb = buffer;
+		MatrixXd temp = MatrixXd::Zero(state->patterns.matrix.rows(),oexpression.cols());
+		for(int i =0; i < temp.rows(); ++i){
+			for(int j=0; j < temp.cols(); ++j){
+				temp(i,j) = *buffer;
+				buffer += 1;
+			}
+		}
+		state->patterns.matrix = temp;
+	//	ErrorFunctionRow efRow(state);
+	//	double error = efRow.error();
+
+	//	cout << "Final Error: " << error << endl;
+	//	cout << "Patterns: " << endl;
+	//	cout << state->patterns.matrix << endl;;
+		delete[] nb;
+	}
+	delete[] sendBuf;
 }
 
 void BlockParallel::stop(){

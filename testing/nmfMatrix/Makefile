@@ -3,7 +3,7 @@ CFLAGS= -c -std=c++11 -I../../shared/
 LDFLAGS=-L../shared/ 
 LIBS=
 VPATH = src:../../shared
-SOURCES=ProbFunc.cpp HistoPF.cpp ShiftPF.cpp Value.cpp NMFMatrix.cpp  driver.cpp
+SOURCES=ProbFunc.cpp HistoPF.cpp ShiftPF.cpp Value.cpp NMFMatrix.cpp driver.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=test_nmf
 

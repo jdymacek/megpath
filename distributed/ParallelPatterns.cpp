@@ -47,7 +47,6 @@ void ParallelPatterns::allAverage(NMFMatrix& mat, MPI_Comm Comm){
 	mat.read(&mat.recvBuffer[0]);
 }
 
-
 void ParallelPatterns::monteCallback(int iter){
 	if(state->both){
 		allAverage(state->patterns,MPI_COMM_WORLD);	
@@ -73,7 +72,6 @@ bool ParallelPatterns::annealCallback(int iter){
 	}
 	return true;
 }
-
 
 void ParallelPatterns::monteFinalCallback(){
 

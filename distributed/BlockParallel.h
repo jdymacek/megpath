@@ -21,6 +21,7 @@ class BlockParallel: public ParallelPatterns{
 //		virtual void allAverage();
 		virtual void start();	
 		virtual void run();
+		virtual void gatherPatterns();
 		virtual void stop();
 //		virtual void gatherCoefficients();
 //		virtual void monteCallback(int iter);	
@@ -30,11 +31,10 @@ class BlockParallel: public ParallelPatterns{
 //		virtual void monteFinalCallback();
 //		virtual void annealFinalCallback();
 	protected:
-		int count;
-		int disp;
 		int rowUnique;
+		int pCount;
+		int pDisp;
 		Range block;
-		MatrixXd oexpression;
 		vector<MPI_Group> rGrps;
 		vector<MPI_Comm> rComms;
 		vector<MPI_Group> cGrps;

@@ -12,6 +12,7 @@
 #include "ProbFunc.h"
 #include "PiecewisePF.h"
 #include "PointerSupport.h"
+#include "Range.h"
 
 using namespace std;
 using namespace Eigen;
@@ -24,6 +25,8 @@ class NMFMatrix{
 		~NMFMatrix();
 		NMFMatrix(int rowss, int cols);
 		void read(double* data);
+		void readRange(Range r, double* data);
+		void writeRange(Range r, double* data);
 		void write(double* data);
 		void reset();
 		void write(string filename);
