@@ -77,12 +77,14 @@ void BlockParallel::start(){
 		//}
 
 		//split the patterns
-		state->patterns.resize(block.colSize(), state->patterns.rows);
+		state->patterns.resize(state->patterns.rows, block.colSize());
 		//split the coefficients
 		state->coefficients.resize(block.rowSize(), state->coefficients.columns);
 
 		MatrixXd temp = state->expression.block(block.rowStart, block.colStart, block.rowSize(), block.colSize());
 		state->expression = temp;
+		state->patterns.createBuffers();
+		state->coefficients.createBuffers();
 	}
 }
 
@@ -90,7 +92,7 @@ void BlockParallel::run(){
 //	cout << rank << '\t' << hostname << endl;
 //	double* buffer = NULL;
 //	int send = state->coefficients.matrix.size();
-	int gRank;
+/*	int gRank;
 	int recv[] = {rank, rank};
 	int vals[] = {rank, rank};
 	int* gBuff = new int[rowUnique*2];
@@ -128,10 +130,9 @@ void BlockParallel::run(){
 			cout << gBuff[i] << ' ';
 		}
 		cout << endl;
-	}
+	}*/
 
 	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
-	state->coefficients.createBuffers();
 
 	for(auto r : rComms){
 		allAverage(state->coefficients,r);

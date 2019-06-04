@@ -6,6 +6,7 @@
 #include "NMFMatrix.h"
 
 NMFMatrix::NMFMatrix(){
+	calculateSize();
 }
 
 NMFMatrix::~NMFMatrix(){
@@ -37,14 +38,14 @@ NMFMatrix::NMFMatrix(int rowss, int cols){
 
 //Size in terms of doubles
 //this could be cached
-int NMFMatrix::size(){
+void NMFMatrix::calculateSize(){
 	int rv = 0;
 	for(int y =0; y < matrix.rows(); ++y){
 		for(int x = 0; x < matrix.cols(); ++x){
 			rv += functions(y,x)->dataSize();		
 		}
 	}
-	return matrix.size()+rv;
+	bufferedSize = matrix.size()+rv;
 }
 
 void NMFMatrix::reset(){
@@ -62,6 +63,7 @@ void NMFMatrix::reset(){
         }
     }
 	matrix = MatrixXd::Zero(rows,columns);
+	calculateSize();
 }
 
 
@@ -133,7 +135,7 @@ void NMFMatrix::resize(int newRows, int newCols){
 			functions(i,j) = new PiecewisePF();
 		}
 	}
-
+	calculateSize();
 }
 
 void NMFMatrix::createBuffers(){

@@ -30,9 +30,8 @@ class ParallelPatterns: virtual public Distributed{
 		virtual void annealFinalCallback();
 	protected:
 		int bufferSize;
-	    double* sendBuffer;
+		double* sendBuffer;
 		double* recvBuffer;
-
 		MatrixXd oexpression;
 		int startPoint;
 };

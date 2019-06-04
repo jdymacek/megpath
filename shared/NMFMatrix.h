@@ -27,12 +27,14 @@ class NMFMatrix{
 		void write(double* data);
 		void reset();
 		void write(string filename);
-		int size();
+		void calculateSize();
+		int size(){return bufferedSize;};
 		void resize(int newRows, int newCols);
 
 		bool isConstrained(int row);
 		void createBuffers();
 		
+		int bufferedSize;
 		double* sendBuffer;
 		double* recvBuffer;
 		int rows;
