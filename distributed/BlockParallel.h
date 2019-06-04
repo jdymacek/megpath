@@ -30,10 +30,11 @@ class BlockParallel: public ParallelPatterns{
 //		virtual void monteFinalCallback();
 //		virtual void annealFinalCallback();
 	protected:
+		int count;
+		int disp;
 		int rowUnique;
 		Range block;
 		MatrixXd oexpression;
-//		int startPoint;
 		vector<MPI_Group> rGrps;
 		vector<MPI_Comm> rComms;
 		vector<MPI_Group> cGrps;

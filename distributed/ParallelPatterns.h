@@ -29,6 +29,8 @@ class ParallelPatterns: virtual public Distributed{
 		virtual void monteFinalCallback();
 		virtual void annealFinalCallback();
 	protected:
+		int count;
+		int disp;
 		int bufferSize;
 		double* sendBuffer;
 		double* recvBuffer;

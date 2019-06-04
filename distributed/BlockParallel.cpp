@@ -83,15 +83,20 @@ void BlockParallel::start(){
 
 		MatrixXd temp = state->expression.block(block.rowStart, block.colStart, block.rowSize(), block.colSize());
 		state->expression = temp;
+		
 		state->patterns.createBuffers();
 		state->coefficients.createBuffers();
+		
+		count = state->coefficients.size();
+		disp = block.rowStart*state->coefficients.columns;
 	}
 }
 
 void BlockParallel::run(){
-//	cout << rank << '\t' << hostname << endl;
-//	double* buffer = NULL;
-//	int send = state->coefficients.matrix.size();
+
+/*	
+	double* buffer = NULL;
+	int send = state->coefficients.matrix.size();
 	int gRank;
 	int recv[] = {rank, rank};
 	int vals[] = {rank, rank};
@@ -100,9 +105,6 @@ void BlockParallel::run(){
 	int* disp = new int[size];
 	memset(counts,0,sizeof(int)*size);
 	memset(disp,0,sizeof(int)*size);
-
-	int count = 0;
-	int dis = 0;
 
 	for(auto r : rComms){
 		MPI_Comm_rank(r, &gRank);
@@ -131,8 +133,10 @@ void BlockParallel::run(){
 		}
 		cout << endl;
 	}
+*/
 
-/*	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
+/*	
+	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
 	state->patterns.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
 
 	for(auto r : rComms){
@@ -140,7 +144,9 @@ void BlockParallel::run(){
 	}
 	for(auto c : cComms){
 		allAverage(state->patterns,c);
-	}*/
+	}
+*/
+
 	gatherCoefficients();
 }
 

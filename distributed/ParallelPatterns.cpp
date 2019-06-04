@@ -24,16 +24,15 @@ void ParallelPatterns::start(){
 	//split the coefficients
 	int myRows = r.rowEnd - r.rowStart;
 	state->coefficients.resize(myRows, state->coefficients.columns);
+
 	//split the expression  
-
-	//change to range startRow
-	startPoint = r.rowStart;
-
-	//replace with the 4 Range coordinates
-	MatrixXd temp = state->expression.block(startPoint, 0, myRows, state->expression.cols());
+	MatrixXd temp = state->expression.block(r.rowStart, 0, myRows, state->expression.cols());
 	state->expression = temp;
 
 	state->patterns.createBuffers();
+
+	count = state->coefficients.size();
+	disp = r.rowStart*state->coefficients.columns;
 }
 
 void ParallelPatterns::allAverage(NMFMatrix& mat, MPI_Comm Comm){
@@ -94,11 +93,9 @@ void ParallelPatterns::gatherCoefficients(){
 		buffer = new double[oexpression.rows()*state->coefficients.matrix.cols()];
 	}
 
-	int send = state->coefficients.matrix.size();
-	MPI_Gather(&send,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
+	MPI_Gather(&count,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
 
-	send = state->coefficients.matrix.cols()*startPoint;
-	MPI_Gather(&send,1,MPI_INT,&allDispls[0],1,MPI_INT, 0, MPI_COMM_WORLD);
+	MPI_Gather(&disp,1,MPI_INT,&allDispls[0],1,MPI_INT, 0, MPI_COMM_WORLD);
 
 	MatrixXd ct = state->coefficients.matrix.transpose();
 
