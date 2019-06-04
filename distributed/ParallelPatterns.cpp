@@ -41,7 +41,7 @@ void ParallelPatterns::allAverage(NMFMatrix& mat, MPI_Comm Comm){
 	MPI_Comm_size(Comm,&gSize);
 	mat.write(&mat.sendBuffer[0]);
 	//all reduce
-	MPI_Allreduce(mat.sendBuffer, mat.recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, Comm);
+	MPI_Allreduce(mat.sendBuffer, mat.recvBuffer, mat.size(), MPI_DOUBLE, MPI_SUM, Comm);
 	for(int q = 0; q < mat.size(); q++){
 		mat.recvBuffer[q] /= gSize;
 	}
