@@ -24,6 +24,23 @@ void BlockParallel::start(){
 
 	block = ar[rank];
 
+	vector<set<int>> rowSets(state->expression.rows());
+	vector<set<int>> colSets(state->expression.cols());
+
+	for(int i =0; i < state->expression.rows(); ++i){
+		for(int j = 0; j < state->expression.cols(); ++j){
+			for(int r = 0; r < ar.size(); ++r){
+				if(ar[r].contains(i,j)){
+					rowSets[i].insert(r);
+					colSets[j].insert(r);
+				}	
+			}
+		}
+	}
+
+	set<set<int>> rowGroups(rowSets.begin(),rowSets.end());
+	set<set<int>> colGroups(colSets.begin(),colSets.end());
+	
 	if(block.isValid()){
 		//if(rank == 0){
 		oexpression = state->expression;
@@ -41,29 +58,12 @@ void BlockParallel::start(){
 		state->coefficients.createBuffers();		
 	}
 
-	vector<set<int>> rowSets(state->expression.rows());
-	vector<set<int>> colSets(state->expression.cols());
-
-	for(int i =0; i < state->expression.rows(); ++i){
-		for(int j = 0; j < state->expression.cols(); ++j){
-			for(int r = 0; r < ar.size(); ++r){
-				if(ar[r].contains(i,j)){
-					rowSets[i].insert(r);
-					colSets[j].insert(r);
-				}	
-			}
-		}
-	}
-
-	set<set<int>> rowGroups(rowSets.begin(),rowSets.end());
-	set<set<int>> colGroups(colSets.begin(),colSets.end());
-
 	rowUnique = colSets[0].size();
 	count = 0;
 	disp = 0;
 	for(int r : colSets[0]){
 		if(rank == r){
-			count = state->coefficients.size();
+			count = state->coefficients.matrix.size();
 			disp = block.rowStart*state->coefficients.columns;
 		}
 	}
@@ -93,7 +93,6 @@ void BlockParallel::start(){
 			cGrps.push_back(group);
 		}
 	}
-
 //	MPI_Group_free(&worldGroup);
 
 }
@@ -144,6 +143,7 @@ void BlockParallel::run(){
 	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
 	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows,state->patterns.columns,rank);
 
+
 	for(auto r : rComms){
 		allAverage(state->coefficients,r);
 	}
@@ -152,6 +152,9 @@ void BlockParallel::run(){
 	}
 
 	gatherCoefficients();
+	if(rank == 0){
+		cout << state->coefficients.matrix << endl;
+	}
 }
 
 void BlockParallel::stop(){

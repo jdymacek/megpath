@@ -101,7 +101,7 @@ void ParallelPatterns::gatherCoefficients(){
 
 	copy(ct.data(),ct.data()+ct.size(), sendBuf);
 
-	MPI_Gatherv(sendBuf, ct.size(), MPI_DOUBLE, buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+	MPI_Gatherv(sendBuf, count, MPI_DOUBLE, buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
 	state->coefficients.resize(oexpression.rows(),state->coefficients.matrix.cols());
 	state->expression = oexpression;
@@ -115,12 +115,12 @@ void ParallelPatterns::gatherCoefficients(){
 			}
 		}
 		state->coefficients.matrix = temp;
-		ErrorFunctionRow efRow(state);
-		double error = efRow.error();
+	//	ErrorFunctionRow efRow(state);
+	//	double error = efRow.error();
 
-		cout << "Final Error: " << error << endl;
-		cout << "Patterns: " << endl;
-		cout << state->patterns.matrix << endl;;
+	//	cout << "Final Error: " << error << endl;
+	//	cout << "Patterns: " << endl;
+	//	cout << state->patterns.matrix << endl;;
 		delete[] nb;
 	}
 	delete[] sendBuf;
