@@ -140,10 +140,9 @@ void BlockParallel::run(){
 		cout << endl;
 	}
 */
-
 	
 	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
-	state->patterns.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
+	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows,state->patterns.columns,rank);
 
 	for(auto r : rComms){
 		allAverage(state->coefficients,r);
