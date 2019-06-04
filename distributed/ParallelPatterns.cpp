@@ -88,7 +88,7 @@ void ParallelPatterns::gatherCoefficients(){
 	double* buffer = NULL;
 	int  allCounts[size];
 	int  allDispls[size];
-	double* sendBuf = new double[state->coefficients.matrix.cols()*state->coefficients.matrix.rows()];
+	double* sendBuf = new double[state->coefficients.matrix.size()];
 
 	if(rank == 0){
 		buffer = new double[oexpression.rows()*state->coefficients.matrix.cols()];
@@ -128,8 +128,6 @@ void ParallelPatterns::gatherCoefficients(){
 	}
 	delete[] sendBuf;
 }
-
-
 
 void ParallelPatterns::run(){
 	state->both = true;

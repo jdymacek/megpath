@@ -92,7 +92,7 @@ void BlockParallel::run(){
 //	cout << rank << '\t' << hostname << endl;
 //	double* buffer = NULL;
 //	int send = state->coefficients.matrix.size();
-/*	int gRank;
+	int gRank;
 	int recv[] = {rank, rank};
 	int vals[] = {rank, rank};
 	int* gBuff = new int[rowUnique*2];
@@ -130,16 +130,18 @@ void BlockParallel::run(){
 			cout << gBuff[i] << ' ';
 		}
 		cout << endl;
-	}*/
+	}
 
-	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
+/*	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
+	state->patterns.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
 
 	for(auto r : rComms){
 		allAverage(state->coefficients,r);
 	}
-
-	cout << rank << '\t' << hostname << endl;
-	cout << state->coefficients.matrix << endl;
+	for(auto c : cComms){
+		allAverage(state->patterns,c);
+	}*/
+	gatherCoefficients();
 }
 
 void BlockParallel::stop(){
