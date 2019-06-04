@@ -24,6 +24,23 @@ void BlockParallel::start(){
 
 	block = ar[rank];
 
+	if(block.isValid()){
+		//if(rank == 0){
+		oexpression = state->expression;
+		//}
+
+		//split the patterns
+		state->patterns.resize(state->patterns.rows, block.colSize());
+		//split the coefficients
+		state->coefficients.resize(block.rowSize(), state->coefficients.columns);
+
+		MatrixXd temp = state->expression.block(block.rowStart, block.colStart, block.rowSize(), block.colSize());
+		state->expression = temp;
+		
+		state->patterns.createBuffers();
+		state->coefficients.createBuffers();		
+	}
+
 	vector<set<int>> rowSets(state->expression.rows());
 	vector<set<int>> colSets(state->expression.cols());
 
@@ -42,6 +59,14 @@ void BlockParallel::start(){
 	set<set<int>> colGroups(colSets.begin(),colSets.end());
 
 	rowUnique = colSets[0].size();
+	count = 0;
+	disp = 0;
+	for(int r : colSets[0]){
+		if(rank == r){
+			count = state->coefficients.size();
+			disp = block.rowStart*state->coefficients.columns;
+		}
+	}
 
 	MPI_Group worldGroup;
 	MPI_Comm_group(MPI_COMM_WORLD, &worldGroup);
@@ -71,25 +96,6 @@ void BlockParallel::start(){
 
 //	MPI_Group_free(&worldGroup);
 
-	if(block.isValid()){
-		//if(rank == 0){
-		oexpression = state->expression;
-		//}
-
-		//split the patterns
-		state->patterns.resize(state->patterns.rows, block.colSize());
-		//split the coefficients
-		state->coefficients.resize(block.rowSize(), state->coefficients.columns);
-
-		MatrixXd temp = state->expression.block(block.rowStart, block.colStart, block.rowSize(), block.colSize());
-		state->expression = temp;
-		
-		state->patterns.createBuffers();
-		state->coefficients.createBuffers();
-		
-		count = state->coefficients.size();
-		disp = block.rowStart*state->coefficients.columns;
-	}
 }
 
 void BlockParallel::run(){
@@ -135,7 +141,7 @@ void BlockParallel::run(){
 	}
 */
 
-/*	
+	
 	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
 	state->patterns.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
 
@@ -145,7 +151,6 @@ void BlockParallel::run(){
 	for(auto c : cComms){
 		allAverage(state->patterns,c);
 	}
-*/
 
 	gatherCoefficients();
 }
