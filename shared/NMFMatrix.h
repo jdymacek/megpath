@@ -31,7 +31,10 @@ class NMFMatrix{
 		void resize(int newRows, int newCols);
 
 		bool isConstrained(int row);
+		void createBuffers();
 		
+		double* sendBuffer;
+		double* recvBuffer;
 		int rows;
 		int columns;
 		MatrixXd matrix;

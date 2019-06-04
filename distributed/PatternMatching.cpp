@@ -40,13 +40,13 @@ void PatternMatching::matchPatterns(){
 
 void PatternMatching::monteCallback(int iter){
 	matchPatterns();
-	allAverage();
+	allAverage(state->patterns,MPI_COMM_WORLD);
 }
 
 bool PatternMatching::annealCallback(int iter){
 	if(state->both == true){
 		matchPatterns();
-		allAverage();
+		allAverage(state->patterns,MPI_COMM_WORLD);
 	}
 	return true;
 }

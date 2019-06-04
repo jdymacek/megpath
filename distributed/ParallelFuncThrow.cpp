@@ -34,9 +34,9 @@ void ParallelFuncThrow::run(){
 	algorithm->setObserver(this);
 	algorithm->monteCarlo();
 	ft->finished();
-	pp->allAverage();
+	pp->allAverage(state->patterns,MPI_COMM_WORLD);
 	error = algorithm->anneal();
-	pp->allAverage();
+	pp->allAverage(state->patterns,MPI_COMM_WORLD);
 	pp->gatherCoefficients();
 }
 

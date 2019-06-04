@@ -14,6 +14,12 @@ NMFMatrix::~NMFMatrix(){
 			delete functions(i,j);
 		}
 	}
+	if(sendBuffer != NULL){
+		delete sendBuffer;
+	}
+	if(recvBuffer != NULL){
+		delete recvBuffer;
+	}
 }
 
 NMFMatrix::NMFMatrix(int rowss, int cols){
@@ -128,4 +134,9 @@ void NMFMatrix::resize(int newRows, int newCols){
 		}
 	}
 
+}
+
+void NMFMatrix::createBuffers(){
+	sendBuffer = new double[size()];
+	recvBuffer = new double[size()];
 }

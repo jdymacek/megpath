@@ -6,7 +6,7 @@
 #ifndef BLOCKPARALLEL__H
 #define BLOCKPARALLEL__H
 
-#include "Distributed.h"
+#include "ParallelPatterns.h"
 #include <mpi.h>
 #include <unistd.h>
 #include <algorithm>
@@ -14,7 +14,7 @@
 
 using namespace std;
 
-class BlockParallel: virtual public Distributed{
+class BlockParallel: public ParallelPatterns{
 	public:
 		BlockParallel();
 //		void startSplit();
@@ -32,11 +32,8 @@ class BlockParallel: virtual public Distributed{
 	protected:
 		int rowUnique;
 		Range block;
-		int bufferSize;
-		double* sendBuffer;
-		double* recvBuffer;
 		MatrixXd oexpression;
-		int startPoint;
+//		int startPoint;
 		vector<MPI_Group> rGrps;
 		vector<MPI_Comm> rComms;
 		vector<MPI_Group> cGrps;

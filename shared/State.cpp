@@ -390,8 +390,8 @@ bool State::load(string argFileName){
 		both = false;
 	}
 
-	string print = args.toString();
-	cout << print << endl;
+//	string print = args.toString();
+//	cout << print << endl;
 
 	if(img){
 		if(COLUMNS == png->width*3){

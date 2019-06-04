@@ -28,10 +28,10 @@ struct Range{
 		return c >= colStart && c <= colEnd && r >= rowStart && r <= rowEnd;
 	}
 	int rowSize(){
-		return rowEnd - rowStart;
+		return rowEnd - rowStart + 1;
 	}
 	int colSize(){
-		return colEnd - colStart;
+		return colEnd - colStart + 1;
 	}
 	bool isValid(){
 		if(rowStart < 0 || rowEnd < 0 || colStart < 0 || colEnd < 0)

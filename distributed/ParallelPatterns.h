@@ -17,7 +17,7 @@ class ParallelPatterns: virtual public Distributed{
 	public:
 		ParallelPatterns();
 		void startSplit();
-		virtual void allAverage();
+		virtual void allAverage(NMFMatrix& mat,MPI_Comm Comm);
 		virtual void start();	
 		virtual void run();
 		virtual void stop();

@@ -10,7 +10,7 @@
 #include <set>
 #include <iostream>
 
-BlockParallel::BlockParallel(): Distributed(){
+BlockParallel::BlockParallel(): ParallelPatterns(){
 	program = "BlockParallel";
 }
 
@@ -42,7 +42,6 @@ void BlockParallel::start(){
 	set<set<int>> colGroups(colSets.begin(),colSets.end());
 
 	rowUnique = colSets[0].size();
-	cout << rowUnique << endl;
 
 	MPI_Group worldGroup;
 	MPI_Comm_group(MPI_COMM_WORLD, &worldGroup);
@@ -84,16 +83,12 @@ void BlockParallel::start(){
 
 		MatrixXd temp = state->expression.block(block.rowStart, block.colStart, block.rowSize(), block.colSize());
 		state->expression = temp;
-
-		bufferSize = state->patterns.size();
-		sendBuffer = new double[bufferSize];
-		recvBuffer = new double[bufferSize];
 	}
 }
 
 void BlockParallel::run(){
-	cout << rank << '\t' << hostname << endl;
-	double* buffer = NULL;
+//	cout << rank << '\t' << hostname << endl;
+//	double* buffer = NULL;
 //	int send = state->coefficients.matrix.size();
 	int gRank;
 	int recv[] = {rank, rank};
@@ -127,14 +122,23 @@ void BlockParallel::run(){
 	}
 
 	MPI_Gatherv(recv,count,MPI_INT,gBuff,counts,disp,MPI_INT,0,MPI_COMM_WORLD);
-	cout << rank << " " << hostname << endl;
-	
+
 	if(rank == 0){
 		for(int i = 0; i < rowUnique*2; i++){
 			cout << gBuff[i] << ' ';
 		}
 		cout << endl;
 	}
+
+	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
+	state->coefficients.createBuffers();
+
+	for(auto r : rComms){
+		allAverage(state->coefficients,r);
+	}
+
+	cout << rank << '\t' << hostname << endl;
+	cout << state->coefficients.matrix << endl;
 }
 
 void BlockParallel::stop(){

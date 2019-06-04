@@ -33,26 +33,25 @@ void ParallelPatterns::start(){
 	MatrixXd temp = state->expression.block(startPoint, 0, myRows, state->expression.cols());
 	state->expression = temp;
 
-	bufferSize = state->patterns.size();
-	sendBuffer = new double[bufferSize];
-	recvBuffer = new double[bufferSize];
-
+	state->patterns.createBuffers();
 }
 
-void ParallelPatterns::allAverage(){
-	state->patterns.write(&sendBuffer[0]);
+void ParallelPatterns::allAverage(NMFMatrix& mat, MPI_Comm Comm){
+	int gSize;
+	MPI_Comm_size(Comm,&gSize);
+	mat.write(&mat.sendBuffer[0]);
 	//all reduce
-	MPI_Allreduce(sendBuffer, recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD);
-	for(int q = 0; q < bufferSize; q++){
-		recvBuffer[q] /= size;
+	MPI_Allreduce(mat.sendBuffer, mat.recvBuffer, bufferSize, MPI_DOUBLE, MPI_SUM, Comm);
+	for(int q = 0; q < mat.size(); q++){
+		mat.recvBuffer[q] /= gSize;
 	}
-	state->patterns.read(&recvBuffer[0]);
+	mat.read(&mat.recvBuffer[0]);
 }
 
 
 void ParallelPatterns::monteCallback(int iter){
 	if(state->both){
-		allAverage();	
+		allAverage(state->patterns,MPI_COMM_WORLD);	
 	}
 }
 
@@ -71,7 +70,7 @@ bool ParallelPatterns::annealCallback(int iter){
 	if(state->both){
 		if(iter > state->MAX_RUNS*state->annealCutOff)
 			state->both = false;
-		allAverage();
+		allAverage(state->patterns,MPI_COMM_WORLD);
 	}
 	return true;
 }
@@ -105,8 +104,7 @@ void ParallelPatterns::gatherCoefficients(){
 
 	copy(ct.data(),ct.data()+ct.size(), sendBuf);
 
-	MPI_Gatherv(sendBuf,ct.size(),MPI_DOUBLE,
-			buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+	MPI_Gatherv(sendBuf, ct.size(), MPI_DOUBLE, buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
 	state->coefficients.resize(oexpression.rows(),state->coefficients.matrix.cols());
 	state->expression = oexpression;
@@ -145,9 +143,9 @@ void ParallelPatterns::run(){
 	algorithm->setObserver(this);
 	//end set observer
 	algorithm->monteCarlo();
-	allAverage();
+	allAverage(state->patterns,MPI_COMM_WORLD);
 	error = algorithm->anneal();
-	allAverage();
+	allAverage(state->patterns,MPI_COMM_WORLD);
 
 	gatherCoefficients();
 }
