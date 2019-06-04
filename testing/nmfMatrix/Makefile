@@ -1,9 +1,9 @@
 CC=g++
 CFLAGS= -c -std=c++11 -I../../shared/
-LDFLAGS=-L../shared/ 
-LIBS=
+LDFLAGS=-L../../shared/ 
+LIBS=-lnmf
 VPATH = src:../../shared
-SOURCES=ProbFunc.cpp HistoPF.cpp ShiftPF.cpp Value.cpp NMFMatrix.cpp driver.cpp
+SOURCES=driver.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=test_nmf
 
