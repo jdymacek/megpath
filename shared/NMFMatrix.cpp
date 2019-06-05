@@ -7,6 +7,8 @@
 
 NMFMatrix::NMFMatrix(){
 	calculateSize();
+	sendBuffer = NULL;
+	recvBuffer = NULL;
 }
 
 NMFMatrix::~NMFMatrix(){
@@ -135,10 +137,10 @@ int NMFMatrix::write(double* data, Range r){
 	cout << "2" << endl;
 	temp = matrix.block(r.rowStart,r.colStart,r.rowSize(),r.colSize());
 	cout << "3" << endl;
-	memcpy(data,temp.data(),((r.rowSize()*r.colSize())*sizeof(double)));
+	memcpy(data,temp.data(),(temp.size()*sizeof(double)));
 	cout << "4" << endl;
-	data += r.rowSize()*r.colSize();
-	int rv = r.rowSize()*r.colSize();
+	data += temp.size();
+	int rv = temp.size();
 	cout << "5" << endl;
 	for(int y = r.rowStart; y <= r.rowEnd; ++y){
 		for(int x = r.colStart; x <= r.colEnd; ++x){

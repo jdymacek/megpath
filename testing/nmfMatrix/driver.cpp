@@ -44,6 +44,7 @@ int main(int argc, char** argv){
 	}
 
 	NMFMatrix b = NMFMatrix(6,4);
+	b.createBuffers();
 
 	b.read(&a.sendBuffer[0],r);
 
