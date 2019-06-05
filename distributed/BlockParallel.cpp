@@ -120,44 +120,6 @@ void BlockParallel::start(){
 	}
 }
 
-void BlockParallel::run(){	
-	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
-	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows,state->patterns.columns,rank);
-
-
-	for(auto r : rSets){
-		r.subRange.rowStart -= block.rowStart;
-		r.subRange.colStart = 0;
-		r.subRange.rowEnd -= block.rowStart;
-		r.subRange.colEnd = state->coefficients.columns-1;
-		groupAverage(state->coefficients,r);
-		r.subRange.rowStart += block.rowStart;
-		r.subRange.rowEnd += block.rowStart;
-	}
-	for(auto c : cSets){
-		c.subRange.rowStart = 0;
-		c.subRange.colStart -= block.colStart;
-		c.subRange.rowEnd = state->patterns.rows-1;
-		c.subRange.colEnd -= block.colStart;
-		//cout << rank << ' ' << c.comm << '\t' << c.subRange.rowStart << ' ' << c.subRange.colStart << ' ' << c.subRange.rowEnd << ' ' << c.subRange.colEnd << endl;
-		groupAverage(state->patterns,c);
-		c.subRange.colStart += block.colStart;
-		c.subRange.colEnd += block.colStart;
-	}
-	cout << rank << '\n' << state->patterns.matrix << endl;
-
-/*	gatherCoefficients();
-	if(rank == 0){
-		cout << state->coefficients.matrix << endl;
-	}
-
-	gatherPatterns();
-	if(rank == 0){
-		cout << state->patterns.matrix << endl;
-	}
-*/	
-}
-
 void BlockParallel::groupAverage(NMFMatrix& mat, BlockSet set){
 	int gSize;
 	MPI_Comm_size(set.comm,&gSize);
@@ -167,6 +129,47 @@ void BlockParallel::groupAverage(NMFMatrix& mat, BlockSet set){
 		mat.recvBuffer[q] /= gSize;
 	}
 	mat.read(&mat.recvBuffer[0],set.subRange);
+}
+
+void BlockParallel::averagePatterns(){
+	for(auto c : cSets){
+		c.subRange.rowStart = 0;
+		c.subRange.colStart -= block.colStart;
+		c.subRange.rowEnd = state->patterns.rows-1;
+		c.subRange.colEnd -= block.colStart;
+		groupAverage(state->patterns,c);
+		c.subRange.colStart += block.colStart;
+		c.subRange.colEnd += block.colStart;
+	}
+}
+
+void BlockParallel::averageCoefficients(){
+	for(auto r : rSets){
+		r.subRange.rowStart -= block.rowStart;
+		r.subRange.colStart = 0;
+		r.subRange.rowEnd -= block.rowStart;
+		r.subRange.colEnd = state->coefficients.columns-1;
+		groupAverage(state->coefficients,r);
+		r.subRange.rowStart += block.rowStart;
+		r.subRange.rowEnd += block.rowStart;
+	}
+}
+
+void BlockParallel::run(){	
+	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
+	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows,state->patterns.columns,rank);
+
+	averageCoefficients();
+	gatherCoefficients();
+	if(rank == 0){
+		cout << state->coefficients.matrix << endl << endl;
+	}
+
+//	averagePatterns();
+	gatherPatterns();
+	if(rank == 0){
+		cout << state->patterns.matrix << endl;
+	}	
 }
 
 void BlockParallel::gatherPatterns(){
@@ -182,7 +185,7 @@ void BlockParallel::gatherPatterns(){
 	MPI_Gather(&pCount,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
 	MPI_Gather(&pDisp,1,MPI_INT,&allDispls[0],1,MPI_INT, 0, MPI_COMM_WORLD);
 
-	MatrixXd ct = state->patterns.matrix.transpose();
+	MatrixXd ct = state->patterns.matrix;
 
 	copy(ct.data(),ct.data()+ct.size(), sendBuf);
 
