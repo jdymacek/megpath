@@ -129,7 +129,7 @@ void BlockParallel::run(){
 		r.subRange.rowStart -= block.rowStart;
 		r.subRange.colStart = 0;
 		r.subRange.rowEnd -= block.rowStart;
-		r.subRange.colEnd = state->coefficients.columns;
+		r.subRange.colEnd = state->coefficients.columns-1;
 		cout << rank << ' ' << r.comm << '\t' << r.subRange.rowStart << ' ' << r.subRange.colStart << ' ' << r.subRange.rowEnd << ' ' << r.subRange.colEnd << endl;
 		groupAverage(state->coefficients,r.comm,r.subRange);
 		r.subRange.rowStart += block.rowStart;
