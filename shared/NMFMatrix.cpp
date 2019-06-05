@@ -36,6 +36,9 @@ NMFMatrix::NMFMatrix(int rowss, int cols){
 			functions(i,j) = new PiecewisePF();
 		}
 	}	
+	calculateSize();
+	sendBuffer = NULL;
+	recvBuffer = NULL;
 }
 
 void NMFMatrix::calculateSize(){
@@ -132,26 +135,19 @@ void NMFMatrix::write(string filename){
 }
 
 int NMFMatrix::write(double* data, Range r){
-	cout << "1" << endl;
 	MatrixXd temp(r.rowSize(),r.colSize());
-	cout << "2" << endl;
 	temp = matrix.block(r.rowStart,r.colStart,r.rowSize(),r.colSize());
-	cout << "3" << endl;
 	memcpy(data,temp.data(),(temp.size()*sizeof(double)));
-	cout << "4" << endl;
 	data += temp.size();
 	int rv = temp.size();
-	cout << "5" << endl;
 	for(int y = r.rowStart; y <= r.rowEnd; ++y){
 		for(int x = r.colStart; x <= r.colEnd; ++x){
-			cout << "5" << '\t' << x << '\t' << y << endl;
 			functions(y,x)->toDoubles(data);
 			int s = functions(y,x)->dataSize();
 			data += s;
 			rv += s;
 		}
 	}
-	cout << "F" << '\t' << rv << endl;
 	return rv;
 }
 

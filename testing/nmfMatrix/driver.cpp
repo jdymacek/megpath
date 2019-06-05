@@ -44,11 +44,19 @@ int main(int argc, char** argv){
 	}
 
 	NMFMatrix b = NMFMatrix(6,4);
-	b.createBuffers();
 
 	b.read(&a.sendBuffer[0],r);
 
 	cout << b.matrix << endl;
+
+	b.createBuffers();
+
+	ret = b.write(&b.recvBuffer[0],r);
+
+	for(int y = 0; y < ret; ++y){
+		cout << y << '\t' << b.recvBuffer[y] << endl;
+	}
+
 /*	
 	NMFMatrix b = NMFMatrix(r.rowSize(),r.colSize());
 

@@ -80,30 +80,44 @@ void BlockParallel::start(){
 	MPI_Group worldGroup;
 	MPI_Comm_group(MPI_COMM_WORLD, &worldGroup);
 
-	MPI_Group group;
-	MPI_Comm comm;
+	BlockSet form;
+	form.subRange = block;
 
 	for(auto s: rowGroups){
 		vector<int> v(s.begin(),s.end());
-		MPI_Group_incl(worldGroup,v.size(),&v[0], &group);
-		MPI_Comm_create(MPI_COMM_WORLD,group,&comm);
-		if(comm != MPI_COMM_NULL){
-			rComms.push_back(comm);
-//			rGrps.push_back(group);
+		for(int i = 0; i < v.size(); i++){
+			if(ar[v[i]].rowStart > form.subRange.rowStart){
+				form.subRange.rowStart = ar[i].rowStart;
+			}
+			if(ar[v[i]].rowEnd < form.subRange.rowEnd){
+				form.subRange.rowEnd = ar[i].rowEnd;
+			}	
 		}
+		MPI_Group_incl(worldGroup,v.size(),&v[0], &form.group);
+		MPI_Comm_create(MPI_COMM_WORLD,form.group,&form.comm);
+		if(form.comm != MPI_COMM_NULL){
+			rSets.push_back(form);
+		}
+		form.subRange = block;
 	}
 
 	for(auto s: colGroups){
 		vector<int> v(s.begin(),s.end());
-		MPI_Group_incl(worldGroup,v.size(),&v[0], &group);
-		MPI_Comm_create(MPI_COMM_WORLD,group,&comm);
-		if(comm != MPI_COMM_NULL){
-			cComms.push_back(comm);
-//			cGrps.push_back(group);
+		for(int i = 0; i < v.size(); i++){
+			if(ar[v[i]].colStart > form.subRange.colStart){
+				form.subRange.colStart = ar[i].colStart;
+			}
+			if(ar[v[i]].colEnd < form.subRange.colEnd){
+				form.subRange.colEnd = ar[i].colEnd;
+			}	
 		}
+		MPI_Group_incl(worldGroup,v.size(),&v[0], &form.group);
+		MPI_Comm_create(MPI_COMM_WORLD,form.group,&form.comm);
+		if(form.comm != MPI_COMM_NULL){
+			cSets.push_back(form);
+		}
+		form.subRange = block;
 	}
-//	MPI_Group_free(&worldGroup);
-
 }
 
 void BlockParallel::run(){	
@@ -111,11 +125,11 @@ void BlockParallel::run(){
 	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows,state->patterns.columns,rank);
 
 
-	for(auto r : rComms){
-		allAverage(state->coefficients,r);
+	for(auto r : rSets){
+		allAverage(state->coefficients,r.comm);
 	}
-	for(auto c : cComms){
-		allAverage(state->patterns,c);
+	for(auto c : cSets){
+		allAverage(state->patterns,c.comm);
 	}
 
 	gatherCoefficients();
@@ -173,16 +187,12 @@ void BlockParallel::gatherPatterns(){
 }
 
 void BlockParallel::stop(){
-	for(auto r : rComms){
-		MPI_Comm_free(&r);
+	for(auto r : rSets){
+		MPI_Comm_free(&r.comm);
+		MPI_Group_free(&r.group);
 	}
-	for(auto c : cComms){
-		MPI_Comm_free(&c);
-	}
-	for(auto r : rGrps){
-		MPI_Group_free(&r);
-	}
-	for(auto c : cGrps){
-		MPI_Group_free(&c);
+	for(auto c : cSets){
+		MPI_Comm_free(&c.comm);
+		MPI_Group_free(&c.group);
 	}
 }

@@ -14,6 +14,12 @@
 
 using namespace std;
 
+struct BlockSet{
+	MPI_Group group;
+	MPI_Comm comm;
+	Range subRange;
+};
+
 class BlockParallel: public ParallelPatterns{
 	public:
 		BlockParallel();
@@ -35,10 +41,8 @@ class BlockParallel: public ParallelPatterns{
 		int pCount;
 		int pDisp;
 		Range block;
-		vector<MPI_Group> rGrps;
-		vector<MPI_Comm> rComms;
-		vector<MPI_Group> cGrps;
-		vector<MPI_Comm> cComms;
+		vector<BlockSet> rSets;
+		vector<BlockSet> cSets;
 };
 
 
