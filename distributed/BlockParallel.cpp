@@ -176,7 +176,6 @@ void BlockParallel::gatherPatterns(){
 	double* buffer = NULL;
 	int  allCounts[size];
 	int  allDispls[size];
-	double* sendBuf = new double[state->patterns.matrix.size()];
 
 	if(rank == 0){
 		buffer = new double[oexpression.cols()*state->patterns.matrix.rows()];
@@ -185,17 +184,14 @@ void BlockParallel::gatherPatterns(){
 	MPI_Gather(&pCount,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
 	MPI_Gather(&pDisp,1,MPI_INT,&allDispls[0],1,MPI_INT, 0, MPI_COMM_WORLD);
 
-	MatrixXd ct = state->patterns.matrix.transpose();
-
-	copy(ct.data(),ct.data()+ct.size(), sendBuf);
-
-	MPI_Gatherv(sendBuf, pCount, MPI_DOUBLE, buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+	MPI_Gatherv(state->patterns.matrix.data(), pCount, MPI_DOUBLE, buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
 	state->patterns.resize(state->patterns.matrix.rows(),oexpression.cols());
 	state->expression = oexpression;
 	if(rank == 0){
 		Map<MatrixXd> mapper(buffer,state->patterns.matrix.rows(),oexpression.cols());
 		state->patterns.matrix = mapper;
+		delete[] buffer;
 
 //		ErrorFunctionRow efRow(state);
 //		double error = efRow.error();
@@ -204,7 +200,6 @@ void BlockParallel::gatherPatterns(){
 //		cout << "Patterns: " << endl;
 //		cout << state->patterns.matrix << endl;;
 	}
-	delete[] sendBuf;
 }
 
 void BlockParallel::stop(){
