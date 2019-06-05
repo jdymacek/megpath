@@ -104,6 +104,8 @@ void ParallelPatterns::gatherCoefficients(){
 	state->coefficients.resize(oexpression.rows(),state->coefficients.matrix.cols());
 	state->expression = oexpression;
 	if(rank == 0){
+//		Map<MatrixXd> mapper(buffer,oexpression.rows(),state->coefficients.matrix.cols());
+//		state->patterns.matrix = mapper;
 		double* nb = buffer;
 		MatrixXd temp = MatrixXd::Zero(oexpression.rows(),state->coefficients.matrix.cols());
 		for(int i =0; i < temp.rows(); ++i){
@@ -119,7 +121,7 @@ void ParallelPatterns::gatherCoefficients(){
 	//	cout << "Final Error: " << error << endl;
 	//	cout << "Patterns: " << endl;
 	//	cout << state->patterns.matrix << endl;;
-		delete[] nb;
+//		delete[] nb;
 	}
 	delete[] sendBuf;
 }
