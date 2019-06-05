@@ -159,17 +159,23 @@ void BlockParallel::run(){
 	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
 	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows,state->patterns.columns,rank);
 
-	averageCoefficients();
-	gatherCoefficients();
-	if(rank == 0){
-		cout << state->coefficients.matrix << endl << endl;
-	}
+	state->both = true;
+	double error = 0;
 
+//	for(int i =0; i < bufferSize; ++i){
+//		recvBuffer[i] = 0;
+//	}
+
+	algorithm->setObserver(this);
+	algorithm->monteCarlo();
 	averagePatterns();
+	averageCoefficients();
+	error = algorithm->anneal();
+	averagePatterns();
+	averageCoefficients();
+
 	gatherPatterns();
-	if(rank == 0){
-		cout << state->patterns.matrix << endl;
-	}	
+	gatherCoefficients();
 }
 
 void BlockParallel::gatherPatterns(){
@@ -192,14 +198,24 @@ void BlockParallel::gatherPatterns(){
 		Map<MatrixXd> mapper(buffer,state->patterns.matrix.rows(),oexpression.cols());
 		state->patterns.matrix = mapper;
 		delete[] buffer;
-
-//		ErrorFunctionRow efRow(state);
-//		double error = efRow.error();
-
-//		cout << "Final Error: " << error << endl;
-//		cout << "Patterns: " << endl;
-//		cout << state->patterns.matrix << endl;;
 	}
+}
+
+void BlockParallel::monteCallback(int iter){
+	if(state->both){
+		averagePatterns();	
+	}
+	averageCoefficients();
+}
+
+bool BlockParallel::annealCallback(int iter){
+	if(state->both){
+		if(iter > state->MAX_RUNS*state->annealCutOff)
+			state->both = false;
+		averagePatterns();
+	}
+	averageCoefficients();
+	return true;
 }
 
 void BlockParallel::stop(){
@@ -211,4 +227,5 @@ void BlockParallel::stop(){
 		MPI_Comm_free(&c.comm);
 		MPI_Group_free(&c.group);
 	}
+	Distributed::stop();
 }

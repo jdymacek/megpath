@@ -33,8 +33,8 @@ class BlockParallel: public ParallelPatterns{
 		virtual void gatherPatterns();
 		virtual void stop();
 //		virtual void gatherCoefficients();
-//		virtual void monteCallback(int iter);	
-//		virtual bool annealCallback(int iter);
+		virtual void monteCallback(int iter);	
+		virtual bool annealCallback(int iter);
 //		virtual void montePrintCallback(int iter);
 //		virtual void annealPrintCallback(int iter);
 //		virtual void monteFinalCallback();

@@ -115,13 +115,13 @@ void ParallelPatterns::gatherCoefficients(){
 			}
 		}
 		state->coefficients.matrix = temp;
-	//	ErrorFunctionRow efRow(state);
-	//	double error = efRow.error();
+		ErrorFunctionRow efRow(state);
+		double error = efRow.error();
 
-	//	cout << "Final Error: " << error << endl;
-	//	cout << "Patterns: " << endl;
-	//	cout << state->patterns.matrix << endl;;
-//		delete[] nb;
+		cout << "Final Error: " << error << endl;
+		cout << "Patterns: " << endl;
+		cout << state->patterns.matrix << endl;;
+		delete[] nb;
 	}
 	delete[] sendBuf;
 }
