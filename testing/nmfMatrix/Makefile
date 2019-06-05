@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS= -c -std=c++11 -I../../shared/
+CFLAGS= -c -g -std=c++11 -I../../shared/
 LDFLAGS=-L../../shared/ 
 LIBS=-lnmf
 VPATH = src:../../shared

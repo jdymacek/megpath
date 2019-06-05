@@ -36,10 +36,11 @@ int main(int argc, char** argv){
 	r.rowEnd = 2;
 	r.colEnd = 3;
 	
-	a.write(&a.recvBuffer[0],r);
+	int ret = a.write(&a.recvBuffer[0],r);
 
-	for(int y = 0; y < r.rowSize()*r.colSize(); ++y){
-		a.sendBuffer[y] = a.recvBuffer[y];
+	cout << ret << endl;
+	for(int y = 0; y < ret; ++y){
+		a.sendBuffer[y] = a.recvBuffer[y]+1;
 	}
 
 	NMFMatrix b = NMFMatrix(6,4);

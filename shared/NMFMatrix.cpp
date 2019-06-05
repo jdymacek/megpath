@@ -86,8 +86,9 @@ int NMFMatrix::read(double* data, Range r){
 	for(int y = r.rowStart; y <= r.rowEnd; ++y){
 		for(int x = r.colStart; x <= r.colEnd; ++x){
 			functions(y,x)->fromDoubles(data);
-			data += functions(y,x)->dataSize();
-			rv += functions(y,x)->dataSize();
+			int s = functions(y,x)->dataSize();
+			data += s;
+			rv += s;
 		}
 	}
 	return rv;
@@ -143,8 +144,9 @@ int NMFMatrix::write(double* data, Range r){
 		for(int x = r.colStart; x <= r.colEnd; ++x){
 			cout << "5" << '\t' << x << '\t' << y << endl;
 			functions(y,x)->toDoubles(data);
-			data += functions(y,x)->dataSize();
-			rv += functions(y,x)->dataSize();
+			int s = functions(y,x)->dataSize();
+			data += s;
+			rv += s;
 		}
 	}
 	cout << "F" << '\t' << rv << endl;
