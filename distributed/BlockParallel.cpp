@@ -87,10 +87,10 @@ void BlockParallel::start(){
 		vector<int> v(s.begin(),s.end());
 		for(int i = 0; i < v.size(); i++){
 			if(ar[v[i]].rowStart > form.subRange.rowStart){
-				form.subRange.rowStart = ar[i].rowStart;
+				form.subRange.rowStart = ar[v[i]].rowStart;
 			}
 			if(ar[v[i]].rowEnd < form.subRange.rowEnd){
-				form.subRange.rowEnd = ar[i].rowEnd;
+				form.subRange.rowEnd = ar[v[i]].rowEnd;
 			}	
 		}
 		MPI_Group_incl(worldGroup,v.size(),&v[0], &form.group);
@@ -126,13 +126,21 @@ void BlockParallel::run(){
 
 
 	for(auto r : rSets){
-		allAverage(state->coefficients,r.comm);
+		r.subRange.rowStart -= block.rowStart;
+		r.subRange.colStart = 0;
+		r.subRange.rowEnd -= block.rowStart;
+		r.subRange.colEnd = state->coefficients.columns;
+		cout << rank << ' ' << r.comm << '\t' << r.subRange.rowStart << ' ' << r.subRange.colStart << ' ' << r.subRange.rowEnd << ' ' << r.subRange.colEnd << endl;
+		groupAverage(state->coefficients,r.comm,r.subRange);
+		r.subRange.rowStart += block.rowStart;
+		r.subRange.rowEnd += block.rowStart;
 	}
 	for(auto c : cSets){
-		allAverage(state->patterns,c.comm);
+		//cout << rank << ' ' << c.comm << '\t' << c.subRange.rowStart << ' ' << c.subRange.colStart << ' ' << c.subRange.rowEnd << ' ' << c.subRange.colEnd << endl;
+//		allAverage(state->patterns,c.comm);
 	}
 
-	gatherCoefficients();
+/*	gatherCoefficients();
 	if(rank == 0){
 		cout << state->coefficients.matrix << endl;
 	}
@@ -141,7 +149,19 @@ void BlockParallel::run(){
 	if(rank == 0){
 		cout << state->patterns.matrix << endl;
 	}
-	
+*/	
+}
+
+void BlockParallel::groupAverage(NMFMatrix& mat, MPI_Comm Comm, Range r){
+	int gSize;
+	MPI_Comm_size(Comm,&gSize);
+	cout << r.rowStart << '\t' << r.colStart << '\t' << r.rowEnd << '\t' << r.colEnd << endl;
+	mat.write(&mat.sendBuffer[0],r);
+	MPI_Allreduce(mat.sendBuffer, mat.recvBuffer, mat.size(), MPI_DOUBLE, MPI_SUM, Comm);
+//	for(int q = 0; q < mat.size(); q++){
+//		mat.recvBuffer[q] /= gSize;
+//	}
+	mat.read(&mat.recvBuffer[0],r);
 }
 
 void BlockParallel::gatherPatterns(){

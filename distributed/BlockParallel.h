@@ -27,6 +27,7 @@ class BlockParallel: public ParallelPatterns{
 //		virtual void allAverage();
 		virtual void start();	
 		virtual void run();
+		virtual void groupAverage(NMFMatrix& mat, MPI_Comm Comm, Range r);
 		virtual void gatherPatterns();
 		virtual void stop();
 //		virtual void gatherCoefficients();
