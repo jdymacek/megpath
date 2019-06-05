@@ -37,26 +37,27 @@ int main(int argc, char** argv){
 	r.rowEnd = 2;
 	r.colEnd = 3;
 	
-	NMFMatrix b = NMFMatrix(6,4);
-	MatrixXd temp2(r.rowSize(),r.colSize());
+	NMFMatrix b = NMFMatrix(r.rowSize(),r.colSize());
 
-	temp2 = a.matrix.block(r.rowStart,r.rowEnd,r.rowSize(),r.colSize());
-	b.matrix = temp2;
-	b.calculateSize();
+	b.matrix = a.matrix.block(r.rowStart,r.colStart,r.rowSize(),r.colSize());
 
-	cout << b.matrix << endl;	
+	int bBufSize = b.size();
+	double* bBuffer = new double[bBufSize];
 
-//	int bBufSize = size();
-//	double* bBuffer = new double[bBufSize];
+	memcpy(bBuffer,b.matrix.data(),((r.rowSize()*r.colSize())*sizeof(double)));
 
-//	cout << bBuffer[2] << endl;
+	for(int y = 0; y < r.rowSize()*r.colSize(); ++y){
+		bBuffer[y] = 10;
+	}
+	
+	Map<MatrixXd> mapper(bBuffer,r.rowSize(),r.colSize());
+	
+	a.matrix.block(r.rowStart,r.rowEnd,r.rowSize(),r.colSize()) = mapper;
 
-//	b.write(&bBuffer[0]);
-
-//	cout << bBuffer[2] << endl;
+	cout << "Did I win?\n" << a.matrix << endl;
 
 	delete buffer;
-//	delete bBuffer;
+	delete bBuffer;
 
 	return 0;
 }

@@ -25,9 +25,9 @@ class NMFMatrix{
 		~NMFMatrix();
 		NMFMatrix(int rowss, int cols);
 		void read(double* data);
-		void readRange(Range r, double* data);
-		void writeRange(Range r, double* data);
+		void read(Range r, double* data);
 		void write(double* data);
+		void write(Range r, double* data);
 		void reset();
 		void write(string filename);
 		void calculateSize();
