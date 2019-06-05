@@ -130,15 +130,21 @@ void BlockParallel::run(){
 		r.subRange.colStart = 0;
 		r.subRange.rowEnd -= block.rowStart;
 		r.subRange.colEnd = state->coefficients.columns-1;
-		cout << rank << ' ' << r.comm << '\t' << r.subRange.rowStart << ' ' << r.subRange.colStart << ' ' << r.subRange.rowEnd << ' ' << r.subRange.colEnd << endl;
-		groupAverage(state->coefficients,r.comm,r.subRange);
+		groupAverage(state->coefficients,r);
 		r.subRange.rowStart += block.rowStart;
 		r.subRange.rowEnd += block.rowStart;
 	}
 	for(auto c : cSets){
+		c.subRange.rowStart = 0;
+		c.subRange.colStart -= block.colStart;
+		c.subRange.rowEnd = state->patterns.rows-1;
+		c.subRange.colEnd -= block.colStart;
 		//cout << rank << ' ' << c.comm << '\t' << c.subRange.rowStart << ' ' << c.subRange.colStart << ' ' << c.subRange.rowEnd << ' ' << c.subRange.colEnd << endl;
-//		allAverage(state->patterns,c.comm);
+		groupAverage(state->patterns,c);
+		c.subRange.colStart += block.colStart;
+		c.subRange.colEnd += block.colStart;
 	}
+	cout << rank << '\n' << state->patterns.matrix << endl;
 
 /*	gatherCoefficients();
 	if(rank == 0){
@@ -152,16 +158,15 @@ void BlockParallel::run(){
 */	
 }
 
-void BlockParallel::groupAverage(NMFMatrix& mat, MPI_Comm Comm, Range r){
+void BlockParallel::groupAverage(NMFMatrix& mat, BlockSet set){
 	int gSize;
-	MPI_Comm_size(Comm,&gSize);
-	cout << r.rowStart << '\t' << r.colStart << '\t' << r.rowEnd << '\t' << r.colEnd << endl;
-	mat.write(&mat.sendBuffer[0],r);
-	MPI_Allreduce(mat.sendBuffer, mat.recvBuffer, mat.size(), MPI_DOUBLE, MPI_SUM, Comm);
-//	for(int q = 0; q < mat.size(); q++){
-//		mat.recvBuffer[q] /= gSize;
-//	}
-	mat.read(&mat.recvBuffer[0],r);
+	MPI_Comm_size(set.comm,&gSize);
+	int ret = mat.write(&mat.sendBuffer[0],set.subRange);
+	MPI_Allreduce(mat.sendBuffer, mat.recvBuffer, ret, MPI_DOUBLE, MPI_SUM, set.comm);
+	for(int q = 0; q < ret; q++){
+		mat.recvBuffer[q] /= gSize;
+	}
+	mat.read(&mat.recvBuffer[0],set.subRange);
 }
 
 void BlockParallel::gatherPatterns(){
