@@ -77,17 +77,20 @@ void NMFMatrix::read(double* data){
 	}
 }
 
-void NMFMatrix::read(Range r, double* data){
+int NMFMatrix::read(double* data, Range r){
 	Map<MatrixXd> mapper(data,r.rowSize(),r.colSize());
 	matrix.block(r.rowStart,r.colStart,r.rowSize(),r.colSize()) = mapper;
 	data += r.rowSize()*r.colSize();
+	int rv = r.rowSize()*r.colSize();
 	
 	for(int y = r.rowStart; y <= r.rowEnd; ++y){
 		for(int x = r.colStart; x <= r.colEnd; ++x){
 			functions(y,x)->fromDoubles(data);
 			data += functions(y,x)->dataSize();
+			rv += functions(y,x)->dataSize();
 		}
 	}
+	return rv;
 }
 
 bool NMFMatrix::isConstrained(int row){
@@ -125,18 +128,27 @@ void NMFMatrix::write(string filename){
 	fout.close();
 }
 
-void NMFMatrix::write(Range r, double* data){
+int NMFMatrix::write(double* data, Range r){
+	cout << "1" << endl;
 	MatrixXd temp(r.rowSize(),r.colSize());
+	cout << "2" << endl;
 	temp = matrix.block(r.rowStart,r.colStart,r.rowSize(),r.colSize());
+	cout << "3" << endl;
 	memcpy(data,temp.data(),((r.rowSize()*r.colSize())*sizeof(double)));
+	cout << "4" << endl;
 	data += r.rowSize()*r.colSize();
-
+	int rv = r.rowSize()*r.colSize();
+	cout << "5" << endl;
 	for(int y = r.rowStart; y <= r.rowEnd; ++y){
 		for(int x = r.colStart; x <= r.colEnd; ++x){
+			cout << "5" << '\t' << x << '\t' << y << endl;
 			functions(y,x)->toDoubles(data);
 			data += functions(y,x)->dataSize();
+			rv += functions(y,x)->dataSize();
 		}
-	}	
+	}
+	cout << "F" << '\t' << rv << endl;
+	return rv;
 }
 
 void NMFMatrix::resize(int newRows, int newCols){

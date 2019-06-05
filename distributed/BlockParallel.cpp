@@ -89,7 +89,7 @@ void BlockParallel::start(){
 		MPI_Comm_create(MPI_COMM_WORLD,group,&comm);
 		if(comm != MPI_COMM_NULL){
 			rComms.push_back(comm);
-			rGrps.push_back(group);
+//			rGrps.push_back(group);
 		}
 	}
 
@@ -99,7 +99,7 @@ void BlockParallel::start(){
 		MPI_Comm_create(MPI_COMM_WORLD,group,&comm);
 		if(comm != MPI_COMM_NULL){
 			cComms.push_back(comm);
-			cGrps.push_back(group);
+//			cGrps.push_back(group);
 		}
 	}
 //	MPI_Group_free(&worldGroup);

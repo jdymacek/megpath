@@ -20,8 +20,7 @@ int main(int argc, char** argv){
 
 	cout << "This is the matrix : \n" << a.matrix << endl;
 	
-	int bufferSize = a.size();
-	double* buffer = new double[bufferSize];
+	a.createBuffers();
 
 //	cout << "Before writing buffer[1] is " << buffer[1] << endl;
 //	a.write(&buffer[0]);
@@ -37,6 +36,18 @@ int main(int argc, char** argv){
 	r.rowEnd = 2;
 	r.colEnd = 3;
 	
+	a.write(&a.recvBuffer[0],r);
+
+	for(int y = 0; y < r.rowSize()*r.colSize(); ++y){
+		a.sendBuffer[y] = a.recvBuffer[y];
+	}
+
+	NMFMatrix b = NMFMatrix(6,4);
+
+	b.read(&a.sendBuffer[0],r);
+
+	cout << b.matrix << endl;
+/*	
 	NMFMatrix b = NMFMatrix(r.rowSize(),r.colSize());
 
 	b.matrix = a.matrix.block(r.rowStart,r.colStart,r.rowSize(),r.colSize());
@@ -56,8 +67,8 @@ int main(int argc, char** argv){
 
 	cout << "Did I win?\n" << a.matrix << endl;
 
-	delete buffer;
 	delete bBuffer;
+	delete buffer;*/
 
 	return 0;
 }
