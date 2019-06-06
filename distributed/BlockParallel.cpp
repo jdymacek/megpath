@@ -193,18 +193,22 @@ void BlockParallel::gatherPatterns(){
 }
 
 void BlockParallel::monteCallback(int iter){
-	if(state->both && (iter/state->interuptRuns)%2 == 0){
+	if(state->both){
 		averagePatterns();	
+		if(iter/state->interuptRuns%2 == 0)
+			averageCoefficients();
 	}else{
 		averageCoefficients();
 	}
 }
 
 bool BlockParallel::annealCallback(int iter){
-	if(state->both && (iter/state->interuptRuns)%2 == 0){
+	if(state->both){
+		averagePatterns();
 		if(iter > state->MAX_RUNS*state->annealCutOff)
 			state->both = false;
-		averagePatterns();
+		if(iter/state->interuptRuns%2 == 0)
+			averageCoefficients();
 	}else{
 		averageCoefficients();
 	}

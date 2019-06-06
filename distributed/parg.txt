@@ -1,10 +1,10 @@
 analysis = "png"
-max_runs = 25000;
-png_filename = "rr.png"
+max_runs = 50000;
+png_filename = "merge.png"
 png_origin = [0,0]
 png_patterns = ["","",""]
 png_directory = ""
 stats = "all"
-print_runs = 250
+print_runs = 100
 interrupt_runs = 500
-distribution = "4*4"
+distribution = "1*9"
