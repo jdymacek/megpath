@@ -155,16 +155,11 @@ void BlockParallel::averageCoefficients(){
 	}
 }
 
-void BlockParallel::run(){	
-//	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
-//	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows,state->patterns.columns,rank);
-
+void BlockParallel::run(){
+	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows,state->patterns.columns,rank);
+	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,1.0*rank/(size*(size+1)/2));
 	state->both = true;
 	double error = 0;
-
-//	for(int i =0; i < bufferSize; ++i){
-//		recvBuffer[i] = 0;
-//	}
 
 	algorithm->setObserver(this);
 	algorithm->monteCarlo();
@@ -216,6 +211,16 @@ bool BlockParallel::annealCallback(int iter){
 	}
 	averageCoefficients();
 	return true;
+}
+
+void BlockParallel::montePrintCallback(int iter){
+	if(rank == 0)
+	cout << "Monte Carlo: " << iter << '\t' << rank << '\n' << state->coefficients.matrix << '\n' << state->patterns.matrix << endl;
+}
+
+void BlockParallel::annealPrintCallback(int iter){
+	if(rank == 0)
+	cout << "Anneal: " << iter << '\t' << rank << '\n' << state->coefficients.matrix << '\n' << state->patterns.matrix << endl;
 }
 
 void BlockParallel::stop(){
