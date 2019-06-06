@@ -213,13 +213,13 @@ bool BlockParallel::annealCallback(int iter){
 
 void BlockParallel::montePrintCallback(int iter){
 	ErrorFunctionRow ef(state);
-	if(rank/4 == 1)
+//	if(rank/4 == 1)
 	cout << "Monte Carlo: " << iter << '\t' << rank << '\t' << /*state->coefficients.matrix << '\n' << state->patterns.matrix <<*/ ef.error() << endl;
 }
 
 void BlockParallel::annealPrintCallback(int iter){
 	ErrorFunctionRow ef(state);
-	if(rank/4 == 1)
+//	if(rank/4 == 1)
 	cout << "Anneal: " << iter << '\t' << rank << '\t' << /*state->coefficients.matrix << '\n' << state->patterns.matrix <<*/ ef.error() << endl;
 }
 
