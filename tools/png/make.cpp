@@ -27,16 +27,16 @@ int abs(int r){
 }
 
 void pngMake(){
-	Image* mak = createImage(32,1024);	
-	for(int i = 0; i < mak->height; i=i+4){
+	Image* mak = createImage(16,256);	
+	for(int i = 0; i < mak->height; i++){
 		int rrand = rand()%32*8;
 		int grand = rand()%32*8;
 		int brand = rand()%32*8;
-		for(int j = 0; j < mak->width*4; j++){
-			mak->data[i*mak->width*4+j] = rrand;
-			mak->data[i*mak->width*4+j+1] = grand;
-			mak->data[i*mak->width*4+j+2] = brand;
-			mak->data[i*mak->width*4+j+3] = 255;
+		for(int j = 0; j < mak->width; j++){
+			mak->data[i*mak->width*4+j*4] = rrand;
+			mak->data[i*mak->width*4+j*4+1] = grand;
+			mak->data[i*mak->width*4+j*4+2] = brand;
+			mak->data[i*mak->width*4+j*4+3] = 255;
 		}
 	}
 

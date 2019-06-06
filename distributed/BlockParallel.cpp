@@ -138,8 +138,8 @@ void BlockParallel::averagePatterns(){
 		c.subRange.rowEnd = state->patterns.rows-1;
 		c.subRange.colEnd -= block.colStart;
 		groupAverage(state->patterns,c);
-		c.subRange.colStart += block.colStart;
-		c.subRange.colEnd += block.colStart;
+//		c.subRange.colStart += block.colStart;
+//		c.subRange.colEnd += block.colStart;
 	}
 }
 
@@ -150,14 +150,14 @@ void BlockParallel::averageCoefficients(){
 		r.subRange.rowEnd -= block.rowStart;
 		r.subRange.colEnd = state->coefficients.columns-1;
 		groupAverage(state->coefficients,r);
-		r.subRange.rowStart += block.rowStart;
-		r.subRange.rowEnd += block.rowStart;
+//		r.subRange.rowStart += block.rowStart;
+//		r.subRange.rowEnd += block.rowStart;
 	}
 }
 
 void BlockParallel::run(){	
-	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
-	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows,state->patterns.columns,rank);
+//	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,rank);
+//	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows,state->patterns.columns,rank);
 
 	state->both = true;
 	double error = 0;

@@ -1,7 +1,7 @@
 #test argument file
 analysis = "png"
-max_runs = 2500;
-png_filename = "spect15.png"
+max_runs = 25000;
+png_filename = "rr.png"
 png_origin = [0,0]
 png_directory = ""
 png_patterns = ["","",""]

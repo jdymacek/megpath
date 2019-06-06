@@ -127,8 +127,7 @@ double MonteAnneal::monteCarlo(){
 		}
 		if(i % state->printRuns == 0 && callback != NULL){
             		callback->montePrintCallback(i);
-        	}
-
+        }
 	}
 	if(callback != NULL){
 		callback->monteFinalCallback();
