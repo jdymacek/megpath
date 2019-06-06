@@ -60,7 +60,6 @@ void ParallelPatterns::montePrintCallback(int iter){
 
 void ParallelPatterns::annealPrintCallback(int iter){
 	ErrorFunctionRow ef(state);
-
 	cout << "anneal " << hostname << " " << rank << ": " << iter << "\t Error = " << ef.error() << endl;
 }
 

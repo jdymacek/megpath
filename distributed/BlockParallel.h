@@ -37,8 +37,6 @@ class BlockParallel: public ParallelPatterns{
 		virtual bool annealCallback(int iter);
 		virtual void montePrintCallback(int iter);
 		virtual void annealPrintCallback(int iter);
-//		virtual void montePrintCallback(int iter);
-//		virtual void annealPrintCallback(int iter);
 //		virtual void monteFinalCallback();
 //		virtual void annealFinalCallback();
 	protected:

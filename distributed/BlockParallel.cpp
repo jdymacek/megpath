@@ -138,8 +138,6 @@ void BlockParallel::averagePatterns(){
 		c.subRange.rowEnd = state->patterns.rows-1;
 		c.subRange.colEnd -= block.colStart;
 		groupAverage(state->patterns,c);
-//		c.subRange.colStart += block.colStart;
-//		c.subRange.colEnd += block.colStart;
 	}
 }
 
@@ -150,14 +148,12 @@ void BlockParallel::averageCoefficients(){
 		r.subRange.rowEnd -= block.rowStart;
 		r.subRange.colEnd = state->coefficients.columns-1;
 		groupAverage(state->coefficients,r);
-//		r.subRange.rowStart += block.rowStart;
-//		r.subRange.rowEnd += block.rowStart;
 	}
 }
 
 void BlockParallel::run(){
-	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows,state->patterns.columns,rank);
-	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,1.0*rank/(size*(size+1)/2));
+//	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows,state->patterns.columns,rank);
+//	state->coefficients.matrix = MatrixXd::Constant(state->coefficients.rows,state->coefficients.columns,1.0*rank/(size*(size+1)/2));
 	state->both = true;
 	double error = 0;
 
@@ -197,30 +193,34 @@ void BlockParallel::gatherPatterns(){
 }
 
 void BlockParallel::monteCallback(int iter){
-	if(state->both){
+	if(state->both && (iter/state->interuptRuns)%2 == 0){
 		averagePatterns();	
+	}else{
+		averageCoefficients();
 	}
-	averageCoefficients();
 }
 
 bool BlockParallel::annealCallback(int iter){
-	if(state->both){
+	if(state->both && (iter/state->interuptRuns)%2 == 0){
 		if(iter > state->MAX_RUNS*state->annealCutOff)
 			state->both = false;
 		averagePatterns();
+	}else{
+		averageCoefficients();
 	}
-	averageCoefficients();
 	return true;
 }
 
 void BlockParallel::montePrintCallback(int iter){
-	if(rank == 0)
-	cout << "Monte Carlo: " << iter << '\t' << rank << '\n' << state->coefficients.matrix << '\n' << state->patterns.matrix << endl;
+	ErrorFunctionRow ef(state);
+	if(rank/4 == 1)
+	cout << "Monte Carlo: " << iter << '\t' << rank << '\t' << /*state->coefficients.matrix << '\n' << state->patterns.matrix <<*/ ef.error() << endl;
 }
 
 void BlockParallel::annealPrintCallback(int iter){
-	if(rank == 0)
-	cout << "Anneal: " << iter << '\t' << rank << '\n' << state->coefficients.matrix << '\n' << state->patterns.matrix << endl;
+	ErrorFunctionRow ef(state);
+	if(rank/4 == 1)
+	cout << "Anneal: " << iter << '\t' << rank << '\t' << /*state->coefficients.matrix << '\n' << state->patterns.matrix <<*/ ef.error() << endl;
 }
 
 void BlockParallel::stop(){

@@ -27,7 +27,7 @@ int abs(int r){
 }
 
 void pngMake(){
-	Image* mak = createImage(16,256);	
+	Image* mak = createImage(8,128);	
 	for(int i = 0; i < mak->height; i++){
 		int rrand = rand()%32*8;
 		int grand = rand()%32*8;
