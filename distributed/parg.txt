@@ -1,10 +1,10 @@
 analysis = "png"
-max_runs = 30000;
+max_runs = 5000;
 png_filename = "rr.png"
 png_origin = [0,0]
 png_patterns = ["","",""]
 png_directory = ""
 stats = "all"
-print_runs = 100
+print_runs = 1000
 interrupt_runs = 1000
-distribution = "4*4"
+distribution = "2*2"

@@ -12,6 +12,7 @@
 #include "PatternMatching.h"
 #include "BlockParallel.h"
 #include "CmdArgs.h"
+#include "MonteDebug.h"
 
 using namespace std;
 
@@ -58,6 +59,10 @@ int main(int argc, char** argv){
 	}
 	int runTime = args.getAsInt("rt", "-1");
 	a->load(argFile);
+	string md;
+	if(args.getAsString("md",md,"md")){
+		a->setAlgorithm(new MonteDebug(a->state));
+	}
 	if(runTime != -1){
 		a->timedRun(runTime);
 	}

@@ -1,5 +1,9 @@
 #include "MonteDebug.h"
 
+MonteDebug::MonteDebug(State* st): MonteAnneal(st){
+	program = "MonteDebug";
+}
+
 double MonteDebug::monteCarlo(){
 	callback->monteStartCallback();
 	for(int i =0; i < state->MAX_RUNS; i++){

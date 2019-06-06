@@ -6,6 +6,7 @@
 using namespace std;
 class MonteDebug: virtual public MonteAnneal{
 	public:
+		MonteDebug(State* st);
 		virtual double monteCarlo();
 		virtual double anneal();
 };
