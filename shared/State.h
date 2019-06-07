@@ -39,7 +39,7 @@ class State{
 		vector<string> patternNames;
 		vector<string> ids;
 		int printRuns;
-		int interuptRuns;
+		int interruptRuns;
 		double annealCutOff;
 		double errorAvg;
 		double errorCount;

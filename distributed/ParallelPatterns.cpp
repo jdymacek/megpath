@@ -84,33 +84,27 @@ void ParallelPatterns::gatherCoefficients(){
 	double* buffer = NULL;
 	int  allCounts[systemSize];
 	int  allDispls[systemSize];
-	double* sendBuf = new double[state->coefficients.matrix.size()];
+	state->coefficients.createBuffers();
 
 	if(rank == 0){
 		buffer = new double[oexpression.rows()*state->coefficients.matrix.cols()];
 	}
 
 	MPI_Gather(&count,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
-
 	MPI_Gather(&disp,1,MPI_INT,&allDispls[0],1,MPI_INT, 0, MPI_COMM_WORLD);
 
 	MatrixXd ct = state->coefficients.matrix.transpose();
-
-	copy(ct.data(),ct.data()+ct.size(), sendBuf);
+	copy(ct.data(),ct.data()+ct.size(), state->coefficients.sendBuffer);
 	
-	MPI_Gatherv(sendBuf, count, MPI_DOUBLE, buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+	MPI_Gatherv(state->coefficients.sendBuffer, count, MPI_DOUBLE, buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
 	state->coefficients.resize(oexpression.rows(),state->coefficients.matrix.cols());
 	state->expression = oexpression;
 	if(rank == 0){
-		cout << "0 is in" << endl;
-//		Map<MatrixXd> mapper(buffer,oexpression.rows(),state->coefficients.matrix.cols());
-//		state->patterns.matrix = mapper;
 		double* nb = buffer;
 		MatrixXd temp = MatrixXd::Zero(oexpression.rows(),state->coefficients.matrix.cols());
 		for(int i =0; i < temp.rows(); ++i){
 			for(int j=0; j < temp.cols(); ++j){
-				cout << i << ' ' << temp.rows() << '\t' << j << ' ' << temp.cols() << endl;
 				temp(i,j) = *buffer;
 				buffer += 1;
 			}
@@ -120,11 +114,8 @@ void ParallelPatterns::gatherCoefficients(){
 		double error = efRow.error();
 
 		cout << "Final Error: " << error << endl;
-		cout << "Patterns: " << endl;
-		cout << state->patterns.matrix << endl;;
 		delete[] nb;
 	}
-	delete[] sendBuf;
 }
 
 void ParallelPatterns::run(){

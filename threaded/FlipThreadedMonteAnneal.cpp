@@ -29,7 +29,7 @@ void FlipThreadedMonteAnneal::monteCarloThreadCoefficient(){
 		//wait for Pattern thread to Exchange the coefficients/Patterns
 		barrier->Wait();
 		if(this_thread::get_id() == rootId){
-			if(i % state->interuptRuns == 0 && callback != NULL){
+			if(i % state->interruptRuns == 0 && callback != NULL){
 				callback->monteCallback(i);
 			}
 			if(i % state->printRuns == 0 && callback != NULL){
@@ -56,7 +56,7 @@ void FlipThreadedMonteAnneal::monteCarloThreadPattern(){
 		state->patterns.matrix = dupe->patterns.matrix;
 		barrier->Wait();
 		if(this_thread::get_id() == rootId){
-			if(i % state->interuptRuns == 0 && callback != NULL){
+			if(i % state->interruptRuns == 0 && callback != NULL){
 				callback->monteCallback(i);
 			}
 			if(i % state->printRuns == 0 && callback != NULL){
@@ -107,7 +107,7 @@ void FlipThreadedMonteAnneal::annealThreadCoefficient(double t, double alpha){
 		barrier->Wait();
 		//wait for Pattern thread to exchange coefficients/rows
 		barrier->Wait(); 
-		if(i % state->interuptRuns == 0 && callback != NULL){
+		if(i % state->interruptRuns == 0 && callback != NULL){
 			barrier->Wait();
 			if(this_thread::get_id() == rootId){
 				callback->annealCallback(i);
@@ -148,7 +148,7 @@ void FlipThreadedMonteAnneal::annealThreadPattern(double t, double alpha){
 		dupe->coefficients.matrix = state->coefficients.matrix;
 		state->patterns.matrix = dupe->patterns.matrix;
 		barrier->Wait(); 
-		if(i % state->interuptRuns == 0 && callback != NULL){
+		if(i % state->interruptRuns == 0 && callback != NULL){
 			barrier->Wait();
 			if(this_thread::get_id() == rootId){
 				callback->annealCallback(i);

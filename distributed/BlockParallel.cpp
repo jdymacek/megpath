@@ -123,6 +123,8 @@ void BlockParallel::start(){
 void BlockParallel::groupAverage(NMFMatrix& mat, BlockSet set){
 	int gSize;
 	MPI_Comm_size(set.comm,&gSize);
+	if(gSize <= 1)
+		return;
 	int ret = mat.write(&mat.sendBuffer[0],set.subRange);
 	MPI_Allreduce(mat.sendBuffer, mat.recvBuffer, ret, MPI_DOUBLE, MPI_SUM, set.comm);
 	for(int q = 0; q < ret; q++){
@@ -193,7 +195,7 @@ void BlockParallel::gatherPatterns(){
 }
 
 void BlockParallel::monteCallback(int iter){
-	if(state->both && iter/state->interuptRuns%2 == 0){
+	if(state->both && iter/state->interruptRuns%2 == 0){
 			averagePatterns();
 	}else{
 		averageCoefficients();
@@ -201,7 +203,7 @@ void BlockParallel::monteCallback(int iter){
 }
 
 bool BlockParallel::annealCallback(int iter){
-	if(state->both && iter/state->interuptRuns%2 == 0){
+	if(state->both && iter/state->interruptRuns%2 == 0){
 		averagePatterns();
 		if(iter > state->MAX_RUNS*state->annealCutOff)
 			state->both = false;
@@ -213,12 +215,12 @@ bool BlockParallel::annealCallback(int iter){
 
 void BlockParallel::montePrintCallback(int iter){
 	ErrorFunctionRow ef(state);
-	cout << "Monte Carlo: " << rank << '\t' << iter << '\t' << ef.error() << endl;
+	cout << "Monte Carlo: " << rank << '\t' << iter << '\t' << ef.error() << '\t' << hostname << endl;
 }
 
 void BlockParallel::annealPrintCallback(int iter){
 	ErrorFunctionRow ef(state);
-	cout << "Anneal: " << rank << '\t' << iter << '\t' << ef.error() << endl;
+	cout << "Anneal: " << rank << '\t' << iter << '\t' << ef.error() << '\t' << hostname << endl;
 }
 
 void BlockParallel::stop(){

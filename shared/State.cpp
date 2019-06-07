@@ -8,7 +8,7 @@ State::State(){
 	directory = "";
 	filename = "";
 	printRuns = 1000;
-	interuptRuns = 1000;
+	interruptRuns = 1000;
 	annealCutOff = 1.5;
 	errorAvg = 0;
 	errorCount = 0;
@@ -273,7 +273,7 @@ bool State::load(string argFileName){
 	}
 	if(args.isArgument("interupt_runs")){
 		Value val = args.getArgument("interupt_runs");
-		interuptRuns = val.asInt();
+		interruptRuns = val.asInt();
 	}
 
 	if(args.isArgument(analysis+"ids")){
