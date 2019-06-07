@@ -290,6 +290,8 @@ void Analysis::outputAll(){
     fout << "#Number_of_genes : " << state->coefficients.rows << endl;
     fout << "#Program : " << program << endl;
     fout << "#MAX_RUNS : " << state->MAX_RUNS << endl;
+	fout << "#Interrupt_runs : " << state->interruptRuns << endl;
+	fout << "#Num_Patterns : " << state->patterns.columns << endl;
     fout << "#Total_error : " << efRow.error() << endl;
     fout << "#Total_running_time : " << ttime << endl;
 

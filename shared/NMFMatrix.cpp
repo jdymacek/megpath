@@ -171,7 +171,22 @@ void NMFMatrix::resize(int newRows, int newCols){
 	calculateSize();
 }
 
+void NMFMatrix::fixRange(Range r){
+	for(int i = r.rowStart; i <= r.rowEnd; i++){
+		for(int j = r.colStart; j <= r.colEnd; j++){
+			delete functions(i,j);
+			functions(i,j) = new FixedPF(0.0);
+		}
+	}
+}
+
 void NMFMatrix::createBuffers(){
+	if(sendBuffer != NULL){
+		delete sendBuffer;
+	}
+	if(recvBuffer != NULL){
+		delete recvBuffer;
+	}
 	sendBuffer = new double[size()];
 	recvBuffer = new double[size()];
 }

@@ -22,11 +22,10 @@ void ParallelPatterns::start(){
 	//vector<vector<int>> ranges = state->splitRanges(systemSize);
 	Range r = state->getRange(rank);
 	//split the coefficients
-	int myRows = r.rowEnd - r.rowStart;
-	state->coefficients.resize(myRows, state->coefficients.columns);
+	state->coefficients.resize(r.rowSize(), state->coefficients.columns);
 
 	//split the expression  
-	MatrixXd temp = state->expression.block(r.rowStart, 0, myRows, state->expression.cols());
+	MatrixXd temp = state->expression.block(r.rowStart, 0, r.rowSize(), state->expression.cols());
 	state->expression = temp;
 
 	state->patterns.createBuffers();

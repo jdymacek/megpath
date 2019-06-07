@@ -11,6 +11,7 @@
 #include "ParallelFuncThrow.h"
 #include "PatternMatching.h"
 #include "BlockParallel.h"
+#include "BlockThrow.h"
 #include "CmdArgs.h"
 #include "MonteDebug.h"
 
@@ -26,7 +27,8 @@ int main(int argc, char** argv){
 			{"3","pft","PFT","ParFuncThrow","ParallelFuncThrow"},
 			{"4","pm","PM","PatMatch","PatternMatching"},
 			{"5","bp","BP","BlocPar","BlockParallel"},
-			{"6","test","Test"}});
+			{"6","bt","BT","BlocThrow","BlockThrow"},
+			{"7","test","Test"}});
 
 	if(args.wasFatal()){
 		cout << "Missing Args" << endl;
@@ -55,6 +57,9 @@ int main(int argc, char** argv){
 			a = new BlockParallel();
 			break;
 		case 6:
+			a = new BlockThrow();
+			break;
+		case 7:
 			a = new Distributed();
 	}
 	int runTime = args.getAsInt("rt", "-1");

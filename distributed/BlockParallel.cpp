@@ -5,10 +5,7 @@
 //Last Modified: 5/30/2019
 
 #include "BlockParallel.h"
-#include "../shared/State.h"
-#include <vector>
 #include <set>
-#include <iostream>
 
 BlockParallel::BlockParallel(): ParallelPatterns(){
 	program = "BlockParallel";

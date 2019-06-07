@@ -11,6 +11,7 @@
 #include "../../Eigen/Core"
 #include "ProbFunc.h"
 #include "PiecewisePF.h"
+#include "FixedPF.h"
 #include "PointerSupport.h"
 #include "Range.h"
 
@@ -33,6 +34,7 @@ class NMFMatrix{
 		void calculateSize();
 		int size(){return bufferedSize;};
 		void resize(int newRows, int newCols);
+		void fixRange(Range r);
 
 		bool isConstrained(int row);
 		void createBuffers();
