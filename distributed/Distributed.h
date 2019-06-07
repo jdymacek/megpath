@@ -24,7 +24,7 @@ class Distributed: public Analysis{
 		string hostname;
 	protected:
         int rank;
-        int size;
+        int systemSize;
 };
 
 #endif

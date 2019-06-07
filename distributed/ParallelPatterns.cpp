@@ -13,13 +13,13 @@ ParallelPatterns::ParallelPatterns(): Distributed(){
 void ParallelPatterns::start(){
 	Distributed::start();
 
-	//if(rank == 0){
+//	if(rank == 0){
 	oexpression = state->expression;
-	//}
+//	}
 
-	state->dist = to_string(size) + "*1";
+	state->dist = to_string(systemSize) + "*1";
 
-	//vector<vector<int>> ranges = state->splitRanges(size);
+	//vector<vector<int>> ranges = state->splitRanges(systemSize);
 	Range r = state->getRange(rank);
 	//split the coefficients
 	int myRows = r.rowEnd - r.rowStart;
@@ -31,7 +31,7 @@ void ParallelPatterns::start(){
 
 	state->patterns.createBuffers();
 
-	count = state->coefficients.size();
+	count = state->coefficients.matrix.size();
 	disp = r.rowStart*state->coefficients.columns;
 }
 
@@ -82,8 +82,8 @@ void ParallelPatterns::annealFinalCallback(){
 
 void ParallelPatterns::gatherCoefficients(){
 	double* buffer = NULL;
-	int  allCounts[size];
-	int  allDispls[size];
+	int  allCounts[systemSize];
+	int  allDispls[systemSize];
 	double* sendBuf = new double[state->coefficients.matrix.size()];
 
 	if(rank == 0){
@@ -97,18 +97,20 @@ void ParallelPatterns::gatherCoefficients(){
 	MatrixXd ct = state->coefficients.matrix.transpose();
 
 	copy(ct.data(),ct.data()+ct.size(), sendBuf);
-
+	
 	MPI_Gatherv(sendBuf, count, MPI_DOUBLE, buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
 	state->coefficients.resize(oexpression.rows(),state->coefficients.matrix.cols());
 	state->expression = oexpression;
 	if(rank == 0){
+		cout << "0 is in" << endl;
 //		Map<MatrixXd> mapper(buffer,oexpression.rows(),state->coefficients.matrix.cols());
 //		state->patterns.matrix = mapper;
 		double* nb = buffer;
 		MatrixXd temp = MatrixXd::Zero(oexpression.rows(),state->coefficients.matrix.cols());
 		for(int i =0; i < temp.rows(); ++i){
 			for(int j=0; j < temp.cols(); ++j){
+				cout << i << ' ' << temp.rows() << '\t' << j << ' ' << temp.cols() << endl;
 				temp(i,j) = *buffer;
 				buffer += 1;
 			}

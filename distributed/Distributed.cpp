@@ -57,9 +57,9 @@ void Distributed::start(){
 //		MPI_Init(NULL,NULL);
     	}
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    	MPI_Comm_size(MPI_COMM_WORLD, &size);
+    	MPI_Comm_size(MPI_COMM_WORLD, &systemSize);
 	if(flag == 0){
-    		program += "_" + to_string(size) + "n";	
+    		program += "_" + to_string(systemSize) + "n";	
 	}
     	char hostbuff[100];
     	gethostname(hostbuff,99);
@@ -71,14 +71,14 @@ void Distributed::sendLeastError(int process, double formerError)
 	int tag = 0;
 	MPI_Status status;
 
-	double* recvBuffer = new double[size];
+	double* recvBuffer = new double[systemSize];
 
 	MPI_Allgather(&formerError,1, MPI_DOUBLE, recvBuffer, 1, MPI_DOUBLE, MPI_COMM_WORLD);
 
 	//find the smallest
 	int smallest = -1;
 	double minError = state->coefficients.matrix.size()*2;
-	for(int i =0; i < size; ++i){
+	for(int i =0; i < systemSize; ++i){
 		if(minError > recvBuffer[i]){
 			minError = recvBuffer[i];
 			smallest = i;

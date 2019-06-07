@@ -32,7 +32,7 @@ void FuncThrow::monteCallback(int iter){
 		//send to a processor other than ourselves
 		int randProcess = rank;
 		while(randProcess == rank){
-			randProcess = (int)(prob->random()*size);
+			randProcess = (int)(prob->random()*systemSize);
 		}
 		MPI_Isend(buffer,bufferSize,MPI_DOUBLE,randProcess,tag,MPI_COMM_WORLD,&req);
 	}
