@@ -6,16 +6,49 @@ BlockThrow::BlockThrow(): BlockParallel(){
 
 void BlockThrow::start(){
 	BlockParallel::start();
+
 	Range fixRange;
 	fixRange.rowStart = 0;
 	fixRange.rowEnd = state->patterns.rows()-1;
 	fixRange.colStart = state->patterns.columns();
 	state->patterns.resize(state->patterns.rows(), state->patterns.columns() + systemSize/2);
 	fixRange.colEnd = state->patterns.columns()-1;
+
 	state->patterns.createBuffers();
 	state->patterns.fixRange(fixRange);
 	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows(),state->patterns.columns(),rank);
 	state->expression.conservativeResize(state->coefficients.rows(),state->patterns.columns());
+
+	int smallCol = systemSize;
+	for(auto c: cSets){
+		int cSize;
+		MPI_Comm_size(c.comm,&cSize);
+		if(cSize < smallCol){
+			smallCol = cSize;
+		}
+	}
+	shareSets.resize(smallCol);
+
+	MPI_Group worldGroup;
+	MPI_Comm_group(MPI_COMM_WORLD, &worldGroup);
+	for(int i = 0; i < smallCol; i++){
+		int nSize = 0;
+		for(int j = 0; j < systemSize; j++){
+			if(j%smallCol == i){
+				nSize++;
+			}
+		}
+		int NGA[nSize];
+		int k = 0;
+		for(int j = 0; j < systemSize; j++){
+			if(j%smallCol == i){
+				NGA[k] = j;
+				k++;
+			}
+		}
+		MPI_Group_incl(worldGroup,nSize,&NGA[0],&shareSets[i].group);
+		MPI_Comm_create(MPI_COMM_WORLD,shareSets[i].group,&shareSets[i].comm);
+	}
 }
 
 void BlockThrow::run(){
@@ -29,22 +62,22 @@ void BlockThrow::run(){
 	error = algorithm->anneal();
 	averagePatterns();
 	averageCoefficients();
-//	if(rank == 0){
-//		cout << state->patterns.columns() << '\n' << state->patterns.matrix << "\n\n";
-//	}
+	//	if(rank == 0){
+	//		cout << state->patterns.columns() << '\n' << state->patterns.matrix << "\n\n";
+	//	}
 	Range s = block;
 	s.rowEnd = state->patterns.rows()-1;
 	s.colEnd -= s.colStart;
 	s.rowStart = 0;
 	s.colStart = 0;
 	state->patterns.shrink(s);
-//	if(rank == 0){
-//		cout << state->patterns.columns() << '\n' << state->patterns.matrix << '\n';
-//	}
+	//	if(rank == 0){
+	//		cout << state->patterns.columns() << '\n' << state->patterns.matrix << '\n';
+	//	}
 	gatherPatterns();
 	gatherCoefficients();
 
-//	BlockParallel::run();
+	//	BlockParallel::run();
 }
 
 void BlockThrow::monteCallback(int iter){
@@ -58,7 +91,7 @@ void BlockThrow::monteCallback(int iter){
 		}
 	}
 	if(state->both && iter/state->interruptRuns%2 == 0){
-			averagePatterns();
+		averagePatterns();
 	}else{
 		averageCoefficients();
 	}

@@ -25,6 +25,7 @@ class BlockThrow: public BlockParallel{
 //		virtual void montePrintCallback(int iter);
 //		virtual void annealPrintCallback(int iter);
 	protected:
+		vector<BlockSet> shareSets;
 //		int rowUnique;
 //		int pCount;
 //		int pDisp;
