@@ -88,7 +88,7 @@ void BlockParallel::start(){
 			}
 			if(ar[v[i]].rowEnd < form.subRange.rowEnd){
 				form.subRange.rowEnd = ar[v[i]].rowEnd;
-			}	
+			}
 		}
 		MPI_Group_incl(worldGroup,v.size(),&v[0], &form.group);
 		MPI_Comm_create(MPI_COMM_WORLD,form.group,&form.comm);

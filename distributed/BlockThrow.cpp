@@ -23,6 +23,7 @@ void BlockThrow::start(){
 	for(auto c: cSets){
 		int cSize;
 		MPI_Comm_size(c.comm,&cSize);
+		cout << rank << '\t' << cSize << endl;
 		if(cSize < smallCol){
 			smallCol = cSize;
 		}
@@ -46,6 +47,11 @@ void BlockThrow::start(){
 				k++;
 			}
 		}
+		cout << rank << ' ' << i << ":\n";
+		for(int j = 0; j < nSize; j++){
+			cout << NGA[j] << ' ';
+		}
+		cout << endl;
 		MPI_Group_incl(worldGroup,nSize,&NGA[0],&shareSets[i].group);
 		MPI_Comm_create(MPI_COMM_WORLD,shareSets[i].group,&shareSets[i].comm);
 	}
@@ -81,9 +87,9 @@ void BlockThrow::run(){
 }
 
 void BlockThrow::monteCallback(int iter){
-	if(rank == 1){
-		cout << state->patterns.matrix << '\n' << iter << '\n';
-	}
+//	if(rank == 1){
+//		cout << state->patterns.matrix << '\n' << iter << '\n';
+//	}
 	for(int i = 0; i < state->patterns.rows(); i++){
 		for(int j = block.colSize(); j < state->patterns.columns(); j++){
 			state->patterns.functions(i,j)->addObservation(iter*rank/state->interruptRuns);
@@ -95,9 +101,9 @@ void BlockThrow::monteCallback(int iter){
 	}else{
 		averageCoefficients();
 	}
-	if(rank == 1){
-		cout << state->patterns.matrix << '\n';
-	}
+//	if(rank == 1){
+//		cout << state->patterns.matrix << '\n';
+//	}
 }
 
 bool BlockThrow::annealCallback(int iter){
