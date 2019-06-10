@@ -20,8 +20,8 @@ class BlockThrow: public BlockParallel{
 		virtual void run();
 //		virtual void gatherPatterns();
 		virtual void stop();
-//		virtual void monteCallback(int iter);	
-//		virtual bool annealCallback(int iter);
+		virtual void monteCallback(int iter);	
+		virtual bool annealCallback(int iter);
 //		virtual void montePrintCallback(int iter);
 //		virtual void annealPrintCallback(int iter);
 	protected:

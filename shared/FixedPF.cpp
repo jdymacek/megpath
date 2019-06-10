@@ -14,6 +14,10 @@ double FixedPF::random(){
 	return value;
 }
 
+void FixedPF::addObservation(double v){
+	value = v;
+}
+
 string FixedPF::toString(){
 	stringstream ss;
 	ss << "fixedpf: " << value;

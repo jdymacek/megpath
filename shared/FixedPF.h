@@ -17,6 +17,7 @@ class FixedPF: public ProbFunc{
 	public:
 		FixedPF(double v);
 		double random();
+		void addObservation(double v);
 		string toString();
 	private:
 		double value;

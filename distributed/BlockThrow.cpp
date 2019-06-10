@@ -15,7 +15,7 @@ void BlockThrow::start(){
 	state->patterns.createBuffers();
 	state->patterns.fixRange(fixRange);
 	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows(),state->patterns.columns(),rank);
-	oexpression.conservativeResize(state->coefficients.rows(),state->patterns.columns());
+	state->expression.conservativeResize(state->coefficients.rows(),state->patterns.columns());
 }
 
 void BlockThrow::run(){
@@ -45,6 +45,37 @@ void BlockThrow::run(){
 	gatherCoefficients();
 
 //	BlockParallel::run();
+}
+
+void BlockThrow::monteCallback(int iter){
+	if(rank == 1){
+		cout << state->patterns.matrix << '\n' << iter << '\n';
+	}
+	for(int i = 0; i < state->patterns.rows(); i++){
+		for(int j = block.colSize(); j < state->patterns.columns(); j++){
+			state->patterns.functions(i,j)->addObservation(iter*rank/state->interruptRuns);
+			state->patterns.matrix(i,j) = iter*rank/state->interruptRuns;
+		}
+	}
+	if(state->both && iter/state->interruptRuns%2 == 0){
+			averagePatterns();
+	}else{
+		averageCoefficients();
+	}
+	if(rank == 1){
+		cout << state->patterns.matrix << '\n';
+	}
+}
+
+bool BlockThrow::annealCallback(int iter){
+	if(state->both && iter/state->interruptRuns%2 == 0){
+		averagePatterns();
+		if(iter > state->MAX_RUNS*state->annealCutOff)
+			state->both = false;
+	}else{
+		averageCoefficients();
+	}
+	return true;
 }
 
 void BlockThrow::stop(){
