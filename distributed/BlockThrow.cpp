@@ -20,14 +20,14 @@ void BlockThrow::start(){
 	state->expression.conservativeResize(state->coefficients.rows(),state->patterns.columns());
 
 	int smallCol = systemSize;
-	for(auto c: cSets){
+	for(auto c: cGroups){
 		int cSize;
-		MPI_Comm_size(c.comm,&cSize);
-		cout << rank << '\t' << cSize << endl;
+		MPI_Group_size(c,&cSize);
 		if(cSize < smallCol){
 			smallCol = cSize;
 		}
 	}
+	vector<BlockSet> shareSets;
 	shareSets.resize(smallCol);
 
 	MPI_Group worldGroup;
@@ -55,6 +55,7 @@ void BlockThrow::start(){
 		MPI_Group_incl(worldGroup,nSize,&NGA[0],&shareSets[i].group);
 		MPI_Comm_create(MPI_COMM_WORLD,shareSets[i].group,&shareSets[i].comm);
 	}
+	shareSet = shareSets[rank%smallCol];
 }
 
 void BlockThrow::run(){

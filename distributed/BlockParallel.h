@@ -51,6 +51,7 @@ class BlockParallel: public ParallelPatterns{
 		int pCount;
 		int pDisp;
 		Range block;
+		vector<MPI_Group> cGroups;
 		vector<BlockSet> rSets;
 		vector<BlockSet> cSets;
 };

@@ -109,6 +109,7 @@ void BlockParallel::start(){
 			}	
 		}
 		MPI_Group_incl(worldGroup,v.size(),&v[0], &form.group);
+		cGroups.push_back(form.group);
 		MPI_Comm_create(MPI_COMM_WORLD,form.group,&form.comm);
 		if(form.comm != MPI_COMM_NULL){
 			cSets.push_back(form);
