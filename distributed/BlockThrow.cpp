@@ -15,6 +15,7 @@ void BlockThrow::start(){
 	state->patterns.createBuffers();
 	state->patterns.fixRange(fixRange);
 	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows(),state->patterns.columns(),rank);
+	oexpression.conservativeResize(state->coefficients.rows(),state->patterns.columns());
 }
 
 void BlockThrow::run(){
@@ -22,17 +23,12 @@ void BlockThrow::run(){
 	double error = 0;
 
 	algorithm->setObserver(this);
-	cout << "Observer set" << endl;
 	algorithm->monteCarlo();
-	cout << "Monte Done" << endl;
 	averagePatterns();
 	averageCoefficients();
-	cout << "Average 1" << endl;
 	error = algorithm->anneal();
-	cout << "Anneal Done" << endl;
 	averagePatterns();
 	averageCoefficients();
-	cout << "Average 2" << endl;
 //	if(rank == 0){
 //		cout << state->patterns.columns() << '\n' << state->patterns.matrix << "\n\n";
 //	}
@@ -42,7 +38,6 @@ void BlockThrow::run(){
 	s.rowStart = 0;
 	s.colStart = 0;
 	state->patterns.shrink(s);
-	cout << "Honey I shrunk the matrix" << endl;
 //	if(rank == 0){
 //		cout << state->patterns.columns() << '\n' << state->patterns.matrix << '\n';
 //	}
