@@ -24,7 +24,7 @@ void PhaseThreadedMonteAnneal::monteCarloThreadCoefficient(){
 	//For each spot take a gamble and record outcome
 	Range r = state->getRange(threadMap[this_thread::get_id()]);
 	for(int i =0; i < state->MAX_RUNS; i++){
-		monteCarloStep(state->coefficients,&efRow,0,state->coefficients.columns,r.rowStart,r.rowEnd);
+		monteCarloStep(state->coefficients,&efRow,0,state->coefficients.columns(),r.rowStart,r.rowEnd);
 		barrier->Wait();
 		//wait for Pattern thread to Exchange the coefficients/Patterns
 		barrier->Wait();
@@ -101,7 +101,7 @@ void PhaseThreadedMonteAnneal::annealThreadCoefficient(double t, double alpha){
 	//For each spot take a gamble and record outcome
 	Range r = state->getRange(threadMap[this_thread::get_id()]);
 	for(int i =0; i < 2*state->MAX_RUNS; i++){
-		annealStep(state->coefficients,t,&efRow,0,state->coefficients.columns,r.rowStart,r.rowEnd);
+		annealStep(state->coefficients,t,&efRow,0,state->coefficients.columns(),r.rowStart,r.rowEnd);
 		barrier->Wait();
 		//wait for Pattern thread to exchange coefficients/rows
 		barrier->Wait(); 
@@ -176,8 +176,8 @@ double PhaseThreadedMonteAnneal::anneal(){
 	vector<thread> threads;
 
 
-	int rowSize = state->coefficients.rows/numThreads;
-	int colSize = state->patterns.columns/numThreads;
+	int rowSize = state->coefficients.rows()/numThreads;
+	int colSize = state->patterns.columns()/numThreads;
 	int rowStart = 0;
 	int colStart = 0;
 

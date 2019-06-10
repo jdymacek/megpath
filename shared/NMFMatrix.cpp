@@ -12,8 +12,8 @@ NMFMatrix::NMFMatrix(){
 }
 
 NMFMatrix::~NMFMatrix(){
-	for(int i =0; i < rows; ++i){
-		for(int j =0; j < columns; ++j){
+	for(int i =0; i < matrix.rows(); ++i){
+		for(int j =0; j < matrix.cols(); ++j){
 			delete functions(i,j);
 		}
 	}
@@ -26,13 +26,11 @@ NMFMatrix::~NMFMatrix(){
 }
 
 NMFMatrix::NMFMatrix(int rowss, int cols){
-	rows = rowss;
-	columns = cols;
-	matrix = MatrixXd::Zero(rows,columns);
-	functions = MatrixXp(rows,columns);
+	matrix = MatrixXd::Zero(matrix.rows(),matrix.cols());
+	functions = MatrixXp(matrix.rows(),matrix.cols());
 
-	for(int i =0; i < rows; ++i){
-		for(int j =0; j < columns; ++j){
+	for(int i =0; i < matrix.rows(); ++i){
+		for(int j =0; j < matrix.cols(); ++j){
 			functions(i,j) = new PiecewisePF();
 		}
 	}	
@@ -52,8 +50,6 @@ void NMFMatrix::calculateSize(){
 }
 
 void NMFMatrix::reset(){
-    rows = matrix.rows();
-    columns = matrix.cols();
 	for(int y =0; y < matrix.rows(); ++y){
         for(int x = 0; x < matrix.cols(); ++x){
             functions(y,x)->reset();
@@ -65,7 +61,7 @@ void NMFMatrix::reset(){
 			}
         }
     }
-	matrix = MatrixXd::Zero(rows,columns);
+	matrix = MatrixXd::Zero(matrix.rows(),matrix.cols());
 	calculateSize();
 }
 
@@ -152,19 +148,16 @@ int NMFMatrix::write(double* data, Range r){
 }
 
 void NMFMatrix::resize(int newRows, int newCols){
-	for(int i =0; i < rows; ++i){
-		for(int j =0; j < columns; ++j){
+	for(int i =0; i < matrix.rows(); ++i){
+		for(int j =0; j < matrix.cols(); ++j){
 			delete functions(i,j);
 		}
 	}
 	matrix = MatrixXd::Zero(newRows,newCols);
 
-	rows = newRows;
-	columns = newCols;
-
 	functions = MatrixXp(newRows,newCols);
-	for(int i =0; i < rows; ++i){
-		for(int j =0; j < columns; ++j){
+	for(int i =0; i < matrix.rows(); ++i){
+		for(int j =0; j < matrix.cols(); ++j){
 			functions(i,j) = new PiecewisePF();
 		}
 	}
@@ -174,8 +167,8 @@ void NMFMatrix::resize(int newRows, int newCols){
 void NMFMatrix::shrink(Range block){
 	MatrixXd temp2 = matrix.block(block.rowStart, block.colStart, block.rowSize(), block.colSize());
 	matrix = temp2;
-	for(int i =0; i < rows; ++i){
-		for(int j =0; j < columns; ++j){
+	for(int i =0; i < matrix.rows(); ++i){
+		for(int j =0; j < matrix.cols(); ++j){
 			if(!block.contains(i,j))
 				delete functions(i,j);
 		}

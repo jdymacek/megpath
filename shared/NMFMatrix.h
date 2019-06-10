@@ -43,8 +43,8 @@ class NMFMatrix{
 		int bufferedSize;
 		double* sendBuffer;
 		double* recvBuffer;
-		int rows;
-		int columns;
+		int rows(){return matrix.rows();};
+		int columns(){return matrix.cols();};
 		MatrixXd matrix;
 		MatrixXp functions;
 };

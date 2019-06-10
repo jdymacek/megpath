@@ -287,23 +287,23 @@ void Analysis::outputAll(){
 
     fout << "#Time : " << curTime << endl;
     fout << "#File : " << state->filename << endl;
-    fout << "#Number_of_genes : " << state->coefficients.rows << endl;
+    fout << "#Number_of_genes : " << state->coefficients.rows() << endl;
     fout << "#Program : " << program << endl;
     fout << "#MAX_RUNS : " << state->MAX_RUNS << endl;
 	fout << "#Interrupt_runs : " << state->interruptRuns << endl;
-	fout << "#Num_Patterns : " << state->patterns.columns << endl;
+	fout << "#Num_Patterns : " << state->patterns.columns() << endl;
     fout << "#Total_error : " << efRow.error() << endl;
     fout << "#Total_running_time : " << ttime << endl;
 
     if(state->img){
-	    state->MXdToPng(state->patterns.matrix,state->patterns.rows,state->patterns.columns,state->gray,"result.png");
+	    state->MXdToPng(state->patterns.matrix,state->patterns.rows(),state->patterns.columns(),state->gray,"result.png");
     }else{
-    	for(int i =0; i < state->patterns.rows; ++i){
+    	for(int i =0; i < state->patterns.rows(); ++i){
     	    fout << "#" << state->patternNames[i] << "," << state->patterns.matrix.row(i) << endl;
     	}
     }
 
-    for(int i = 0; i < state->coefficients.rows; ++i){
+    for(int i = 0; i < state->coefficients.rows(); ++i){
         MatrixXd errorMatrix;
         errorMatrix.noalias() = state->expression.row(i);
         errorMatrix.noalias() -= (state->coefficients.matrix.row(i) * state->patterns.matrix);

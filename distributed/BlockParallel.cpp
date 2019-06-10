@@ -44,9 +44,9 @@ void BlockParallel::start(){
 		//}
 
 		//split the patterns
-		state->patterns.resize(state->patterns.rows, block.colSize());
+		state->patterns.resize(state->patterns.rows(), block.colSize());
 		//split the coefficients
-		state->coefficients.resize(block.rowSize(), state->coefficients.columns);
+		state->coefficients.resize(block.rowSize(), state->coefficients.columns());
 
 		MatrixXd temp = state->expression.block(block.rowStart, block.colStart, block.rowSize(), block.colSize());
 		state->expression = temp;
@@ -61,7 +61,7 @@ void BlockParallel::start(){
 	for(int r : colSets[0]){
 		if(rank == r){
 			count = state->coefficients.matrix.size();
-			disp = block.rowStart*state->coefficients.columns;
+			disp = block.rowStart*state->coefficients.columns();
 		}
 	}
 
@@ -70,7 +70,7 @@ void BlockParallel::start(){
 	for(int r : rowSets[0]){
 		if(rank == r){
 			pCount = state->patterns.matrix.size();
-			pDisp = block.colStart*state->patterns.rows;
+			pDisp = block.colStart*state->patterns.rows();
 		}
 	}
 
@@ -134,7 +134,7 @@ void BlockParallel::averagePatterns(){
 	for(auto c : cSets){
 		c.subRange.rowStart = 0;
 		c.subRange.colStart -= block.colStart;
-		c.subRange.rowEnd = state->patterns.rows-1;
+		c.subRange.rowEnd = state->patterns.rows()-1;
 		c.subRange.colEnd -= block.colStart;
 		groupAverage(state->patterns,c);
 	}
@@ -145,7 +145,7 @@ void BlockParallel::averageCoefficients(){
 		r.subRange.rowStart -= block.rowStart;
 		r.subRange.colStart = 0;
 		r.subRange.rowEnd -= block.rowStart;
-		r.subRange.colEnd = state->coefficients.columns-1;
+		r.subRange.colEnd = state->coefficients.columns()-1;
 		groupAverage(state->coefficients,r);
 	}
 }
@@ -172,7 +172,6 @@ void BlockParallel::gatherPatterns(){
 	double* buffer = NULL;
 	int  allCounts[systemSize];
 	int  allDispls[systemSize];
-
 	if(rank == 0){
 		buffer = new double[oexpression.cols()*state->patterns.matrix.rows()];
 	}

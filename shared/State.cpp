@@ -90,11 +90,11 @@ Range State::getRange(int rank){
 		cTotal += parse[i];
 		dTotal += (parse[i-1]*parse[i]);
 	}
-	if(cTotal > patterns.columns){
-		cTotal = patterns.columns;
+	if(cTotal > patterns.columns()){
+		cTotal = patterns.columns();
 	}
 
-	int cWidth = patterns.columns/cTotal;
+	int cWidth = patterns.columns()/cTotal;
 	vector<Range> lookup;
 
 	for(int i = 0; i<cTotal; i++){
@@ -106,31 +106,31 @@ Range State::getRange(int rank){
 		}
 
 		r.colStart = i*cWidth;
-		if(i < patterns.columns%cTotal)
+		if(i < patterns.columns()%cTotal)
 			r.colStart += i;
 		else
-			r.colStart += patterns.columns%cTotal;
+			r.colStart += patterns.columns()%cTotal;
 
 		r.colEnd = r.colStart + cWidth - 1;
-		if(i < patterns.columns%cTotal)
+		if(i < patterns.columns()%cTotal)
 			r.colEnd += 1;
 
 		int rStep = parse[sub-1];
-		if(parse[sub-1] > coefficients.rows)
-			rStep = coefficients.rows;
+		if(parse[sub-1] > coefficients.rows())
+			rStep = coefficients.rows();
 
-		int rHeight = coefficients.rows/rStep;
+		int rHeight = coefficients.rows()/rStep;
 		
 		for(int j = 0; j < rStep; j++){
 			
 			r.rowStart = j*rHeight;
-			if(j < coefficients.rows%rStep)
+			if(j < coefficients.rows()%rStep)
 				r.rowStart += j;
 			else
-				r.rowStart += coefficients.rows%rStep;
+				r.rowStart += coefficients.rows()%rStep;
 
 			r.rowEnd = r.rowStart + rHeight - 1;
-			if(j < coefficients.rows%rStep)
+			if(j < coefficients.rows()%rStep)
 				r.rowEnd += 1;
 
 			lookup.push_back(r);
