@@ -10,22 +10,40 @@ void BlockThrow::start(){
 	fixRange.rowStart = 0;
 	fixRange.rowEnd = state->patterns.rows - 1;
 	fixRange.colStart = state->patterns.columns;
-	if(rank == 0){
-		cout << state->patterns.columns << '\n' << state->patterns.matrix << "\n\n";
-	}
-	state->patterns.resize(state->patterns.rows, state->patterns.columns + (int)(systemSize/2));
+//	if(rank == 0){
+//		cout << state->patterns.columns << '\n' << state->patterns.matrix << "\n\n";
+//	}
+	state->patterns.resize(state->patterns.rows, state->patterns.columns + systemSize/2);
 	fixRange.colEnd = state->patterns.columns - 1;
+	state->patterns.createBuffers();
 	state->patterns.fixRange(fixRange);
-	if(rank == 0){
-		cout << state->patterns.columns << '\n' << state->patterns.matrix << '\n';
-	}
-//	state->patterns.createBuffers();
+	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows,state->patterns.columns,rank);
+//	if(rank == 0){
+//		cout << state->patterns.columns << '\n' << state->patterns.matrix << '\n';
+//	}
 }
 
 void BlockThrow::run(){
-	
+	BlockParallel::averagePatterns();
+	BlockParallel::averageCoefficients();
+	if(rank == 0){
+		cout << state->patterns.columns << '\n' << state->patterns.matrix << "\n\n";
+	}
+	Range s = block;
+	s.rowEnd = state->patterns.rows-1;
+	s.colEnd -= s.colStart;
+	s.rowStart = 0;
+	s.colStart = 0;
+	state->patterns.shrink(s);
+	if(rank == 0){
+		cout << state->patterns.columns << '\n' << state->patterns.matrix << '\n';
+	}
+	BlockParallel::gatherPatterns();
+	ParallelPatterns::gatherCoefficients();
+
+//	BlockParallel::run();
 }
 
 void BlockThrow::stop(){
-	
+//	BlockParallel::stop();
 }

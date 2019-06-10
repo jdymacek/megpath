@@ -33,7 +33,6 @@ class ParallelPatterns: virtual public Distributed{
 		int disp;
 		int bufferSize;
 		double* sendBuffer;
-		double* recvBuffer;
 		MatrixXd oexpression;
 		int startPoint;
 };

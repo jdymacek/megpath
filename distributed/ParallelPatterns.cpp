@@ -114,10 +114,6 @@ void ParallelPatterns::run(){
 	state->both = true;
 	double error = 0;
 
-	for(int i =0; i < bufferSize; ++i){
-		recvBuffer[i] = 0;
-	}
-
 	//should we set observer in start?
 	algorithm->setObserver(this);
 	//end set observer
@@ -131,7 +127,5 @@ void ParallelPatterns::run(){
 
 void ParallelPatterns::stop(){
 	delete[] sendBuffer;
-	delete[] recvBuffer;
-
 	Distributed::stop();
 }

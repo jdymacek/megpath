@@ -171,6 +171,20 @@ void NMFMatrix::resize(int newRows, int newCols){
 	calculateSize();
 }
 
+void NMFMatrix::shrink(Range block){
+	MatrixXd temp2 = matrix.block(block.rowStart, block.colStart, block.rowSize(), block.colSize());
+	matrix = temp2;
+	for(int i =0; i < rows; ++i){
+		for(int j =0; j < columns; ++j){
+			if(!block.contains(i,j))
+				delete functions(i,j);
+		}
+	}
+	MatrixXp temp = functions.block(block.rowStart, block.colStart, block.rowSize(), block.colSize());
+	functions = temp;
+	calculateSize();
+}
+
 void NMFMatrix::fixRange(Range r){
 	for(int i = r.rowStart; i <= r.rowEnd; i++){
 		for(int j = r.colStart; j <= r.colEnd; j++){
