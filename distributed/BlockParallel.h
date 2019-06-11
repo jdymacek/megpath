@@ -50,6 +50,7 @@ class BlockParallel: public ParallelPatterns{
 		int rowUnique;
 		int pCount;
 		int pDisp;
+		int sampleSize;
 		Range block;
 		vector<MPI_Group> cGroups;
 		vector<BlockSet> rSets;

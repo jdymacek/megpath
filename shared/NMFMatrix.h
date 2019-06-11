@@ -36,6 +36,7 @@ class NMFMatrix{
 		void resize(int newRows, int newCols);
 		void shrink(Range r);
 		void fixRange(Range r);
+		void observeRange(Range r);
 
 		bool isConstrained(int row);
 		void createBuffers();

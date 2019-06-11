@@ -6,6 +6,7 @@
 
 #include "BlockParallel.h"
 #include <set>
+#include <cmath>
 
 BlockParallel::BlockParallel(): ParallelPatterns(){
 	program = "BlockParallel";
@@ -100,6 +101,8 @@ void BlockParallel::start(){
 
 	for(auto s: colGroups){
 		vector<int> v(s.begin(),s.end());
+		int gColSize = oexpression.cols()/v.size();
+		sampleSize = sqrt(gColSize);
 		for(int i = 0; i < v.size(); i++){
 			if(ar[v[i]].colStart > form.subRange.colStart){
 				form.subRange.colStart = ar[i].colStart;

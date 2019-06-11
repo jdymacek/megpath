@@ -1,17 +1,20 @@
 #include "BlockThrow.h"
+#include "time.h"
+#include <set>
 
 BlockThrow::BlockThrow(): BlockParallel(){
 	program = "BlockThrow";
 }
 
 void BlockThrow::start(){
+	srand(time(0));
 	BlockParallel::start();
 
 	Range fixRange;
 	fixRange.rowStart = 0;
 	fixRange.rowEnd = state->patterns.rows()-1;
 	fixRange.colStart = state->patterns.columns();
-	state->patterns.resize(state->patterns.rows(), state->patterns.columns() + systemSize/2);
+	state->patterns.resize(state->patterns.rows(), state->patterns.columns() + sampleSize);
 	fixRange.colEnd = state->patterns.columns()-1;
 
 	state->patterns.createBuffers();
@@ -47,11 +50,6 @@ void BlockThrow::start(){
 				k++;
 			}
 		}
-		cout << rank << ' ' << i << ":\n";
-		for(int j = 0; j < nSize; j++){
-			cout << NGA[j] << ' ';
-		}
-		cout << endl;
 		MPI_Group_incl(worldGroup,nSize,&NGA[0],&shareSets[i].group);
 		MPI_Comm_create(MPI_COMM_WORLD,shareSets[i].group,&shareSets[i].comm);
 	}
@@ -59,6 +57,9 @@ void BlockThrow::start(){
 }
 
 void BlockThrow::run(){
+
+	//XXX: (Z_[a/2])^2 *p*(1-p)/(M.O.E)^2 = X   -----   N*X/(X+N-1) = *n*
+
 	state->both = true;
 	double error = 0;
 
@@ -69,47 +70,93 @@ void BlockThrow::run(){
 	error = algorithm->anneal();
 	averagePatterns();
 	averageCoefficients();
-	//	if(rank == 0){
-	//		cout << state->patterns.columns() << '\n' << state->patterns.matrix << "\n\n";
-	//	}
+
 	Range s = block;
 	s.rowEnd = state->patterns.rows()-1;
 	s.colEnd -= s.colStart;
 	s.rowStart = 0;
 	s.colStart = 0;
 	state->patterns.shrink(s);
-	//	if(rank == 0){
-	//		cout << state->patterns.columns() << '\n' << state->patterns.matrix << '\n';
-	//	}
+
 	gatherPatterns();
 	gatherCoefficients();
+}
 
-	//	BlockParallel::run();
+void BlockThrow::throwPatterns(){
+	cout << "Sample Size: " << sampleSize << endl;
+	cout << "Throwing" << endl;
+	int count = 0;
+	Range colGrab;
+	int cSize;
+	MPI_Comm_size(shareSet.comm, &cSize);
+	//Set receive buffer size
+	int intake = sampleSize*(state->patterns.rows()+1)*cSize;
+	double recvBuf[intake];
+	cout << "Set Buffers" << endl;
+
+	//Generate random column number and check if it hasn't been used before
+	set<int> pushed;
+	bool unique = true;
+	for(int i = 0; i < sampleSize; i++){
+		int rCol = rand()%state->patterns.columns();
+		while(!unique){
+			unique = true;
+			if(pushed.find(rCol) != pushed.end()){
+				rCol = rand()%state->patterns.columns();
+				unique = false;
+			}
+		}
+		if(rank == 0)	cout << rCol << endl;
+		pushed.insert(rCol);
+
+		//Set column number and data for that column into buffer
+		state->patterns.sendBuffer[i*(state->patterns.rows()+1)] = rCol;
+		colGrab.rowStart = 0;
+		colGrab.colStart = rCol;
+		colGrab.rowEnd = state->patterns.rows()-1;
+		colGrab.colEnd = rCol;
+		state->patterns.write(&state->patterns.sendBuffer[i*(state->patterns.rows()+1)+1],colGrab);
+		cout << "Wrote Buffer " << i << endl;
+	}
+
+	cout << "Gathering..." << endl;
+	MPI_Allgather(state->patterns.sendBuffer,sampleSize*(state->patterns.rows()+1),MPI_DOUBLE,recvBuf,intake,MPI_DOUBLE,shareSet.comm);
+	cout << "Gathered" << endl;
+	double* ptr = recvBuf;
+	//Create set of already seen columns, starting with own columns
+	set<int> added;
+	for(int i = block.rowStart; i <= block.rowEnd; i++){
+		added.insert(i);
+	}
+	colGrab.colStart = state->patterns.columns()-sampleSize;
+	colGrab.colEnd = state->patterns.columns()-sampleSize;
+	while(count < sampleSize){
+		if(added.find(*ptr) != added.end()){
+			state->patterns.read((ptr+1),colGrab);
+			state->patterns.observeRange(colGrab);
+			added.insert(*ptr);
+			colGrab.colStart++;
+			colGrab.colEnd++;
+			count++;
+		}
+		ptr += state->patterns.rows()+1;
+	}
+	delete[] ptr;
 }
 
 void BlockThrow::monteCallback(int iter){
-//	if(rank == 1){
-//		cout << state->patterns.matrix << '\n' << iter << '\n';
-//	}
-	for(int i = 0; i < state->patterns.rows(); i++){
-		for(int j = block.colSize(); j < state->patterns.columns(); j++){
-			state->patterns.functions(i,j)->addObservation(iter*rank/state->interruptRuns);
-			state->patterns.matrix(i,j) = iter*rank/state->interruptRuns;
-		}
-	}
 	if(state->both && iter/state->interruptRuns%2 == 0){
 		averagePatterns();
+		throwPatterns();
 	}else{
 		averageCoefficients();
 	}
-//	if(rank == 1){
-//		cout << state->patterns.matrix << '\n';
-//	}
 }
 
 bool BlockThrow::annealCallback(int iter){
 	if(state->both && iter/state->interruptRuns%2 == 0){
 		averagePatterns();
+		throwPatterns();
 		if(iter > state->MAX_RUNS*state->annealCutOff)
 			state->both = false;
 	}else{

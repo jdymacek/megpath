@@ -187,6 +187,15 @@ void NMFMatrix::fixRange(Range r){
 	}
 }
 
+void NMFMatrix::observeRange(Range r){
+	for(int i = r.rowStart; i <= r.rowEnd; i++){
+		for(int j = r.colStart; j <= r.colEnd; j++){
+			functions(i,j)->addObservation(matrix(i,j));
+		}
+	}
+	
+}
+
 void NMFMatrix::createBuffers(){
 	if(sendBuffer != NULL){
 		delete sendBuffer;

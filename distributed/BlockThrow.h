@@ -22,6 +22,7 @@ class BlockThrow: public BlockParallel{
 		virtual void stop();
 		virtual void monteCallback(int iter);	
 		virtual bool annealCallback(int iter);
+		void throwPatterns();
 //		virtual void montePrintCallback(int iter);
 //		virtual void annealPrintCallback(int iter);
 	protected:
