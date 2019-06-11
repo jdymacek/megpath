@@ -7,7 +7,7 @@ BlockThrow::BlockThrow(): BlockParallel(){
 }
 
 void BlockThrow::start(){
-	srand(time(0));
+	srand(time(0)+rank);
 	BlockParallel::start();
 
 	Range fixRange;
@@ -83,8 +83,6 @@ void BlockThrow::run(){
 }
 
 void BlockThrow::throwPatterns(){
-	cout << "Sample Size: " << sampleSize << endl;
-	cout << "Throwing" << endl;
 	int count = 0;
 	Range colGrab;
 	int cSize;
@@ -92,7 +90,7 @@ void BlockThrow::throwPatterns(){
 	//Set receive buffer size
 	int intake = sampleSize*(state->patterns.rows()+1)*cSize;
 	double recvBuf[intake];
-	cout << "Set Buffers" << endl;
+	double* m = state->patterns.matrix.data();
 
 	//Generate random column number and check if it hasn't been used before
 	set<int> pushed;
@@ -106,17 +104,18 @@ void BlockThrow::throwPatterns(){
 				unique = false;
 			}
 		}
-		if(rank == 0)	cout << rCol << endl;
+		cout << rank << ' ' << rCol+block.colStart << ' ' << hostname << endl;
 		pushed.insert(rCol);
 
 		//Set column number and data for that column into buffer
-		state->patterns.sendBuffer[i*(state->patterns.rows()+1)] = rCol;
+		state->patterns.sendBuffer[i*(state->patterns.rows()+1)] = rCol+block.colStart;
 		colGrab.rowStart = 0;
 		colGrab.colStart = rCol;
 		colGrab.rowEnd = state->patterns.rows()-1;
 		colGrab.colEnd = rCol;
-		state->patterns.write(&state->patterns.sendBuffer[i*(state->patterns.rows()+1)+1],colGrab);
-		cout << "Wrote Buffer " << i << endl;
+		m += (rCol-block.colStart)*state->patterns.rows();
+		memcpy(&state->patterns.sendBuffer[i*(state->patterns.rows()+1)+1],m,state->patterns.rows()*sizeof(double));
+		m -= (rCol-block.colStart)*state->patterns.rows();	
 	}
 
 	cout << "Gathering..." << endl;
@@ -141,7 +140,7 @@ void BlockThrow::throwPatterns(){
 		}
 		ptr += state->patterns.rows()+1;
 	}
-	delete[] ptr;
+//	delete[] ptr;
 }
 
 void BlockThrow::monteCallback(int iter){
