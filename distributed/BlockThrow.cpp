@@ -100,10 +100,6 @@ void BlockThrow::throwPatterns(){
 		copy(&from[ndx*state->patterns.rows()],&from[(ndx+1)*state->patterns.rows()],&state->patterns.sendBuffer[i*columnSize+1]);
 	}
 
-	if(rank == 2){
-		cout << "2\n" << state->patterns.matrix << endl;
-	}
-
 	MPI_Allgather(state->patterns.sendBuffer,sampleSize*columnSize,MPI_DOUBLE,&recvBuf[0],sampleSize*columnSize,MPI_DOUBLE,shareSet.comm);
 
 	set<int> patternIndices;
@@ -121,11 +117,6 @@ void BlockThrow::throwPatterns(){
 	}
 	Range cross = {0,state->patterns.rows()-1,block.colSize(),state->patterns.columns()-1};
 	state->patterns.observeRange(cross);
-	if(rank == 10){
-		cout << "10\n" << oexpression << endl;
-		cout << state->expression << endl;
-		cout << state->patterns.matrix << endl;
-	}
 }
 
 
