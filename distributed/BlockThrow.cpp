@@ -116,6 +116,9 @@ void BlockThrow::throwPatterns(){
 	}
 	Range cross = {0,state->patterns.rows()-1,block.colSize(),state->patterns.columns()-1};
 	state->patterns.observeRange(cross);
+	if(rank == 12){
+		cout << state->expression << endl;
+	}
 }
 
 
