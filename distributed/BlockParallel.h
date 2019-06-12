@@ -17,6 +17,12 @@ struct BlockSet{
 	MPI_Comm comm;
 	Range subRange;
 
+	int groupSize(){
+		int commSize = -1;
+		MPI_Comm_size(comm,&commSize);
+		return commSize;
+	}
+
 	vector<int> worldRanks(){
 		MPI_Group worldGroup;
 		MPI_Comm_group(MPI_COMM_WORLD,&worldGroup);

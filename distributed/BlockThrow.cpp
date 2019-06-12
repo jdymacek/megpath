@@ -49,10 +49,7 @@ void BlockThrow::start(){
 	fixRange.rowEnd = state->patterns.rows()-1;
 	fixRange.colStart = state->patterns.columns();
 
-   int commSize;
-    MPI_Comm_size(shareSet.comm,&commSize);
-
-	state->patterns.resize(state->patterns.rows(), state->patterns.columns() + sampleSize*(commSize-1));
+	state->patterns.resize(state->patterns.rows(), state->patterns.columns() + sampleSize*(shareSet.groupSize()-1));
 	fixRange.colEnd = state->patterns.columns()-1;
 
 	state->patterns.createBuffers();
@@ -89,8 +86,7 @@ void BlockThrow::run(){
 
 
 void BlockThrow::throwPatterns(){
-	int commSize;
-	MPI_Comm_size(shareSet.comm,&commSize);
+	int commSize = shareSet.groupSize();
 	int columnSize = state->patterns.rows()+1;
 	double recvBuf[ sampleSize*columnSize*commSize];
 	vector<int> columnIndices(block.colSize());
@@ -111,13 +107,15 @@ void BlockThrow::throwPatterns(){
 	int currentColumn = block.colSize();
 	for(int i =0; i < sampleSize*commSize; ++i){
 		if(patternIndices.find(recv[0]) == patternIndices.end()){
-			copy(&recv[1],recv+columnSize,from+state->patterns.rows()*currentColumn);
+			Map<MatrixXd> pmap(&recv[1],state->patterns.rows(),1);
+			state->patterns.matrix.col(currentColumn) = pmap;
+			state->expression.col(currentColumn) = oexpression.block(block.rowStart,recv[0],state->expression.rows(),1);
 			currentColumn += 1;
 		}
 		recv += columnSize;
 	}
-	Range cross = {0,state->patterns.rows()-1,block.colSize(),block.colSize()+sampleSize*commSize};
-	//state->patterns.observeRange(cross);
+	Range cross = {0,state->patterns.rows()-1,block.colSize(),state->patterns.columns()-1};
+	state->patterns.observeRange(cross);
 }
 
 
