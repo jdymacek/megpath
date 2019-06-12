@@ -96,7 +96,8 @@ void BlockThrow::throwPatterns(){
 	double* from = state->patterns.matrix.data();	
 	for(int i =0; i < sampleSize; ++i){
 		state->patterns.sendBuffer[i*columnSize] = columnIndices[i];
-		copy(&from[i*state->patterns.rows()],&from[(i+1)*state->patterns.rows()],&state->patterns.sendBuffer[i*columnSize+1]);
+		int ndx = columnIndices[i]-block.colStart;
+		copy(&from[ndx*state->patterns.rows()],&from[(ndx+1)*state->patterns.rows()],&state->patterns.sendBuffer[i*columnSize+1]);
 	}
 
 	if(rank == 2){
