@@ -1,7 +1,7 @@
 CC=mpic++
-CFLAGS=-O3 -c -Wfatal-errors -std=c++11 -I../shared/ -I../threaded/ -I../distributed/ -I../openMp/
-LDFLAGS=-L../shared/ -L../threaded/ -L../distributed/ -L../openMp/
-LIBS=-fopenmp -lnmf -lnmfthread -lnmfdist -lnmfomp
+CFLAGS=-O3 -c -Wfatal-errors -std=c++11 -I../shared/ -I../threaded/ -I../distributed/ #-I../openMp/
+LDFLAGS=-L../shared/ -L../threaded/ -L../distributed/ #-L../openMp/
+LIBS=-fopenmp -lnmf -lnmfthread -lnmfdist -lpng #-lnmfomp
 VPATH =/usr/lib64/openmpi/bin
 SOURCES=main.cpp
 OBJECTS=$(SOURCES:.cpp=.o)

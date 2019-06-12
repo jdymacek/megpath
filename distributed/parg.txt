@@ -7,4 +7,5 @@ png_directory = ""
 stats = "all"
 print_runs = 100
 interrupt_runs = 1000
+anneal_cut_off = 1
 distribution = "4*4"

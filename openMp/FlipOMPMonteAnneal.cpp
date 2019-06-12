@@ -22,13 +22,13 @@ void FlipOMPMonteAnneal::monteCarloThreadCoefficient(){
 	//For each spot take a gamble and record outcome
 	for(int i = 0; i < state->MAX_RUNS; i++){
 		int id = omp_get_thread_num();
-		monteCarloStep(state->coefficients,&efRow,0,state->coefficients.columns,ranges[id][2],ranges[id][3]);
+		monteCarloStep(state->coefficients,&efRow,0,state->coefficients.columns(),ranges[id][2],ranges[id][3]);
 	 	#pragma omp barrier
 		//wait for Pattern thread to Exchange the coefficients/Patterns
 	 	#pragma omp barrier
 		#pragma omp master
 		{
-			if(i % state->interuptRuns == 0){
+			if(i % state->interruptRuns == 0){
 				if(callback != NULL){
 						callback->monteCallback(i);
 				}
@@ -54,7 +54,7 @@ void FlipOMPMonteAnneal::monteCarloThreadPattern(){
 	 #pragma omp barrier
 		#pragma omp master
 		{
-			if(i % state->interuptRuns == 0){
+			if(i % state->interruptRuns == 0){
 				if(callback != NULL){
 						callback->monteCallback(i);
 						dupe->patterns.matrix = state->patterns.matrix;
@@ -109,14 +109,14 @@ void FlipOMPMonteAnneal::annealThreadCoefficient(int num, double tstart, double 
     //For each spot take a gamble and record outcome
     for(int i =num; i < 2*state->MAX_RUNS; i++){
 	
-	annealStep(state->coefficients,t,&efRow,0,state->coefficients.columns,ranges[id][2],ranges[id][3]);
+	annealStep(state->coefficients,t,&efRow,0,state->coefficients.columns(),ranges[id][2],ranges[id][3]);
 	#pragma omp barrier
 	    //wait for Pattern thread to exchange coefficients/rows
 	#pragma omp barrier
 	
 	#pragma omp master
 	{
-        	if(i % state->interuptRuns == 0 && callback != NULL){
+        	if(i % state->interruptRuns == 0 && callback != NULL){
 			callback->annealCallback(i);
         	}
 		if(i % state->printRuns == 0 && callback != NULL){
@@ -151,7 +151,7 @@ void FlipOMPMonteAnneal::annealThreadPattern(){
 	#pragma omp barrier
 	#pragma omp master 
 	{
-		if(i % state->interuptRuns == 0 && callback != NULL){
+		if(i % state->interruptRuns == 0 && callback != NULL){
 			callback->annealCallback(i);
 			dupe->patterns.matrix = state->patterns.matrix;
 			dupe->coefficients.matrix = state->coefficients.matrix;
@@ -185,8 +185,8 @@ double FlipOMPMonteAnneal::anneal(){
     vector<thread> threads;
 
 
-    int rowSize = state->coefficients.rows/numThreads;
-    int colSize = state->patterns.columns/numThreads;
+    int rowSize = state->coefficients.rows()/numThreads;
+    int colSize = state->patterns.columns()/numThreads;
     int rowStart = 0;
     int colStart = 0;
 	

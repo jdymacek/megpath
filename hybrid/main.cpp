@@ -4,7 +4,7 @@
 //Created on 5/25/2017
 //Last modified: 7/7/2017
 
-#include "OMPMonteAnneal.h"
+//#include "OMPMonteAnneal.h"
 #include "PhaseThreadedMonteAnneal.h"
 #include "FlipThreadedMonteAnneal.h"
 #include "ThreadedMonteAnneal.h"
@@ -13,7 +13,10 @@
 #include "ParallelPatterns.h"
 #include "ParallelFuncThrow.h"
 #include "PatternMatching.h"
+#include "BlockParallel.h"
+#include "BlockThrow.h"
 #include "CmdArgs.h"
+#include "MonteDebug.h"
 
 using namespace std;
 
@@ -26,12 +29,15 @@ int main(int argc, char** argv){
 					  {"2","pp", "PP", "ParPat", "ParallelPatterns"},
 					  {"3","pft","PFT","ParFuncThrow","ParallelFuncThrow"},
 					  {"4","pm","PM","PatMatch","PatternMatching"},
-					  {"5","test","Test"}});
+					  {"5","bp","BP","BlocPar","BlockParallel"},
+					  {"6","bt","BT","BlocThrow","BlockThrow"},
+					  {"7","test","Test"}});
 	
 	string al = args.findFlag({{"0","t","T","Threaded"},
 				    {"1","tf","TF","FlipThreaded"},
 				    {"2","tp","TP","PhaseThreaded"},
-				    {"3","o","O","OpenMP"}});
+//				    {"3","o","O","OpenMP"}});
+					});
 	
 	int nt = args.getAsInt(al,to_string(thread::hardware_concurrency()));
 	if(args.wasFatal()){
@@ -57,6 +63,12 @@ int main(int argc, char** argv){
 			a = new PatternMatching();
 			break;
 		case 5:
+			a = new BlockParallel();
+			break;
+		case 6:
+			a = new BlockThrow();
+			break;
+		case 7:
 			a = new Distributed();
 	}
 	a->load(argFile);
@@ -70,14 +82,18 @@ int main(int argc, char** argv){
 		case 2:
 			a->setAlgorithm(new PhaseThreadedMonteAnneal(a->state,nt));
 			break;
-		case 3:
-			a->setAlgorithm(new OMPMonteAnneal(a->state, nt));
-			break;
+//		case 3:
+//			a->setAlgorithm(new OMPMonteAnneal(a->state, nt));
+//			break;
 	}
 
 	int runTime = args.getAsInt("rt", "-1");
 	if(runTime != -1){
 		a->timedRun(runTime);
+	}
+	string md;
+	if(args.getAsString("md",md,"md")){
+		a->setAlgorithm(new MonteDebug(a->state));
 	}
 	int runs = args.getAsInt("r","1");
 	for(int i = 0; i < runs; i++)
