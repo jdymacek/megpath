@@ -10,18 +10,6 @@ void BlockThrow::start(){
 	srand(time(0)+rank);
 	BlockParallel::start();
 
-	Range fixRange;
-	fixRange.rowStart = 0;
-	fixRange.rowEnd = state->patterns.rows()-1;
-	fixRange.colStart = state->patterns.columns();
-	state->patterns.resize(state->patterns.rows(), state->patterns.columns() + sampleSize);
-	fixRange.colEnd = state->patterns.columns()-1;
-
-	state->patterns.createBuffers();
-	state->patterns.fixRange(fixRange);
-	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows(),state->patterns.columns(),rank);
-	state->expression.conservativeResize(state->coefficients.rows(),state->patterns.columns());
-
 	int smallCol = systemSize;
 	for(auto c: cGroups){
 		int cSize;
@@ -54,6 +42,23 @@ void BlockThrow::start(){
 		MPI_Comm_create(MPI_COMM_WORLD,shareSets[i].group,&shareSets[i].comm);
 	}
 	shareSet = shareSets[rank%smallCol];
+
+
+	Range fixRange;
+	fixRange.rowStart = 0;
+	fixRange.rowEnd = state->patterns.rows()-1;
+	fixRange.colStart = state->patterns.columns();
+
+   int commSize;
+    MPI_Comm_size(shareSet.comm,&commSize);
+
+	state->patterns.resize(state->patterns.rows(), state->patterns.columns() + sampleSize*(commSize-1));
+	fixRange.colEnd = state->patterns.columns()-1;
+
+	state->patterns.createBuffers();
+	state->patterns.fixRange(fixRange);
+	state->patterns.matrix = MatrixXd::Constant(state->patterns.rows(),state->patterns.columns(),rank);
+	state->expression.conservativeResize(state->coefficients.rows(),state->patterns.columns());
 }
 
 void BlockThrow::run(){
@@ -87,21 +92,32 @@ void BlockThrow::throwPatterns(){
 	int commSize;
 	MPI_Comm_size(shareSet.comm,&commSize);
 	int columnSize = state->patterns.rows()+1;
-	int intake = sampleSize*columnSize*commSize;
-	double recvBuf[intake];
-	double* copyPtr = &state->patterns.sendBuffer;
-	vector<int> columnIndices(block.colSize())
-	iota(columnIndices.start(),columnIndices.end(),block.colStart);
+	double recvBuf[ sampleSize*columnSize*commSize];
+	vector<int> columnIndices(block.colSize());
+	iota(columnIndices.begin(),columnIndices.end(),block.colStart);
 	random_shuffle(columnIndices.begin(),columnIndices.end());
-	
+
+	double* from = state->patterns.matrix.data();	
 	for(int i =0; i < sampleSize; ++i){
-		*copyPtr = columnIndices[i];
-		copy(columnIndices[i]-...start,columnIndices[i]-...start+1,copyPtr+1);
-		copyPtr += columnSize;
+		state->patterns.sendBuffer[i*columnSize] = columnIndices[i];
+		copy(&from[i*state->patterns.rows()],&from[(i+1)*state->patterns.rows()],&state->patterns.sendBuffer[i*columnSize+1]);
 	}
 
-    MPI_Allgather(state->patterns.sendBuffer,sampleSize*columnSize,MPI_DOUBLE,&recvBuf[0],intake,MPI_DOUBLE,shareSet.comm);
+	MPI_Allgather(state->patterns.sendBuffer,sampleSize*columnSize,MPI_DOUBLE,&recvBuf[0],sampleSize*columnSize,MPI_DOUBLE,shareSet.comm);
 
+	set<int> patternIndices;
+	patternIndices.insert(columnIndices.begin(),columnIndices.end());
+	double* recv = &recvBuf[0];
+	int currentColumn = block.colSize();
+	for(int i =0; i < sampleSize*commSize; ++i){
+		if(patternIndices.find(recv[0]) == patternIndices.end()){
+			copy(&recv[1],recv+columnSize,from+state->patterns.rows()*currentColumn);
+			currentColumn += 1;
+		}
+		recv += columnSize;
+	}
+	Range cross = {0,state->patterns.rows()-1,block.colSize(),block.colSize()+sampleSize*commSize};
+	//state->patterns.observeRange(cross);
 }
 
 
@@ -163,7 +179,7 @@ void BlockThrow::throwPatterns2(){
 		}
 		ptr += state->patterns.rows()+1;
 	}
-//	delete[] ptr;
+	//	delete[] ptr;
 }
 
 void BlockThrow::monteCallback(int iter){
@@ -189,4 +205,4 @@ bool BlockThrow::annealCallback(int iter){
 
 void BlockThrow::stop(){
 	BlockParallel::stop();
-}`
+}

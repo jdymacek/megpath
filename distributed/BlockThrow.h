@@ -7,7 +7,7 @@
 #define BLOCKTHROW__H
 
 #include "BlockParallel.h"
-
+#include <algorithm>
 using namespace std;
 
 class BlockThrow: public BlockParallel{
@@ -23,6 +23,7 @@ class BlockThrow: public BlockParallel{
 		virtual void monteCallback(int iter);	
 		virtual bool annealCallback(int iter);
 		void throwPatterns();
+		void throwPatterns2();
 //		virtual void montePrintCallback(int iter);
 //		virtual void annealPrintCallback(int iter);
 	protected:
