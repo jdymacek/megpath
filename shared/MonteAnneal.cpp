@@ -26,14 +26,19 @@ bool MonteAnneal::accept(double de,double t){
 }
 
 void MonteAnneal::monteCarloStep(NMFMatrix& m,ErrorFunction* ef){
-	monteCarloStep(m,ef,0,m.columns(),0,m.rows());
+	Range r;
+	r.rowStart = 0;
+	r.rowEnd = m.columns()-1;
+	r.colStart = 0;
+	r.colEnd = m.rows()-1;
+	monteCarloStep(m,ef,r);
 }
 
-void MonteAnneal::monteCarloStep(NMFMatrix& m,ErrorFunction* ef, int xStart, int xStop, int yStart, int yStop){
+void MonteAnneal::monteCarloStep(NMFMatrix& m,ErrorFunction* ef, Range r){
 	double oldError = 0;
 	double error = 0; 
-	for(int y = yStart; y < yStop; ++y){
-		for(int x = xStart; x < xStop; ++x){
+	for(int y = r.rowStart; y <= r.rowEnd; ++y){
+		for(int x = r.colStart; x <= r.colEnd; ++x){
 			ProbFunc* function = m.functions(y,x);
 			double r = function->random();
 			if(isnan(r)){
@@ -63,17 +68,22 @@ void MonteAnneal::monteCarloStep(NMFMatrix& m,ErrorFunction* ef, int xStart, int
 }
 
 void MonteAnneal::annealStep(NMFMatrix& m, double t,ErrorFunction* ef){
-	annealStep(m,t,ef,0,m.columns(),0,m.rows());
+	Range r;
+	r.rowStart = 0;
+	r.rowEnd = m.columns()-1;
+	r.colStart = 0;
+	r.colEnd = m.rows()-1;
+	annealStep(m,t,ef,r);
 }
 
-void MonteAnneal::annealStep(NMFMatrix& m, double t,ErrorFunction* ef, int xStart, int xStop, int yStart, int yStop){
+void MonteAnneal::annealStep(NMFMatrix& m, double t,ErrorFunction* ef, Range r){
 	vector<Entry> entries;
 	entries.push_back({0,0,0});
 	double olderror = 0;
 	double error = 0;
 
-	for(int y =yStart; y < yStop; y++){
-		for(int x = xStart; x < xStop; x++){
+	for(int y = r.rowStart; y <= r.rowEnd; y++){
+		for(int x = r.colStart; x <= r.colEnd; x++){
 
 			ProbFunc* function = m.functions(y,x);
 			double r = function->random();

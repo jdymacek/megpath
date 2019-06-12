@@ -24,12 +24,16 @@ void ThreadedMonteAnneal::monteCarloThread(){
 	ErrorFunctionCol efCol(state);
 	//For each spot take a gamble and record outcome
 	Range rc = state->getRange(threadMap[this_thread::get_id()]);
+	rc.colStart = 0;
+	rc.colEnd = state->coefficients.columns()-1;
 	Range rp = state->getRange(threadMap[this_thread::get_id()]*numThreads);
+	rp.rowStart = 0;
+	rp.rowEnd = state->patterns.rows()-1;
 	for(int i =0; i < state->MAX_RUNS; i++){
-		monteCarloStep(state->coefficients,&efRow,0,state->coefficients.columns(),rc.rowStart,rc.rowEnd);
+		monteCarloStep(state->coefficients,&efRow,rc);
 		if(state->both){
 			barrier->Wait();
-			monteCarloStep(state->patterns,&efCol,rp.colStart,rp.colEnd,0,state->patterns.rows());
+			monteCarloStep(state->patterns,&efCol,rp);
 		}
 		barrier->Wait();
 		if(this_thread::get_id() == rootId){
@@ -81,12 +85,16 @@ void ThreadedMonteAnneal::annealThread(double t, double alpha){
 
 	//For each spot take a gamble and record outcome
 	Range rc = state->getRange(threadMap[this_thread::get_id()]);
+	rc.colStart = 0;
+	rc.colEnd = state->coefficients.columns()-1;
 	Range rp = state->getRange(threadMap[this_thread::get_id()]*numThreads);
+	rp.rowStart = 0;
+	rp.rowEnd = state->patterns.rows()-1;
 	for(int i =0; i < 2*state->MAX_RUNS; i++){
-		annealStep(state->coefficients,t,&efRow,0,state->coefficients.columns(),rc.rowStart,rc.rowEnd);
+		annealStep(state->coefficients,t,&efRow,rc);
 		if(state->both){
 			barrier->Wait();
-			annealStep(state->patterns,t,&efCol,rp.colStart,rp.colEnd,0,state->patterns.rows());
+			annealStep(state->patterns,t,&efCol,rp);
 		}
 		barrier->Wait(); 
 		if(this_thread::get_id() == rootId){
