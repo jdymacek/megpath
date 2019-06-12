@@ -82,7 +82,30 @@ void BlockThrow::run(){
 	gatherCoefficients();
 }
 
+
 void BlockThrow::throwPatterns(){
+	int commSize;
+	MPI_Comm_size(shareSet.comm,&commSize);
+	int columnSize = state->patterns.rows()+1;
+	int intake = sampleSize*columnSize*commSize;
+	double recvBuf[intake];
+	double* copyPtr = &state->patterns.sendBuffer;
+	vector<int> columnIndices(block.colSize())
+	iota(columnIndices.start(),columnIndices.end(),block.colStart);
+	random_shuffle(columnIndices.begin(),columnIndices.end());
+	
+	for(int i =0; i < sampleSize; ++i){
+		*copyPtr = columnIndices[i];
+		copy(columnIndices[i]-...start,columnIndices[i]-...start+1,copyPtr+1);
+		copyPtr += columnSize;
+	}
+
+    MPI_Allgather(state->patterns.sendBuffer,sampleSize*columnSize,MPI_DOUBLE,&recvBuf[0],intake,MPI_DOUBLE,shareSet.comm);
+
+}
+
+
+void BlockThrow::throwPatterns2(){
 	int count = 0;
 	Range colGrab;
 	int cSize;
@@ -166,4 +189,4 @@ bool BlockThrow::annealCallback(int iter){
 
 void BlockThrow::stop(){
 	BlockParallel::stop();
-}
+}`
