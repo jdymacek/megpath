@@ -17,7 +17,8 @@ void BlockParallel::start(){
 	vector<Range> ar;
 
 	for(int i = 0; i < systemSize; i++){
-		ar.push_back(state->getRange(i));
+		Range r = state->getRange(i);
+		ar.push_back(r);
 	}
 
 	block = ar[rank];
@@ -53,7 +54,7 @@ void BlockParallel::start(){
 		state->expression = temp;
 		
 		state->patterns.createBuffers();
-		state->coefficients.createBuffers();		
+		state->coefficients.createBuffers();
 	}
 
 	rowUnique = colSets[0].size();
@@ -84,6 +85,8 @@ void BlockParallel::start(){
 	for(auto s: rowGroups){
 		vector<int> v(s.begin(),s.end());
 		for(int i = 0; i < v.size(); i++){
+			if(rank == 0)
+				cout << v[i] << '\t';
 			if(ar[v[i]].rowStart > form.subRange.rowStart){
 				form.subRange.rowStart = ar[v[i]].rowStart;
 			}
@@ -97,6 +100,8 @@ void BlockParallel::start(){
 			rSets.push_back(form);
 		}
 		form.subRange = block;
+		if(rank == 0)
+			cout << '\n';
 	}
 
 	for(auto s: colGroups){
@@ -104,6 +109,8 @@ void BlockParallel::start(){
 		int gColSize = oexpression.cols()/v.size();
 		sampleSize = sqrt(gColSize);
 		for(int i = 0; i < v.size(); i++){
+			if(rank == 0)
+				cout << v[i] << '\t';
 			if(ar[v[i]].colStart > form.subRange.colStart){
 				form.subRange.colStart = ar[i].colStart;
 			}
@@ -118,6 +125,8 @@ void BlockParallel::start(){
 			cSets.push_back(form);
 		}
 		form.subRange = block;
+		if(rank == 0)
+			cout << '\n';
 	}
 }
 
@@ -195,18 +204,16 @@ void BlockParallel::gatherPatterns(){
 }
 
 void BlockParallel::monteCallback(int iter){
-	if(state->both && iter/state->interruptRuns%2 == 0){
-			averagePatterns();
+	if(iter/state->interruptRuns%2 == 1){
+		averagePatterns();
 	}else{
 		averageCoefficients();
 	}
 }
 
 bool BlockParallel::annealCallback(int iter){
-	if(state->both && iter/state->interruptRuns%2 == 0){
+	if(iter/state->interruptRuns%2 == 1){
 		averagePatterns();
-		if(iter > state->MAX_RUNS*state->annealCutOff)
-			state->both = false;
 	}else{
 		averageCoefficients();
 	}

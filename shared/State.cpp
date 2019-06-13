@@ -24,41 +24,41 @@ void State::reset()
 {
 	both = true;
 	//this is broken -- fix if all patterns are constrained
-    //if(numPatterns == patternArgs.size()){
-    //    both = false;
-    //}
+	//if(numPatterns == patternArgs.size()){
+	//    both = false;
+	//}
 	patterns.reset();
 	coefficients.reset();
 }
 
 /*vector<vector<int>> State::splitRanges(int by)
-{
-	int rowSize = coefficients.rows/by;
-	int colSize = patterns.columns/by;
-	int rowStart = 0;
-	int colStart = 0;
+  {
+  int rowSize = coefficients.rows/by;
+  int colSize = patterns.columns/by;
+  int rowStart = 0;
+  int colStart = 0;
 
-	vector<vector<int>> rv;
+  vector<vector<int>> rv;
 
-	for(int i =0; i < by; ++i){
-        	int rowEnd = rowStart + rowSize;
-        	int colEnd = colStart + colSize;
-        	if(i < coefficients.rows%by)
-	            rowEnd += 1;
-	        if(i < patterns.columns%by)
-	            colEnd += 1;
-		vector<int> tmp;
-		tmp.push_back(colStart);
-		tmp.push_back(colEnd);
-		tmp.push_back(rowStart);
-		tmp.push_back(rowEnd);
-		rv.push_back(tmp);
+  for(int i =0; i < by; ++i){
+  int rowEnd = rowStart + rowSize;
+  int colEnd = colStart + colSize;
+  if(i < coefficients.rows%by)
+  rowEnd += 1;
+  if(i < patterns.columns%by)
+  colEnd += 1;
+  vector<int> tmp;
+  tmp.push_back(colStart);
+  tmp.push_back(colEnd);
+  tmp.push_back(rowStart);
+  tmp.push_back(rowEnd);
+  rv.push_back(tmp);
 
-        	rowStart = rowEnd;
-        	colStart = colEnd;
-    	}
-	return rv;
-}*/
+  rowStart = rowEnd;
+  colStart = colEnd;
+  }
+  return rv;
+  }*/
 Range State::getRange(int rank){
 	Range r;
 	vector<int> parse;
@@ -83,60 +83,112 @@ Range State::getRange(int rank){
 			push = 0;
 		}
 	}
-
-	int cTotal = 0;
-	int dTotal = 0;
-	for(int i = 1; i < parse.size(); i=i+2){
-		cTotal += parse[i];
-		dTotal += (parse[i-1]*parse[i]);
-	}
-	if(cTotal > patterns.columns()){
-		cTotal = patterns.columns();
-	}
-
-	int cWidth = patterns.columns()/cTotal;
 	vector<Range> lookup;
-
-	for(int i = 0; i<cTotal; i++){
-		int sub = 1;
-		int up = parse[1];
-		while(i >= up){
-			sub += 2;
-			up += parse[sub];
+	if(dist[0] == '~'){
+		int rTotal = 0;
+		int dTotal = 0;
+		for(int i = 0; i < parse.size(); i=i+2){
+			rTotal += parse[i];
+			dTotal += (parse[i]*parse[i+1]);
+		}
+		if(rTotal > coefficients.rows()){
+			rTotal = coefficients.rows();
 		}
 
-		r.colStart = i*cWidth;
-		if(i < patterns.columns()%cTotal)
-			r.colStart += i;
-		else
-			r.colStart += patterns.columns()%cTotal;
+		int rHeight = coefficients.rows()/rTotal;
 
-		r.colEnd = r.colStart + cWidth - 1;
-		if(i < patterns.columns()%cTotal)
-			r.colEnd += 1;
+		for(int i = 0; i<rTotal; i++){
+			int sub = 0;
+			int up = parse[0];
+			while(i >= up){
+				sub += 2;
+				up += parse[sub];
+			}
 
-		int rStep = parse[sub-1];
-		if(parse[sub-1] > coefficients.rows())
-			rStep = coefficients.rows();
-
-		int rHeight = coefficients.rows()/rStep;
-		
-		for(int j = 0; j < rStep; j++){
-			
-			r.rowStart = j*rHeight;
-			if(j < coefficients.rows()%rStep)
-				r.rowStart += j;
+			r.rowStart = i*rHeight;
+			if(i < coefficients.rows()%rTotal)
+				r.rowStart += i;
 			else
-				r.rowStart += coefficients.rows()%rStep;
+				r.rowStart += coefficients.rows()%rTotal;
 
 			r.rowEnd = r.rowStart + rHeight - 1;
-			if(j < coefficients.rows()%rStep)
+			if(i < coefficients.rows()%rTotal)
 				r.rowEnd += 1;
 
-			lookup.push_back(r);
+			int cStep = parse[sub+1];
+			if(parse[sub+1] > patterns.columns())
+				cStep = patterns.columns();
+
+			int cWidth = patterns.columns()/cStep;
+
+			for(int j = 0; j < cStep; j++){
+				r.colStart = j*cWidth;
+				if(j < patterns.columns()%cStep)
+					r.colStart += j;
+				else
+					r.colStart += patterns.columns()%cStep;
+
+				r.colEnd = r.colStart + cWidth - 1;
+				if(j < patterns.columns()%cStep)
+					r.colEnd += 1;
+
+				lookup.push_back(r);
+			}
+		}
+	}else{
+		int cTotal = 0;
+		int dTotal = 0;
+		for(int i = 1; i < parse.size(); i=i+2){
+			cTotal += parse[i];
+			dTotal += (parse[i-1]*parse[i]);
+		}
+		if(cTotal > patterns.columns()){
+			cTotal = patterns.columns();
+		}
+
+		int cWidth = patterns.columns()/cTotal;
+
+		for(int i = 0; i<cTotal; i++){
+			int sub = 1;
+			int up = parse[1];
+			while(i >= up){
+				sub += 2;
+				up += parse[sub];
+			}
+
+			r.colStart = i*cWidth;
+			if(i < patterns.columns()%cTotal)
+				r.colStart += i;
+			else
+				r.colStart += patterns.columns()%cTotal;
+
+			r.colEnd = r.colStart + cWidth - 1;
+			if(i < patterns.columns()%cTotal)
+				r.colEnd += 1;
+
+			int rStep = parse[sub-1];
+			if(parse[sub-1] > coefficients.rows())
+				rStep = coefficients.rows();
+
+			int rHeight = coefficients.rows()/rStep;
+
+			for(int j = 0; j < rStep; j++){
+
+				r.rowStart = j*rHeight;
+				if(j < coefficients.rows()%rStep)
+					r.rowStart += j;
+				else
+					r.rowStart += coefficients.rows()%rStep;
+
+				r.rowEnd = r.rowStart + rHeight - 1;
+				if(j < coefficients.rows()%rStep)
+					r.rowEnd += 1;
+
+				lookup.push_back(r);
+			}
 		}
 	}
-	
+
 	if(rank >= lookup.size()){
 		r.rowStart = -1;
 		r.rowEnd = -1;
@@ -203,8 +255,8 @@ bool State::load(string argFileName){
 		end_error = val.asDouble();
 	}
 	if(args.isArgument("start_prob")){
-	       Value val = args.getArgument("start_prob");
-	       start_prob = val.asDouble();
+		Value val = args.getArgument("start_prob");
+		start_prob = val.asDouble();
 	}
 	if(args.isArgument("end_prob")){
 		Value val = args.getArgument("end_prob");
@@ -390,8 +442,8 @@ bool State::load(string argFileName){
 		both = false;
 	}
 
-//	string print = args.toString();
-//	cout << print << endl;
+	//	string print = args.toString();
+	//	cout << print << endl;
 
 	if(img){
 		if(COLUMNS == png->width*3){
@@ -530,23 +582,23 @@ void State::MXdToPng(MatrixXd mat, int r, int c, bool g, const char* name){
 }
 //Old State split functions
 /*int ParallelPatterns::findStart(int myRank, int curSize, int numRows){
-	int startRow = 0;
-	int split = numRows/curSize;
-	int leftover = numRows%curSize;
-	if(myRank < leftover){
-		split = split + 1;
-		startRow = myRank*split;
-	}else{
-		startRow = numRows - (curSize - myRank) * split;
-	}
-	return startRow;
-}
+  int startRow = 0;
+  int split = numRows/curSize;
+  int leftover = numRows%curSize;
+  if(myRank < leftover){
+  split = split + 1;
+  startRow = myRank*split;
+  }else{
+  startRow = numRows - (curSize - myRank) * split;
+  }
+  return startRow;
+  }
 
-int ParallelPatterns::findRows(int myRank, int curSize, int numRows){
-	int split = numRows/curSize;
-	int leftover = numRows%curSize;
-	if(myRank < leftover){
-		split = split + 1;
-	}
-	return split;
-}*/
+  int ParallelPatterns::findRows(int myRank, int curSize, int numRows){
+  int split = numRows/curSize;
+  int leftover = numRows%curSize;
+  if(myRank < leftover){
+  split = split + 1;
+  }
+  return split;
+  }*/

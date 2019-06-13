@@ -72,7 +72,6 @@ void BlockThrow::run(){
 	error = algorithm->anneal();
 	averagePatterns();
 	averageCoefficients();
-			
 	Range s = block;
 	s.rowEnd = state->patterns.rows()-1;
 	s.colEnd -= s.colStart;
@@ -182,7 +181,7 @@ void BlockThrow::throwPatterns2(){
 }
 
 void BlockThrow::monteCallback(int iter){
-	if(state->both && iter/state->interruptRuns%2 == 0){
+	if(iter/state->interruptRuns%2 == 1){
 		averagePatterns();
 		throwPatterns();
 	}else{
@@ -191,12 +190,9 @@ void BlockThrow::monteCallback(int iter){
 }
 
 bool BlockThrow::annealCallback(int iter){
-	if(state->both && iter/state->interruptRuns%2 == 0){
+	if(iter/state->interruptRuns%2 == 1){
 		averagePatterns();
 		throwPatterns();
-		if(iter > state->MAX_RUNS*state->annealCutOff){
-			state->both = false;
-		}
 	}else{
 		averageCoefficients();
 	}

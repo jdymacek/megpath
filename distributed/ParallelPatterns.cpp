@@ -21,6 +21,7 @@ void ParallelPatterns::start(){
 
 	//vector<vector<int>> ranges = state->splitRanges(systemSize);
 	Range r = state->getRange(rank);
+	cout << rank << '\t' << r.rowStart << '\t' << r.rowEnd << '\t' << r.colStart << '\t' << r.colEnd << endl;
 	//split the coefficients
 	state->coefficients.resize(r.rowSize(), state->coefficients.columns());
 
