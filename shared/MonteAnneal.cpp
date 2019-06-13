@@ -28,9 +28,9 @@ bool MonteAnneal::accept(double de,double t){
 void MonteAnneal::monteCarloStep(NMFMatrix& m,ErrorFunction* ef){
 	Range r;
 	r.rowStart = 0;
-	r.rowEnd = m.columns()-1;
+	r.rowEnd = m.rows()-1;
 	r.colStart = 0;
-	r.colEnd = m.rows()-1;
+	r.colEnd = m.columns()-1;
 	monteCarloStep(m,ef,r);
 }
 
@@ -70,9 +70,9 @@ void MonteAnneal::monteCarloStep(NMFMatrix& m,ErrorFunction* ef, Range r){
 void MonteAnneal::annealStep(NMFMatrix& m, double t,ErrorFunction* ef){
 	Range r;
 	r.rowStart = 0;
-	r.rowEnd = m.columns()-1;
+	r.rowEnd = m.rows()-1;
 	r.colStart = 0;
-	r.colEnd = m.rows()-1;
+	r.colEnd = m.columns()-1;
 	annealStep(m,t,ef,r);
 }
 
