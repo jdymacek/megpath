@@ -85,8 +85,6 @@ void BlockParallel::start(){
 	for(auto s: rowGroups){
 		vector<int> v(s.begin(),s.end());
 		for(int i = 0; i < v.size(); i++){
-			if(rank == 0)
-				cout << v[i] << '\t';
 			if(ar[v[i]].rowStart > form.subRange.rowStart){
 				form.subRange.rowStart = ar[v[i]].rowStart;
 			}
@@ -100,8 +98,6 @@ void BlockParallel::start(){
 			rSets.push_back(form);
 		}
 		form.subRange = block;
-		if(rank == 0)
-			cout << '\n';
 	}
 
 	for(auto s: colGroups){
@@ -109,13 +105,11 @@ void BlockParallel::start(){
 		int gColSize = oexpression.cols()/v.size();
 		sampleSize = sqrt(gColSize);
 		for(int i = 0; i < v.size(); i++){
-			if(rank == 0)
-				cout << v[i] << '\t';
 			if(ar[v[i]].colStart > form.subRange.colStart){
-				form.subRange.colStart = ar[i].colStart;
+				form.subRange.colStart = ar[v[i]].colStart;
 			}
 			if(ar[v[i]].colEnd < form.subRange.colEnd){
-				form.subRange.colEnd = ar[i].colEnd;
+				form.subRange.colEnd = ar[v[i]].colEnd;
 			}	
 		}
 		MPI_Group_incl(worldGroup,v.size(),&v[0], &form.group);
@@ -125,8 +119,6 @@ void BlockParallel::start(){
 			cSets.push_back(form);
 		}
 		form.subRange = block;
-		if(rank == 0)
-			cout << '\n';
 	}
 }
 
@@ -222,12 +214,12 @@ bool BlockParallel::annealCallback(int iter){
 
 void BlockParallel::montePrintCallback(int iter){
 	ErrorFunctionRow ef(state);
-	cout << "Monte Carlo: " << rank << '\t' << iter << '\t' << ef.error() << '\t' << hostname << endl;
+	cout << "Monte Carlo: " << rank << '\t' << iter << '\t' << ef.error()/state->expression.size() << '\t' << hostname << endl;
 }
 
 void BlockParallel::annealPrintCallback(int iter){
 	ErrorFunctionRow ef(state);
-	cout << "Anneal: " << rank << '\t' << iter << '\t' << ef.error() << '\t' << hostname << endl;
+	cout << "Anneal: " << rank << '\t' << iter << '\t' << ef.error()/state->expression.size() << '\t' << hostname << endl;
 }
 
 void BlockParallel::stop(){
