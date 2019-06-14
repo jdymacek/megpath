@@ -204,8 +204,11 @@ void BlockParallel::monteCallback(int iter){
 }
 
 bool BlockParallel::annealCallback(int iter){
-	if(iter/state->interruptRuns%2 == 1){
+	if(state->both == true && iter/state->interruptRuns%2 == 1){
 		averagePatterns();
+		if(iter >= state->annealCutOff*state->interruptRuns){
+			state->both = false;
+		}
 	}else{
 		averageCoefficients();
 	}

@@ -132,12 +132,12 @@ double MonteAnneal::monteCarlo(){
 			monteCarloStep(state->patterns,&efCol);
 		}
 		monteCarloStep(state->coefficients,&efRow);
+		if(i % state->printRuns == 0 && callback != NULL){
+        	callback->montePrintCallback(i);
+        }
 		if(i % state->interruptRuns == 0 && callback != NULL){
 			callback->monteCallback(i);
 		}
-		if(i % state->printRuns == 0 && callback != NULL){
-            		callback->montePrintCallback(i);
-        }
 	}
 	if(callback != NULL){
 		callback->monteFinalCallback();
@@ -160,11 +160,11 @@ double MonteAnneal::anneal(){
 		if(state->both){
 			annealStep(state->patterns,t,&efCol);
 		}
-		if(ndx % state->interruptRuns == 0 && callback != NULL){
-			running = callback->annealCallback(ndx);
-		}
 		if(ndx % state->printRuns == 0 && callback != NULL){
 			callback->annealPrintCallback(ndx);
+		}
+		if(ndx % state->interruptRuns == 0 && callback != NULL){
+			running = callback->annealCallback(ndx);
 		}
 		t *= alpha;
 		//0.99975; - the old alpha

@@ -31,11 +31,11 @@ void FlipThreadedMonteAnneal::monteCarloThreadCoefficient(){
 		//wait for Pattern thread to Exchange the coefficients/Patterns
 		barrier->Wait();
 		if(this_thread::get_id() == rootId){
-			if(i % state->interruptRuns == 0 && callback != NULL){
-				callback->monteCallback(i);
-			}
 			if(i % state->printRuns == 0 && callback != NULL){
 				callback->montePrintCallback(i);
+			}
+			if(i % state->interruptRuns == 0 && callback != NULL){
+				callback->monteCallback(i);
 			}
 		}
 		barrier->Wait();
@@ -58,11 +58,11 @@ void FlipThreadedMonteAnneal::monteCarloThreadPattern(){
 		state->patterns.matrix = dupe->patterns.matrix;
 		barrier->Wait();
 		if(this_thread::get_id() == rootId){
-			if(i % state->interruptRuns == 0 && callback != NULL){
-				callback->monteCallback(i);
-			}
 			if(i % state->printRuns == 0 && callback != NULL){
 				callback->montePrintCallback(i);
+			}
+			if(i % state->interruptRuns == 0 && callback != NULL){
+				callback->monteCallback(i);
 			}
 		}
 		barrier->Wait();
@@ -111,17 +111,17 @@ void FlipThreadedMonteAnneal::annealThreadCoefficient(double t, double alpha){
 		barrier->Wait();
 		//wait for Pattern thread to exchange coefficients/rows
 		barrier->Wait(); 
-		if(i % state->interruptRuns == 0 && callback != NULL){
-			barrier->Wait();
-			if(this_thread::get_id() == rootId){
-				callback->annealCallback(i);
-			}
-			barrier->Wait();
-		}
 		if(i % state->printRuns == 0 && callback != NULL){
 			barrier->Wait();
 			if(this_thread::get_id() == rootId){
 				callback->annealPrintCallback(i);
+			}
+			barrier->Wait();
+		}
+		if(i % state->interruptRuns == 0 && callback != NULL){
+			barrier->Wait();
+			if(this_thread::get_id() == rootId){
+				callback->annealCallback(i);
 			}
 			barrier->Wait();
 		}
@@ -152,19 +152,19 @@ void FlipThreadedMonteAnneal::annealThreadPattern(double t, double alpha){
 		dupe->coefficients.matrix = state->coefficients.matrix;
 		state->patterns.matrix = dupe->patterns.matrix;
 		barrier->Wait(); 
+		if(i % state->printRuns == 0 && callback != NULL){
+			barrier->Wait();
+			if(this_thread::get_id() == rootId){
+				callback->annealPrintCallback(i);
+			}
+			barrier->Wait();
+		}
 		if(i % state->interruptRuns == 0 && callback != NULL){
 			barrier->Wait();
 			if(this_thread::get_id() == rootId){
 				callback->annealCallback(i);
 				dupe->patterns.matrix = state->patterns.matrix;
 				dupe->coefficients.matrix = state->coefficients.matrix;
-			}
-			barrier->Wait();
-		}
-		if(i % state->printRuns == 0 && callback != NULL){
-			barrier->Wait();
-			if(this_thread::get_id() == rootId){
-				callback->annealPrintCallback(i);
 			}
 			barrier->Wait();
 		}

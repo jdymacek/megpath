@@ -37,11 +37,11 @@ void ThreadedMonteAnneal::monteCarloThread(){
 		}
 		barrier->Wait();
 		if(this_thread::get_id() == rootId){
-			if(i % state->interruptRuns == 0 && callback != NULL){
-				callback->monteCallback(i);
-			}
 			if(i % state->printRuns == 0 && callback != NULL){
 				callback->montePrintCallback(i);
+			}
+			if(i % state->interruptRuns == 0 && callback != NULL){
+				callback->monteCallback(i);
 			}
 		}
 		barrier->Wait();
@@ -98,11 +98,11 @@ void ThreadedMonteAnneal::annealThread(double t, double alpha){
 		}
 		barrier->Wait(); 
 		if(this_thread::get_id() == rootId){
-			if(i % state->interruptRuns == 0 && callback != NULL){
-				callback->annealCallback(i);
-			}
 			if(i % state->printRuns == 0 && callback != NULL){
 				callback->annealPrintCallback(i);
+			}
+			if(i % state->interruptRuns == 0 && callback != NULL){
+				callback->annealCallback(i);
 			}
 		}
 		barrier->Wait();
