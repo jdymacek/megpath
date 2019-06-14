@@ -52,15 +52,6 @@ void ParallelPatterns::monteCallback(int iter){
 	}
 }
 
-void ParallelPatterns::montePrintCallback(int iter){
-	ErrorFunctionRow ef(state);
-	cout << "Monte Carlo:" << '\t' << rank << '\t' << iter << '\t' << ef.error()/state->expression.size() << '\t' << hostname << endl;
-}
-
-void ParallelPatterns::annealPrintCallback(int iter){
-	ErrorFunctionRow ef(state);
-	cout << "Anneal:" << '\t' << rank << '\t' << iter << '\t' << ef.error()/state->expression.size() << '\t' << hostname << endl;
-}
 
 bool ParallelPatterns::annealCallback(int iter){
 	if(state->both){

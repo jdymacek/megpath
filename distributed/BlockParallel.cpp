@@ -212,15 +212,6 @@ bool BlockParallel::annealCallback(int iter){
 	return true;
 }
 
-void BlockParallel::montePrintCallback(int iter){
-	ErrorFunctionRow ef(state);
-	cout << "Monte Carlo:" << '\t' << rank << '\t' << iter << '\t' << ef.error()/state->expression.size() << '\t' << hostname << endl;
-}
-
-void BlockParallel::annealPrintCallback(int iter){
-	ErrorFunctionRow ef(state);
-	cout << "Anneal:" << '\t' << rank << '\t' << iter << '\t' << ef.error()/state->expression.size() << '\t' << hostname << endl;
-}
 
 void BlockParallel::stop(){
 	for(auto r : rSets){

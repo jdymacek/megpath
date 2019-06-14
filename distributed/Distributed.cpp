@@ -100,15 +100,17 @@ void Distributed::sendLeastError(int process, double formerError)
 	delete[] recvBuffer;
 }
 
+
 void Distributed::montePrintCallback(int iter){
-	cout << hostname << "\t";
-	Analysis::montePrintCallback(iter);
+    ErrorFunctionRow ef(state);
+    cout << "montecarlo\t" << rank << '\t' << iter << '\t' << ef.error()/state->expression.size() << '\t' << hostname << endl;
 }
 
 void Distributed::annealPrintCallback(int iter){
-	cout << hostname << "\t";
-	Analysis::annealPrintCallback(iter);
+    ErrorFunctionRow ef(state);
+    cout << "anneal\t" << rank << '\t' << iter << '\t' << ef.error()/state->expression.size() << '\t' << hostname << endl;
 }
+
 
 
 void Distributed::sendMatrix(MatrixXd& matrix,int dest){

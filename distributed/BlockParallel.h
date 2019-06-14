@@ -50,8 +50,6 @@ class BlockParallel: public ParallelPatterns{
 		virtual void stop();
 		virtual void monteCallback(int iter);	
 		virtual bool annealCallback(int iter);
-		virtual void montePrintCallback(int iter);
-		virtual void annealPrintCallback(int iter);
 	protected:
 		int rowUnique;
 		int pCount;
