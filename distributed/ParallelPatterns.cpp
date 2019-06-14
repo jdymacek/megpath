@@ -21,7 +21,6 @@ void ParallelPatterns::start(){
 
 	//vector<vector<int>> ranges = state->splitRanges(systemSize);
 	Range r = state->getRange(rank);
-	cout << rank << '\t' << r.rowStart << '\t' << r.rowEnd << '\t' << r.colStart << '\t' << r.colEnd << endl;
 	//split the coefficients
 	state->coefficients.resize(r.rowSize(), state->coefficients.columns());
 
@@ -55,12 +54,12 @@ void ParallelPatterns::monteCallback(int iter){
 
 void ParallelPatterns::montePrintCallback(int iter){
 	ErrorFunctionRow ef(state);
-	cout << "montecarlo " << hostname << ": " << iter << "\t Error = " << ef.error() << endl;
+	cout << "Monte Carlo:" << '\t' << rank << '\t' << iter << '\t' << ef.error()/state->expression.size() << '\t' << hostname << endl;
 }
 
 void ParallelPatterns::annealPrintCallback(int iter){
 	ErrorFunctionRow ef(state);
-	cout << "anneal " << hostname << " " << rank << ": " << iter << "\t Error = " << ef.error() << endl;
+	cout << "Anneal:" << '\t' << rank << '\t' << iter << '\t' << ef.error()/state->expression.size() << '\t' << hostname << endl;
 }
 
 bool ParallelPatterns::annealCallback(int iter){
@@ -87,7 +86,7 @@ void ParallelPatterns::gatherCoefficients(){
 	state->coefficients.createBuffers();
 
 	if(rank == 0){
-		buffer = new double[oexpression.rows()*state->coefficients.matrix.cols()];
+		buffer = new double[oexpression.rows()*state->coefficients.columns()];
 	}
 
 	MPI_Gather(&count,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
@@ -95,18 +94,25 @@ void ParallelPatterns::gatherCoefficients(){
 
 	MatrixXd ct = state->coefficients.matrix.transpose();
 	copy(ct.data(),ct.data()+ct.size(), state->coefficients.sendBuffer);
-	
+
 	MPI_Gatherv(state->coefficients.sendBuffer, count, MPI_DOUBLE, buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
-	state->coefficients.resize(oexpression.rows(),state->coefficients.matrix.cols());
+	state->coefficients.resize(oexpression.rows(),state->coefficients.columns());
 	state->expression = oexpression;
 	if(rank == 0){
-		Map<MatrixXd,RowMajor> mapper(buffer,oexpression.rows(),state->coefficients.matrix.cols());
-		state->coefficients.matrix = mapper;
+		for(int i = 0; i < oexpression.rows(); i++){
+			for(int j = 0; j < state->coefficients.columns(); j++){
+				state->coefficients.matrix(i,j) = buffer[j+state->coefficients.columns()*i];
+			}
+		}
+//		Map<MatrixXd> mapper(buffer,oexpression.rows(),state->coefficients.columns());
+//		cout << "Map:" << '\n' << mapper << endl;
+//		state->coefficients.matrix = mapper;
+//		cout << "Final:" << '\n' << state->coefficients.matrix << endl;
 		ErrorFunctionRow efRow(state);
 		double error = efRow.error();
 
-		cout << "Final Error: " << error << endl;
+		cout << "Final Error: " << error/state->expression.size() << endl;
 		delete[] buffer;
 	}
 }

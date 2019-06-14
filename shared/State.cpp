@@ -280,7 +280,6 @@ bool State::load(string argFileName){
 		filename = val.asString();
 
 		if(filename.substr(filename.size()-4,4) == ".png"){
-			cout << "PNG Found" << endl;
 			img = true;
 		}
 	}
