@@ -27,13 +27,13 @@ void PatternMatching::writeMatrix(double* data,MatrixXd& matrix){
 void PatternMatching::matchPatterns(){
     MatrixXd myPatterns = state->patterns.matrix;
     if(rank == 0){
-        writeMatrix(&sendBuffer[0],myPatterns);
+        writeMatrix(&state->patterns.sendBuffer[0],myPatterns);
     }
 
-    MPI_Bcast(sendBuffer,bufferSize,MPI_DOUBLE,0,MPI_COMM_WORLD);
+    MPI_Bcast(state->patterns.sendBuffer,state->patterns.matrix.size(),MPI_DOUBLE,0,MPI_COMM_WORLD);
 
     if(rank != 0){
-        readMatrix(&sendBuffer[0],myPatterns);
+        readMatrix(&state->patterns.sendBuffer[0],myPatterns);
         state->patternMatch(myPatterns);
     }
 }

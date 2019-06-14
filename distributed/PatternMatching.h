@@ -16,7 +16,7 @@ using namespace std;
 
 class PatternMatching:  public ParallelPatterns{
 	public:
-		PatternMatching();	
+		PatternMatching();
 		void matchPatterns();
 		void readMatrix(double* data, MatrixXd& matrix);
         void writeMatrix(double* data, MatrixXd& matrix);
