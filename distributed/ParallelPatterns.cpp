@@ -96,10 +96,7 @@ void ParallelPatterns::gatherCoefficients(){
 				state->coefficients.matrix(i,j) = buffer[j+state->coefficients.columns()*i];
 			}
 		}
-//		Map<MatrixXd> mapper(buffer,oexpression.rows(),state->coefficients.columns());
-//		cout << "Map:" << '\n' << mapper << endl;
-//		state->coefficients.matrix = mapper;
-//		cout << "Final:" << '\n' << state->coefficients.matrix << endl;
+
 		ErrorFunctionRow efRow(state);
 		double error = efRow.error();
 

@@ -184,6 +184,10 @@ void BlockParallel::gatherPatterns(){
 	MPI_Gather(&pCount,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
 	MPI_Gather(&pDisp,1,MPI_INT,&allDispls[0],1,MPI_INT, 0, MPI_COMM_WORLD);
 
+//	if(rank == 0 || rank == 1){
+//		cout << rank << '\n' << state->patterns.matrix << '\n';
+//	}
+
 	MPI_Gatherv(state->patterns.matrix.data(), pCount, MPI_DOUBLE, buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
 	state->patterns.resize(state->patterns.matrix.rows(),oexpression.cols());
@@ -191,6 +195,7 @@ void BlockParallel::gatherPatterns(){
 	if(rank == 0){
 		Map<MatrixXd> mapper(buffer,state->patterns.matrix.rows(),oexpression.cols());
 		state->patterns.matrix = mapper;
+//		cout << state->patterns.matrix << endl;
 		delete[] buffer;
 	}
 }
@@ -204,11 +209,14 @@ void BlockParallel::monteCallback(int iter){
 }
 
 bool BlockParallel::annealCallback(int iter){
-	if(state->both == true && iter/state->interruptRuns%2 == 1){
+	if(state->both && iter >= state->annealCutOff*state->MAX_RUNS){
 		averagePatterns();
-		if(iter >= state->annealCutOff*state->interruptRuns){
-			state->both = false;
-		}
+		state->both = false;
+		ErrorFunctionRow ef(state);
+		cout << "At False\t" << rank << '\t' << ef.error()/state->expression.size() << endl;
+	}
+	if(state->both && iter/state->interruptRuns%2 == 1){
+		averagePatterns();
 	}else{
 		averageCoefficients();
 	}
