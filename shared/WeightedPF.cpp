@@ -38,9 +38,9 @@ void WeightedPF::addObservation(double obs){
 string WeightedPF::toString(){
 	string rv = "";
 	stringstream ss;
+	cout << mean << endl;
 	ss << "Mean: " << mean << " Std Dev: " << sqrt(variance) << endl;
-	ss >> rv;
-	return rv;
+	return ss.str();
 }
 
 void WeightedPF::toDoubles(double* buffer){

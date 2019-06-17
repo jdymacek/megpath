@@ -12,6 +12,7 @@
 #include "../../shared/NormalPF.h"
 #include "../../shared/ShiftPF.h"
 #include "../../shared/PiecewisePF.h"
+#include "../../shared/WeightedPF.h"
 
 using namespace std;
 
@@ -114,6 +115,29 @@ void normalTest(){
 	cout << " ]\n";
 }
 
+void weightedTest(){
+	ProbFunc* pf = new WeightedPF(0.5,0.1);
+	vector<double> counts(22,0);
+	for(int i = 0; i < 5; i++){
+		pf->addObservation(0.75);
+		cout << pf->toString() << endl;
+	}
+	for(int i = 0; i < 5000; ++i){
+		double d = pf->random();
+		counts[(int)(d*22)] += 1;
+	}
+
+	cout << "[ ";
+	for(int i = 0; i < counts.size(); ++i){
+		if(i < counts.size()-1){
+			cout << counts[i] << ", ";
+		}else{
+			cout << counts[i];
+		}
+	}
+	cout << " ]\n";
+}
+
 int main(int argc, char* argv[]){
 
 	ProbFunc::generator.seed(time(0));
@@ -142,6 +166,8 @@ int main(int argc, char* argv[]){
 		shiftTest();
 	}else if(type == "-normal"){
 		normalTest();
+	}else if(type == "-weighted"){
+		weightedTest();
 	}else{
 
 		vector<Entry> vec;
