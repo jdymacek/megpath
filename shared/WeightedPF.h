@@ -4,8 +4,8 @@
 //Created on 5/24/2017
 //Last Modified: 5/25/2017
 
-#ifndef NORMALPF__H
-#define NORMALPF__H
+#ifndef WEIGHTEDPF__H
+#define WEIGTHEDPF__H
 
 #include <iostream>
 #include <sstream>

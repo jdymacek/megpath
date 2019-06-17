@@ -8,12 +8,14 @@
 WeightedPF::WeightedPF(){
 	mean = 0.5;
 	variance = 0.01;
+	alpha = 0.1;
 	dist = normal_distribution<double>(0.5,0.1);
 }
 
 WeightedPF::WeightedPF(double mu,double sd){
 	mean = mu;
 	variance = sd*sd;
+	alpha = 0.1;
 	dist = normal_distribution<double>(mean,sd);
 }
 
@@ -27,7 +29,7 @@ double WeightedPF::random(){
 
 void WeightedPF::addObservation(double obs){
 	double diff = obs-mean;
-	double incr = alpha-diff;
+	double incr = alpha*diff;
 	mean = mean + incr;
 	variance = (1-alpha)*(variance+diff*incr);
 	dist = normal_distribution<double>(mean,sqrt(variance));
@@ -49,6 +51,7 @@ void WeightedPF::toDoubles(double* buffer){
 void WeightedPF::fromDoubles(double* buffer){
 	mean = buffer[0];
 	variance = buffer[1];
+	dist = normal_distribution<double>(mean,sqrt(variance));
 }
 
 int WeightedPF::dataSize(){
