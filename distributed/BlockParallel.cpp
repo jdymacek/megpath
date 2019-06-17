@@ -223,9 +223,9 @@ bool BlockParallel::annealCallback(int iter){
 	if(state->both && iter/state->interruptRuns%2 == 1){
 		averagePatterns();
 	}else{
-		if(rank == 0 || rank == 4 || rank == 8 || rank == 12){
-			cout << iter << '\t' << rank << '\t' << state->coefficients.matrix(0,state->coefficients.columns()-1) << endl;
-		}
+//		if(rank == 1){
+//			cout << iter << '\t' << rank << '\t' << state->coefficients.matrix << endl;
+//		}
 		averageCoefficients();
 	}
 	return true;

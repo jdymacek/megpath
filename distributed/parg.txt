@@ -1,6 +1,6 @@
 analysis = "png"
 max_runs = 50000;
-png_filename = "testSize.csv"
+png_filename = "spect15.png"
 png_origin = [0,0]
 png_patterns = ["","",""]
 png_directory = ""
