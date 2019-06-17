@@ -11,6 +11,7 @@
 #include "../../Eigen/Core"
 #include "ProbFunc.h"
 #include "PiecewisePF.h"
+#include "WeightedPF.h"
 #include "FixedPF.h"
 #include "PointerSupport.h"
 #include "Range.h"

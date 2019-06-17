@@ -31,7 +31,7 @@ NMFMatrix::NMFMatrix(int rowss, int cols){
 
 	for(int i =0; i < matrix.rows(); ++i){
 		for(int j =0; j < matrix.cols(); ++j){
-			functions(i,j) = new PiecewisePF();
+			functions(i,j) = new WeightedPF();
 		}
 	}	
 	calculateSize();
@@ -158,7 +158,7 @@ void NMFMatrix::resize(int newRows, int newCols){
 	functions = MatrixXp(newRows,newCols);
 	for(int i =0; i < matrix.rows(); ++i){
 		for(int j =0; j < matrix.cols(); ++j){
-			functions(i,j) = new PiecewisePF();
+			functions(i,j) = new WeightedPF();
 		}
 	}
 	calculateSize();

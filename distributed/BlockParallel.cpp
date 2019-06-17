@@ -201,25 +201,39 @@ void BlockParallel::gatherPatterns(){
 }
 
 void BlockParallel::monteCallback(int iter){
-	if(iter/state->interruptRuns%2 == 1){
+/*	if(iter/state->interruptRuns%2 == 1){
 		averagePatterns();
 	}else{
 		averageCoefficients();
-	}
+	}*/
+	averagePatterns();
+	averageCoefficients();
 }
 
 bool BlockParallel::annealCallback(int iter){
-	if(state->both && iter >= state->annealCutOff*state->MAX_RUNS){
-		averagePatterns();
+/*	if(state->both && iter >= state->annealCutOff*state->MAX_RUNS){
+//		cout << "Before Both\t";
+//		annealPrintCallback(iter);
 		state->both = false;
-		ErrorFunctionRow ef(state);
-		cout << "At False\t" << rank << '\t' << ef.error()/state->expression.size() << endl;
+//		cout << "After Both\t";
+//		annealPrintCallback(iter);
+		averagePatterns();
+//		cout << "After Avg\t";
+//		annealPrintCallback(iter);
 	}
 	if(state->both && iter/state->interruptRuns%2 == 1){
+		if(rank == 2 || rank == 5 || rank == 10 || rank == 15){
+			cout << iter << '\t' << rank << '\t' << state->patterns.matrix(0,state->patterns.columns()-1) << endl;
+		}
 		averagePatterns();
 	}else{
 		averageCoefficients();
+	}*/
+	if(rank == 0 || rank == 3 || rank == 6 || rank == 11){
+		cout << iter << '\t' << rank << '\t' << state->patterns.matrix(0,0) << endl;
 	}
+	averagePatterns();
+	averageCoefficients();
 	return true;
 }
 
