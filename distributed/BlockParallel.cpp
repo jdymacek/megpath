@@ -201,7 +201,7 @@ void BlockParallel::gatherPatterns(){
 }
 
 void BlockParallel::monteCallback(int iter){
-	cout << iter << '\t' << rank << '\t' << state->patterns.functions(0,0)->toString() << '\n';
+//	cout << iter << '\t' << rank << '\t' << state->patterns.functions(0,0)->toString() << '\n';
 	if(iter/state->interruptRuns%2 == 1){
 		averagePatterns();
 	}else{
