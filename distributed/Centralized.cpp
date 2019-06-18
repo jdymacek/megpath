@@ -66,6 +66,16 @@ void Centralized::run(){
 				received.colEnd -= (received.colStart - randX);
 				received.colStart -= (received.colStart - randX);
 				MPI_Send(&received,4,MPI_INT,status.MPI_SOURCE,0,MPI_COMM_WORLD);
+
+				coRec.colStart = 0;
+				coRec.colEnd = state->coefficients.columns()-1;
+				state->coefficients.write(&state->coefficients.sendBuffer[0],coRec);
+				MPI_Send(&state->coefficients.sendBuffer[0],state->coefficients.size(coRec),MPI_DOUBLE,status.MPI_SOURCE,1,MPI_COMM_WORLD);
+
+				patRec.rowStart = 0;
+				patRec.rowEnd = state->patterns.rows()-1;
+				state->patterns.write(&state->patterns.sendBuffer[0],patRec);
+				MPI_Send(&state->patterns.sendBuffer[0],state->patterns.size(coRec),MPI_DOUBLE,status.MPI_SOURCE,2,MPI_COMM_WORLD);
 			}
 		}
 		ErrorFunctionRow efRow(state);
@@ -75,7 +85,9 @@ void Centralized::run(){
 	}else{
 		algorithm->setObserver(this);
 		algorithm->monteCarlo();
+		monteCallback(0);
 		error = algorithm->anneal();
+		annealCallback(0);
 		block.rowStart = -1;
 		block.rowEnd = -1;
 		block.colStart = -1;
@@ -95,6 +107,18 @@ void Centralized::monteCallback(int iter){
 	MPI_Send(&state->patterns.sendBuffer[0],state->patterns.size(),MPI_DOUBLE,0,2,MPI_COMM_WORLD);
 
 	MPI_Recv(&block,4,MPI_INT,0,0,MPI_COMM_WORLD,&status);
+	Range coRec = block;
+	coRec.colStart = 0;
+	coRec.colEnd = state->coefficients.columns()-1;
+	Range patRec = block;
+	patRec.rowStart = 0;
+	patRec.rowEnd = state->patterns.rows()-1;
+
+	MPI_Recv(&state->coefficients.recvBuffer[0],state->coefficients.size(coRec),MPI_DOUBLE,status.MPI_SOURCE,1,MPI_COMM_WORLD,&status);
+	state->coefficients.read(&state->coefficients.recvBuffer[0],coRec);
+
+	MPI_Recv(&state->patterns.recvBuffer[0],state->patterns.size(patRec),MPI_DOUBLE,status.MPI_SOURCE,2,MPI_COMM_WORLD,&status);
+	state->patterns.read(&state->patterns.recvBuffer[0],patRec);
 
 	MatrixXd temp = oexpression.block(block.rowStart, block.colStart, block.rowSize(), block.colSize());
 	state->expression = temp;
@@ -111,6 +135,18 @@ bool Centralized::annealCallback(int iter){
 	MPI_Send(&state->patterns.sendBuffer[0],state->patterns.size(),MPI_DOUBLE,0,2,MPI_COMM_WORLD);
 
 	MPI_Recv(&block,4,MPI_INT,0,0,MPI_COMM_WORLD,&status);
+	Range coRec = block;
+	coRec.colStart = 0;
+	coRec.colEnd = state->coefficients.columns()-1;
+	Range patRec = block;
+	patRec.rowStart = 0;
+	patRec.rowEnd = state->patterns.rows()-1;
+
+	MPI_Recv(&state->coefficients.recvBuffer[0],state->coefficients.size(coRec),MPI_DOUBLE,status.MPI_SOURCE,1,MPI_COMM_WORLD,&status);
+	state->coefficients.read(&state->coefficients.recvBuffer[0],coRec);
+
+	MPI_Recv(&state->patterns.recvBuffer[0],state->patterns.size(patRec),MPI_DOUBLE,status.MPI_SOURCE,2,MPI_COMM_WORLD,&status);
+	state->patterns.read(&state->patterns.recvBuffer[0],patRec);
 
 	MatrixXd temp = oexpression.block(block.rowStart, block.colStart, block.rowSize(), block.colSize());
 	state->expression = temp;
