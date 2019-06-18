@@ -121,11 +121,11 @@ void Centralized::monteCallback(int iter){
 	patRec.rowEnd = state->patterns.rows()-1;
 
 	MPI_Recv(&state->coefficients.recvBuffer[0],state->coefficients.size(coRec),MPI_DOUBLE,status.MPI_SOURCE,1,MPI_COMM_WORLD,&status);
-	state->coefficients.read(&state->coefficients.recvBuffer[0]);
+	state->coefficients.read(&state->coefficients.recvBuffer[0],coRec);
 	cout << rank << " Read Co" << endl;
 
 	MPI_Recv(&state->patterns.recvBuffer[0],state->patterns.size(patRec),MPI_DOUBLE,status.MPI_SOURCE,2,MPI_COMM_WORLD,&status);
-	state->patterns.read(&state->patterns.recvBuffer[0]);
+	state->patterns.read(&state->patterns.recvBuffer[0],patRec);
 	cout << rank << " Read Pat" << endl;
 
 	MatrixXd temp = oexpression.block(block.rowStart, block.colStart, block.rowSize(), block.colSize());
