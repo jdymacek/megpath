@@ -56,7 +56,7 @@ int NMFMatrix::size(Range r){
 			rv += functions(y,x)->dataSize();		
 		}
 	}
-	return matrix.size()+rv;
+	return r.rowSize()*r.colSize()+rv;
 }
 
 void NMFMatrix::reset(){

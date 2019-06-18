@@ -30,7 +30,7 @@ int main(int argc, char** argv){
 			{"5","bp","BP","BlocPar","BlockParallel"},
 			{"6","bt","BT","BlocThrow","BlockThrow"},
 			{"7","c","C","Centr","Centralized"},
-			{"7","test","Test"}});
+			{"8","test","Test"}});
 
 	if(args.wasFatal()){
 		cout << "Missing Args" << endl;
