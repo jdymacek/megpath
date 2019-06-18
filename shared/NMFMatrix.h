@@ -34,6 +34,7 @@ class NMFMatrix{
 		void write(string filename);
 		void calculateSize();
 		int size(){return bufferedSize;};
+		int size(Range r);
 		void resize(int newRows, int newCols);
 		void shrink(Range r);
 		void fixRange(Range r);

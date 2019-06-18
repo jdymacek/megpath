@@ -12,6 +12,7 @@
 #include "PatternMatching.h"
 #include "BlockParallel.h"
 #include "BlockThrow.h"
+#include "Centralized.h"
 #include "CmdArgs.h"
 #include "MonteDebug.h"
 
@@ -28,6 +29,7 @@ int main(int argc, char** argv){
 			{"4","pm","PM","PatMatch","PatternMatching"},
 			{"5","bp","BP","BlocPar","BlockParallel"},
 			{"6","bt","BT","BlocThrow","BlockThrow"},
+			{"7","c","C","Centr","Centralized"},
 			{"7","test","Test"}});
 
 	if(args.wasFatal()){
@@ -60,6 +62,9 @@ int main(int argc, char** argv){
 			a = new BlockThrow();
 			break;
 		case 7:
+			a = new Centralized();
+			break;
+		case 8:
 			a = new Distributed();
 	}
 	int runTime = args.getAsInt("rt", "-1");

@@ -2,7 +2,7 @@
 //Julian Dymacek
 //Justin Moore
 //Created: 5/30/2019
-//Last Modified: 5/30/2019
+//Last Modified: 6/17/2019
 
 #include "BlockParallel.h"
 #include <set>
@@ -167,6 +167,8 @@ void BlockParallel::run(){
 	averageCoefficients();
 	error = algorithm->anneal();
 	averagePatterns();
+	state->both = false;
+	error = algorithm->anneal();
 	averageCoefficients();
 
 	gatherPatterns();
@@ -184,10 +186,6 @@ void BlockParallel::gatherPatterns(){
 	MPI_Gather(&pCount,1,MPI_INT,&allCounts[0],1,MPI_INT, 0, MPI_COMM_WORLD);
 	MPI_Gather(&pDisp,1,MPI_INT,&allDispls[0],1,MPI_INT, 0, MPI_COMM_WORLD);
 
-//	if(rank == 0 || rank == 1){
-//		cout << rank << '\n' << state->patterns.matrix << '\n';
-//	}
-
 	MPI_Gatherv(state->patterns.matrix.data(), pCount, MPI_DOUBLE, buffer, allCounts, allDispls, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
 	state->patterns.resize(state->patterns.matrix.rows(),oexpression.cols());
@@ -195,13 +193,11 @@ void BlockParallel::gatherPatterns(){
 	if(rank == 0){
 		Map<MatrixXd> mapper(buffer,state->patterns.matrix.rows(),oexpression.cols());
 		state->patterns.matrix = mapper;
-//		cout << state->patterns.matrix << endl;
 		delete[] buffer;
 	}
 }
 
 void BlockParallel::monteCallback(int iter){
-//	cout << iter << '\t' << rank << '\t' << state->patterns.functions(0,0)->toString() << '\n';
 	if(iter/state->interruptRuns%2 == 1){
 		averagePatterns();
 	}else{
@@ -210,24 +206,10 @@ void BlockParallel::monteCallback(int iter){
 }
 
 bool BlockParallel::annealCallback(int iter){
-	if(state->both && iter >= state->annealCutOff*state->MAX_RUNS){
-//		cout << "Before Both\t";
-//		annealPrintCallback(iter);
-		state->both = false;
-//		cout << "After Both\t";
-//		annealPrintCallback(iter);
+	if(state->both){
 		averagePatterns();
-//		cout << "After Avg\t";
-//		annealPrintCallback(iter);
 	}
-	if(state->both && iter/state->interruptRuns%2 == 1){
-		averagePatterns();
-	}else{
-//		if(rank == 1){
-//			cout << iter << '\t' << rank << '\t' << state->coefficients.matrix << endl;
-//		}
-		averageCoefficients();
-	}
+	averageCoefficients();
 	return true;
 }
 

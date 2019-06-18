@@ -3,7 +3,7 @@ CFLAGS=-O3 -c -Wfatal-errors -std=c++11 -I../shared/
 LDFLAGS=-L../shared/ 
 LIBS=-lnmf -lpng
 VPATH = /usr/lib64/openmpi/bin
-LIB_SOURCES=PatternMatching.cpp Distributed.cpp FuncThrow.cpp DistNaive.cpp ParallelFuncThrow.cpp ParallelPatterns.cpp BlockParallel.cpp BlockThrow.cpp
+LIB_SOURCES=PatternMatching.cpp Distributed.cpp FuncThrow.cpp DistNaive.cpp ParallelFuncThrow.cpp ParallelPatterns.cpp BlockParallel.cpp BlockThrow.cpp Centralized.cpp
 SOURCES=$(LIB_SOURCES) main.cpp 
 LIB_OBJECTS=$(LIB_SOURCES:.cpp=.o)
 OBJECTS=$(SOURCES:.cpp=.o)

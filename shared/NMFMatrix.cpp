@@ -49,6 +49,16 @@ void NMFMatrix::calculateSize(){
 	bufferedSize = matrix.size()+rv;
 }
 
+int NMFMatrix::size(Range r){
+	int rv = 0;
+	for(int y = r.rowStart; y <= r.rowEnd; ++y){
+		for(int x = r.colStart; x <= r.colEnd; ++x){
+			rv += functions(y,x)->dataSize();		
+		}
+	}
+	return matrix.size()+rv;
+}
+
 void NMFMatrix::reset(){
 	for(int y =0; y < matrix.rows(); ++y){
         for(int x = 0; x < matrix.cols(); ++x){
