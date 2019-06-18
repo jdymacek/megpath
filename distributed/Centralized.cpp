@@ -64,9 +64,9 @@ void Centralized::run(){
 				int rSiz = received.rowSize();
 				int cSiz = received.colSize();
 				received.rowStart = randY;
-				received.rowEnd = received.rowStart + rSiz;
+				received.rowEnd = received.rowStart + rSiz - 1;
 				received.colStart = randX;
-				received.colEnd = (received.colStart + cSiz;
+				received.colEnd = received.colStart + cSiz - 1;
 				MPI_Send(&received,4,MPI_INT,status.MPI_SOURCE,0,MPI_COMM_WORLD);
 
 				coRec = received;
