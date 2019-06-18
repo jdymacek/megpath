@@ -53,11 +53,11 @@ void Centralized::run(){
 				patRec.rowStart = 0;
 				patRec.rowEnd = state->patterns.rows()-1;
 
-				MPI_Recv(&state->coefficients.recvBuffer[0],state->coefficients.size(coRec),MPI_DOUBLE,status.MPI_SOURCE,1,MPI_COMM_WORLD,&status);
-				state->coefficients.read(&state->coefficients.recvBuffer[0],coRec);
+				MPI_Recv(&state->coefficients.sendBuffer[0],state->coefficients.size(coRec),MPI_DOUBLE,status.MPI_SOURCE,1,MPI_COMM_WORLD,&status);
+				state->coefficients.average(&state->coefficients.sendBuffer[0],coRec);
 
-				MPI_Recv(&state->patterns.recvBuffer[0],state->patterns.size(patRec),MPI_DOUBLE,status.MPI_SOURCE,2,MPI_COMM_WORLD,&status);
-				state->patterns.read(&state->patterns.recvBuffer[0],patRec);
+				MPI_Recv(&state->patterns.sendBuffer[0],state->patterns.size(patRec),MPI_DOUBLE,status.MPI_SOURCE,2,MPI_COMM_WORLD,&status);
+				state->patterns.average(&state->patterns.sendBuffer[0],patRec);
 
 				int randX = rand()%(oexpression.cols()-received.colSize()+1);
 				int randY = rand()%(oexpression.rows()-received.rowSize()+1);

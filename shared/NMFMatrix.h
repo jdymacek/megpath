@@ -30,6 +30,7 @@ class NMFMatrix{
 		int read(double* data, Range r);
 		void write(double* data);
 		int write(double* data, Range r);
+		int average(double* data, Range r);
 		void reset();
 		void write(string filename);
 		void calculateSize();
