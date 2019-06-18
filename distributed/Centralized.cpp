@@ -67,11 +67,13 @@ void Centralized::run(){
 				received.colStart -= (received.colStart - randX);
 				MPI_Send(&received,4,MPI_INT,status.MPI_SOURCE,0,MPI_COMM_WORLD);
 
+				coRec = received;
 				coRec.colStart = 0;
 				coRec.colEnd = state->coefficients.columns()-1;
 				state->coefficients.write(&state->coefficients.sendBuffer[0],coRec);
 				MPI_Send(&state->coefficients.sendBuffer[0],state->coefficients.size(coRec),MPI_DOUBLE,status.MPI_SOURCE,1,MPI_COMM_WORLD);
 
+				patRec = received;
 				patRec.rowStart = 0;
 				patRec.rowEnd = state->patterns.rows()-1;
 				state->patterns.write(&state->patterns.sendBuffer[0],patRec);
