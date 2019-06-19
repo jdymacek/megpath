@@ -54,10 +54,13 @@ void Centralized::run(){
 				patRec.rowEnd = state->patterns.rows()-1;
 
 				MPI_Recv(&state->coefficients.sendBuffer[0],state->coefficients.size(coRec),MPI_DOUBLE,status.MPI_SOURCE,1,MPI_COMM_WORLD,&status);
+
 				state->coefficients.average(&state->coefficients.sendBuffer[0],coRec);
 
 				MPI_Recv(&state->patterns.sendBuffer[0],state->patterns.size(patRec),MPI_DOUBLE,status.MPI_SOURCE,2,MPI_COMM_WORLD,&status);
+				
 				state->patterns.average(&state->patterns.sendBuffer[0],patRec);
+
 
 				int randX = rand()%(oexpression.cols()-received.colSize()+1);
 				int randY = rand()%(oexpression.rows()-received.rowSize()+1);
@@ -100,7 +103,10 @@ void Centralized::run(){
 	}
 }
 
+
 void Centralized::monteCallback(int iter){
+
+
 	MPI_Status status;
 	MPI_Send(&block,4,MPI_INT,0,0,MPI_COMM_WORLD);
 
@@ -118,8 +124,10 @@ void Centralized::monteCallback(int iter){
 	MPI_Recv(&state->patterns.recvBuffer[0],state->patterns.size(),MPI_DOUBLE,status.MPI_SOURCE,2,MPI_COMM_WORLD,&status);
 	state->patterns.read(&state->patterns.recvBuffer[0]);
 
+
 	MatrixXd temp = oexpression.block(block.rowStart, block.colStart, block.rowSize(), block.colSize());
 	state->expression = temp;
+
 }
 
 bool Centralized::annealCallback(int iter){

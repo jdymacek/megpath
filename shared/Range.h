@@ -20,6 +20,11 @@ struct Range{
 			return false;
 		return true;
 	}
+	
+	string toString(){
+		return "{" + to_string(rowStart) + ":" + to_string(rowEnd) + "," + to_string(colStart) + ":" + to_string(colEnd) + "}";
+	}
+
 };
 
 #endif
