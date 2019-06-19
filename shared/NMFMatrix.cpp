@@ -157,7 +157,31 @@ int NMFMatrix::write(double* data, Range r){
 	return rv;
 }
 
+int NMFMatrix::average(double* data, Range r){
+	float a = 0.3333333;
+	int rr = write(recvBuffer,r);
+	for(int i =0; i < rr; ++i){
+		data[i] = data[i]*(1-a) + recvBuffer[i]*a;
+	}
 
+    Map<MatrixXd> mapper(data,r.rowSize(),r.colSize());
+    matrix.block(r.rowStart,r.colStart,r.rowSize(),r.colSize()) = mapper;
+    data += r.rowSize()*r.colSize();
+    int rv = r.rowSize()*r.colSize();
+
+    for(int y = r.rowStart; y <= r.rowEnd; ++y){
+        for(int x = r.colStart; x <= r.colEnd; ++x){
+            functions(y,x)->fromDoubles(data);
+            int s = functions(y,x)->dataSize();
+            data += s;
+            rv += s;
+        }
+    }
+    return rv;
+}
+
+
+/*
 int NMFMatrix::average(double* data, Range r){
 	Map<MatrixXd> mapper(data,r.rowSize(),r.colSize());
 	matrix.block(r.rowStart,r.colStart,r.rowSize(),r.colSize()) = mapper;
@@ -177,7 +201,7 @@ int NMFMatrix::average(double* data, Range r){
 		}
 	}
 	return rv;
-}
+}*/
 
 
 

@@ -8,6 +8,7 @@
 #include "PhaseThreadedMonteAnneal.h"
 #include "FlipThreadedMonteAnneal.h"
 #include "ThreadedMonteAnneal.h"
+#include "Centralized.h"
 #include "DistNaive.h"
 #include "FuncThrow.h"
 #include "ParallelPatterns.h"
@@ -31,7 +32,8 @@ int main(int argc, char** argv){
 					  {"4","pm","PM","PatMatch","PatternMatching"},
 					  {"5","bp","BP","BlocPar","BlockParallel"},
 					  {"6","bt","BT","BlocThrow","BlockThrow"},
-					  {"7","test","Test"}});
+					  {"7","c","C","Centralized","Central"},
+					  {"8","test","Test"}});
 	
 	string al = args.findFlag({{"0","t","T","Threaded"},
 				    {"1","tf","TF","FlipThreaded"},
@@ -69,6 +71,9 @@ int main(int argc, char** argv){
 			a = new BlockThrow();
 			break;
 		case 7:
+			a = new Centralized();
+			break;
+		case 8:
 			a = new Distributed();
 	}
 	a->load(argFile);

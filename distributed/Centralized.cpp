@@ -54,11 +54,9 @@ void Centralized::run(){
 				patRec.rowEnd = state->patterns.rows()-1;
 
 				MPI_Recv(&state->coefficients.sendBuffer[0],state->coefficients.size(coRec),MPI_DOUBLE,status.MPI_SOURCE,1,MPI_COMM_WORLD,&status);
-
 				state->coefficients.average(&state->coefficients.sendBuffer[0],coRec);
 
 				MPI_Recv(&state->patterns.sendBuffer[0],state->patterns.size(patRec),MPI_DOUBLE,status.MPI_SOURCE,2,MPI_COMM_WORLD,&status);
-				
 				state->patterns.average(&state->patterns.sendBuffer[0],patRec);
 
 
@@ -95,10 +93,7 @@ void Centralized::run(){
 		monteCallback(0);
 		error = algorithm->anneal();
 		annealCallback(0);
-		block.rowStart = -1;
-		block.rowEnd = -1;
-		block.colStart = -1;
-		block.colEnd = -1;
+		block = {-1,-1,-1,-1};
 		MPI_Send(&block,4,MPI_INT,0,0,MPI_COMM_WORLD);
 	}
 }
