@@ -10,8 +10,6 @@
 #include <fstream>
 #include "../../Eigen/Core"
 #include "ProbFunc.h"
-#include "PiecewisePF.h"
-#include "WeightedPF.h"
 #include "FixedPF.h"
 #include "PointerSupport.h"
 #include "Range.h"
@@ -25,12 +23,12 @@ class NMFMatrix{
 	public:
 		NMFMatrix();
 		~NMFMatrix();
-		NMFMatrix(int rowss, int cols);
+		NMFMatrix(int rowss, int cols,ProbFunc* p);
 		void read(double* data);
 		int read(double* data, Range r);
 		void write(double* data);
 		int write(double* data, Range r);
-		int average(double* data, Range r);
+		int average(double* data, Range r, double alpha);
 		void reset();
 		void write(string filename);
 		void calculateSize();
@@ -51,6 +49,8 @@ class NMFMatrix{
 		int columns(){return matrix.cols();};
 		MatrixXd matrix;
 		MatrixXp functions;
+
+		ProbFunc* prototype;
 };
 
 #endif

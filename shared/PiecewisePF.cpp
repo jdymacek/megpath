@@ -16,6 +16,15 @@ PiecewisePF::PiecewisePF(){
 	uniform = new UniformPF();
 }
 
+ProbFunc* PiecewisePF::copy(){
+	PiecewisePF* rv = new PiecewisePF();
+	rv->total = total;
+	for(int i =0; i < SIZE; ++i){
+		rv->weights[i] = weights[i]; 
+	}
+	return rv;
+}
+
 void PiecewisePF::reset(){
 	total = SIZE;
 	for(int i =0; i < SIZE; ++i){

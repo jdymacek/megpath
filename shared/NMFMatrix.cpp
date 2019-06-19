@@ -7,6 +7,7 @@
 
 NMFMatrix::NMFMatrix(){
 	calculateSize();
+	prototype = NULL;
 	sendBuffer = NULL;
 	recvBuffer = NULL;
 }
@@ -25,13 +26,15 @@ NMFMatrix::~NMFMatrix(){
 	}
 }
 
-NMFMatrix::NMFMatrix(int rowss, int cols){
+NMFMatrix::NMFMatrix(int rowss, int cols, ProbFunc* p = NULL){
+	prototype = p;
+
 	matrix = MatrixXd::Zero(matrix.rows(),matrix.cols());
 	functions = MatrixXp(matrix.rows(),matrix.cols());
 
 	for(int i =0; i < matrix.rows(); ++i){
 		for(int j =0; j < matrix.cols(); ++j){
-			functions(i,j) = new WeightedPF();
+			functions(i,j) = prototype->copy();
 		}
 	}	
 	calculateSize();
@@ -157,11 +160,10 @@ int NMFMatrix::write(double* data, Range r){
 	return rv;
 }
 
-int NMFMatrix::average(double* data, Range r){
-	float a = 0.3333333;
+int NMFMatrix::average(double* data, Range r, double alpha = 0.5){
 	int rr = write(recvBuffer,r);
 	for(int i =0; i < rr; ++i){
-		data[i] = data[i]*(1-a) + recvBuffer[i]*a;
+		data[i] = data[i]*(1-alpha) + recvBuffer[i]*alpha;
 	}
 
     Map<MatrixXd> mapper(data,r.rowSize(),r.colSize());
@@ -181,31 +183,8 @@ int NMFMatrix::average(double* data, Range r){
 }
 
 
-/*
-int NMFMatrix::average(double* data, Range r){
-	Map<MatrixXd> mapper(data,r.rowSize(),r.colSize());
-	matrix.block(r.rowStart,r.colStart,r.rowSize(),r.colSize()) = mapper;
-	data += r.rowSize()*r.colSize();
-	int rv = r.rowSize()*r.colSize();
-
-	for(int y = r.rowStart; y <= r.rowEnd; ++y){
-		for(int x = r.colStart; x <= r.colEnd; ++x){
-			functions(y,x)->toDoubles(recvBuffer);
-            int s = functions(y,x)->dataSize();
-            for(int i = 0; i < s; i++){
-                recvBuffer[i] = recvBuffer[i]*0.9+data[i]*0.1;
-            }
-			functions(y,x)->fromDoubles(recvBuffer);
-			data += s;
-			rv += s;
-		}
-	}
-	return rv;
-}*/
-
-
-
 void NMFMatrix::resize(int newRows, int newCols){
+
 	for(int i =0; i < matrix.rows(); ++i){
 		for(int j =0; j < matrix.cols(); ++j){
 			delete functions(i,j);
@@ -216,7 +195,7 @@ void NMFMatrix::resize(int newRows, int newCols){
 	functions = MatrixXp(newRows,newCols);
 	for(int i =0; i < matrix.rows(); ++i){
 		for(int j =0; j < matrix.cols(); ++j){
-			functions(i,j) = new WeightedPF();
+			functions(i,j) = prototype->copy();
 		}
 	}
 	calculateSize();

@@ -39,6 +39,7 @@ void Centralized::run(){
 
 	if(rank == 0){
 		int workingSize = systemSize-1;
+		int runs = 0;
 		while(workingSize > 0){
 			MPI_Status status;
 			Range received;
@@ -54,10 +55,10 @@ void Centralized::run(){
 				patRec.rowEnd = state->patterns.rows()-1;
 
 				MPI_Recv(&state->coefficients.sendBuffer[0],state->coefficients.size(coRec),MPI_DOUBLE,status.MPI_SOURCE,1,MPI_COMM_WORLD,&status);
-				state->coefficients.average(&state->coefficients.sendBuffer[0],coRec);
+				state->coefficients.average(&state->coefficients.sendBuffer[0],coRec,0.25);
 
 				MPI_Recv(&state->patterns.sendBuffer[0],state->patterns.size(patRec),MPI_DOUBLE,status.MPI_SOURCE,2,MPI_COMM_WORLD,&status);
-				state->patterns.average(&state->patterns.sendBuffer[0],patRec);
+				state->patterns.average(&state->patterns.sendBuffer[0],patRec,0.25);
 
 
 				int randX = rand()%(oexpression.cols()-received.colSize()+1);
@@ -81,6 +82,12 @@ void Centralized::run(){
 				patRec.rowEnd = state->patterns.rows()-1;
 				state->patterns.write(&state->patterns.sendBuffer[0],patRec);
 				MPI_Send(&state->patterns.sendBuffer[0],state->patterns.size(patRec),MPI_DOUBLE,status.MPI_SOURCE,2,MPI_COMM_WORLD);
+			}
+			runs += 1;
+			if(runs % 10 == 0){
+				ErrorFunctionRow efRow(state);
+				error = efRow.error();
+				cout << "Current Error: " << error/state->expression.size() << endl;
 			}
 		}
 		ErrorFunctionRow efRow(state);

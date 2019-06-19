@@ -19,6 +19,10 @@ WeightedPF::WeightedPF(double mu,double sd){
 	dist = normal_distribution<double>(mean,sd);
 }
 
+ProbFunc* WeightedPF::copy(){
+	return new WeightedPF(mean,sqrt(variance));
+}
+
 double WeightedPF::random(){
 	double rando = dist(generator);
 	while(rando < 0.0 || rando > 1.0){

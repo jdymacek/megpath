@@ -14,6 +14,8 @@
 #include "NMFMatrix.h"
 #include "../../Eigen/Core"
 #include "ShiftPF.h"
+#include "WeightedPF.h"
+#include "PiecewisePF.h"
 #include "PNG.h"
 
 using namespace std;

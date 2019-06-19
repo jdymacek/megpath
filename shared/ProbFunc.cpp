@@ -8,6 +8,14 @@ mt19937_64 ProbFunc::generator;
 
 ProbFunc::~ProbFunc(){}
 
+double ProbFunc::random(){
+	return 0;
+}
+
+string ProbFunc::toString(){
+	return "silly this does not work!";
+}
+
 int ProbFunc::size(){
 	return 1;
 }
@@ -39,4 +47,8 @@ vector<double> ProbFunc::getVector(){
 }
 
 void ProbFunc::setVector(vector<double> vec){
+}
+
+ProbFunc* ProbFunc::copy(){
+	return new ProbFunc();
 }

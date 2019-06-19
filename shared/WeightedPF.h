@@ -24,6 +24,7 @@ class WeightedPF: public ProbFunc{
 		string toString();
 		void toDoubles(double* buffer);
 		void fromDoubles(double* buffer);
+		ProbFunc* copy();
 		int dataSize();
 	private:
 		normal_distribution<double> dist;

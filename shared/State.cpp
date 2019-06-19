@@ -396,9 +396,11 @@ bool State::load(string argFileName){
 
 	normalize();
 
+	patterns.prototype = new WeightedPF();
 	//should be PATTERNS and COLUMNS
 	patterns.resize(PATTERNS,COLUMNS);
 	//should be ROWS and PATTERNS
+	coefficients.prototype = new WeightedPF();
 	coefficients.resize(ROWS,PATTERNS);
 
 

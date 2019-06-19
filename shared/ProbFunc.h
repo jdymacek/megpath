@@ -21,10 +21,10 @@ struct Entry{
 class ProbFunc{
 	public:
 		virtual ~ProbFunc();
-		virtual double random() = 0;
+		virtual double random();
 		virtual int dataSize();
 		virtual void addObservation(double d){ };
-		virtual string toString() = 0;
+		virtual string toString();
 		virtual int size();
 		virtual Entry getEntry(int i);
 		virtual vector<double> getVector();
@@ -32,6 +32,7 @@ class ProbFunc{
 		virtual void toDoubles(double* buffer);
 		virtual void fromDoubles(double* buffer);
 		virtual void reset();
+		virtual ProbFunc* copy();
 		static mt19937_64 generator;
 };
 
