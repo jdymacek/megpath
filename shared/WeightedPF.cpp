@@ -7,15 +7,15 @@
 
 WeightedPF::WeightedPF(){
 	mean = 0.5;
-	variance = 0.01;
-	alpha = 0.001;
+	variance = 0.0064;
+	alpha = 0.00075;
 	dist = normal_distribution<double>(0.5,0.1);
 }
 
 WeightedPF::WeightedPF(double mu,double sd){
 	mean = mu;
 	variance = sd*sd;
-	alpha = 0.001;
+	alpha = 0.00075;
 	dist = normal_distribution<double>(mean,sd);
 }
 

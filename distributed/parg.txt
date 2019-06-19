@@ -1,10 +1,10 @@
 analysis = "png"
-max_runs = 50000;
-png_filename = "spect15.png"
+max_runs = 250000;
+png_filename = "merge.png"
 png_origin = [0,0]
-png_patterns = ["","",""]
+png_patterns = ["","","","","","","","","","","","","","","","","","","","","",""]
 png_directory = ""
 stats = "all"
 print_runs = 1000
-interrupt_runs = 100
-distribution = "2*4"
+interrupt_runs = 25
+distribution = "3*9"

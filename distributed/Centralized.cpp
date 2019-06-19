@@ -18,7 +18,33 @@ void Centralized::start(){
 	if(rank == 0){
 
 	}else{
-		block = state->getRange(rank-1);
+		vector<int> parse;
+
+		int push = 0;
+		for(int i = 0; i<state->dist.size(); i++){
+			if(state->dist[i] >= '0' && state->dist[i] <= '9'){
+				push = push*10 + state->dist[i]-'0';
+			}
+
+			if(state->dist[i] == '+' || i == state->dist.size()-1){
+				if(push == 0)
+					push = 1;
+				parse.push_back(push);
+				push = 0;
+				if(parse.size()%2 == 1)
+					parse.push_back(1);
+			}else if(state->dist[i] == '*' || state->dist[i] == 'x'){
+				if(push == 0)
+					push = 1;
+				parse.push_back(push);
+				push = 0;
+			}
+		}
+		int distSize = 0;
+		for(int i = 0; i< parse.size(); i+=2){
+			distSize += (parse[i]*parse[i+1]);
+		}
+		block = state->getRange((rank-1)%distSize);
 
 		if(block.isValid()){
 			state->patterns.resize(state->patterns.rows(), block.colSize());
@@ -40,6 +66,7 @@ void Centralized::run(){
 	if(rank == 0){
 		int workingSize = systemSize-1;
 		int runs = 0;
+		//		MatrixXd touch = MatrixXd::Zero(oexpression.rows(),oexpression.cols());
 		while(workingSize > 0){
 			MPI_Status status;
 			Range received;
@@ -47,6 +74,9 @@ void Centralized::run(){
 			if(received.rowStart == -1){
 				workingSize--;
 			}else{
+				//				MatrixXd add = MatrixXd::Constant(received.rowSize(),received.colSize(),1);
+				//				MatrixXd newB = touch.block(received.rowStart,received.colStart,received.rowSize(),received.colSize());
+				//				touch.block(received.rowStart,received.colStart,received.rowSize(),received.colSize()) = newB + add;
 				Range coRec = received;
 				coRec.colStart = 0;
 				coRec.colEnd = state->coefficients.columns()-1;
@@ -84,7 +114,7 @@ void Centralized::run(){
 				MPI_Send(&state->patterns.sendBuffer[0],state->patterns.size(patRec),MPI_DOUBLE,status.MPI_SOURCE,2,MPI_COMM_WORLD);
 			}
 			runs += 1;
-			if(runs % 10 == 0){
+			if(runs % 100 == 0){
 				ErrorFunctionRow efRow(state);
 				error = efRow.error();
 				cout << "Current Error: " << error/state->expression.size() << endl;
@@ -94,6 +124,22 @@ void Centralized::run(){
 		error = efRow.error();
 
 		cout << "Final Error: " << error/state->expression.size() << endl;
+		//		cout << touch << endl;
+		MatrixXd diff = oexpression - state->coefficients.matrix*state->patterns.matrix;
+		diff = diff.cwiseAbs();
+		diff *= 255;
+
+		Image* vis = createImage(oexpression.cols(),oexpression.rows());
+		for(int i = 0; i < vis->height; i++){
+			for(int j = 0; j < vis->width; j++){
+				int spot = (int)diff(i,j);
+				vis->data[i*vis->width*4+j*4] = spot;
+				vis->data[i*vis->width*4+j*4+1] = spot;
+				vis->data[i*vis->width*4+j*4+2] = spot;
+				vis->data[i*vis->width*4+j*4+3] = 255;
+			}
+		}
+		writePng("vis.png",vis);
 	}else{
 		algorithm->setObserver(this);
 		algorithm->monteCarlo();
