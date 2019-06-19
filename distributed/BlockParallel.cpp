@@ -173,6 +173,9 @@ void BlockParallel::run(){
 
 	gatherPatterns();
 	gatherCoefficients();
+	if(rank == 0){
+		state->errorToPNG();
+	}
 }
 
 void BlockParallel::gatherPatterns(){

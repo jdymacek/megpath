@@ -59,6 +59,24 @@ void State::reset()
   }
   return rv;
   }*/
+void State::errorToPNG(){
+		MatrixXd diff = expression - coefficients.matrix*patterns.matrix;
+		diff = diff.cwiseAbs();
+		diff *= 255;
+
+		Image* vis = createImage(patterns.columns(),coefficients.rows());
+		for(int i = 0; i < vis->height; i++){
+			for(int j = 0; j < vis->width; j++){
+				int spot = (int)diff(i,j);
+				vis->data[i*vis->width*4+j*4] = spot;
+				vis->data[i*vis->width*4+j*4+1] = spot;
+				vis->data[i*vis->width*4+j*4+2] = spot;
+				vis->data[i*vis->width*4+j*4+3] = 255;
+			}
+		}
+		writePng("vis.png",vis);
+}
+
 Range State::getRange(int rank){
 	Range r;
 	vector<int> parse;
@@ -448,9 +466,9 @@ bool State::load(string argFileName){
 
 	if(img){
 		if(COLUMNS == png->width*3){
-			MXdToPng(expression,ROWS,COLUMNS,false,"return.png");
+			MXdToPNG(expression,ROWS,COLUMNS,false,"return.png");
 		}else if(COLUMNS == png->width){
-			MXdToPng(expression,ROWS,COLUMNS,true,"return.png");
+			MXdToPNG(expression,ROWS,COLUMNS,true,"return.png");
 		}else{
 			cout << "expression-to-PNG failed" << endl;
 			return true;
@@ -555,7 +573,7 @@ vector<vector<Value> > State::pixlToVal(Image* png, bool& gray){
 	}
 }
 
-void State::MXdToPng(MatrixXd mat, int r, int c, bool g, const char* name){
+void State::MXdToPNG(MatrixXd mat, int r, int c, bool g, const char* name){
 	Image* ret;
 	if(!g){
 		ret = createImage(c/3, r);

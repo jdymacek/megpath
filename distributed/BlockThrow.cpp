@@ -81,8 +81,10 @@ void BlockThrow::run(){
 
 	gatherPatterns();
 	gatherCoefficients();
+	if(rank == 0){
+		state->errorToPNG();
+	}
 }
-
 
 void BlockThrow::throwPatterns(){
 	int commSize = shareSet.groupSize();

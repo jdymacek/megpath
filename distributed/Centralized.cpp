@@ -66,7 +66,6 @@ void Centralized::run(){
 	if(rank == 0){
 		int workingSize = systemSize-1;
 		int runs = 0;
-		//		MatrixXd touch = MatrixXd::Zero(oexpression.rows(),oexpression.cols());
 		while(workingSize > 0){
 			MPI_Status status;
 			Range received;
@@ -74,9 +73,6 @@ void Centralized::run(){
 			if(received.rowStart == -1){
 				workingSize--;
 			}else{
-				//				MatrixXd add = MatrixXd::Constant(received.rowSize(),received.colSize(),1);
-				//				MatrixXd newB = touch.block(received.rowStart,received.colStart,received.rowSize(),received.colSize());
-				//				touch.block(received.rowStart,received.colStart,received.rowSize(),received.colSize()) = newB + add;
 				Range coRec = received;
 				coRec.colStart = 0;
 				coRec.colEnd = state->coefficients.columns()-1;
@@ -91,10 +87,20 @@ void Centralized::run(){
 				state->patterns.average(&state->patterns.sendBuffer[0],patRec,0.25);
 
 
-				int randX = rand()%(oexpression.cols()-received.colSize()+1);
-				int randY = rand()%(oexpression.rows()-received.rowSize()+1);
 				int rSiz = received.rowSize();
 				int cSiz = received.colSize();
+				int xRange = oexpression.cols()-cSiz+1;
+				int yRange = oexpression.rows()-rSiz+1;
+//				int randX = rand()%xRange;
+//				int randY = rand()%yRange;								
+				int randX = (rand()%xRange)*(rand()%xRange)/xRange;
+				if(rand()%2 == 0){
+					randX = xRange-randX-1;
+				}
+				int randY = (rand()%yRange)*(rand()%yRange)/yRange;
+				if(rand()%2 == 0){
+					randY = yRange-randY-1;
+				}
 				received.rowStart = randY;
 				received.rowEnd = received.rowStart + rSiz - 1;
 				received.colStart = randX;
@@ -114,7 +120,7 @@ void Centralized::run(){
 				MPI_Send(&state->patterns.sendBuffer[0],state->patterns.size(patRec),MPI_DOUBLE,status.MPI_SOURCE,2,MPI_COMM_WORLD);
 			}
 			runs += 1;
-			if(runs % 100 == 0){
+			if(runs % 1000 == 0){
 				ErrorFunctionRow efRow(state);
 				error = efRow.error();
 				cout << "Current Error: " << error/state->expression.size() << endl;
@@ -124,22 +130,7 @@ void Centralized::run(){
 		error = efRow.error();
 
 		cout << "Final Error: " << error/state->expression.size() << endl;
-		//		cout << touch << endl;
-		MatrixXd diff = oexpression - state->coefficients.matrix*state->patterns.matrix;
-		diff = diff.cwiseAbs();
-		diff *= 255;
-
-		Image* vis = createImage(oexpression.cols(),oexpression.rows());
-		for(int i = 0; i < vis->height; i++){
-			for(int j = 0; j < vis->width; j++){
-				int spot = (int)diff(i,j);
-				vis->data[i*vis->width*4+j*4] = spot;
-				vis->data[i*vis->width*4+j*4+1] = spot;
-				vis->data[i*vis->width*4+j*4+2] = spot;
-				vis->data[i*vis->width*4+j*4+3] = 255;
-			}
-		}
-		writePng("vis.png",vis);
+		state->errorToPNG();
 	}else{
 		algorithm->setObserver(this);
 		algorithm->monteCarlo();
