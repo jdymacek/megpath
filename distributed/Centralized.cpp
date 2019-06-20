@@ -66,6 +66,7 @@ void Centralized::run(){
 	if(rank == 0){
 		int workingSize = systemSize-1;
 		int runs = 0;
+		int indexOne = 1000;
 		while(workingSize > 0){
 			MPI_Status status;
 			Range received;
@@ -79,32 +80,49 @@ void Centralized::run(){
 				Range patRec = received;
 				patRec.rowStart = 0;
 				patRec.rowEnd = state->patterns.rows()-1;
+				if(status.MPI_SOURCE == 1){
+					string out = "centralpat/debug" + to_string(indexOne) + ".png";
+					state->unshufflePC();
+					state->MXdToPNG(state->patterns.matrix,state->patterns.rows(),state->patterns.columns(),false,out.c_str());
+//					state->MXdToPNG(state->coefficients.matrix,state->coefficients.rows(),state->coefficients.columns(),true,out.c_str());
+					state->reshufflePC();
+					++indexOne;
+				}
 
 				MPI_Recv(&state->coefficients.sendBuffer[0],state->coefficients.size(coRec),MPI_DOUBLE,status.MPI_SOURCE,1,MPI_COMM_WORLD,&status);
 				state->coefficients.average(&state->coefficients.sendBuffer[0],coRec,0.25);
 
 				MPI_Recv(&state->patterns.sendBuffer[0],state->patterns.size(patRec),MPI_DOUBLE,status.MPI_SOURCE,2,MPI_COMM_WORLD,&status);
 				state->patterns.average(&state->patterns.sendBuffer[0],patRec,0.25);
-
+				if(status.MPI_SOURCE == 1){
+					string out = "centralpat/debug" + to_string(indexOne) + ".png";
+					state->unshufflePC();
+					state->MXdToPNG(state->patterns.matrix,state->patterns.rows(),state->patterns.columns(),false,out.c_str());
+//					state->MXdToPNG(state->coefficients.matrix,state->coefficients.rows(),state->coefficients.columns(),true,out.c_str());
+					state->reshufflePC();
+					++indexOne;
+				}
 
 				int rSiz = received.rowSize();
 				int cSiz = received.colSize();
-				int xRange = oexpression.cols()-cSiz+1;
-				int yRange = oexpression.rows()-rSiz+1;
-//				int randX = rand()%xRange;
-//				int randY = rand()%yRange;								
-				int randX = (rand()%xRange)*(rand()%xRange)/xRange;
-				if(rand()%2 == 0){
-					randX = xRange-randX-1;
+				int xRange = oexpression.cols()+cSiz;
+				int yRange = oexpression.rows()+rSiz;
+				int randX = rand()%xRange - cSiz;
+				if(randX < 0){
+					randX = 0;
+				}else if(randX > oexpression.cols()-cSiz){
+					randX = oexpression.cols()-cSiz;
 				}
-				int randY = (rand()%yRange)*(rand()%yRange)/yRange;
-				if(rand()%2 == 0){
-					randY = yRange-randY-1;
+				int randY = rand()%yRange - rSiz;
+				if(randY < 0){
+					randY = 0;
+				}else if(randY > oexpression.rows()-rSiz){
+					randY = oexpression.rows()-rSiz;
 				}
 				received.rowStart = randY;
-				received.rowEnd = received.rowStart + rSiz - 1;
+				received.rowEnd = randY + rSiz - 1;
 				received.colStart = randX;
-				received.colEnd = received.colStart + cSiz - 1;
+				received.colEnd = randX + cSiz - 1;
 				MPI_Send(&received,4,MPI_INT,status.MPI_SOURCE,0,MPI_COMM_WORLD);
 
 				coRec = received;

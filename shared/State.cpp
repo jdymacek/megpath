@@ -413,6 +413,15 @@ bool State::load(string argFileName){
 	}
 
 	normalize();
+//	PermutationMatrix<Dynamic> rPerm(tot.rows());
+//	PermutationMatrix<Dynamic> cPerm(tot.cols());
+	rPerm = PermutationMatrix<Dynamic>(expression.rows());
+	cPerm = PermutationMatrix<Dynamic>(expression.cols());
+	rPerm.setIdentity();
+	cPerm.setIdentity();
+	random_shuffle(rPerm.indices().data(),rPerm.indices().data()+rPerm.indices().size());
+	random_shuffle(cPerm.indices().data(),cPerm.indices().data()+cPerm.indices().size());
+	expression = rPerm * expression * cPerm;
 
 	patterns.prototype = new WeightedPF();
 	//should be PATTERNS and COLUMNS
@@ -541,6 +550,16 @@ void State::normalize(){
 	double min = expression.minCoeff();
 	expression = expression.array() - min;
 	expression = expression/(max-min);
+}
+
+void State::unshufflePC(){
+	coefficients.matrix = rPerm.inverse() * coefficients.matrix;
+	patterns.matrix = patterns.matrix * cPerm.inverse();
+}
+
+void State::reshufflePC(){
+	coefficients.matrix = rPerm * coefficients.matrix;
+	patterns.matrix = patterns.matrix * cPerm;
 }
 
 vector<vector<Value> > State::pixlToVal(Image* png, bool& gray){

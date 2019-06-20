@@ -58,11 +58,15 @@ class State{
 		void reset();
 		void MXdToPNG(MatrixXd mat, int r, int c, bool g, const char* name);
 		void errorToPNG();
+		void unshufflePC();
+		void reshufflePC();
 
 	protected:
 		void normalize();
 		void normalizeMatrix(MatrixXd& mat);
 		vector<vector<Value> > pixlToVal(Image* png, bool& gray);
+		PermutationMatrix<Dynamic> rPerm;
+		PermutationMatrix<Dynamic> cPerm;
 };
 
 #endif
