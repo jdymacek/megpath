@@ -296,6 +296,7 @@ void Analysis::outputAll(){
     fout << "#Total_error : " << efRow.error() << endl;
     fout << "#Total_running_time : " << ttime << endl;
 
+	state->unshufflePC();
     if(state->img){
 	    state->MXdToPNG(state->patterns.matrix,state->patterns.rows(),state->patterns.columns(),state->gray,"result.png");
     }else{
