@@ -42,6 +42,7 @@ class State{
 		vector<string> ids;
 		int printRuns;
 		int interruptRuns;
+		int zeroes;
 		double annealCutOff;
 		double errorAvg;
 		double errorCount;
@@ -62,11 +63,13 @@ class State{
 		void reshufflePC();
 
 	protected:
+		PermutationMatrix<Dynamic> rPerm;
+		PermutationMatrix<Dynamic> cPerm;
+		PermutationMatrix<Dynamic> zCol;
 		void normalize();
 		void normalizeMatrix(MatrixXd& mat);
 		vector<vector<Value> > pixlToVal(Image* png, bool& gray);
-		PermutationMatrix<Dynamic> rPerm;
-		PermutationMatrix<Dynamic> cPerm;
+		void sortZero();
 };
 
 #endif

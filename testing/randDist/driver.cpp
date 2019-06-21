@@ -18,29 +18,25 @@ void shuffleExpression(MatrixXd& tot){
 	cout << tot << endl << endl;	
 }
 
-void sortZero(MatrixXd& tot){
+int sortZero(MatrixXd& tot){
 	PermutationMatrix<Dynamic> cPerm(tot.cols());
 	cPerm.setIdentity();
 	int i = 0;
 	int j = tot.cols()-1;
 	int zeroes = 0;
 	while(i < j){
-		while(i < tot.cols() && tot.col(i).sum() != 0){	
+		while(i < j && tot.col(i).sum() != 0){	
 			i++;
-			cout << "i\t" << i << endl;
 		}
-		while(j > 0 && tot.col(j).sum() == 0){	
+		while(j >= i && tot.col(j).sum() == 0){	
+			if(j < i)
+				zeroes--;
 			j--;
 			zeroes++;
-			cout << "j\t" << j << endl;
-//			if(j < i)
-//				zeroes--;
-			cout << "0\t" << zeroes << endl;
 		}
 		if(i < j){
 			swap(cPerm.indices().data()[i],cPerm.indices().data()[j]);
 			zeroes++;
-			cout << "0\t" << zeroes << endl;
 		}
 		i++;
 		j--;
@@ -49,7 +45,7 @@ void sortZero(MatrixXd& tot){
 		}
 	}
 	tot = tot * cPerm;
-	cout << tot << endl << zeroes << endl;
+	return zeroes;
 }
 
 int main(int argc, char* argv[]){
@@ -70,7 +66,11 @@ int main(int argc, char* argv[]){
 		}
 	}
 	cout << total << endl << endl;
-	sortZero(total);
+	int z = sortZero(total);
+
+	MatrixXd t = total.block(0,0,total.rows(),total.cols()-z);
+	cout << t << endl << z << endl;
+
 /*	MatrixXd add = MatrixXd::Constant(atoi(argv[4]),atoi(argv[3]),1);
 	int xRange = total.cols()+add.cols()+1;
 	int yRange = total.rows()+add.rows()+1;

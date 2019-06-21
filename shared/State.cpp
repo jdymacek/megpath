@@ -413,8 +413,10 @@ bool State::load(string argFileName){
 	}
 
 	normalize();
-//	PermutationMatrix<Dynamic> rPerm(tot.rows());
-//	PermutationMatrix<Dynamic> cPerm(tot.cols());
+	sortZero();
+	MatrixXd temp = expression.block(0,0,expression.rows(),expression.cols()-zeroes);
+	expression = temp;
+	
 	rPerm = PermutationMatrix<Dynamic>(expression.rows());
 	cPerm = PermutationMatrix<Dynamic>(expression.cols());
 	rPerm.setIdentity();
@@ -483,8 +485,36 @@ bool State::load(string argFileName){
 			return true;
 		}
 	}
-
 	return true;
+}
+
+void State::sortZero(){
+	zCol = PermutationMatrix<Dynamic>(expression.cols());
+	zCol.setIdentity();
+	int i = 0;
+	int j = expression.cols()-1;
+	zeroes = 0;
+	while(i < j){
+		while(i < j && expression.col(i).sum() != 0){	
+			i++;
+		}
+		while(j >= i && expression.col(j).sum() == 0){	
+			if(j < i)
+				zeroes--;
+			j--;
+			zeroes++;
+		}
+		if(i < j){
+			swap(zCol.indices().data()[i],zCol.indices().data()[j]);
+			zeroes++;
+		}
+		i++;
+		j--;
+		if(i == j && expression.col(j).sum() == 0){
+			zeroes++;
+		}
+	}
+	expression = expression * zCol;
 }
 
 void State::normalizeMatrix(MatrixXd& mat){
@@ -555,11 +585,16 @@ void State::normalize(){
 void State::unshufflePC(){
 	coefficients.matrix = rPerm.inverse() * coefficients.matrix;
 	patterns.matrix = patterns.matrix * cPerm.inverse();
+	patterns.matrix.conservativeResize(patterns.rows(),patterns.columns()+zeroes);
+	patterns.matrix = patterns.matrix * zCol.inverse();
 }
 
 void State::reshufflePC(){
 	coefficients.matrix = rPerm * coefficients.matrix;
 	patterns.matrix = patterns.matrix * cPerm;
+	patterns.matrix = patterns.matrix * zCol;
+	MatrixXd temp = patterns.matrix.block(0,0,patterns.rows(),patterns.columns()-zeroes);
+	patterns.matrix = temp;
 }
 
 vector<vector<Value> > State::pixlToVal(Image* png, bool& gray){
