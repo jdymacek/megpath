@@ -116,7 +116,7 @@ void MonteAnneal::annealStep(NMFMatrix& m, double t,ErrorFunction* ef, Range r){
 				state->errorAvg += error - olderror;
 				state->errorCount++;
 			}else{
-				function->addObservation(r);
+//				function->addObservation(r);
 			}
 		}
 	}

@@ -163,7 +163,7 @@ int NMFMatrix::write(double* data, Range r){
 int NMFMatrix::average(double* data, Range r, double alpha = 0.5){
 	int rr = write(recvBuffer,r);
 	for(int i =0; i < rr; ++i){
-		data[i] = data[i]*(1-alpha) + recvBuffer[i]*alpha;
+		data[i] = data[i]*alpha + recvBuffer[i]*(1-alpha);
 	}
 
     Map<MatrixXd> mapper(data,r.rowSize(),r.colSize());
