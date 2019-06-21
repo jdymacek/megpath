@@ -1,7 +1,7 @@
 #test argument file
 analysis = "png"
 max_runs = 25000;
-png_filename = "rr.png"
+png_filename = "merge.png"
 png_origin = [0,0]
 png_directory = ""
 png_patterns = ["","",""]

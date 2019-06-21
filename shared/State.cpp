@@ -426,12 +426,10 @@ bool State::load(string argFileName){
 	expression = rPerm * expression * cPerm;
 
 	patterns.prototype = new WeightedPF();
-	//should be PATTERNS and COLUMNS
-	patterns.resize(PATTERNS,COLUMNS);
-	//should be ROWS and PATTERNS
-	coefficients.prototype = new WeightedPF();
-	coefficients.resize(ROWS,PATTERNS);
+	patterns.resize(PATTERNS,expression.cols());
 
+	coefficients.prototype = new WeightedPF();
+	coefficients.resize(expression.rows(),PATTERNS);
 
 	int numPatterns = 0;
 	for(int i = 0; i < patternArgs.size(); ++i){
@@ -467,23 +465,8 @@ bool State::load(string argFileName){
 		}
 	}
 
-
 	if(numPatterns == patternArgs.size()){
 		both = false;
-	}
-
-	//	string print = args.toString();
-	//	cout << print << endl;
-
-	if(img){
-		if(COLUMNS == png->width*3){
-			MXdToPNG(expression,ROWS,COLUMNS,false,"return.png");
-		}else if(COLUMNS == png->width){
-			MXdToPNG(expression,ROWS,COLUMNS,true,"return.png");
-		}else{
-			cout << "expression-to-PNG failed" << endl;
-			return true;
-		}
 	}
 	return true;
 }
@@ -587,6 +570,9 @@ void State::unshufflePC(){
 	patterns.matrix = patterns.matrix * cPerm.inverse();
 	patterns.matrix.conservativeResize(patterns.rows(),patterns.columns()+zeroes);
 	patterns.matrix = patterns.matrix * zCol.inverse();
+	expression = rPerm.inverse() * expression * cPerm.inverse();
+	expression.conservativeResize(expression.rows(),expression.cols()+zeroes);
+	expression = expression * zCol.inverse();
 }
 
 void State::reshufflePC(){
@@ -595,6 +581,10 @@ void State::reshufflePC(){
 	MatrixXd temp = patterns.matrix.block(0,0,patterns.rows(),patterns.columns()-zeroes);
 	patterns.matrix = temp;
 	patterns.matrix = patterns.matrix * cPerm;
+	expression = expression * zCol;
+	temp = expression.block(0,0,expression.rows(),expression.cols()-zeroes);
+	expression = temp;
+	expression = rPerm * expression * cPerm;
 }
 
 vector<vector<Value> > State::pixlToVal(Image* png, bool& gray){

@@ -88,12 +88,11 @@ void Centralized::run(){
 					state->reshufflePC();
 					++indexOne;
 				}
-				double a = rand()%51/1000.0 + 0.05;
 				MPI_Recv(&state->coefficients.sendBuffer[0],state->coefficients.size(coRec),MPI_DOUBLE,status.MPI_SOURCE,1,MPI_COMM_WORLD,&status);
-				state->coefficients.average(&state->coefficients.sendBuffer[0],coRec,a);
+				state->coefficients.average(&state->coefficients.sendBuffer[0],coRec,0.09);
 
 				MPI_Recv(&state->patterns.sendBuffer[0],state->patterns.size(patRec),MPI_DOUBLE,status.MPI_SOURCE,2,MPI_COMM_WORLD,&status);
-				state->patterns.average(&state->patterns.sendBuffer[0],patRec,a);
+				state->patterns.average(&state->patterns.sendBuffer[0],patRec,0.09);
 				if(status.MPI_SOURCE == 1){
 					string out = "centralpat/debug" + to_string(indexOne) + ".png";
 					state->unshufflePC();
