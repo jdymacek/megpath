@@ -10,6 +10,8 @@ public:
 	void run();
 	void monteCallback(int iter);
 	bool annealCallback(int iter);
+protected:
+	MPI_Comm waitC;
 };
 
 #endif

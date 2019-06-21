@@ -34,8 +34,9 @@ double WeightedPF::random(){
 void WeightedPF::addObservation(double obs){
 	double diff = obs-mean;
 	double incr = alpha*diff;
-	mean = mean + incr;
-	variance = (1-alpha)*(variance+diff*incr);
+	mean = mean + incr;	
+	variance = 0.01;
+//	variance = (1-alpha)*(variance+diff*incr);
 	dist = normal_distribution<double>(mean,sqrt(variance));
 }
 

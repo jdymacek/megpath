@@ -19,7 +19,6 @@ void Centralized::start(){
 
 	}else{
 		vector<int> parse;
-
 		int push = 0;
 		for(int i = 0; i<state->dist.size(); i++){
 			if(state->dist[i] >= '0' && state->dist[i] <= '9'){
@@ -57,6 +56,15 @@ void Centralized::start(){
 	}
 	state->patterns.createBuffers();
 	state->coefficients.createBuffers();
+	int bar[systemSize-1];
+	MPI_Group waitG;
+	for(int i = 0; i < systemSize-1; i++){
+		bar[i] = i+1;
+	}
+	MPI_Group worldGroup;
+	MPI_Comm_group(MPI_COMM_WORLD, &worldGroup);
+	MPI_Group_incl(worldGroup,systemSize-1,&bar[0], &waitG);
+	MPI_Comm_create(MPI_COMM_WORLD,waitG,&waitC);
 }
 
 void Centralized::run(){
@@ -80,27 +88,27 @@ void Centralized::run(){
 				Range patRec = received;
 				patRec.rowStart = 0;
 				patRec.rowEnd = state->patterns.rows()-1;
-				if(status.MPI_SOURCE == 1){
-					string out = "centralpat/debug" + to_string(indexOne) + ".png";
-					state->unshufflePC();
-					state->MXdToPNG(state->patterns.matrix,state->patterns.rows(),state->patterns.columns(),false,out.c_str());
+//				if(status.MPI_SOURCE == 1){
+//					string out = "centralpat/debug" + to_string(indexOne) + ".png";
+//					state->unshufflePC();
+//					state->MXdToPNG(state->patterns.matrix,state->patterns.rows(),state->patterns.columns(),false,out.c_str());
 //					state->MXdToPNG(state->coefficients.matrix,state->coefficients.rows(),state->coefficients.columns(),true,out.c_str());
-					state->reshufflePC();
-					++indexOne;
-				}
+//					state->reshufflePC();
+//					++indexOne;
+//				}
 				MPI_Recv(&state->coefficients.sendBuffer[0],state->coefficients.size(coRec),MPI_DOUBLE,status.MPI_SOURCE,1,MPI_COMM_WORLD,&status);
 				state->coefficients.average(&state->coefficients.sendBuffer[0],coRec,0.09);
 
 				MPI_Recv(&state->patterns.sendBuffer[0],state->patterns.size(patRec),MPI_DOUBLE,status.MPI_SOURCE,2,MPI_COMM_WORLD,&status);
 				state->patterns.average(&state->patterns.sendBuffer[0],patRec,0.09);
-				if(status.MPI_SOURCE == 1){
-					string out = "centralpat/debug" + to_string(indexOne) + ".png";
-					state->unshufflePC();
-					state->MXdToPNG(state->patterns.matrix,state->patterns.rows(),state->patterns.columns(),false,out.c_str());
+//				if(status.MPI_SOURCE == 1){
+//					string out = "centralpat/debug" + to_string(indexOne) + ".png";
+//					state->unshufflePC();
+//					state->MXdToPNG(state->patterns.matrix,state->patterns.rows(),state->patterns.columns(),false,out.c_str());
 //					state->MXdToPNG(state->coefficients.matrix,state->coefficients.rows(),state->coefficients.columns(),true,out.c_str());
-					state->reshufflePC();
-					++indexOne;
-				}
+//					state->reshufflePC();
+//					++indexOne;
+//				}
 
 				int rSiz = received.rowSize();
 				int cSiz = received.colSize();
@@ -152,6 +160,7 @@ void Centralized::run(){
 		algorithm->setObserver(this);
 		algorithm->monteCarlo();
 		monteCallback(0);
+		MPI_Barrier(waitC);
 		error = algorithm->anneal();
 		annealCallback(0);
 		block = {-1,-1,-1,-1};
