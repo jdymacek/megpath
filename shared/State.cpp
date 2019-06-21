@@ -591,10 +591,10 @@ void State::unshufflePC(){
 
 void State::reshufflePC(){
 	coefficients.matrix = rPerm * coefficients.matrix;
-	patterns.matrix = patterns.matrix * cPerm;
 	patterns.matrix = patterns.matrix * zCol;
 	MatrixXd temp = patterns.matrix.block(0,0,patterns.rows(),patterns.columns()-zeroes);
 	patterns.matrix = temp;
+	patterns.matrix = patterns.matrix * cPerm;
 }
 
 vector<vector<Value> > State::pixlToVal(Image* png, bool& gray){
