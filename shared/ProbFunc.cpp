@@ -33,6 +33,10 @@ void ProbFunc::reset(){
 
 }
 
+void ProbFunc::average(double* buffer, double alpha = 0.5){
+
+}
+
 void ProbFunc::toDoubles(double* buffer){
 
 }

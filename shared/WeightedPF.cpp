@@ -58,6 +58,12 @@ void WeightedPF::fromDoubles(double* buffer){
 	dist = normal_distribution<double>(mean,sqrt(variance));
 }
 
+void WeightedPF::average(double* buffer, double alpha = 0.5){
+	mean = buffer[0]*alpha + mean*(1-alpha);
+    dist = normal_distribution<double>(mean,sqrt(variance));
+}
+
+
 int WeightedPF::dataSize(){
 	return 2;
 }

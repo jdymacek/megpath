@@ -167,13 +167,18 @@ int NMFMatrix::average(double* data, Range r, double alpha = 0.5){
 	}
 
     Map<MatrixXd> mapper(data,r.rowSize(),r.colSize());
-    matrix.block(r.rowStart,r.colStart,r.rowSize(),r.colSize()) = mapper;
+	MatrixXd a = mapper*alpha;
+	MatrixXd b = matrix.block(r.rowStart,r.colStart,r.rowSize(),r.colSize())*(1-alpha); 
+	
+    matrix.block(r.rowStart,r.colStart,r.rowSize(),r.colSize()) = a+b;
+
+
     data += r.rowSize()*r.colSize();
     int rv = r.rowSize()*r.colSize();
 
     for(int y = r.rowStart; y <= r.rowEnd; ++y){
         for(int x = r.colStart; x <= r.colEnd; ++x){
-            functions(y,x)->fromDoubles(data);
+            functions(y,x)->average(data,alpha);
             int s = functions(y,x)->dataSize();
             data += s;
             rv += s;

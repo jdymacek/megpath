@@ -31,6 +31,7 @@ class ProbFunc{
 		virtual void setVector(vector<double> vec);
 		virtual void toDoubles(double* buffer);
 		virtual void fromDoubles(double* buffer);
+		virtual void average(double* buffer, double alpha);
 		virtual void reset();
 		virtual ProbFunc* copy();
 		static mt19937_64 generator;

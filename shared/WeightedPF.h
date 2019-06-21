@@ -5,7 +5,7 @@
 //Last Modified: 5/25/2017
 
 #ifndef WEIGHTEDPF__H
-#define WEIGTHEDPF__H
+#define WEIGHTEDPF__H
 
 #include <iostream>
 #include <sstream>
@@ -22,6 +22,7 @@ class WeightedPF: public ProbFunc{
 		double random();
 		void addObservation(double obs);	
 		string toString();
+		void average(double* buffer, double alpha);
 		void toDoubles(double* buffer);
 		void fromDoubles(double* buffer);
 		ProbFunc* copy();
