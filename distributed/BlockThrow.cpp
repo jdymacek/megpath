@@ -71,6 +71,8 @@ void BlockThrow::run(){
 	averageCoefficients();
 	error = algorithm->anneal();
 	averagePatterns();
+	state->both = false;
+	error = algorithm->anneal();
 	averageCoefficients();
 	Range s = block;
 	s.rowEnd = state->patterns.rows()-1;

@@ -312,8 +312,8 @@ void Analysis::outputAll(){
         rowError = errorMatrix.cwiseAbs().sum();
 
         MatrixXd temp = state->coefficients.matrix.row(i);
-        max = temp.sum();
-        temp = temp/(max);
+//		max = temp.sum();
+//		temp = temp/(max);
         if(state->ids.size() > 0){
             fout << state->ids[i] << ",";
         }
