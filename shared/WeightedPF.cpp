@@ -26,9 +26,9 @@ ProbFunc* WeightedPF::copy(){
 double WeightedPF::random(){
 	double rando = dist(generator);
 	while(rando < 0.0 || rando > 1.0){
-		rando = round(100*dist(generator))/100;
+		rando = dist(generator);
 	}
-	return rando;
+	return round(100*rando)/100;
 }
 
 void WeightedPF::addObservation(double obs){
