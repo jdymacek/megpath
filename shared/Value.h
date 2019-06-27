@@ -12,15 +12,14 @@ class Value{
 		Value();
 		Value(string d);
 		Value(int d);
-		bool asBool() const;
-		int asInt() const;
-		double asDouble() const;
-		string asString() const;
-		vector<Value> asVector() const;
 		string toString() const;
 
+		operator bool() const;
 		operator int() const;
 		operator double() const;
+		operator string() const;
+		operator vector<Value>() const;
+		operator vector<int>() const;
 	private:
 		string data;
 };

@@ -25,7 +25,7 @@ vector<vector<Value> > CSVFile::readCSV(string filename, bool tab){
 			line = "[" + line;
 			line = line + "]";
 			row = Value(line);
-			rv.push_back(row.asVector());
+			rv.push_back(row);
 		}else{
 			for(int i = 0; i < line.size(); ++i){
 				if(line[i] == '\t'){
@@ -35,7 +35,7 @@ vector<vector<Value> > CSVFile::readCSV(string filename, bool tab){
 			line = "[" + line;
 			line = line + "]";
 			row = Value(line);
-			rv.push_back(row.asVector());
+			rv.push_back(row);
 		}
 	}
 

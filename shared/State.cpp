@@ -237,19 +237,19 @@ bool State::load(string argFileName){
 	CSVFile file;
 	Image* png;
 
-	vector<Value> origin;
-	vector<Value> controls;
-	vector<Value> columns;
+	vector<int> origin;
+	vector<int> controls;
+	vector<int> columns;
 	vector<Value> patternArgs;
-	vector<Value> idArgs;
+	vector<int> idArgs;
 
 	//grab arguments
 	args.fromString("analysis = \"default\"\nmax_runs = 1000\ndebug = false\nstart_error = 0.2\nend_error = 0.001\nstart_prob = 0.67\nend_prob = 0.1\nstats = \"none\"\nanneal_cut_off = 1.5\ndefault_filename = \"mixed.csv\"\ndefault_patterns = [\"\",\"\",\"\",\"\",\"\"]\ndefault_origin = {0,0}\ndefault_directory = \"\"\nprint_runs = 1000\ninterrupt_runs = 1000\ndistribution = 1*1+2*2+3*3");
 	args.load(argFileName);
 
 	if(args.isArgument("analysis")){
-		Value val = args.getArgument("analysis");
-		analysis = val.asString();
+		analysis = (string)args.getArgument("analysis");
+//		analysis = val.asString();
 		analysis = analysis + "_";
 	}
 
@@ -260,43 +260,43 @@ bool State::load(string argFileName){
 	}
 
 	if(args.isArgument("debug")){
-		Value val = args.getArgument("debug");
-		debug = val.asBool();
+		debug = args.getArgument("debug");
+//		debug = val.asBool();
 	}else{
 		debug = false;
 	}
 	if(args.isArgument("start_error")){
-		Value val = args.getArgument("start_error");
-		start_error = val.asDouble();
+		start_error = args.getArgument("start_error");
+//		start_error = val.asDouble();
 	}
 	if(args.isArgument("end_error")){
-		Value val = args.getArgument("end_error");
-		end_error = val.asDouble();
+		end_error = args.getArgument("end_error");
+//		end_error = val.asDouble();
 	}
 	if(args.isArgument("start_prob")){
-		Value val = args.getArgument("start_prob");
-		start_prob = val.asDouble();
+		start_prob = args.getArgument("start_prob");
+//		start_prob = val.asDouble();
 	}
 	if(args.isArgument("end_prob")){
-		Value val = args.getArgument("end_prob");
-		end_prob = val.asDouble();
+		end_prob = args.getArgument("end_prob");
+//		end_prob = val.asDouble();
 	}
 
 	if(args.isArgument("stats")){
-		Value val = args.getArgument("stats");
-		stats = val.asString();
+		stats = (string)args.getArgument("stats");
+//		stats = val.asString();
 	}
 	if(args.isArgument("anneal_cut_off")){
-		Value val = args.getArgument("anneal_cut_off");
-		annealCutOff = val.asDouble();
+		annealCutOff = args.getArgument("anneal_cut_off");
+//		annealCutOff = val.asDouble();
 	}
 	if(debug){
 		cout << "Using analysis: " << analysis.substr(0,analysis.size()-1) << "\n";
 	}
 
 	if(args.isArgument(analysis + "filename")){
-		Value val = args.getArgument(analysis + "filename");
-		filename = val.asString();
+		filename = (string)args.getArgument(analysis + "filename");
+//		filename = val.asString();
 
 		if(filename.substr(filename.size()-4,4) == ".png"){
 			img = true;
@@ -304,14 +304,14 @@ bool State::load(string argFileName){
 	}
 
 	if(args.isArgument(analysis + "patterns")){
-		Value val = args.getArgument(analysis + "patterns");
-		patternArgs = val.asVector();
+		patternArgs = args.getArgument(analysis + "patterns");
+//		patternArgs = val.asVector();
 		PATTERNS = patternArgs.size();
 		int i = 0;
 		both = false;
 		while(i < PATTERNS){
 			patternNames.push_back(patternArgs[i].toString());
-			if(patternArgs[i].asString() == ""){
+			if((string)patternArgs[i] == ""){
 				both = true;
 			}
 			++i;
@@ -319,8 +319,8 @@ bool State::load(string argFileName){
 	}
 
 	if(args.isArgument(analysis + "origin")){
-		Value val = args.getArgument(analysis + "origin");
-		origin = val.asVector();
+		origin = args.getArgument(analysis + "origin");
+//		origin = val.asVector();
 	}else{
 		Value val;
 		origin.push_back(val);
@@ -328,32 +328,32 @@ bool State::load(string argFileName){
 	}
 
 	if(args.isArgument(analysis + "directory")){
-		Value val = args.getArgument(analysis + "directory");
-		directory = val.asString();
+		directory = (string)args.getArgument(analysis + "directory");
+//		directory = val.asString();
 	}
 
 	if(args.isArgument(analysis + "controls")){
-		Value val = args.getArgument(analysis + "controls");
-		controls = val.asVector();
+		controls = args.getArgument(analysis + "controls");
+//		controls = val.asVector();
 	}
 
 	if(args.isArgument("print_runs")){
-		Value val = args.getArgument("print_runs");
-		printRuns = val.asInt();
+		printRuns = args.getArgument("print_runs");
+//		printRuns = val.asInt();
 	}
 	if(args.isArgument("interrupt_runs")){
-		Value val = args.getArgument("interrupt_runs");
-		interruptRuns = val.asInt();
+		interruptRuns = args.getArgument("interrupt_runs");
+//		interruptRuns = val.asInt();
 	}
 
 	if(args.isArgument(analysis+"ids")){
-		Value val = args.getArgument(analysis + "ids");
-		idArgs = val.asVector();
+		idArgs = args.getArgument(analysis + "ids");
+//		idArgs = val.asVector();
 	}
 
 	if(args.isArgument("distribution")){
-		Value val = args.getArgument("distribution");
-		dist = val.asString();
+		dist = (string)args.getArgument("distribution");
+//		dist = val.asString();
 	}
 
 	vector<vector<Value> > res;
@@ -364,13 +364,13 @@ bool State::load(string argFileName){
 		res = file.readCSV(filename);
 	}
 	//expression matrix
-	ROWS = res.size() - origin[1].asInt();
+	ROWS = res.size() - origin[1];
 	if(args.isArgument(analysis + "columns")){
-		Value val = args.getArgument(analysis + "columns");
-		columns = val.asVector();
+		columns = args.getArgument(analysis + "columns");
+//		columns = val.asVector();
 		COLUMNS = columns.size();
 	}else{
-		COLUMNS = res[0].size() - origin[0].asInt();
+		COLUMNS = res[0].size() - origin[0];
 		for(int i = 0; i < COLUMNS;++i){
 			Value newVal(i);
 			columns.push_back(newVal);
@@ -392,16 +392,16 @@ bool State::load(string argFileName){
 	for(int i = 0; i < ROWS; ++i){
 		for(int j = 0; j < COLUMNS; ++j){
 			if(columns.size() == controls.size()){
-				expression(i,j) = res[i+origin[1].asInt()][columns[j].asInt()+origin[0].asInt()].asDouble() - res[i+origin[1].asInt()][controls[j].asInt()+origin[0].asInt()].asDouble();
+				expression(i,j) = (double)res[i+origin[1]][columns[j]+origin[0]] - (double)res[i+origin[1]][controls[j]+origin[0]];
 			}else{
-				expression(i,j) = res[i+origin[1].asInt()][columns[j].asInt()+origin[0].asInt()].asDouble();
+				expression(i,j) = (double)res[i+origin[1]][columns[j]+origin[0]];
 			}
 		}
 		//read columns to make an id
 		if(idArgs.size() > 0){
 			string id = "";
 			for(int k =0; k < idArgs.size(); ++k){
-				id += (res[i+origin[1].asInt()][idArgs[k].asInt()]).toString();
+				id += (res[i+origin[1]][idArgs[k]]).toString();
 				if(k != idArgs.size()-1){
 					id += ",";
 				}
@@ -435,16 +435,16 @@ bool State::load(string argFileName){
 	int numPatterns = 0;
 	for(int i = 0; i < patternArgs.size(); ++i){
 		vector<Value> intoMatrix;
-		string findPattern = patternArgs[i].asString();
+		string findPattern = (string)patternArgs[i];
 		if(args.isArgument(findPattern)){
 			++numPatterns;
-			Value newVal = args.getArgument(findPattern);
-			intoMatrix = newVal.asVector();
+			intoMatrix = args.getArgument(findPattern);
+//			intoMatrix = newVal.asVector();
 
 			ShiftPF* shared = new ShiftPF();
 			vector<Entry> constraints;
 			for(int j = 0; j < intoMatrix.size(); ++j){
-				string str = intoMatrix[j].asString();
+				string str = (string)intoMatrix[j];
 				if(debug){
 					cout << str << endl;
 				}
@@ -454,7 +454,7 @@ bool State::load(string argFileName){
 					}
 					constrained = true;
 					Entry e;
-					patterns.matrix(i,j) = intoMatrix[j].asDouble();
+					patterns.matrix(i,j) = (double)intoMatrix[j];
 					patterns.functions(i,j) = shared;
 					e.x = j;
 					e.y = i;
