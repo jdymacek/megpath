@@ -20,6 +20,7 @@ class Value{
 		string toString() const;
 
 		operator int() const;
+		operator double() const;
 	private:
 		string data;
 };

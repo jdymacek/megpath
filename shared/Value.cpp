@@ -31,8 +31,12 @@ Value::operator int() const{
 	return atoi(str.c_str());
 }
 
-
 double Value::asDouble() const{
+	string str = data;
+	return atof(str.c_str());
+}
+
+Value::operator double() const{
 	string str = data;
 	return atof(str.c_str());
 }
@@ -87,4 +91,3 @@ vector<Value> Value::asVector() const{
 
 	return vec;
 }
-
