@@ -254,8 +254,9 @@ bool State::load(string argFileName){
 	}
 
 	if(args.isArgument("max_runs")){
-		Value val = args.getArgument("max_runs");
-		MAX_RUNS = val.asInt();
+		MAX_RUNS = args.getArgument("max_runs");
+//		Value val = args.getArgument("max_runs");
+//		MAX_RUNS = val.asInt();
 	}
 
 	if(args.isArgument("debug")){

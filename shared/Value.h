@@ -18,6 +18,8 @@ class Value{
 		string asString() const;
 		vector<Value> asVector() const;
 		string toString() const;
+
+		operator int() const;
 	private:
 		string data;
 };

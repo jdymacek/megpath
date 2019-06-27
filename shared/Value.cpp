@@ -26,6 +26,12 @@ int Value::asInt() const{
 	return atoi(str.c_str());
 }
 
+Value::operator int() const{
+	string str = data;
+	return atoi(str.c_str());
+}
+
+
 double Value::asDouble() const{
 	string str = data;
 	return atof(str.c_str());
