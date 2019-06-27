@@ -1,8 +1,8 @@
 analysis = "png"
 max_runs = 30000;
-png_filename = "output.png"
+png_filename = "testSize.csv"
 png_origin = [0,0]
-png_patterns = ["","","","","",""]
+png_patterns = ["","","",""]
 png_directory = ""
 stats = "all"
 print_runs = 1000

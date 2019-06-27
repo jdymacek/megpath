@@ -569,9 +569,11 @@ void State::unshufflePC(){
 	coefficients.matrix = rPerm.inverse() * coefficients.matrix;
 	patterns.matrix = patterns.matrix * cPerm.inverse();
 	patterns.matrix.conservativeResize(patterns.rows(),patterns.columns()+zeroes);
+	patterns.matrix.topRightCorner(patterns.rows(),zeroes) = MatrixXd::Zero(patterns.rows(),zeroes);
 	patterns.matrix = patterns.matrix * zCol.inverse();
 	expression = rPerm.inverse() * expression * cPerm.inverse();
 	expression.conservativeResize(expression.rows(),expression.cols()+zeroes);
+	expression.topRightCorner(expression.rows(),zeroes) = MatrixXd::Zero(patterns.rows(),zeroes);
 	expression = expression * zCol.inverse();
 }
 

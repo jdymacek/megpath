@@ -28,7 +28,8 @@ double WeightedPF::random(){
 	while(rando < 0.0 || rando > 1.0){
 		rando = dist(generator);
 	}
-	return round(100*rando)/100;
+	return round(200*rando)/200;
+	//return rando;
 }
 
 void WeightedPF::addObservation(double obs){
