@@ -34,6 +34,7 @@ class ProbFunc{
 		virtual void average(double* buffer, double alpha);
 		virtual void reset();
 		virtual ProbFunc* copy();
+		virtual void transition();
 		static mt19937_64 generator;
 };
 

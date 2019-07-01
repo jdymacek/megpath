@@ -172,7 +172,6 @@ int NMFMatrix::average(double* data, Range r, double alpha = 0.5){
 	
     matrix.block(r.rowStart,r.colStart,r.rowSize(),r.colSize()) = a+b;
 
-
     data += r.rowSize()*r.colSize();
     int rv = r.rowSize()*r.colSize();
 
@@ -187,6 +186,13 @@ int NMFMatrix::average(double* data, Range r, double alpha = 0.5){
     return rv;
 }
 
+void NMFMatrix::transition(){
+	for(int i =0; i < matrix.rows(); ++i){
+		for(int j =0; j < matrix.cols(); ++j){
+			functions(i,j)->transition();
+		}
+	}
+}
 
 void NMFMatrix::resize(int newRows, int newCols){
 

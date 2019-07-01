@@ -21,6 +21,7 @@ class WeightedPF: public ProbFunc{
 		WeightedPF(double mu,double sd);
 		double random();
 		void addObservation(double obs);	
+		void transition();
 		string toString();
 		void average(double* buffer, double alpha);
 		void toDoubles(double* buffer);

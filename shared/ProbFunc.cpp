@@ -45,6 +45,10 @@ void ProbFunc::fromDoubles(double* buffer){
 
 }
 
+void ProbFunc::transition(){
+
+}
+
 vector<double> ProbFunc::getVector(){
 	vector<double> vec;
 	return vec;

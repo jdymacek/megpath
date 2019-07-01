@@ -153,6 +153,9 @@ double MonteAnneal::anneal(){
 	double t = state->calcT();
 	double alpha = state->calcAlpha(t);
 
+	state->patterns.transition();
+	state->coefficients.transition();
+
 	ErrorFunctionRow efRow(state);
 	ErrorFunctionCol efCol(state);
 

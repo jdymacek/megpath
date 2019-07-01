@@ -28,6 +28,7 @@ class NMFMatrix{
 		int read(double* data, Range r);
 		void write(double* data);
 		int write(double* data, Range r);
+		void transition();
 		int average(double* data, Range r, double alpha);
 		void reset();
 		void write(string filename);
