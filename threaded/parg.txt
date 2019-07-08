@@ -1,7 +1,7 @@
 analysis = "png"
-max_runs = 30000;
+max_runs = 25000;
 png_filename = "birddata1s.csv"
-png_origin = [0,0]
+png_origin = [1,1]
 png_patterns = ["","","","","","","","","",""]
 png_directory = ""
 stats = "all"

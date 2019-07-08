@@ -33,7 +33,9 @@ void ThreadedMonteAnneal::monteCarloThread(){
 		monteCarloStep(state->coefficients,&efRow,rc);
 		if(state->both){
 			barrier->Wait();
-			monteCarloStep(state->patterns,&efCol,rp);
+			if(rp.colStart > -1){
+				monteCarloStep(state->patterns,&efCol,rp);
+			}
 		}
 		barrier->Wait();
 		if(this_thread::get_id() == rootId){
@@ -94,7 +96,9 @@ void ThreadedMonteAnneal::annealThread(double t, double alpha){
 		annealStep(state->coefficients,t,&efRow,rc);
 		if(state->both){
 			barrier->Wait();
-			annealStep(state->patterns,t,&efCol,rp);
+			if(rp.colStart > -1){
+				annealStep(state->patterns,t,&efCol,rp);
+			}
 		}
 		barrier->Wait(); 
 		if(this_thread::get_id() == rootId){

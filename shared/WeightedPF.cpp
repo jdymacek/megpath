@@ -7,9 +7,9 @@
 
 WeightedPF::WeightedPF(){
 	mean = 0.5;
-	variance = 0.000075;
+	variance = 0.01;
 	alpha = 0.01;
-	dist = normal_distribution<double>(0.5,0.1);
+	dist = normal_distribution<double>(mean,sqrt(variance));
 }
 
 WeightedPF::WeightedPF(double mu,double sd){
@@ -28,8 +28,8 @@ double WeightedPF::random(){
 	while(rando < 0.0 || rando > 1.0){
 		rando = dist(generator);
 	}
-	return round(200*rando)/200;
-	//return rando;
+	//return round(200*rando)/200;
+	return rando;
 }
 
 void WeightedPF::addObservation(double obs){
