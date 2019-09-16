@@ -14,6 +14,12 @@ Image* createImage(int width,int height){
 	return image;
 }
 
+Image* destroyImage(Image* image){
+	free(image->data);
+	free(image);
+	return NULL;
+}
+
 
 Image* readPng(const char* file_name){
 	/* open file and test for it being a png */

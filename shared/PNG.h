@@ -14,7 +14,7 @@ typedef struct Image{
 } Image;
 
 Image* createImage(int width,int height);
-
+Image* destroyImage(Image* img);
 
 Image* readPng(const char* filename);
 void writePng(const char* filename,Image* image);

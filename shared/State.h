@@ -58,7 +58,9 @@ class State{
 		void patternMatch(MatrixXd& other);
 		void reset();
 		void MXdToPNG(MatrixXd mat, int r, int c, bool g, const char* name);
+        void MXdToPNG2(MatrixXd mat, int r, int c, int g, const char* name);
 		void errorToPNG();
+        void errorToPNG2(const char* name);
 		void unshufflePC();
 		void reshufflePC();
 

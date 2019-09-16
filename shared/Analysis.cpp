@@ -127,18 +127,43 @@ void Analysis::monteFinalCallback(){
 	cout << "Total time: " << lap.formatTime(lap.stop()) << endl;
 }
 
+
+// tejas
+// put it in here 
+
 void Analysis::montePrintCallback(int iterations){
     //needs time
     ErrorFunctionRow ef(state);
 	cachedError = ef.error();
 	cout << "montecarlo\t" << iterations << "\t" << cachedError/state->expression.size() << endl;
+////
+    string out = "debug" + to_string(iterations) + ".png";
+    string out1 = "debugg" + to_string(iterations) + ".png";
+    state->unshufflePC();
+//     state->MXdToPNG(state->patterns.matrix,state->patterns.rows(),state->patterns.columns(),state->gray,out.c_str());
+//     state->MXdToPNG(state->coefficients.matrix,state->coefficients.rows(),state->coefficients.columns(),state->gray,out1.c_str());
+    state->errorToPNG2(out.c_str());
+    state->errorToPNG2(out1.c_str());
+    state->reshufflePC();
+////
 }
 
+// tejas 
 void Analysis::annealPrintCallback(int iterations){
 	//needs time
     ErrorFunctionRow ef(state);
 	cachedError = ef.error();
 	cout << "anneal\t" << iterations << "\t" << cachedError/state->expression.size() << endl;
+////
+    string out = "debug" + to_string(iterations) + ".png";
+    string out1 = "debugg" + to_string(iterations) + ".png";
+    state->unshufflePC();
+//     state->MXdToPNG(state->patterns.matrix,state->patterns.rows(),state->patterns.columns(),state->gray,out.c_str());
+//     state->MXdToPNG(state->coefficients.matrix,state->coefficients.rows(),state->coefficients.columns(),state->gray,out1.c_str());
+    state->errorToPNG2(out.c_str());
+    state->errorToPNG2(out1.c_str());
+    state->reshufflePC();
+////
 }
 
 

@@ -8,6 +8,7 @@
 #include "Stopwatch.h"
 #include "MonteAnneal.h"
 #include "Observer.h"
+#include "FileUtil.h"
 
 using namespace std;
 

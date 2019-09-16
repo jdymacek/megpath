@@ -59,6 +59,47 @@ void State::reset()
   }
   return rv;
   }*/
+
+
+
+
+
+// tejas 
+void State::errorToPNG2(const char* name){
+		MatrixXd diff = expression - coefficients.matrix*patterns.matrix;
+		// diff = diff.cwiseAbs();
+		diff *= 255;
+/*
+if spot is less than zero its gone get 0 or else its gone get -spot.
+if less than zero it is red
+grater than zero it is blue 
+if equal to zero black. 
+*/
+		Image* vis = createImage(patterns.columns(),coefficients.rows());
+		for(int i = 0; i < vis->height; i++){
+			for(int j = 0; j < vis->width; j++){
+				int spot = (int)diff(i,j);
+					if(spot < 0){
+						vis->data[i*vis->width*4+j*4] = spot;
+						vis->data[i*vis->width*4+j*4+1] = spot;
+						vis->data[i*vis->width*4+j*4+2] = spot;
+						vis->data[i*vis->width*4+j*4+3] = 255;
+				}
+					if(spot > 0){
+						vis->data[i*vis->width*4+j*4] = spot;
+						vis->data[i*vis->width*4+j*4+1] = spot;
+						vis->data[i*vis->width*4+j*4+2] = spot;
+						vis->data[i*vis->width*4+j*4+3] = 255;
+				}
+		}
+		writePng(name,vis);
+        
+}
+    destroyImage(vis);
+}
+
+
+
 void State::errorToPNG(){
 		MatrixXd diff = expression - coefficients.matrix*patterns.matrix;
 		diff = diff.cwiseAbs();
@@ -620,12 +661,17 @@ vector<vector<Value> > State::pixlToVal(Image* png, bool& gray){
 	}
 }
 
-void State::MXdToPNG(MatrixXd mat, int r, int c, bool g, const char* name){
-	Image* ret;
+// Tejas
+// change g to int
+// error to png new func
+//  const char* name
+
+/*	Image* ret;
 	if(!g){
 		ret = createImage(c/3, r);
 		for(int i = 0; i<r; i++){
 			for(int j = 0; j<c; j=j+3){
+                // 
 				ret->data[j/3*4+c/3*4*i] = (int)(mat(i,j)*255);
 				ret->data[j/3*4+c/3*4*i+1] = (int)(mat(i,j+1)*255);
 				ret->data[j/3*4+c/3*4*i+2] = (int)(mat(i,j+2)*255);
@@ -635,7 +681,8 @@ void State::MXdToPNG(MatrixXd mat, int r, int c, bool g, const char* name){
 	}else{
 		ret = createImage(c, r);
 		for(int i = 0; i<r; i++){
-			for(int j = 0; j<c; j++){
+			for(int j = 0; j<c; j++){                
+                //
 				int temp = (int)(mat(i,j)*255);
 				ret->data[4*j+4*c*i] = temp;
 				ret->data[4*j+4*c*i+1] = temp;
@@ -646,6 +693,39 @@ void State::MXdToPNG(MatrixXd mat, int r, int c, bool g, const char* name){
 	}
 	writePng(name,ret);
 }
+*/
+
+
+void State::MXdToPNG(MatrixXd mat, int r, int c, bool g, const char* name){
+	Image* ret;
+	if(!g){
+		ret = createImage(c/3, r);
+		for(int i = 0; i<r; i++){
+			for(int j = 0; j<c; j=j+3){
+                
+                // 
+				ret->data[j/3*4+c/3*4*i] = (int)(mat(i,j)*255);
+				ret->data[j/3*4+c/3*4*i+1] = (int)(mat(i,j+1)*255);
+				ret->data[j/3*4+c/3*4*i+2] = (int)(mat(i,j+2)*255);
+				ret->data[j/3*4+c/3*4*i+3] = 255;
+			}
+		}
+	}else{
+		ret = createImage(c, r);
+		for(int i = 0; i<r; i++){
+			for(int j = 0; j<c; j++){                
+                //
+				int temp = (int)(mat(i,j)*255);
+				ret->data[4*j+4*c*i] = temp;
+				ret->data[4*j+4*c*i+1] = temp;
+				ret->data[4*j+4*c*i+2] = temp;
+				ret->data[4*j+4*c*i+3] = 255;
+			}
+		}
+	}
+	writePng(name,ret);
+}
+
 //Old State split functions
 /*int ParallelPatterns::findStart(int myRank, int curSize, int numRows){
   int startRow = 0;

@@ -90,6 +90,7 @@ string FileUtil::findMatchingFile(string path, string toSearch, int num){
 
 }
 
+// use this function to find unique files
 string FileUtil::uniqueFile(string path){
 	int i = 1;
 	string rv = path;

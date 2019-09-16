@@ -1,0 +1,12 @@
+esc
+ctlr +v
+y
+number of p
+shift v and then number of p
+
+to compile 
+first make in shared
+then make in threaded
+then copy paste command below
+./threadednmf -t 6 -a parg.txt -r
+
