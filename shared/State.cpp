@@ -84,10 +84,9 @@ if equal to zero black.
 						vis->data[i*vis->width*4+j*4+1] = 0;
 						vis->data[i*vis->width*4+j*4+2] = 0;
 						vis->data[i*vis->width*4+j*4+3] = 255;
-				}
-					if(spot > 0){
-						vis->data[i*vis->width*4+j*4] = spot;
-						vis->data[i*vis->width*4+j*4+1] = spot;
+				}else{
+						vis->data[i*vis->width*4+j*4] = 0;
+						vis->data[i*vis->width*4+j*4+1] = 0;
 						vis->data[i*vis->width*4+j*4+2] = spot;
 						vis->data[i*vis->width*4+j*4+3] = 255;
 				}
