@@ -80,9 +80,9 @@ if equal to zero black.
 			for(int j = 0; j < vis->width; j++){
 				int spot = (int)diff(i,j);
 					if(spot < 0){
-						vis->data[i*vis->width*4+j*4] = spot;
-						vis->data[i*vis->width*4+j*4+1] = spot;
-						vis->data[i*vis->width*4+j*4+2] = spot;
+						vis->data[i*vis->width*4+j*4] = -spot;
+						vis->data[i*vis->width*4+j*4+1] = 0;
+						vis->data[i*vis->width*4+j*4+2] = 0;
 						vis->data[i*vis->width*4+j*4+3] = 255;
 				}
 					if(spot > 0){

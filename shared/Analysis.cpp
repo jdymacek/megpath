@@ -137,13 +137,13 @@ void Analysis::montePrintCallback(int iterations){
 	cachedError = ef.error();
 	cout << "montecarlo\t" << iterations << "\t" << cachedError/state->expression.size() << endl;
 ////
-    string out = "debug" + to_string(iterations) + ".png";
-    string out1 = "debugg" + to_string(iterations) + ".png";
+    string out = "montecarlo" + to_string(iterations) + ".png";
+  //  string out1 = "debugg" + to_string(iterations) + ".png";
     state->unshufflePC();
 //     state->MXdToPNG(state->patterns.matrix,state->patterns.rows(),state->patterns.columns(),state->gray,out.c_str());
 //     state->MXdToPNG(state->coefficients.matrix,state->coefficients.rows(),state->coefficients.columns(),state->gray,out1.c_str());
     state->errorToPNG2(out.c_str());
-    state->errorToPNG2(out1.c_str());
+   /// state->errorToPNG2(out1.c_str());
     state->reshufflePC();
 ////
 }
@@ -155,13 +155,13 @@ void Analysis::annealPrintCallback(int iterations){
 	cachedError = ef.error();
 	cout << "anneal\t" << iterations << "\t" << cachedError/state->expression.size() << endl;
 ////
-    string out = "debug" + to_string(iterations) + ".png";
-    string out1 = "debugg" + to_string(iterations) + ".png";
+    string out = "anneal" + to_string(iterations) + ".png";
+   /// string out1 = "debugg" + to_string(iterations) + ".png";
     state->unshufflePC();
 //     state->MXdToPNG(state->patterns.matrix,state->patterns.rows(),state->patterns.columns(),state->gray,out.c_str());
 //     state->MXdToPNG(state->coefficients.matrix,state->coefficients.rows(),state->coefficients.columns(),state->gray,out1.c_str());
     state->errorToPNG2(out.c_str());
-    state->errorToPNG2(out1.c_str());
+   /// state->errorToPNG2(out1.c_str());
     state->reshufflePC();
 ////
 }
