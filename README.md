@@ -33,3 +33,7 @@ Running the Program
 - GSEA
 	* ./gsea	"*argument file*"
 	* Argument file requires two arguments:	coefficient_file, genome_file
+	
+Compiling
+-------------------------------------------------------------
+- The software can be compiled using the command "*make all*" and subsequently cleaned with "*make clean*".
